@@ -1,0 +1,64 @@
+version: '3.8'
+
+services:
+  # MongoDB database
+  mongodb:
+    image: mongo:7.0
+    container_name: aislemarts_mongodb
+    restart: unless-stopped
+    ports:
+      - "27017:27017"
+    environment:
+      MONGO_INITDB_ROOT_USERNAME: admin
+      MONGO_INITDB_ROOT_PASSWORD: password
+      MONGO_INITDB_DATABASE: aislemarts
+    volumes:
+      - mongodb_data:/data/db
+    networks:
+      - aislemarts_network
+
+  # FastAPI backend
+  backend:
+    build: ./backend
+    container_name: aislemarts_backend
+    restart: unless-stopped
+    ports:
+      - "8000:8000"
+    environment:
+      MONGODB_URL: mongodb://admin:password@mongodb:27017/aislemarts?authSource=admin
+      DATABASE_NAME: aislemarts
+    depends_on:
+      - mongodb
+    volumes:
+      - ./backend:/app
+    networks:
+      - aislemarts_network
+
+  # Expo development server (for web)
+  frontend:
+    build: 
+      context: ./frontend
+      dockerfile: Dockerfile.dev
+    container_name: aislemarts_frontend
+    restart: unless-stopped
+    ports:
+      - "8081:8081"  # Expo dev server
+      - "19000:19000"  # Expo dev tools
+      - "19001:19001"  # Expo dev tools
+      - "19002:19002"  # Expo dev tools
+    environment:
+      EXPO_DEVTOOLS_LISTEN_ADDRESS: 0.0.0.0
+    volumes:
+      - ./frontend:/app
+      - /app/node_modules
+    networks:
+      - aislemarts_network
+    stdin_open: true
+    tty: true
+
+volumes:
+  mongodb_data:
+
+networks:
+  aislemarts_network:
+    driver: bridge
