@@ -167,8 +167,8 @@ class APITester:
         
         if success and isinstance(data, list) and len(data) > 0:
             self.log_test("Products List", True, f"Found {len(data)} products")
-            # Store first product for later tests
-            self.test_product_id = data[0].get("id")
+            # Store first product for later tests (use _id since id alias might not work)
+            self.test_product_id = data[0].get("id") or data[0].get("_id")
             return data
         else:
             self.log_test("Products List", False, str(data))
