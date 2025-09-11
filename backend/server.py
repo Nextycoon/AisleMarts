@@ -1,75 +1,278 @@
-from fastapi import FastAPI, APIRouter
-from dotenv import load_dotenv
-from starlette.middleware.cors import CORSMiddleware
-from motor.motor_asyncio import AsyncIOMotorClient
-import os
-import logging
-from pathlib import Path
-from pydantic import BaseModel, Field
-from typing import List
-import uuid
+from fastapi import FastAPI, APIRouter, Depends, HTTPException, Header, Request
+from fastapi.middleware.cors import CORSMiddleware
 from datetime import datetime
+import stripe
+from passlib.hash import bcrypt
+from jose import jwt, JWTError
+import uuid
+from typing import List, Optional
 
+from config import settings
+from db import db
+from security import create_access_token, decode_access_token
+from schemas import (
+    UserCreate, UserLogin, UserOut, ProductIn, ProductOut, 
+    CreatePaymentIntentIn, OrderOut, CartItemIn, CategoryIn, CategoryOut
+)
 
-ROOT_DIR = Path(__file__).parent
-load_dotenv(ROOT_DIR / '.env')
-
-# MongoDB connection
-mongo_url = os.environ['MONGO_URL']
-client = AsyncIOMotorClient(mongo_url)
-db = client[os.environ['DB_NAME']]
-
-# Create the main app without a prefix
-app = FastAPI()
-
-# Create a router with the /api prefix
-api_router = APIRouter(prefix="/api")
-
-
-# Define Models
-class StatusCheck(BaseModel):
-    id: str = Field(default_factory=lambda: str(uuid.uuid4()))
-    client_name: str
-    timestamp: datetime = Field(default_factory=datetime.utcnow)
-
-class StatusCheckCreate(BaseModel):
-    client_name: str
-
-# Add your routes to the router instead of directly to app
-@api_router.get("/")
-async def root():
-    return {"message": "Hello World"}
-
-@api_router.post("/status", response_model=StatusCheck)
-async def create_status_check(input: StatusCheckCreate):
-    status_dict = input.dict()
-    status_obj = StatusCheck(**status_dict)
-    _ = await db.status_checks.insert_one(status_obj.dict())
-    return status_obj
-
-@api_router.get("/status", response_model=List[StatusCheck])
-async def get_status_checks():
-    status_checks = await db.status_checks.find().to_list(1000)
-    return [StatusCheck(**status_check) for status_check in status_checks]
-
-# Include the router in the main app
-app.include_router(api_router)
+app = FastAPI(title="AisleMarts API", version="0.1.0")
 
 app.add_middleware(
     CORSMiddleware,
-    allow_credentials=True,
     allow_origins=["*"],
+    allow_credentials=True,
     allow_methods=["*"],
     allow_headers=["*"],
 )
 
-# Configure logging
-logging.basicConfig(
-    level=logging.INFO,
-    format='%(asctime)s - %(name)s - %(levelname)s - %(message)s'
-)
-logger = logging.getLogger(__name__)
+stripe.api_key = settings.STRIPE_SECRET_KEY
 
-@app.on_event("shutdown")
-async def shutdown_db_client():
-    client.close()
+# Create a router with the /api prefix
+api_router = APIRouter(prefix="/api")
+
+async def get_current_user(authorization: str | None = Header(None)):
+    if not authorization:
+        raise HTTPException(401, "Missing Authorization header")
+    try:
+        token = authorization.split()[1]
+        payload = decode_access_token(token)
+        user_id = payload.get("sub")
+        if not user_id:
+            raise HTTPException(401, "Invalid token")
+        user = await db().users.find_one({"_id": user_id})
+        if not user:
+            raise HTTPException(401, "User not found")
+        return user
+    except Exception as e:
+        raise HTTPException(401, f"Invalid token: {str(e)}")
+
+@api_router.get("/health")
+async def health():
+    return {"ok": True, "service": "AisleMarts API"}
+
+# -------- Auth --------
+@api_router.post("/auth/register")
+async def register(payload: UserCreate):
+    existing = await db().users.find_one({"email": payload.email})
+    if existing:
+        raise HTTPException(400, "Email already in use")
+    
+    user_id = str(uuid.uuid4())
+    doc = {
+        "_id": user_id,
+        "email": payload.email,
+        "name": payload.name,
+        "password_hash": bcrypt.hash(payload.password),
+        "roles": ["user"],
+        "created_at": datetime.utcnow(),
+    }
+    await db().users.insert_one(doc)
+    token = create_access_token(user_id)
+    return {"access_token": token, "token_type": "bearer"}
+
+@api_router.post("/auth/login")
+async def login(payload: UserLogin):
+    user = await db().users.find_one({"email": payload.email})
+    if not user or not bcrypt.verify(payload.password, user.get("password_hash", "")):
+        raise HTTPException(401, "Invalid credentials")
+    token = create_access_token(str(user["_id"]))
+    return {"access_token": token, "token_type": "bearer"}
+
+@api_router.get("/auth/me", response_model=UserOut)
+async def get_me(user=Depends(get_current_user)):
+    return UserOut(**user)
+
+# -------- Categories --------
+@api_router.post("/categories", response_model=CategoryOut)
+async def create_category(category: CategoryIn, user=Depends(get_current_user)):
+    if "admin" not in user["roles"]:
+        raise HTTPException(403, "Admin access required")
+    
+    category_id = str(uuid.uuid4())
+    doc = category.model_dump()
+    doc["_id"] = category_id
+    doc["created_at"] = datetime.utcnow()
+    
+    await db().categories.insert_one(doc)
+    return CategoryOut(**doc)
+
+@api_router.get("/categories", response_model=List[CategoryOut])
+async def list_categories(active_only: bool = True):
+    filter_dict = {"active": True} if active_only else {}
+    cursor = db().categories.find(filter_dict)
+    categories = await cursor.to_list(length=100)
+    return [CategoryOut(**cat) for cat in categories]
+
+# -------- Products --------
+@api_router.post("/products", response_model=ProductOut)
+async def create_product(product: ProductIn, user=Depends(get_current_user)):
+    if "admin" not in user["roles"] and "vendor" not in user["roles"]:
+        raise HTTPException(403, "Admin or vendor access required")
+    
+    product_id = str(uuid.uuid4())
+    doc = product.model_dump()
+    doc["_id"] = product_id
+    doc["created_at"] = doc["updated_at"] = datetime.utcnow()
+    
+    await db().products.insert_one(doc)
+    return ProductOut(**doc)
+
+@api_router.get("/products", response_model=List[ProductOut])
+async def list_products(
+    q: str | None = None, 
+    category_id: str | None = None,
+    limit: int = 20, 
+    skip: int = 0
+):
+    filter_dict = {"active": True}
+    
+    if q:
+        filter_dict["$or"] = [
+            {"title": {"$regex": q, "$options": "i"}},
+            {"description": {"$regex": q, "$options": "i"}},
+            {"brand": {"$regex": q, "$options": "i"}}
+        ]
+    
+    if category_id:
+        filter_dict["category_id"] = category_id
+    
+    cursor = db().products.find(filter_dict).skip(skip).limit(limit)
+    products = await cursor.to_list(length=limit)
+    return [ProductOut(**product) for product in products]
+
+@api_router.get("/products/{product_id}", response_model=ProductOut)
+async def get_product(product_id: str):
+    product = await db().products.find_one({"_id": product_id, "active": True})
+    if not product:
+        raise HTTPException(404, "Product not found")
+    return ProductOut(**product)
+
+# -------- Checkout / Stripe --------
+@api_router.post("/checkout/payment-intent")
+async def create_payment_intent(payload: CreatePaymentIntentIn, user=Depends(get_current_user)):
+    # Get products and calculate total
+    product_ids = [item.product_id for item in payload.items]
+    products = await db().products.find({"_id": {"$in": product_ids}}).to_list(length=len(product_ids))
+    
+    if len(products) != len(product_ids):
+        raise HTTPException(400, "Some products not found")
+    
+    price_map = {str(p["_id"]): p for p in products}
+    
+    total_amount = 0
+    order_items = []
+    
+    for item in payload.items:
+        product = price_map.get(item.product_id)
+        if not product:
+            raise HTTPException(400, f"Product {item.product_id} not found")
+        
+        if product["stock"] < item.quantity:
+            raise HTTPException(400, f"Insufficient stock for {product['title']}")
+        
+        item_total = float(product["price"]) * item.quantity
+        total_amount += item_total
+        
+        order_items.append({
+            "product_id": item.product_id,
+            "title": product["title"],
+            "quantity": item.quantity,
+            "unit_price": product["price"],
+            "currency": product["currency"]
+        })
+    
+    # Convert to cents for Stripe
+    stripe_amount = int(total_amount * 100)
+    
+    try:
+        intent = stripe.PaymentIntent.create(
+            amount=stripe_amount,
+            currency=payload.currency.lower(),
+            automatic_payment_methods={"enabled": True},
+            metadata={"user_id": str(user["_id"])},
+        )
+    except Exception as e:
+        raise HTTPException(400, f"Stripe error: {str(e)}")
+    
+    # Create order document
+    order_id = str(uuid.uuid4())
+    order_doc = {
+        "_id": order_id,
+        "user_id": str(user["_id"]),
+        "items": order_items,
+        "subtotal": total_amount,
+        "currency": payload.currency,
+        "stripe_payment_intent": intent["id"],
+        "status": "created",
+        "shipping_address": payload.shipping_address,
+        "created_at": datetime.utcnow(),
+        "updated_at": datetime.utcnow(),
+    }
+    await db().orders.insert_one(order_doc)
+    
+    return {
+        "clientSecret": intent["client_secret"], 
+        "paymentIntentId": intent["id"],
+        "orderId": order_id
+    }
+
+# -------- Orders --------
+@api_router.get("/orders", response_model=List[OrderOut])
+async def get_user_orders(user=Depends(get_current_user)):
+    cursor = db().orders.find({"user_id": str(user["_id"])}).sort("created_at", -1)
+    orders = await cursor.to_list(length=50)
+    return [OrderOut(**order) for order in orders]
+
+@api_router.get("/orders/{order_id}", response_model=OrderOut)
+async def get_order(order_id: str, user=Depends(get_current_user)):
+    order = await db().orders.find_one({"_id": order_id, "user_id": str(user["_id"])})
+    if not order:
+        raise HTTPException(404, "Order not found")
+    return OrderOut(**order)
+
+# -------- Stripe webhook --------
+@api_router.post("/webhooks/stripe")
+async def stripe_webhook(request: Request):
+    payload = await request.body()
+    sig_header = request.headers.get("stripe-signature")
+    
+    try:
+        event = stripe.Webhook.construct_event(
+            payload, sig_header, settings.STRIPE_WEBHOOK_SECRET
+        )
+    except ValueError:
+        raise HTTPException(400, "Invalid payload")
+    except stripe.error.SignatureVerificationError:
+        raise HTTPException(400, "Invalid signature")
+    
+    if event["type"] == "payment_intent.succeeded":
+        payment_intent = event["data"]["object"]
+        await db().orders.update_one(
+            {"stripe_payment_intent": payment_intent["id"]}, 
+            {"$set": {"status": "paid", "updated_at": datetime.utcnow()}}
+        )
+        
+        # Update product stock
+        order = await db().orders.find_one({"stripe_payment_intent": payment_intent["id"]})
+        if order:
+            for item in order["items"]:
+                await db().products.update_one(
+                    {"_id": item["product_id"]},
+                    {"$inc": {"stock": -item["quantity"]}}
+                )
+    
+    elif event["type"] == "payment_intent.payment_failed":
+        payment_intent = event["data"]["object"]
+        await db().orders.update_one(
+            {"stripe_payment_intent": payment_intent["id"]}, 
+            {"$set": {"status": "failed", "updated_at": datetime.utcnow()}}
+        )
+    
+    return {"received": True}
+
+# Include the router in the main app
+app.include_router(api_router)
+
+if __name__ == "__main__":
+    import uvicorn
+    uvicorn.run(app, host="0.0.0.0", port=8001)
