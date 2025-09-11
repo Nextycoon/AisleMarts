@@ -16,10 +16,8 @@ config.resolver.alias = {
   ...(config.resolver.alias || {}),
 };
 
-// Platform-specific resolver to exclude Stripe on web
-if (process.env.EXPO_PLATFORM === 'web') {
-  config.resolver.alias['@stripe/stripe-react-native'] = path.resolve(__dirname, 'src/mocks/stripe-mock.js');
-}
+// Always alias Stripe for web compatibility
+config.resolver.alias['@stripe/stripe-react-native'] = path.resolve(__dirname, 'src/mocks/stripe-mock.js');
 
 // Reduce the number of workers to decrease resource usage
 config.maxWorkers = 2;
