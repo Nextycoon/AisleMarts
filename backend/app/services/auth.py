@@ -43,12 +43,12 @@ async def get_user_by_id(user_id: str, db):
     return None
 
 async def authenticate_user(email: str, password: str, db):
-    user = await get_user_by_email(email, db)
-    if not user:
+    user_doc = await db.users.find_one({"email": email})
+    if not user_doc:
         return False
-    if not verify_password(password, user.password_hash):
+    if not verify_password(password, user_doc.get("password_hash", "")):
         return False
-    return user
+    return User(**user_doc)
 
 async def get_current_user(
     credentials: HTTPAuthorizationCredentials = Depends(security),
