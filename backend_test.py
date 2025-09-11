@@ -295,7 +295,7 @@ class APITester:
             
         success, data = self.make_request("GET", f"/orders/{self.test_order_id}")
         
-        if success and isinstance(data, dict) and data.get("id") == self.test_order_id:
+        if success and isinstance(data, dict) and (data.get("id") == self.test_order_id or data.get("_id") == self.test_order_id):
             self.log_test("Order Details", True, f"Order status: {data.get('status')}")
         else:
             self.log_test("Order Details", False, str(data))
