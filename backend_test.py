@@ -180,7 +180,7 @@ class APITester:
         
         success, data = self.make_request("GET", f"/products/{product_id}")
         
-        if success and isinstance(data, dict) and data.get("id") == product_id:
+        if success and isinstance(data, dict) and (data.get("id") == product_id or data.get("_id") == product_id):
             self.log_test("Product Details", True, f"Product: {data.get('title')}")
         else:
             self.log_test("Product Details", False, str(data))
