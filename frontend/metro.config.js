@@ -11,13 +11,11 @@ config.cacheStores = [
   new FileStore({ root: path.join(root, 'cache') }),
 ];
 
-// Exclude Stripe React Native from web builds
-config.resolver.alias = {
-  ...(config.resolver.alias || {}),
+// Exclude Stripe React Native from web builds using extraNodeModules
+config.resolver.extraNodeModules = {
+  ...config.resolver.extraNodeModules,
+  '@stripe/stripe-react-native': path.resolve(__dirname, 'src/mocks/stripe-mock.js'),
 };
-
-// Always alias Stripe for web compatibility
-config.resolver.alias['@stripe/stripe-react-native'] = path.resolve(__dirname, 'src/mocks/stripe-mock.js');
 
 // Reduce the number of workers to decrease resource usage
 config.maxWorkers = 2;
