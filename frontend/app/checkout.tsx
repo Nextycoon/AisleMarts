@@ -7,14 +7,26 @@ import {
   TouchableOpacity,
   Alert,
   ActivityIndicator,
+  Platform,
 } from 'react-native';
 import { SafeAreaView } from 'react-native-safe-area-context';
 import { router } from 'expo-router';
 import { Ionicons } from '@expo/vector-icons';
-import { useStripe } from '@stripe/stripe-react-native';
 import { useAuth } from '../src/context/AuthContext';
 import { useCart, CartItem } from '../src/context/CartContext';
 import { API } from '../src/api/client';
+
+// Conditionally import Stripe hooks only for native platforms
+let useStripe: any = () => ({ initPaymentSheet: null, presentPaymentSheet: null });
+
+if (Platform.OS !== 'web') {
+  try {
+    const stripeHooks = require('@stripe/stripe-react-native');
+    useStripe = stripeHooks.useStripe;
+  } catch (error) {
+    console.warn('Stripe React Native not available:', error);
+  }
+}
 
 export default function CheckoutScreen() {
   const { user } = useAuth();
@@ -30,6 +42,21 @@ export default function CheckoutScreen() {
 
     if (items.length === 0) {
       Alert.alert('Error', 'Your cart is empty');
+      return;
+    }
+
+    // For web platform, show a message that payment is not supported
+    if (Platform.OS === 'web') {
+      Alert.alert(
+        'Payment Not Available',
+        'Payment processing is only available on mobile devices. Please use the mobile app to complete your purchase.',
+        [
+          {
+            text: 'OK',
+            onPress: () => router.replace('/cart'),
+          },
+        ]
+      );
       return;
     }
 
@@ -50,41 +77,45 @@ export default function CheckoutScreen() {
 
       const { clientSecret, paymentIntentId, orderId } = paymentResponse.data;
 
-      // Initialize payment sheet
-      const initResponse = await initPaymentSheet({
-        paymentIntentClientSecret: clientSecret,
-        merchantDisplayName: 'AisleMarts',
-        style: 'alwaysDark',
-      });
+      // Initialize payment sheet (only available on native)
+      if (initPaymentSheet && presentPaymentSheet) {
+        const initResponse = await initPaymentSheet({
+          paymentIntentClientSecret: clientSecret,
+          merchantDisplayName: 'AisleMarts',
+          style: 'alwaysDark',
+        });
 
-      if (initResponse.error) {
-        throw new Error(initResponse.error.message);
-      }
-
-      // Present payment sheet
-      const paymentResponse2 = await presentPaymentSheet();
-
-      if (paymentResponse2.error) {
-        if (paymentResponse2.error.code !== 'Canceled') {
-          throw new Error(paymentResponse2.error.message);
+        if (initResponse.error) {
+          throw new Error(initResponse.error.message);
         }
-        return; // User canceled
-      }
 
-      // Payment successful
-      Alert.alert(
-        'Payment Successful!',
-        'Your order has been placed successfully.',
-        [
-          {
-            text: 'View Order',
-            onPress: () => {
-              clearCart();
-              router.replace('/orders');
+        // Present payment sheet
+        const paymentResponse2 = await presentPaymentSheet();
+
+        if (paymentResponse2.error) {
+          if (paymentResponse2.error.code !== 'Canceled') {
+            throw new Error(paymentResponse2.error.message);
+          }
+          return; // User canceled
+        }
+
+        // Payment successful
+        Alert.alert(
+          'Payment Successful!',
+          'Your order has been placed successfully.',
+          [
+            {
+              text: 'View Order',
+              onPress: () => {
+                clearCart();
+                router.replace('/orders');
+              },
             },
-          },
-        ]
-      );
+          ]
+        );
+      } else {
+        throw new Error('Payment processing not available');
+      }
     } catch (error: any) {
       console.error('Payment error:', error);
       Alert.alert(
@@ -95,6 +126,133 @@ export default function CheckoutScreen() {
       setLoading(false);
     }
   };
+
+  const renderOrderItem = (item: CartItem) => (
+    <View key={item.product_id} style={styles.orderItem}>
+      <View style={styles.itemInfo}>
+        <Text style={styles.itemTitle} numberOfLines={2}>
+          {item.title}
+        </Text>
+        <Text style={styles.itemDetails}>
+          Qty: {item.quantity} × ${item.price.toFixed(2)}
+        </Text>
+      </View>
+      <Text style={styles.itemTotal}>
+        ${(item.price * item.quantity).toFixed(2)}
+      </Text>
+    </View>
+  );
+
+  if (!user) {
+    return (
+      <SafeAreaView style={styles.container}>
+        <View style={styles.authRequiredContainer}>
+          <Ionicons name="person-outline" size={64} color="#ccc" />
+          <Text style={styles.authRequiredTitle}>Sign In Required</Text>
+          <Text style={styles.authRequiredSubtitle}>
+            Please sign in to proceed with checkout
+          </Text>
+          <TouchableOpacity
+            style={styles.signInButton}
+            onPress={() => router.push('/auth')}
+          >
+            <Text style={styles.signInButtonText}>Sign In</Text>
+          </TouchableOpacity>
+        </View>
+      </SafeAreaView>
+    );
+  }
+
+  if (items.length === 0) {
+    return (
+      <SafeAreaView style={styles.container}>
+        <View style={styles.emptyContainer}>
+          <Ionicons name="cart-outline" size={64} color="#ccc" />
+          <Text style={styles.emptyTitle}>Your cart is empty</Text>
+          <TouchableOpacity
+            style={styles.continueButton}
+            onPress={() => router.replace('/')}
+          >
+            <Text style={styles.continueButtonText}>Continue Shopping</Text>
+          </TouchableOpacity>
+        </View>
+      </SafeAreaView>
+    );
+  }
+
+  return (
+    <SafeAreaView style={styles.container}>
+      <ScrollView style={styles.scrollView}>
+        {/* Order Summary */}
+        <View style={styles.section}>
+          <Text style={styles.sectionTitle}>Order Summary</Text>
+          {items.map(renderOrderItem)}
+        </View>
+
+        {/* User Info */}
+        <View style={styles.section}>
+          <Text style={styles.sectionTitle}>Customer Information</Text>
+          <View style={styles.userInfo}>
+            <Ionicons name="person-outline" size={20} color="#666" />
+            <Text style={styles.userInfoText}>{user.name || user.email}</Text>
+          </View>
+        </View>
+
+        {/* Payment Summary */}
+        <View style={styles.section}>
+          <Text style={styles.sectionTitle}>Payment Summary</Text>
+          <View style={styles.summaryRow}>
+            <Text style={styles.summaryLabel}>Subtotal:</Text>
+            <Text style={styles.summaryValue}>${totalAmount.toFixed(2)}</Text>
+          </View>
+          <View style={styles.summaryRow}>
+            <Text style={styles.summaryLabel}>Shipping:</Text>
+            <Text style={styles.summaryValue}>Free</Text>
+          </View>
+          <View style={styles.summaryRow}>
+            <Text style={styles.summaryLabel}>Tax:</Text>
+            <Text style={styles.summaryValue}>$0.00</Text>
+          </View>
+          <View style={[styles.summaryRow, styles.totalRow]}>
+            <Text style={styles.totalLabel}>Total:</Text>
+            <Text style={styles.totalValue}>${totalAmount.toFixed(2)}</Text>
+          </View>
+        </View>
+
+        {/* Payment Method */}
+        <View style={styles.section}>
+          <Text style={styles.sectionTitle}>Payment Method</Text>
+          <View style={styles.paymentMethod}>
+            <Ionicons name="card-outline" size={20} color="#666" />
+            <Text style={styles.paymentMethodText}>
+              {Platform.OS === 'web' ? 'Not Available on Web' : 'Credit/Debit Card'}
+            </Text>
+          </View>
+        </View>
+      </ScrollView>
+
+      {/* Pay Button */}
+      <View style={styles.footer}>
+        <TouchableOpacity
+          style={[styles.payButton, loading && styles.payButtonDisabled]}
+          onPress={handlePayment}
+          disabled={loading}
+        >
+          {loading ? (
+            <ActivityIndicator color="white" />
+          ) : (
+            <>
+              <Ionicons name="card-outline" size={20} color="white" />
+              <Text style={styles.payButtonText}>
+                Pay ${totalAmount.toFixed(2)}
+              </Text>
+            </>
+          )}
+        </TouchableOpacity>
+      </View>
+    </SafeAreaView>
+  );
+}
 
   const renderOrderItem = (item: CartItem) => (
     <View key={item.product_id} style={styles.orderItem}>
