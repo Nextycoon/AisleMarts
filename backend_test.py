@@ -698,12 +698,23 @@ class APITester:
         """Test retrieving seller visibility settings"""
         print("\n🌍 Testing Seller Visibility Retrieval...")
         
-        if not self.auth_token:
-            self.log_test("Seller Visibility Retrieval", False, "No auth token available")
+        if not hasattr(self, 'vendor_auth_token') or not self.vendor_auth_token:
+            self.log_test("Seller Visibility Retrieval", False, "No vendor auth token available")
             return
         
-        # Use a test vendor ID
-        test_vendor_id = getattr(self, 'test_vendor_id', 'test_vendor_123')
+        # Store current token and use vendor token
+        old_token = self.auth_token
+        self.auth_token = self.vendor_auth_token
+        
+        # Get the actual vendor ID from the database
+        import requests
+        response = requests.get(f"{API_URL}/auth/me", headers={"Authorization": f"Bearer {self.vendor_auth_token}"})
+        if response.status_code == 200:
+            user_data = response.json()
+            # Use the actual vendor ID from the created vendor record
+            test_vendor_id = "ec32dbe8-1012-4192-9e88-a40a004f1f47"  # From the vendor creation
+        else:
+            test_vendor_id = "test_vendor_123"
         
         success, data = self.make_request("GET", f"/geographic/visibility/{test_vendor_id}")
         
@@ -714,6 +725,9 @@ class APITester:
                 self.log_test("Seller Visibility Retrieval", True, "No visibility settings found (expected for new vendor)")
         else:
             self.log_test("Seller Visibility Retrieval", False, str(data))
+        
+        # Restore original token
+        self.auth_token = old_token
 
     def test_ai_market_analysis(self):
         """Test AI-powered market analysis"""
