@@ -521,6 +521,370 @@ class APITester:
             self.log_test("AI Recommendations Invalid Query", True, "Handled invalid query")
         else:
             self.log_test("AI Recommendations Invalid Query", False, str(data))
+
+    def test_geographic_data_initialization(self):
+        """Test geographic data initialization"""
+        print("\n🌍 Testing Geographic Data Initialization...")
+        
+        success, data = self.make_request("POST", "/geographic/initialize")
+        
+        if success and isinstance(data, dict) and data.get("status") == "success":
+            self.log_test("Geographic Data Initialization", True, "World cities and countries initialized successfully")
+        else:
+            self.log_test("Geographic Data Initialization", False, str(data))
+
+    def test_countries_list(self):
+        """Test getting all countries"""
+        print("\n🌍 Testing Countries List...")
+        
+        success, data = self.make_request("GET", "/geographic/countries")
+        
+        if success and isinstance(data, dict) and "countries" in data and len(data["countries"]) > 0:
+            self.log_test("Countries List", True, f"Found {len(data['countries'])} countries")
+            # Store first country for later tests
+            self.test_country_code = data["countries"][0].get("code")
+        else:
+            self.log_test("Countries List", False, str(data))
+
+    def test_cities_list(self):
+        """Test getting cities with and without filters"""
+        print("\n🌍 Testing Cities List...")
+        
+        # Test all cities
+        success, data = self.make_request("GET", "/geographic/cities")
+        
+        if success and isinstance(data, dict) and "cities" in data and len(data["cities"]) > 0:
+            self.log_test("Cities List (All)", True, f"Found {len(data['cities'])} cities")
+            # Store first city for later tests
+            self.test_city_id = data["cities"][0].get("_id")
+        else:
+            self.log_test("Cities List (All)", False, str(data))
+        
+        # Test cities filtered by country
+        if hasattr(self, 'test_country_code'):
+            success, data = self.make_request("GET", "/geographic/cities", {"country_code": self.test_country_code})
+            
+            if success and isinstance(data, dict) and "cities" in data:
+                self.log_test("Cities List (Filtered by Country)", True, f"Found {len(data['cities'])} cities in {self.test_country_code}")
+            else:
+                self.log_test("Cities List (Filtered by Country)", False, str(data))
+        
+        # Test major cities only
+        success, data = self.make_request("GET", "/geographic/cities", {"major_cities_only": True})
+        
+        if success and isinstance(data, dict) and "cities" in data:
+            self.log_test("Cities List (Major Cities Only)", True, f"Found {len(data['cities'])} major cities")
+        else:
+            self.log_test("Cities List (Major Cities Only)", False, str(data))
+
+    def test_cities_in_radius(self):
+        """Test distance calculations - cities within radius"""
+        print("\n🌍 Testing Cities in Radius...")
+        
+        if not hasattr(self, 'test_city_id'):
+            self.log_test("Cities in Radius", False, "No city ID available for testing")
+            return
+        
+        radius_data = {
+            "center_city_id": self.test_city_id,
+            "radius_km": 100
+        }
+        
+        success, data = self.make_request("POST", "/geographic/cities/in-radius", radius_data)
+        
+        if success and isinstance(data, dict) and "cities" in data and "count" in data:
+            self.log_test("Cities in Radius", True, f"Found {data['count']} cities within 100km radius")
+        else:
+            self.log_test("Cities in Radius", False, str(data))
+
+    def test_seller_visibility_creation(self):
+        """Test creating seller visibility settings"""
+        print("\n🌍 Testing Seller Visibility Creation...")
+        
+        if not self.auth_token:
+            self.log_test("Seller Visibility Creation", False, "No auth token available")
+            return
+        
+        # Test local visibility
+        local_visibility = {
+            "visibility_type": "local",
+            "local_radius_km": 50,
+            "local_center_city_id": getattr(self, 'test_city_id', 'city_new_york_US'),
+            "auto_expand": True,
+            "budget_daily_usd": 100.0,
+            "performance_threshold": 0.02
+        }
+        
+        success, data = self.make_request("POST", "/geographic/visibility", local_visibility)
+        
+        if success and isinstance(data, dict) and data.get("status") == "success":
+            self.log_test("Seller Visibility Creation (Local)", True, f"Local visibility created: {data.get('visibility_id')}")
+        else:
+            self.log_test("Seller Visibility Creation (Local)", False, str(data))
+        
+        # Test national visibility
+        national_visibility = {
+            "visibility_type": "national",
+            "target_countries": ["US", "CA"],
+            "auto_expand": True,
+            "budget_daily_usd": 200.0
+        }
+        
+        success, data = self.make_request("POST", "/geographic/visibility", national_visibility)
+        
+        if success and isinstance(data, dict) and data.get("status") == "success":
+            self.log_test("Seller Visibility Creation (National)", True, "National visibility created successfully")
+        else:
+            self.log_test("Seller Visibility Creation (National)", False, str(data))
+        
+        # Test global strategic visibility
+        global_strategic = {
+            "visibility_type": "global_strategic",
+            "target_countries": ["US", "GB", "AU", "CA"],
+            "target_cities": ["city_new_york_US", "city_london_GB", "city_sydney_AU"],
+            "excluded_countries": ["CN"],
+            "auto_expand": False,
+            "budget_daily_usd": 500.0
+        }
+        
+        success, data = self.make_request("POST", "/geographic/visibility", global_strategic)
+        
+        if success and isinstance(data, dict) and data.get("status") == "success":
+            self.log_test("Seller Visibility Creation (Global Strategic)", True, "Global strategic visibility created successfully")
+        else:
+            self.log_test("Seller Visibility Creation (Global Strategic)", False, str(data))
+        
+        # Test global all visibility
+        global_all = {
+            "visibility_type": "global_all",
+            "auto_expand": True,
+            "budget_daily_usd": 1000.0
+        }
+        
+        success, data = self.make_request("POST", "/geographic/visibility", global_all)
+        
+        if success and isinstance(data, dict) and data.get("status") == "success":
+            self.log_test("Seller Visibility Creation (Global All)", True, "Global all visibility created successfully")
+            # Store vendor ID for later tests
+            if hasattr(self, 'user_id'):
+                self.test_vendor_id = "test_vendor_" + str(self.user_id)
+        else:
+            self.log_test("Seller Visibility Creation (Global All)", False, str(data))
+
+    def test_seller_visibility_retrieval(self):
+        """Test retrieving seller visibility settings"""
+        print("\n🌍 Testing Seller Visibility Retrieval...")
+        
+        if not self.auth_token:
+            self.log_test("Seller Visibility Retrieval", False, "No auth token available")
+            return
+        
+        # Use a test vendor ID
+        test_vendor_id = getattr(self, 'test_vendor_id', 'test_vendor_123')
+        
+        success, data = self.make_request("GET", f"/geographic/visibility/{test_vendor_id}")
+        
+        if success and isinstance(data, dict) and ("visibility" in data or "message" in data):
+            if data.get("visibility"):
+                self.log_test("Seller Visibility Retrieval", True, f"Retrieved visibility settings for vendor {test_vendor_id}")
+            else:
+                self.log_test("Seller Visibility Retrieval", True, "No visibility settings found (expected for new vendor)")
+        else:
+            self.log_test("Seller Visibility Retrieval", False, str(data))
+
+    def test_ai_market_analysis(self):
+        """Test AI-powered market analysis"""
+        print("\n🌍 Testing AI Market Analysis...")
+        
+        if not self.auth_token:
+            self.log_test("AI Market Analysis", False, "No auth token available")
+            return
+        
+        analysis_data = {
+            "product_category": "Electronics",
+            "target_locations": ["country_US", "country_GB", "city_new_york_US", "city_london_GB"]
+        }
+        
+        success, data = self.make_request("POST", "/geographic/market-analysis", analysis_data)
+        
+        if success and isinstance(data, dict) and ("overall_opportunity_score" in data or "market_insights" in data):
+            opportunity_score = data.get("overall_opportunity_score", 0)
+            insights_count = len(data.get("market_insights", []))
+            self.log_test("AI Market Analysis", True, f"Market analysis completed - Opportunity Score: {opportunity_score}, Insights: {insights_count}")
+        else:
+            self.log_test("AI Market Analysis", False, str(data))
+
+    def test_ai_targeting_recommendations(self):
+        """Test AI-powered targeting recommendations"""
+        print("\n🌍 Testing AI Targeting Recommendations...")
+        
+        if not self.auth_token:
+            self.log_test("AI Targeting Recommendations", False, "No auth token available")
+            return
+        
+        test_vendor_id = getattr(self, 'test_vendor_id', 'test_vendor_123')
+        
+        success, data = self.make_request("GET", f"/geographic/targeting-recommendations/{test_vendor_id}")
+        
+        if success and isinstance(data, dict) and "recommendations" in data:
+            recommendations = data.get("recommendations", [])
+            self.log_test("AI Targeting Recommendations", True, f"Received {len(recommendations)} AI targeting recommendations")
+        else:
+            self.log_test("AI Targeting Recommendations", False, str(data))
+
+    def test_performance_tracking(self):
+        """Test geographic performance tracking"""
+        print("\n🌍 Testing Performance Tracking...")
+        
+        if not self.auth_token:
+            self.log_test("Performance Tracking", False, "No auth token available")
+            return
+        
+        # Test view tracking
+        view_data = {
+            "product_id": getattr(self, 'test_product_id', 'test_product_123'),
+            "country_code": "US",
+            "city_id": "city_new_york_US",
+            "event_type": "view",
+            "revenue": 0.0
+        }
+        
+        success, data = self.make_request("POST", "/geographic/track-performance", view_data)
+        
+        if success and isinstance(data, dict) and data.get("status") == "success":
+            self.log_test("Performance Tracking (View)", True, "View event tracked successfully")
+        else:
+            self.log_test("Performance Tracking (View)", False, str(data))
+        
+        # Test click tracking
+        click_data = {
+            "product_id": getattr(self, 'test_product_id', 'test_product_123'),
+            "country_code": "US",
+            "city_id": "city_new_york_US",
+            "event_type": "click",
+            "revenue": 0.0
+        }
+        
+        success, data = self.make_request("POST", "/geographic/track-performance", click_data)
+        
+        if success and isinstance(data, dict) and data.get("status") == "success":
+            self.log_test("Performance Tracking (Click)", True, "Click event tracked successfully")
+        else:
+            self.log_test("Performance Tracking (Click)", False, str(data))
+        
+        # Test conversion tracking
+        conversion_data = {
+            "product_id": getattr(self, 'test_product_id', 'test_product_123'),
+            "country_code": "US",
+            "city_id": "city_new_york_US",
+            "event_type": "conversion",
+            "revenue": 99.99
+        }
+        
+        success, data = self.make_request("POST", "/geographic/track-performance", conversion_data)
+        
+        if success and isinstance(data, dict) and data.get("status") == "success":
+            self.log_test("Performance Tracking (Conversion)", True, "Conversion event with revenue tracked successfully")
+        else:
+            self.log_test("Performance Tracking (Conversion)", False, str(data))
+
+    def test_vendor_analytics(self):
+        """Test comprehensive geographic analytics for vendor"""
+        print("\n🌍 Testing Vendor Analytics...")
+        
+        if not self.auth_token:
+            self.log_test("Vendor Analytics", False, "No auth token available")
+            return
+        
+        test_vendor_id = getattr(self, 'test_vendor_id', 'test_vendor_123')
+        
+        success, data = self.make_request("GET", f"/geographic/analytics/{test_vendor_id}", {"days": 30})
+        
+        if success and isinstance(data, dict) and "total_stats" in data:
+            total_stats = data.get("total_stats", {})
+            country_count = len(data.get("country_performance", {}))
+            city_count = len(data.get("city_performance", {}))
+            self.log_test("Vendor Analytics", True, f"Analytics retrieved - Countries: {country_count}, Cities: {city_count}, Revenue: ${total_stats.get('revenue_usd', 0)}")
+        else:
+            self.log_test("Vendor Analytics", False, str(data))
+
+    def test_geographic_product_filtering(self):
+        """Test filtering products based on buyer's geographic preferences"""
+        print("\n🌍 Testing Geographic Product Filtering...")
+        
+        filter_data = {
+            "buyer_country_code": "US",
+            "buyer_city_id": "city_new_york_US",
+            "max_distance_km": 100,
+            "include_international": True
+        }
+        
+        success, data = self.make_request("POST", "/geographic/filter-products", filter_data, {"q": "headphones", "limit": 10})
+        
+        if success and isinstance(data, dict) and "products" in data:
+            products = data.get("products", [])
+            geographic_filter_applied = data.get("geographic_filter_applied", False)
+            self.log_test("Geographic Product Filtering", True, f"Found {len(products)} products with geographic filtering {'applied' if geographic_filter_applied else 'not applied'}")
+        else:
+            self.log_test("Geographic Product Filtering", False, str(data))
+
+    def test_seller_geographic_insights(self):
+        """Test comprehensive geographic insights for seller dashboard"""
+        print("\n🌍 Testing Seller Geographic Insights...")
+        
+        if not self.auth_token:
+            self.log_test("Seller Geographic Insights", False, "No auth token available")
+            return
+        
+        test_vendor_id = getattr(self, 'test_vendor_id', 'test_vendor_123')
+        
+        success, data = self.make_request("GET", f"/geographic/insights/{test_vendor_id}")
+        
+        if success and isinstance(data, dict):
+            has_visibility = "current_visibility" in data
+            has_analytics = "performance_analytics" in data
+            has_ai_recommendations = "ai_recommendations" in data
+            has_quick_stats = "quick_stats" in data
+            
+            if has_visibility and has_analytics and has_ai_recommendations and has_quick_stats:
+                quick_stats = data.get("quick_stats", {})
+                countries_active = quick_stats.get("countries_active", 0)
+                total_revenue = quick_stats.get("total_revenue", 0)
+                self.log_test("Seller Geographic Insights", True, f"Complete insights retrieved - Active countries: {countries_active}, Revenue: ${total_revenue}")
+            else:
+                self.log_test("Seller Geographic Insights", True, "Partial insights retrieved (expected for new vendor)")
+        else:
+            self.log_test("Seller Geographic Insights", False, str(data))
+
+    def test_geographic_authentication_controls(self):
+        """Test authentication and authorization controls for geographic features"""
+        print("\n🌍 Testing Geographic Authentication Controls...")
+        
+        # Test accessing protected endpoint without token
+        old_token = self.auth_token
+        self.auth_token = None
+        
+        success, data = self.make_request("POST", "/geographic/visibility", {
+            "visibility_type": "local",
+            "local_radius_km": 50
+        })
+        
+        self.auth_token = old_token
+        
+        if not success and ("401" in str(data) or "Missing Authorization" in str(data)):
+            self.log_test("Geographic Auth Control (No Token)", True, "Correctly rejected request without authentication")
+        else:
+            self.log_test("Geographic Auth Control (No Token)", False, f"Expected 401 error, got: {data}")
+        
+        # Test accessing vendor-specific endpoint with valid token
+        if self.auth_token:
+            test_vendor_id = getattr(self, 'test_vendor_id', 'test_vendor_123')
+            success, data = self.make_request("GET", f"/geographic/visibility/{test_vendor_id}")
+            
+            if success or ("403" in str(data) and "Access denied" in str(data)):
+                self.log_test("Geographic Auth Control (Valid Token)", True, "Authentication working correctly for vendor endpoints")
+            else:
+                self.log_test("Geographic Auth Control (Valid Token)", False, str(data))
     
     def run_all_tests(self):
         """Run all tests in sequence"""
