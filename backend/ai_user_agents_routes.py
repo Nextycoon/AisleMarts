@@ -172,7 +172,7 @@ async def create_agent_task(
         task_data = request.dict()
         task_data["user_id"] = user_id
         
-        task_id = await ai_user_agents_service.create_task(task_data)
+        task_id = await ai_user_agents_service.create_task_new(task_data)
         
         return {
             "success": True,
