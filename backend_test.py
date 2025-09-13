@@ -1463,6 +1463,22 @@ class APITester:
         self.test_seller_geographic_insights()
         self.test_geographic_authentication_controls()
         
+        # PHASE 2C: Global Payments & Tax Engine Tests
+        print("\n" + "💳" * 15 + " GLOBAL PAYMENTS & TAX ENGINE TESTING " + "💳" * 15)
+        self.test_payments_tax_initialization()
+        self.test_payment_method_suggestions()
+        self.test_tax_computation()
+        self.test_currency_conversion()
+        self.test_fraud_risk_assessment()
+        self.test_enhanced_payment_intent()
+        self.test_payment_analytics_admin()
+        self.test_tax_analytics_admin()
+        self.test_payments_tax_health_check()
+        self.test_payment_methods_listing()
+        self.test_tax_rules_listing()
+        self.test_currencies_listing()
+        self.test_payments_tax_error_scenarios()
+        
         # Print summary
         print("\n" + "=" * 80)
         print("📊 TEST SUMMARY")
