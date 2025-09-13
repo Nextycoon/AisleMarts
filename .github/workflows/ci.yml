@@ -106,11 +106,13 @@ jobs:
       with:
         node-version: '20'
     
-    - name: Cache npm packages
+    - name: Cache npm packages and node_modules
       uses: actions/cache@v3
       with:
-        path: ~/.npm
-        key: ${{ runner.os }}-node-mobile-${{ hashFiles('apps/mobile/package.json') }}
+        path: |
+          ~/.npm
+          apps/mobile/node_modules
+        key: ${{ runner.os }}-node-mobile-${{ hashFiles('apps/mobile/package-lock.json', 'apps/mobile/package.json') }}
         restore-keys: |
           ${{ runner.os }}-node-mobile-
           ${{ runner.os }}-node-
@@ -153,11 +155,13 @@ jobs:
       with:
         node-version: '20'
     
-    - name: Cache npm packages
+    - name: Cache npm packages and node_modules
       uses: actions/cache@v3
       with:
-        path: ~/.npm
-        key: ${{ runner.os }}-node-frontend-${{ hashFiles('frontend/package-lock.json') }}
+        path: |
+          ~/.npm
+          frontend/node_modules
+        key: ${{ runner.os }}-node-frontend-${{ hashFiles('frontend/package-lock.json', 'frontend/package.json') }}
         restore-keys: |
           ${{ runner.os }}-node-frontend-
           ${{ runner.os }}-node-
