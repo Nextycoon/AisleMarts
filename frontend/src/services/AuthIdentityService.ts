@@ -1,4 +1,4 @@
-import apiClient from './client';
+import apiClient from '../api/client';
 
 // Auth Identity & Verification Service
 export interface CreateUserIdentityRequest {

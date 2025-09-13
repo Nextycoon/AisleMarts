@@ -1,4 +1,4 @@
-import apiClient from './client';
+import apiClient from '../api/client';
 
 // Profile Card Service
 export interface CreateProfileCardRequest {
