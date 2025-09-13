@@ -69,6 +69,9 @@ AisleMarts is a comprehensive mobile-first AI-powered marketplace platform built
 
 ```
 AisleMarts/
+├── apps/                       # Other services
+│   ├── api/                    # Example API service
+│   └── mobile/                 # Example mobile app
 ├── backend/                    # FastAPI backend
 │   ├── app/
 │   │   ├── config/            # Configuration files
@@ -230,12 +233,17 @@ ENVIRONMENT=development
 ## 🧪 Testing
 
 ### Backend Testing
+To run the backend tests, navigate to the `backend` directory and run `pytest`.
+
 ```bash
 cd backend
+export PYTHONPATH=.
 pytest
 ```
 
 ### Frontend Testing
+To run the frontend tests, navigate to the `frontend` directory and run `npm test`.
+
 ```bash
 cd frontend
 npm test
