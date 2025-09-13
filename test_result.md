@@ -653,6 +653,66 @@ backend:
           comment: "✅ WORKING: Authentication and authorization controls working correctly. Proper vendor/admin role validation, secure access to vendor-specific data, and appropriate rejection of unauthorized requests. Geographic endpoints properly protected with JWT authentication."
 
 frontend:
+  - task: "Enhanced Checkout with Payment & Tax Engine"
+    implemented: true
+    working: "NA"
+    file: "/app/frontend/app/checkout.tsx"
+    stuck_count: 0
+    priority: "high"
+    needs_retesting: true
+    status_history:
+        - working: "NA"
+          agent: "main"
+          comment: "Comprehensive checkout flow with AI-powered payment methods, real-time tax calculation, fraud assessment, and country/currency selection"
+
+  - task: "Payment & Tax Service Integration"
+    implemented: true
+    working: "NA"
+    file: "/app/frontend/src/services/PaymentsTaxService.ts"
+    stuck_count: 0
+    priority: "high"
+    needs_retesting: true
+    status_history:
+        - working: "NA"
+          agent: "main"
+          comment: "Frontend service layer for payments and tax API integration with TypeScript interfaces"
+
+  - task: "Payment Components Library"
+    implemented: true
+    working: "NA"
+    file: "/app/frontend/src/components/PaymentsComponents.tsx"
+    stuck_count: 0
+    priority: "high"
+    needs_retesting: true
+    status_history:
+        - working: "NA"
+          agent: "main"
+          comment: "Reusable components for payment method cards, tax breakdown, fraud assessment, and AI insights"
+
+  - task: "Admin Dashboard for Analytics"
+    implemented: true
+    working: "NA"
+    file: "/app/frontend/app/admin-dashboard.tsx"
+    stuck_count: 0
+    priority: "medium"
+    needs_retesting: true
+    status_history:
+        - working: "NA"
+          agent: "main"
+          comment: "Comprehensive admin dashboard with payment analytics, tax analytics, system health, and filtering capabilities"
+
+  - task: "Profile Enhancement for Admin Access"
+    implemented: true
+    working: "NA"
+    file: "/app/frontend/app/profile.tsx"
+    stuck_count: 0
+    priority: "low"
+    needs_retesting: true
+    status_history:
+        - working: "NA"
+          agent: "main"
+          comment: "Added admin dashboard link in profile for admin users with role-based access"
+
   - task: "App Launch & Home Screen"
     implemented: true
     working: true
@@ -785,7 +845,7 @@ frontend:
     file: "/app/frontend/app/checkout.tsx"
     stuck_count: 0
     priority: "low"
-    needs_retesting: false
+    needs_retesting: true
     status_history:
         - working: "NA"
           agent: "testing"
@@ -796,6 +856,9 @@ frontend:
         - working: true
           agent: "testing"
           comment: "✅ WORKING: Checkout process is accessible and implemented. Stripe dependencies removed and replaced with web-compatible payment flow. Shows appropriate message for web platform that payment is only available on mobile devices."
+        - working: "NA"
+          agent: "main"
+          comment: "Enhanced checkout with AI-powered payment methods, tax calculation, fraud assessment, country selection, and optimization focus - needs retesting"
 
   - task: "AI Sparkles Button & Assistant Modal"
     implemented: true
