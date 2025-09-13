@@ -121,7 +121,7 @@ async def get_onboarding_guidance(
         raise HTTPException(500, f"Onboarding error: {str(e)}")
 
 @router.get("/locale-detection", response_model=LocaleDetectionResponse)
-async def detect_user_locale(request):
+async def detect_user_locale(request: Request):
     """AI-powered locale detection and personalization"""
     try:
         # Get client IP (in production, use proper IP detection)
