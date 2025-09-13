@@ -1000,13 +1000,10 @@ metadata:
 
 test_plan:
   current_focus:
-    - "Payments & Tax Data Initialization"
-    - "Payment Method Suggestions API"  
-    - "Tax Computation Engine"
-    - "Enhanced Payment Intent API"
     - "Enhanced Checkout with Payment & Tax Engine"
     - "Payment & Tax Service Integration"
     - "Payment Components Library"
+    - "Admin Dashboard for Analytics"
   stuck_tasks: []
   test_all: false
   test_priority: "high_first"
