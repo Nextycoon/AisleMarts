@@ -474,9 +474,13 @@ metadata:
 
 test_plan:
   current_focus:
-    - "All AI endpoints are now working perfectly"
-    - "Core backend functionality is stable"
-  stuck_tasks: []
+    - "AI Sparkles Button & Assistant Modal - Critical icon rendering issue"
+    - "Voice Search Integration - Icon visibility problem"
+    - "AI Recommendations Display - Not showing on home screen"
+  stuck_tasks:
+    - "AI Sparkles Button & Assistant Modal"
+    - "Voice Search Integration"
+    - "AI Recommendations Display"
   test_all: false
   test_priority: "high_first"
 
