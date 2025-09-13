@@ -18,6 +18,8 @@ import { useAuth } from '../src/context/AuthContext';
 import { useCart } from '../src/context/CartContext';
 import { API } from '../src/api/client';
 import { Product, Category } from '../src/types';
+import { aiService, LocaleInfo } from '../src/services/AIService';
+import AIAssistant from '../src/components/AIAssistant';
 
 export default function HomeScreen() {
   const { user } = useAuth();
@@ -28,10 +30,56 @@ export default function HomeScreen() {
   const [refreshing, setRefreshing] = useState(false);
   const [searchQuery, setSearchQuery] = useState('');
   const [selectedCategory, setSelectedCategory] = useState<string | null>(null);
+  const [showAIAssistant, setShowAIAssistant] = useState(false);
+  const [aiRecommendations, setAIRecommendations] = useState<any>(null);
+  const [localeInfo, setLocaleInfo] = useState<LocaleInfo | null>(null);
+  const [welcomeMessage, setWelcomeMessage] = useState('');
+  const [isVoiceSearching, setIsVoiceSearching] = useState(false);
 
   useEffect(() => {
     loadData();
+    initializeAI();
   }, []);
+
+  useEffect(() => {
+    if (user) {
+      loadPersonalizedContent();
+    }
+  }, [user]);
+
+  const initializeAI = async () => {
+    try {
+      // Detect locale and get AI recommendations
+      const locale = await aiService.detectLocale();
+      setLocaleInfo(locale);
+      
+      // Get personalized welcome message
+      const welcome = await aiService.getWelcomeMessage(user);
+      setWelcomeMessage(welcome);
+      
+      // Track activity
+      aiService.trackActivity({
+        type: 'app_launch',
+        locale: locale,
+        user_authenticated: !!user
+      });
+    } catch (error) {
+      console.error('AI initialization failed:', error);
+    }
+  };
+
+  const loadPersonalizedContent = async () => {
+    try {
+      // Get AI-powered product recommendations
+      const recommendations = await aiService.getProductRecommendations(
+        `Popular products for ${user?.name || 'user'} based on preferences`,
+        8
+      );
+      setAIRecommendations(recommendations);
+    } catch (error) {
+      console.error('Failed to load personalized content:', error);
+    }
+  };
 
   const loadData = async () => {
     try {
@@ -53,6 +101,9 @@ export default function HomeScreen() {
   const onRefresh = () => {
     setRefreshing(true);
     loadData();
+    if (user) {
+      loadPersonalizedContent();
+    }
   };
 
   const searchProducts = async () => {
@@ -63,16 +114,52 @@ export default function HomeScreen() {
 
     try {
       setLoading(true);
-      const params: any = { q: searchQuery };
+      
+      // Enhance search with AI
+      const enhancedQuery = await aiService.enhanceSearchQuery(searchQuery, {
+        user_preferences: user,
+        selected_category: selectedCategory
+      });
+      
+      const params: any = { q: enhancedQuery.original_query };
       if (selectedCategory) {
         params.category_id = selectedCategory;
       }
+      
       const response = await API.get('/products', { params });
       setProducts(response.data);
+      
+      // Track search activity
+      aiService.trackActivity({
+        type: 'product_search',
+        query: searchQuery,
+        enhanced_query: enhancedQuery,
+        results_count: response.data.length
+      });
+      
     } catch (error) {
       Alert.alert('Error', 'Failed to search products');
     } finally {
       setLoading(false);
+    }
+  };
+
+  const startVoiceSearch = async () => {
+    try {
+      setIsVoiceSearching(true);
+      const speechText = await aiService.startVoiceSearch();
+      
+      if (speechText) {
+        setSearchQuery(speechText);
+        // Automatically search with voice input
+        setTimeout(() => {
+          searchProducts();
+        }, 500);
+      }
+    } catch (error: any) {
+      Alert.alert('Voice Search', error.message || 'Voice search not available');
+    } finally {
+      setIsVoiceSearching(false);
     }
   };
 
@@ -89,6 +176,14 @@ export default function HomeScreen() {
       }
       const response = await API.get('/products', { params });
       setProducts(response.data);
+      
+      // Track category filtering
+      aiService.trackActivity({
+        type: 'category_filter',
+        category_id: categoryId,
+        search_query: searchQuery
+      });
+      
     } catch (error) {
       Alert.alert('Error', 'Failed to filter products');
     } finally {
@@ -99,7 +194,17 @@ export default function HomeScreen() {
   const renderProduct = ({ item }: { item: Product }) => (
     <TouchableOpacity
       style={styles.productCard}
-      onPress={() => router.push(`/product/${item.id}`)}
+      onPress={() => {
+        router.push(`/product/${item.id}`);
+        // Track product view
+        aiService.trackActivity({
+          type: 'product_view',
+          product_id: item.id,
+          category: item.category_id,
+          price: item.price,
+          brand: item.brand
+        });
+      }}
     >
       {item.images[0] && (
         <Image source={{ uri: item.images[0] }} style={styles.productImage} />
@@ -136,15 +241,65 @@ export default function HomeScreen() {
     </TouchableOpacity>
   );
 
+  const renderAIRecommendations = () => {
+    if (!aiRecommendations || aiRecommendations.recommendations.length === 0) {
+      return null;
+    }
+
+    return (
+      <View style={styles.aiSection}>
+        <View style={styles.aiSectionHeader}>
+          <Ionicons name="sparkles" size={20} color="#007AFF" />
+          <Text style={styles.aiSectionTitle}>AI Recommendations</Text>
+        </View>
+        <Text style={styles.aiExplanation} numberOfLines={3}>
+          {aiRecommendations.ai_explanation}
+        </Text>
+        <ScrollView horizontal showsHorizontalScrollIndicator={false}>
+          {aiRecommendations.recommendations.map((product: any, index: number) => (
+            <TouchableOpacity
+              key={index}
+              style={styles.aiProductCard}
+              onPress={() => router.push(`/product/${product.id}`)}
+            >
+              {product.images[0] && (
+                <Image source={{ uri: product.images[0] }} style={styles.aiProductImage} />
+              )}
+              <Text style={styles.aiProductTitle} numberOfLines={2}>
+                {product.title}
+              </Text>
+              <Text style={styles.aiProductPrice}>
+                ${product.price.toFixed(2)}
+              </Text>
+            </TouchableOpacity>
+          ))}
+        </ScrollView>
+      </View>
+    );
+  };
+
   return (
     <SafeAreaView style={styles.container}>
       {/* Header */}
       <View style={styles.header}>
         <View style={styles.headerLeft}>
-          <Text style={styles.welcomeText}>Welcome to AisleMarts</Text>
+          <Text style={styles.welcomeText}>
+            {welcomeMessage || 'Welcome to AisleMarts'}
+          </Text>
           {user && <Text style={styles.userText}>Hello, {user.name || user.email}</Text>}
+          {localeInfo && (
+            <Text style={styles.localeText}>
+              📍 {localeInfo.country} • {localeInfo.currency}
+            </Text>
+          )}
         </View>
         <View style={styles.headerRight}>
+          <TouchableOpacity
+            style={styles.aiButton}
+            onPress={() => setShowAIAssistant(true)}
+          >
+            <Ionicons name="sparkles" size={20} color="#007AFF" />
+          </TouchableOpacity>
           <TouchableOpacity
             style={styles.cartButton}
             onPress={() => router.push('/cart')}
@@ -166,11 +321,22 @@ export default function HomeScreen() {
       <View style={styles.searchContainer}>
         <TextInput
           style={styles.searchInput}
-          placeholder="Search products..."
+          placeholder="Ask AI to find anything..."
           value={searchQuery}
           onChangeText={setSearchQuery}
           onSubmitEditing={searchProducts}
         />
+        <TouchableOpacity
+          style={[styles.voiceButton, isVoiceSearching && styles.voiceButtonActive]}
+          onPress={startVoiceSearch}
+          disabled={isVoiceSearching}
+        >
+          <Ionicons 
+            name={isVoiceSearching ? "radio-button-on" : "mic"} 
+            size={20} 
+            color={isVoiceSearching ? "#FF3B30" : "#007AFF"} 
+          />
+        </TouchableOpacity>
         <TouchableOpacity style={styles.searchButton} onPress={searchProducts}>
           <Ionicons name="search" size={20} color="white" />
         </TouchableOpacity>
@@ -179,6 +345,9 @@ export default function HomeScreen() {
       <ScrollView
         refreshControl={<RefreshControl refreshing={refreshing} onRefresh={onRefresh} />}
       >
+        {/* AI Recommendations */}
+        {renderAIRecommendations()}
+
         {/* Categories */}
         <View style={styles.categoriesSection}>
           <Text style={styles.sectionTitle}>Categories</Text>
@@ -222,10 +391,33 @@ export default function HomeScreen() {
               contentContainerStyle={styles.productGrid}
             />
           ) : (
-            <Text style={styles.emptyText}>No products found</Text>
+            <View style={styles.emptyState}>
+              <Ionicons name="search-outline" size={48} color="#ccc" />
+              <Text style={styles.emptyText}>No products found</Text>
+              <TouchableOpacity 
+                style={styles.aiHelpButton}
+                onPress={() => setShowAIAssistant(true)}
+              >
+                <Ionicons name="sparkles" size={16} color="#007AFF" />
+                <Text style={styles.aiHelpText}>Ask AI for help</Text>
+              </TouchableOpacity>
+            </View>
           )}
         </View>
       </ScrollView>
+
+      {/* AI Assistant Modal */}
+      <AIAssistant
+        visible={showAIAssistant}
+        onClose={() => setShowAIAssistant(false)}
+        screenName="home"
+        initialContext={{
+          current_products: products.length,
+          selected_category: selectedCategory,
+          search_query: searchQuery,
+          locale_info: localeInfo
+        }}
+      />
     </SafeAreaView>
   );
 }
