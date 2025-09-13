@@ -557,12 +557,7 @@ metadata:
   run_ui: false
 
 test_plan:
-  current_focus:
-    - "Geographic Data Infrastructure"
-    - "Seller Visibility Management"
-    - "AI-Powered Geographic Intelligence"
-    - "Performance Analytics"
-    - "Authentication & Authorization"
+  current_focus: []
   stuck_tasks: []
   test_all: false
   test_priority: "high_first"
