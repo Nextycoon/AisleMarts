@@ -1000,8 +1000,7 @@ metadata:
 
 test_plan:
   current_focus: []
-  stuck_tasks:
-    - "AI User Agents Framework"
+  stuck_tasks: []
   test_all: false
   test_priority: "high_first"
 
