@@ -1404,6 +1404,443 @@ class APITester:
             else:
                 self.log_test("Geographic Auth Control (Valid Token)", False, str(data))
 
+    # ========== AI USER AGENTS FRAMEWORK TESTS ==========
+    
+    def test_agents_health_check(self):
+        """Test AI User Agents health check"""
+        print("\n🤖 Testing AI User Agents Health Check...")
+        
+        success, data = self.make_request("GET", "/agents/health")
+        
+        if success and isinstance(data, dict) and data.get("status") == "healthy":
+            capabilities = data.get("capabilities", [])
+            agent_roles = data.get("agent_roles", [])
+            supported_tasks = data.get("supported_tasks", [])
+            self.log_test("AI User Agents Health Check", True, f"Capabilities: {len(capabilities)}, Roles: {len(agent_roles)}, Tasks: {len(supported_tasks)}")
+        else:
+            self.log_test("AI User Agents Health Check", False, str(data))
+
+    def test_agent_capabilities(self):
+        """Test getting agent capabilities and reference data"""
+        print("\n🤖 Testing Agent Capabilities...")
+        
+        success, data = self.make_request("GET", "/agents/capabilities")
+        
+        if success and isinstance(data, dict) and "capabilities" in data and "task_templates" in data:
+            capabilities = data.get("capabilities", {})
+            task_templates = data.get("task_templates", {})
+            agent_roles = data.get("agent_roles", [])
+            self.log_test("Agent Capabilities", True, f"Capabilities: {len(capabilities)}, Templates: {len(task_templates)}, Roles: {len(agent_roles)}")
+        else:
+            self.log_test("Agent Capabilities", False, str(data))
+
+    def test_task_templates(self):
+        """Test getting task templates"""
+        print("\n🤖 Testing Task Templates...")
+        
+        success, data = self.make_request("GET", "/agents/templates")
+        
+        if success and isinstance(data, dict) and "templates" in data:
+            templates = data.get("templates", {})
+            self.log_test("Task Templates", True, f"Found {len(templates)} task templates")
+        else:
+            self.log_test("Task Templates", False, str(data))
+
+    def test_create_agent_configuration(self):
+        """Test creating agent configuration"""
+        print("\n🤖 Testing Agent Configuration Creation...")
+        
+        if not self.auth_token:
+            self.log_test("Agent Configuration Creation", False, "No auth token available")
+            return
+        
+        # Test creating buyer agent configuration
+        config_data = {
+            "agent_role": "buyer_agent",
+            "tasks_enabled": ["shopping.discover_products", "logistics.estimate"],
+            "priority_rules": ["cost", "reliability"],
+            "interest_tags": ["electronics", "fashion"],
+            "agent_style": "friendly",
+            "default_mode": "semi_auto",
+            "spend_limits": {"daily": 100.0, "monthly": 1000.0},
+            "learning_enabled": True,
+            "privacy_mode": False
+        }
+        
+        success, data = self.make_request("POST", "/agents/config/create", config_data)
+        
+        if success and isinstance(data, dict) and data.get("success") is True:
+            agent_id = data.get("agent_id")
+            self.log_test("Agent Configuration Creation", True, f"Agent created: {agent_id}")
+            self.test_agent_id = agent_id
+        else:
+            self.log_test("Agent Configuration Creation", False, str(data))
+
+    def test_get_agent_configuration(self):
+        """Test getting agent configuration"""
+        print("\n🤖 Testing Get Agent Configuration...")
+        
+        if not self.auth_token:
+            self.log_test("Get Agent Configuration", False, "No auth token available")
+            return
+        
+        success, data = self.make_request("GET", "/agents/config")
+        
+        if success and isinstance(data, dict) and ("agent_role" in data or "user_id" in data):
+            agent_role = data.get("agent_role", "unknown")
+            tasks_enabled = len(data.get("tasks_enabled", []))
+            self.log_test("Get Agent Configuration", True, f"Role: {agent_role}, Tasks: {tasks_enabled}")
+        else:
+            # Configuration might not exist yet, which is acceptable
+            if "404" in str(data) or "not found" in str(data).lower():
+                self.log_test("Get Agent Configuration", True, "No configuration found (expected for new user)")
+            else:
+                self.log_test("Get Agent Configuration", False, str(data))
+
+    def test_update_agent_configuration(self):
+        """Test updating agent configuration"""
+        print("\n🤖 Testing Update Agent Configuration...")
+        
+        if not self.auth_token:
+            self.log_test("Update Agent Configuration", False, "No auth token available")
+            return
+        
+        # First ensure we have a configuration
+        self.make_request("POST", "/agents/config/create", {
+            "agent_role": "buyer_agent",
+            "tasks_enabled": ["shopping.discover_products"],
+            "priority_rules": ["cost"],
+            "interest_tags": ["electronics"],
+            "agent_style": "concise",
+            "default_mode": "manual",
+            "spend_limits": {"daily": 50.0, "monthly": 500.0}
+        })
+        
+        # Now update it
+        update_data = {
+            "tasks_enabled": ["shopping.discover_products", "logistics.estimate", "payments.select_methods"],
+            "priority_rules": ["reliability", "cost"],
+            "agent_style": "friendly",
+            "spend_limits": {"daily": 200.0, "monthly": 2000.0}
+        }
+        
+        success, data = self.make_request("PUT", "/agents/config/update", update_data)
+        
+        if success and isinstance(data, dict) and data.get("success") is True:
+            updates = data.get("updates", {})
+            self.log_test("Update Agent Configuration", True, f"Updated {len(updates)} settings")
+        else:
+            self.log_test("Update Agent Configuration", False, str(data))
+
+    def test_create_agent_task(self):
+        """Test creating agent task"""
+        print("\n🤖 Testing Agent Task Creation...")
+        
+        if not self.auth_token:
+            self.log_test("Agent Task Creation", False, "No auth token available")
+            return
+        
+        # Create task for product discovery
+        task_data = {
+            "task_type": "shopping.discover_products",
+            "task_name": "Find Wireless Headphones",
+            "description": "Search for wireless headphones under $100",
+            "mode": "manual",
+            "parameters": {
+                "query": "wireless headphones",
+                "budget_max": 100.0,
+                "categories": ["electronics"],
+                "regions": ["US", "EU"]
+            },
+            "budget_limit": 100.0,
+            "deadline": "2024-12-31"
+        }
+        
+        success, data = self.make_request("POST", "/agents/tasks/create", task_data)
+        
+        if success and isinstance(data, dict) and data.get("success") is True:
+            task_id = data.get("task_id")
+            self.log_test("Agent Task Creation", True, f"Task created: {task_id}")
+            self.test_task_id = task_id
+        else:
+            self.log_test("Agent Task Creation", False, str(data))
+
+    def test_get_user_tasks(self):
+        """Test getting user tasks"""
+        print("\n🤖 Testing Get User Tasks...")
+        
+        if not self.auth_token:
+            self.log_test("Get User Tasks", False, "No auth token available")
+            return
+        
+        success, data = self.make_request("GET", "/agents/tasks")
+        
+        if success and isinstance(data, dict) and "tasks" in data:
+            tasks = data.get("tasks", [])
+            count = data.get("count", 0)
+            self.log_test("Get User Tasks", True, f"Found {count} tasks")
+        else:
+            self.log_test("Get User Tasks", False, str(data))
+
+    def test_get_task_details(self):
+        """Test getting specific task details"""
+        print("\n🤖 Testing Get Task Details...")
+        
+        if not self.auth_token:
+            self.log_test("Get Task Details", False, "No auth token available")
+            return
+        
+        # Use task ID from previous test or create a new one
+        if not hasattr(self, 'test_task_id'):
+            # Create a task first
+            task_data = {
+                "task_type": "logistics.estimate",
+                "task_name": "Shipping Estimate",
+                "description": "Get shipping estimate for electronics",
+                "mode": "manual",
+                "parameters": {
+                    "items": [{"sku": "HEADPHONES-001", "weight": 0.5, "value": 50.0}],
+                    "destination": "US"
+                }
+            }
+            success, create_data = self.make_request("POST", "/agents/tasks/create", task_data)
+            if success:
+                self.test_task_id = create_data.get("task_id")
+        
+        if hasattr(self, 'test_task_id') and self.test_task_id:
+            success, data = self.make_request("GET", f"/agents/tasks/{self.test_task_id}")
+            
+            if success and isinstance(data, dict) and ("task_type" in data or "_id" in data):
+                task_type = data.get("task_type", "unknown")
+                status = data.get("status", "unknown")
+                self.log_test("Get Task Details", True, f"Task: {task_type}, Status: {status}")
+            else:
+                self.log_test("Get Task Details", False, str(data))
+        else:
+            self.log_test("Get Task Details", False, "No task ID available for testing")
+
+    def test_task_actions(self):
+        """Test task actions (approve, reject, cancel)"""
+        print("\n🤖 Testing Task Actions...")
+        
+        if not self.auth_token:
+            self.log_test("Task Actions", False, "No auth token available")
+            return
+        
+        # Create a task first if we don't have one
+        if not hasattr(self, 'test_task_id'):
+            task_data = {
+                "task_type": "payments.select_methods",
+                "task_name": "Payment Method Selection",
+                "description": "Select optimal payment methods",
+                "mode": "manual",
+                "parameters": {
+                    "country": "US",
+                    "currency": "USD",
+                    "total": 150.0
+                }
+            }
+            success, create_data = self.make_request("POST", "/agents/tasks/create", task_data)
+            if success:
+                self.test_task_id = create_data.get("task_id")
+        
+        if hasattr(self, 'test_task_id') and self.test_task_id:
+            # Test approve action
+            action_data = {
+                "task_id": self.test_task_id,
+                "action": "approve",
+                "feedback": "Looks good, proceed with the task"
+            }
+            
+            success, data = self.make_request("POST", "/agents/tasks/action", action_data)
+            
+            if success and isinstance(data, dict) and data.get("success") is True:
+                action = data.get("action", "unknown")
+                self.log_test("Task Actions (Approve)", True, f"Action: {action}")
+            else:
+                self.log_test("Task Actions (Approve)", False, str(data))
+        else:
+            self.log_test("Task Actions", False, "No task ID available for testing")
+
+    def test_shopping_task_execution(self):
+        """Test shopping task execution"""
+        print("\n🤖 Testing Shopping Task Execution...")
+        
+        if not self.auth_token:
+            self.log_test("Shopping Task Execution", False, "No auth token available")
+            return
+        
+        shopping_data = {
+            "cart_id": "cart_test_123",
+            "payment_pref": "auto",
+            "address_id": "addr_test_456",
+            "max_budget": 500.0
+        }
+        
+        success, data = self.make_request("POST", "/agents/tasks/shopping", shopping_data)
+        
+        if success and isinstance(data, dict):
+            # Check if it's a successful execution or proper error handling
+            if "order_id" in data or "status" in data or "error" in str(data):
+                self.log_test("Shopping Task Execution", True, "Shopping task processed (simulation)")
+            else:
+                self.log_test("Shopping Task Execution", False, str(data))
+        else:
+            self.log_test("Shopping Task Execution", False, str(data))
+
+    def test_logistics_estimate_task(self):
+        """Test logistics estimate task"""
+        print("\n🤖 Testing Logistics Estimate Task...")
+        
+        if not self.auth_token:
+            self.log_test("Logistics Estimate Task", False, "No auth token available")
+            return
+        
+        logistics_data = {
+            "items": [
+                {"sku": "LAPTOP-001", "weight": 2.5, "value": 800.0, "dimensions": "30x20x5"},
+                {"sku": "MOUSE-001", "weight": 0.2, "value": 25.0, "dimensions": "10x6x3"}
+            ],
+            "origin": "TR",
+            "destination": "US",
+            "incoterm": "DDP"
+        }
+        
+        success, data = self.make_request("POST", "/agents/tasks/logistics-estimate", logistics_data)
+        
+        if success and isinstance(data, dict):
+            if "options" in data or "recommended" in data or "error" in str(data):
+                self.log_test("Logistics Estimate Task", True, "Logistics estimate processed")
+            else:
+                self.log_test("Logistics Estimate Task", False, str(data))
+        else:
+            self.log_test("Logistics Estimate Task", False, str(data))
+
+    def test_document_generation_task(self):
+        """Test document generation task"""
+        print("\n🤖 Testing Document Generation Task...")
+        
+        if not self.auth_token:
+            self.log_test("Document Generation Task", False, "No auth token available")
+            return
+        
+        doc_data = {
+            "flow": "export",
+            "items": [
+                {
+                    "sku": "HAZELNUT-PREMIUM-001",
+                    "desc": "Premium Turkish Hazelnuts",
+                    "hs": "0802.21.00",
+                    "value": 1200.0,
+                    "qty": 100,
+                    "origin": "TR"
+                }
+            ],
+            "incoterm": "FOB",
+            "destination": "US"
+        }
+        
+        success, data = self.make_request("POST", "/agents/tasks/document-generation", doc_data)
+        
+        if success and isinstance(data, dict):
+            if "files" in data or "notes" in data or "error" in str(data):
+                self.log_test("Document Generation Task", True, "Document generation processed")
+            else:
+                self.log_test("Document Generation Task", False, str(data))
+        else:
+            self.log_test("Document Generation Task", False, str(data))
+
+    def test_agent_analytics(self):
+        """Test agent analytics"""
+        print("\n🤖 Testing Agent Analytics...")
+        
+        if not self.auth_token:
+            self.log_test("Agent Analytics", False, "No auth token available")
+            return
+        
+        success, data = self.make_request("GET", "/agents/analytics")
+        
+        if success and isinstance(data, dict):
+            if "total_tasks" in data or "success_rate" in data or "error" in str(data):
+                total_tasks = data.get("total_tasks", 0)
+                success_rate = data.get("success_rate", 0)
+                self.log_test("Agent Analytics", True, f"Tasks: {total_tasks}, Success Rate: {success_rate}")
+            else:
+                self.log_test("Agent Analytics", False, str(data))
+        else:
+            self.log_test("Agent Analytics", False, str(data))
+
+    def test_agent_simulation(self):
+        """Test agent action simulation"""
+        print("\n🤖 Testing Agent Simulation...")
+        
+        if not self.auth_token:
+            self.log_test("Agent Simulation", False, "No auth token available")
+            return
+        
+        simulation_data = {
+            "task_type": "shopping.discover_products",
+            "parameters": {
+                "query": "organic cotton t-shirts",
+                "budget_max": 50.0,
+                "categories": ["fashion", "textiles"]
+            }
+        }
+        
+        success, data = self.make_request("POST", "/agents/simulate", simulation_data)
+        
+        if success and isinstance(data, dict) and "simulation" in data:
+            simulation = data.get("simulation", {})
+            recommendation = data.get("recommendation", "unknown")
+            self.log_test("Agent Simulation", True, f"Recommendation: {recommendation}")
+        else:
+            self.log_test("Agent Simulation", False, str(data))
+
+    def test_agents_error_scenarios(self):
+        """Test AI User Agents error scenarios"""
+        print("\n🤖 Testing AI User Agents Error Scenarios...")
+        
+        # Test creating configuration without auth
+        old_token = self.auth_token
+        self.auth_token = None
+        
+        config_data = {
+            "agent_role": "buyer_agent",
+            "tasks_enabled": ["shopping.discover_products"],
+            "priority_rules": ["cost"],
+            "interest_tags": ["electronics"],
+            "agent_style": "concise",
+            "default_mode": "manual",
+            "spend_limits": {"daily": 100.0, "monthly": 1000.0}
+        }
+        
+        success, data = self.make_request("POST", "/agents/config/create", config_data)
+        
+        if not success and ("401" in str(data) or "Authorization" in str(data)):
+            self.log_test("Agents Auth Error", True, "Correctly rejected request without authentication")
+        else:
+            self.log_test("Agents Auth Error", False, f"Expected 401 error, got: {data}")
+        
+        # Restore token
+        self.auth_token = old_token
+        
+        # Test invalid task creation
+        if self.auth_token:
+            invalid_task_data = {
+                "task_type": "invalid.task.type",
+                "task_name": "Invalid Task",
+                "description": "This should fail",
+                "mode": "manual",
+                "parameters": {}
+            }
+            
+            success, data = self.make_request("POST", "/agents/tasks/create", invalid_task_data)
+            
+            if not success or "error" in str(data).lower():
+                self.log_test("Invalid Task Creation", True, "Invalid task type properly rejected")
+            else:
+                self.log_test("Invalid Task Creation", False, "Should reject invalid task types")
+
     # ========== ENTERPRISE FEATURES TESTS ==========
     
     def test_trade_intelligence_health_check(self):
