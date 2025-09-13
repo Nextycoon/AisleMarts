@@ -43,6 +43,12 @@ export default function ProfileScreen() {
       onPress: () => router.push('/orders'),
       color: '#007AFF',
     },
+    ...(user?.roles.includes('vendor') ? [{
+      title: 'Seller Dashboard',
+      icon: 'business-outline',
+      onPress: () => router.push('/vendor-dashboard'),
+      color: '#34C759',
+    }] : []),
     {
       title: 'Shopping Cart',
       icon: 'cart-outline', 
