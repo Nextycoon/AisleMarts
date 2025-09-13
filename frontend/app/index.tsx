@@ -32,6 +32,7 @@ export default function HomeScreen() {
   const [searchQuery, setSearchQuery] = useState('');
   const [selectedCategory, setSelectedCategory] = useState<string | null>(null);
   const [showAIAssistant, setShowAIAssistant] = useState(false);
+  const [showAISearchHub, setShowAISearchHub] = useState(false);
   const [aiRecommendations, setAIRecommendations] = useState<any>(null);
   const [localeInfo, setLocaleInfo] = useState<LocaleInfo | null>(null);
   const [welcomeMessage, setWelcomeMessage] = useState('');
