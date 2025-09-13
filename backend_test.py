@@ -2038,6 +2038,25 @@ class APITester:
         self.test_performance_tracking()
         self.test_vendor_analytics()
         self.test_geographic_product_filtering()
+        self.test_seller_geographic_insights()
+        self.test_geographic_authentication_controls()
+        
+        # AI Search Hub Tests
+        print("\n" + "🔍" * 15 + " AI SEARCH HUB TESTING " + "🔍" * 15)
+        self.test_search_hub_health_check()
+        self.test_quick_search_anonymous()
+        self.test_quick_search_authenticated()
+        self.test_deep_search_market_analysis()
+        self.test_image_read_ocr()
+        self.test_qr_code_scanning()
+        self.test_barcode_scanning()
+        self.test_voice_input_processing()
+        self.test_intent_analysis()
+        self.test_user_preferences_anonymous()
+        self.test_user_preferences_authenticated()
+        self.test_search_analytics_user()
+        self.test_search_hub_edge_cases()
+        self.test_search_hub_multi_language()
         # Note: Some geographic insight methods may not be fully implemented yet
         
         # PHASE 2C: Global Payments & Tax Engine Tests
