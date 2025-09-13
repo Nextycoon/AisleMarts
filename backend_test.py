@@ -2681,6 +2681,50 @@ class APITester:
         self.test_currencies_listing()
         self.test_payments_tax_error_scenarios()
         
+        # ENTERPRISE FEATURES TESTS
+        print("\n" + "🏢" * 15 + " ENTERPRISE FEATURES TESTING " + "🏢" * 15)
+        
+        # AI Domain Specialization - Trade Intelligence
+        print("\n🌐 AI Trade Intelligence Testing...")
+        self.test_trade_intelligence_health_check()
+        self.test_hs_code_suggestion()
+        self.test_landed_cost_calculation()
+        self.test_freight_quote()
+        self.test_compliance_screening()
+        self.test_trade_payment_methods_suggestion()
+        self.test_trade_tax_computation()
+        self.test_trade_insights()
+        self.test_trade_reference_data()
+        
+        # Auth Identity & Verification System
+        print("\n🔐 Auth Identity & Verification Testing...")
+        self.test_identity_service_health_check()
+        self.test_create_user_identity()
+        self.test_identity_verification_requirements()
+        self.test_username_validation()
+        self.test_avatar_validation()
+        self.test_identity_policies()
+        self.test_verification_levels()
+        
+        # AI User Agents Framework
+        print("\n🤖 AI User Agents Framework Testing...")
+        self.test_ai_agents_health_check()
+        self.test_create_agent_configuration()
+        self.test_get_agent_configuration()
+        self.test_create_agent_task()
+        self.test_get_agent_tasks()
+        self.test_agent_capabilities()
+        self.test_agent_analytics()
+        
+        # Profile Card System
+        print("\n👤 Profile Card System Testing...")
+        self.test_profile_cards_health_check()
+        self.test_create_profile_card()
+        self.test_get_my_profile_card()
+        self.test_profile_completeness()
+        self.test_profile_search()
+        self.test_profile_reference_data()
+        
         # Print summary
         print("\n" + "=" * 80)
         print("📊 TEST SUMMARY")
