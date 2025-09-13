@@ -241,7 +241,7 @@ async def get_product_recommendations(
 
 @router.post("/intent-analysis")
 async def analyze_user_intent(
-    message: str,
+    request: IntentAnalysisRequest,
     authorization: str = None
 ):
     """Analyze user intent from their message"""
@@ -255,7 +255,7 @@ async def analyze_user_intent(
             user_role = "buyer"
         
         agent = get_user_agent(user_id, user_role)
-        intent_analysis = await agent.analyze_user_intent(message)
+        intent_analysis = await agent.analyze_user_intent(request.message)
         
         return intent_analysis
         
