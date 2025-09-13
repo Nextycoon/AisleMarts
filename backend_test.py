@@ -1404,6 +1404,612 @@ class APITester:
             else:
                 self.log_test("Geographic Auth Control (Valid Token)", False, str(data))
 
+    # ========== ENTERPRISE FEATURES TESTS ==========
+    
+    def test_trade_intelligence_health_check(self):
+        """Test AI Trade Intelligence health check"""
+        print("\n🌐 Testing Trade Intelligence Health Check...")
+        
+        success, data = self.make_request("GET", "/trade/health")
+        
+        if success and isinstance(data, dict) and data.get("status") == "healthy":
+            capabilities = data.get("capabilities", [])
+            knowledge_domains = data.get("knowledge_domains", [])
+            self.log_test("Trade Intelligence Health Check", True, f"Capabilities: {len(capabilities)}, Domains: {len(knowledge_domains)}")
+        else:
+            self.log_test("Trade Intelligence Health Check", False, str(data))
+
+    def test_hs_code_suggestion(self):
+        """Test HS code suggestion API"""
+        print("\n🌐 Testing HS Code Suggestion...")
+        
+        hs_request = {
+            "title": "Wireless Bluetooth Headphones",
+            "materials": "plastic, metal, electronics",
+            "use": "consumer electronics",
+            "country_origin": "CN"
+        }
+        
+        success, data = self.make_request("POST", "/trade/hscode-suggest", hs_request, headers={})
+        
+        if success and isinstance(data, dict) and "suggestions" in data:
+            suggestions = data.get("suggestions", [])
+            confidence = data.get("confidence", 0)
+            self.log_test("HS Code Suggestion", True, f"Found {len(suggestions)} suggestions with {confidence} confidence")
+        else:
+            self.log_test("HS Code Suggestion", False, str(data))
+
+    def test_landed_cost_calculation(self):
+        """Test landed cost calculation API"""
+        print("\n🌐 Testing Landed Cost Calculation...")
+        
+        landed_cost_request = {
+            "destination_country": "US",
+            "incoterm": "DDP",
+            "items": [
+                {
+                    "sku": "HEADPHONES-001",
+                    "hs": "8518.30.20",
+                    "value": 100.0,
+                    "qty": 10,
+                    "uom": "pieces",
+                    "origin": "CN"
+                }
+            ],
+            "freight_cost": 50.0,
+            "insurance_cost": 10.0,
+            "currency": "USD"
+        }
+        
+        success, data = self.make_request("POST", "/trade/landed-cost-calculate", landed_cost_request, headers={})
+        
+        if success and isinstance(data, dict) and "total_landed_cost" in data:
+            total_cost = data.get("total_landed_cost", 0)
+            breakdown = data.get("cost_breakdown", {})
+            self.log_test("Landed Cost Calculation", True, f"Total cost: ${total_cost}, Components: {len(breakdown)}")
+        else:
+            self.log_test("Landed Cost Calculation", False, str(data))
+
+    def test_freight_quote(self):
+        """Test freight quote API"""
+        print("\n🌐 Testing Freight Quote...")
+        
+        freight_request = {
+            "mode": "Air",
+            "dimensions": [
+                {
+                    "l_cm": 30.0,
+                    "w_cm": 20.0,
+                    "h_cm": 15.0,
+                    "qty": 5
+                }
+            ],
+            "weight_kg": 10.0,
+            "origin": "Shanghai, CN",
+            "destination": "Los Angeles, US",
+            "service_level": "balanced"
+        }
+        
+        success, data = self.make_request("POST", "/trade/freight-quote", freight_request, headers={})
+        
+        if success and isinstance(data, dict) and "quotes" in data:
+            quotes = data.get("quotes", [])
+            transit_time = data.get("estimated_transit_days", 0)
+            self.log_test("Freight Quote", True, f"Found {len(quotes)} quotes, Transit: {transit_time} days")
+        else:
+            self.log_test("Freight Quote", False, str(data))
+
+    def test_compliance_screening(self):
+        """Test compliance screening API"""
+        print("\n🌐 Testing Compliance Screening...")
+        
+        screening_request = {
+            "parties": [
+                {
+                    "name": "Test Company Ltd",
+                    "country": "US"
+                },
+                {
+                    "name": "Sample Trading Corp",
+                    "country": "GB"
+                }
+            ]
+        }
+        
+        success, data = self.make_request("POST", "/trade/compliance-screening", screening_request, headers={})
+        
+        if success and isinstance(data, dict) and "screening_results" in data:
+            results = data.get("screening_results", [])
+            overall_risk = data.get("overall_risk_level", "unknown")
+            self.log_test("Compliance Screening", True, f"Screened {len(results)} parties, Risk: {overall_risk}")
+        else:
+            self.log_test("Compliance Screening", False, str(data))
+
+    def test_trade_payment_methods_suggestion(self):
+        """Test trade payment methods suggestion API"""
+        print("\n🌐 Testing Trade Payment Methods Suggestion...")
+        
+        payment_request = {
+            "country": "DE",
+            "currency": "EUR",
+            "cart_total": 5000.0
+        }
+        
+        success, data = self.make_request("POST", "/trade/payment-methods-suggest", payment_request, headers={})
+        
+        if success and isinstance(data, dict) and "methods" in data:
+            methods = data.get("methods", [])
+            ai_insights = data.get("ai_insights", "")
+            self.log_test("Trade Payment Methods Suggestion", True, f"Found {len(methods)} methods with AI insights")
+        else:
+            self.log_test("Trade Payment Methods Suggestion", False, str(data))
+
+    def test_trade_tax_computation(self):
+        """Test trade tax computation API"""
+        print("\n🌐 Testing Trade Tax Computation...")
+        
+        tax_request = {
+            "country": "US",
+            "role": "marketplace_facilitator",
+            "items": [
+                {
+                    "sku": "ELECTRONICS-001",
+                    "category": "electronics",
+                    "price": 299.99
+                }
+            ]
+        }
+        
+        success, data = self.make_request("POST", "/trade/tax-compute", tax_request, headers={})
+        
+        if success and isinstance(data, dict) and "total_tax" in data:
+            total_tax = data.get("total_tax", 0)
+            tax_lines = data.get("tax_lines", [])
+            self.log_test("Trade Tax Computation", True, f"Tax: ${total_tax}, Lines: {len(tax_lines)}")
+        else:
+            self.log_test("Trade Tax Computation", False, str(data))
+
+    def test_trade_insights(self):
+        """Test trade insights API"""
+        print("\n🌐 Testing Trade Insights...")
+        
+        insights_request = {
+            "query": "What are the import duties for electronics from China to USA?",
+            "context": {
+                "product_category": "electronics",
+                "origin": "CN",
+                "destination": "US"
+            }
+        }
+        
+        success, data = self.make_request("POST", "/trade/insights", insights_request, headers={})
+        
+        if success and isinstance(data, dict) and "insights" in data:
+            insights = data.get("insights", "")
+            confidence = data.get("confidence", 0)
+            self.log_test("Trade Insights", True, f"AI insights provided with {confidence} confidence")
+        else:
+            self.log_test("Trade Insights", False, str(data))
+
+    def test_trade_reference_data(self):
+        """Test trade reference data APIs"""
+        print("\n🌐 Testing Trade Reference Data...")
+        
+        # Test Incoterms
+        success, data = self.make_request("GET", "/trade/incoterms")
+        if success and isinstance(data, dict) and "incoterms" in data:
+            incoterms = data.get("incoterms", [])
+            self.log_test("Trade Incoterms Reference", True, f"Found {len(incoterms)} Incoterms")
+        else:
+            self.log_test("Trade Incoterms Reference", False, str(data))
+        
+        # Test Transport Modes
+        success, data = self.make_request("GET", "/trade/transport-modes")
+        if success and isinstance(data, dict) and "modes" in data:
+            modes = data.get("modes", [])
+            self.log_test("Trade Transport Modes Reference", True, f"Found {len(modes)} transport modes")
+        else:
+            self.log_test("Trade Transport Modes Reference", False, str(data))
+        
+        # Test Sample HS Codes
+        success, data = self.make_request("GET", "/trade/sample-hs-codes")
+        if success and isinstance(data, dict) and "hs_codes" in data:
+            hs_codes = data.get("hs_codes", [])
+            self.log_test("Trade Sample HS Codes Reference", True, f"Found {len(hs_codes)} sample HS codes")
+        else:
+            self.log_test("Trade Sample HS Codes Reference", False, str(data))
+
+    def test_identity_service_health_check(self):
+        """Test Auth Identity service health check"""
+        print("\n🔐 Testing Identity Service Health Check...")
+        
+        success, data = self.make_request("GET", "/identity/health")
+        
+        if success and isinstance(data, dict) and data.get("status") == "healthy":
+            capabilities = data.get("capabilities", [])
+            verification_levels = data.get("verification_levels", [])
+            self.log_test("Identity Service Health Check", True, f"Capabilities: {len(capabilities)}, Levels: {len(verification_levels)}")
+        else:
+            self.log_test("Identity Service Health Check", False, str(data))
+
+    def test_create_user_identity(self):
+        """Test user identity creation"""
+        print("\n🔐 Testing User Identity Creation...")
+        
+        identity_request = {
+            "username": "testuser_identity",
+            "display_name": "Test Identity User",
+            "email": "identity@test.com",
+            "phone": "+1234567890",
+            "is_seller": False,
+            "is_buyer": True,
+            "bio": "Test user for identity verification",
+            "city": "New York",
+            "country": "US",
+            "language": "en",
+            "currency": "USD"
+        }
+        
+        success, data = self.make_request("POST", "/identity/create", identity_request, headers={})
+        
+        if success and isinstance(data, dict) and data.get("success") is True:
+            user_id = data.get("user_id")
+            self.test_identity_user_id = user_id
+            self.log_test("User Identity Creation", True, f"Created identity for user: {user_id}")
+        else:
+            self.log_test("User Identity Creation", False, str(data))
+
+    def test_identity_verification_requirements(self):
+        """Test getting verification requirements"""
+        print("\n🔐 Testing Identity Verification Requirements...")
+        
+        if not self.auth_token:
+            self.log_test("Identity Verification Requirements", False, "No auth token available")
+            return
+        
+        success, data = self.make_request("GET", "/identity/verification/requirements")
+        
+        if success and isinstance(data, dict) and "requirements" in data:
+            requirements = data.get("requirements", {})
+            self.log_test("Identity Verification Requirements", True, f"Requirements retrieved for user")
+        else:
+            self.log_test("Identity Verification Requirements", False, str(data))
+
+    def test_username_validation(self):
+        """Test username change validation"""
+        print("\n🔐 Testing Username Validation...")
+        
+        if not self.auth_token:
+            self.log_test("Username Validation", False, "No auth token available")
+            return
+        
+        validation_request = {
+            "new_username": "newusername123"
+        }
+        
+        success, data = self.make_request("POST", "/identity/username/validate", validation_request)
+        
+        if success and isinstance(data, dict) and "validation_result" in data:
+            is_valid = data.get("validation_result", {}).get("is_valid", False)
+            self.log_test("Username Validation", True, f"Username validation: {'valid' if is_valid else 'invalid'}")
+        else:
+            self.log_test("Username Validation", False, str(data))
+
+    def test_avatar_validation(self):
+        """Test avatar change validation"""
+        print("\n🔐 Testing Avatar Validation...")
+        
+        if not self.auth_token:
+            self.log_test("Avatar Validation", False, "No auth token available")
+            return
+        
+        avatar_request = {
+            "image_data": "data:image/jpeg;base64,/9j/4AAQSkZJRgABAQEAYABgAAD/2wBDAAEBAQEBAQEBAQEBAQEBAQEBAQEBAQEBAQEBAQEBAQEBAQEBAQEBAQEBAQEBAQEBAQEBAQEBAQEBAQEBAQEBAQH/2wBDAQEBAQEBAQEBAQEBAQEBAQEBAQEBAQEBAQEBAQEBAQEBAQEBAQEBAQEBAQEBAQEBAQEBAQEBAQEBAQEBAQEBAQH/wAARCAABAAEDASIAAhEBAxEB/8QAFQABAQAAAAAAAAAAAAAAAAAAAAv/xAAUEAEAAAAAAAAAAAAAAAAAAAAA/8QAFQEBAQAAAAAAAAAAAAAAAAAAAAX/xAAUEQEAAAAAAAAAAAAAAAAAAAAA/9oADAMBAAIRAxEAPwA/8A"
+        }
+        
+        success, data = self.make_request("POST", "/identity/avatar/validate", avatar_request)
+        
+        if success and isinstance(data, dict) and "validation_result" in data:
+            is_valid = data.get("validation_result", {}).get("is_valid", False)
+            self.log_test("Avatar Validation", True, f"Avatar validation: {'valid' if is_valid else 'invalid'}")
+        else:
+            self.log_test("Avatar Validation", False, str(data))
+
+    def test_identity_policies(self):
+        """Test identity policy endpoints"""
+        print("\n🔐 Testing Identity Policies...")
+        
+        # Test username policy
+        success, data = self.make_request("GET", "/identity/username/policy")
+        if success and isinstance(data, dict) and "policy" in data:
+            policy = data.get("policy", {})
+            self.log_test("Username Policy", True, f"Policy retrieved with {len(policy)} rules")
+        else:
+            self.log_test("Username Policy", False, str(data))
+        
+        # Test avatar policy
+        success, data = self.make_request("GET", "/identity/avatar/policy")
+        if success and isinstance(data, dict) and "policy" in data:
+            policy = data.get("policy", {})
+            self.log_test("Avatar Policy", True, f"Policy retrieved with {len(policy)} rules")
+        else:
+            self.log_test("Avatar Policy", False, str(data))
+
+    def test_verification_levels(self):
+        """Test verification levels endpoint"""
+        print("\n🔐 Testing Verification Levels...")
+        
+        success, data = self.make_request("GET", "/identity/verification/levels")
+        
+        if success and isinstance(data, dict) and "verification_levels" in data:
+            levels = data.get("verification_levels", {})
+            role_configs = data.get("role_configs", {})
+            self.log_test("Verification Levels", True, f"Levels: {len(levels)}, Role configs: {len(role_configs)}")
+        else:
+            self.log_test("Verification Levels", False, str(data))
+
+    def test_ai_agents_health_check(self):
+        """Test AI User Agents service health check"""
+        print("\n🤖 Testing AI Agents Health Check...")
+        
+        success, data = self.make_request("GET", "/agents/health")
+        
+        if success and isinstance(data, dict) and data.get("status") == "healthy":
+            capabilities = data.get("capabilities", [])
+            agent_roles = data.get("agent_roles", [])
+            supported_tasks = data.get("supported_tasks", [])
+            self.log_test("AI Agents Health Check", True, f"Capabilities: {len(capabilities)}, Roles: {len(agent_roles)}, Tasks: {len(supported_tasks)}")
+        else:
+            self.log_test("AI Agents Health Check", False, str(data))
+
+    def test_create_agent_configuration(self):
+        """Test creating AI agent configuration"""
+        print("\n🤖 Testing Agent Configuration Creation...")
+        
+        if not self.auth_token:
+            self.log_test("Agent Configuration Creation", False, "No auth token available")
+            return
+        
+        config_request = {
+            "agent_role": "buyer_agent",
+            "tasks_enabled": ["shopping", "research", "analytics"],
+            "priority_rules": ["budget_first", "quality_second"],
+            "interest_tags": ["electronics", "fashion", "home"],
+            "agent_style": "balanced",
+            "default_mode": "semi_auto",
+            "spend_limits": {
+                "daily": 500.0,
+                "monthly": 2000.0
+            },
+            "learning_enabled": True,
+            "privacy_mode": False
+        }
+        
+        success, data = self.make_request("POST", "/agents/config/create", config_request)
+        
+        if success and isinstance(data, dict) and data.get("success") is True:
+            agent_id = data.get("agent_id")
+            self.test_agent_id = agent_id
+            self.log_test("Agent Configuration Creation", True, f"Created agent: {agent_id}")
+        else:
+            self.log_test("Agent Configuration Creation", False, str(data))
+
+    def test_get_agent_configuration(self):
+        """Test getting agent configuration"""
+        print("\n🤖 Testing Get Agent Configuration...")
+        
+        if not self.auth_token:
+            self.log_test("Get Agent Configuration", False, "No auth token available")
+            return
+        
+        success, data = self.make_request("GET", "/agents/config")
+        
+        if success and isinstance(data, dict) and "agent_role" in data:
+            agent_role = data.get("agent_role")
+            tasks_enabled = data.get("tasks_enabled", [])
+            self.log_test("Get Agent Configuration", True, f"Role: {agent_role}, Tasks: {len(tasks_enabled)}")
+        else:
+            self.log_test("Get Agent Configuration", False, str(data))
+
+    def test_create_agent_task(self):
+        """Test creating agent task"""
+        print("\n🤖 Testing Agent Task Creation...")
+        
+        if not self.auth_token:
+            self.log_test("Agent Task Creation", False, "No auth token available")
+            return
+        
+        task_request = {
+            "task_type": "shopping",
+            "task_name": "Find Best Headphones",
+            "description": "Find the best wireless headphones under $200",
+            "mode": "semi_auto",
+            "parameters": {
+                "budget": 200.0,
+                "category": "electronics",
+                "features": ["wireless", "noise_cancelling"]
+            },
+            "budget_limit": 200.0
+        }
+        
+        success, data = self.make_request("POST", "/agents/tasks/create", task_request)
+        
+        if success and isinstance(data, dict) and data.get("success") is True:
+            task_id = data.get("task_id")
+            self.test_task_id = task_id
+            self.log_test("Agent Task Creation", True, f"Created task: {task_id}")
+        else:
+            self.log_test("Agent Task Creation", False, str(data))
+
+    def test_get_agent_tasks(self):
+        """Test getting agent tasks"""
+        print("\n🤖 Testing Get Agent Tasks...")
+        
+        if not self.auth_token:
+            self.log_test("Get Agent Tasks", False, "No auth token available")
+            return
+        
+        success, data = self.make_request("GET", "/agents/tasks")
+        
+        if success and isinstance(data, dict) and "tasks" in data:
+            tasks = data.get("tasks", [])
+            count = data.get("count", 0)
+            self.log_test("Get Agent Tasks", True, f"Found {count} tasks")
+        else:
+            self.log_test("Get Agent Tasks", False, str(data))
+
+    def test_agent_capabilities(self):
+        """Test getting agent capabilities"""
+        print("\n🤖 Testing Agent Capabilities...")
+        
+        success, data = self.make_request("GET", "/agents/capabilities")
+        
+        if success and isinstance(data, dict) and "capabilities" in data:
+            capabilities = data.get("capabilities", {})
+            task_templates = data.get("task_templates", {})
+            agent_roles = data.get("agent_roles", [])
+            self.log_test("Agent Capabilities", True, f"Capabilities: {len(capabilities)}, Templates: {len(task_templates)}, Roles: {len(agent_roles)}")
+        else:
+            self.log_test("Agent Capabilities", False, str(data))
+
+    def test_agent_analytics(self):
+        """Test getting agent analytics"""
+        print("\n🤖 Testing Agent Analytics...")
+        
+        if not self.auth_token:
+            self.log_test("Agent Analytics", False, "No auth token available")
+            return
+        
+        success, data = self.make_request("GET", "/agents/analytics")
+        
+        if success and isinstance(data, dict) and "analytics" in data:
+            analytics = data.get("analytics", {})
+            self.log_test("Agent Analytics", True, f"Analytics retrieved with {len(analytics)} metrics")
+        else:
+            self.log_test("Agent Analytics", False, str(data))
+
+    def test_profile_cards_health_check(self):
+        """Test Profile Cards service health check"""
+        print("\n👤 Testing Profile Cards Health Check...")
+        
+        success, data = self.make_request("GET", "/profile-cards/health")
+        
+        if success and isinstance(data, dict) and data.get("status") == "healthy":
+            capabilities = data.get("capabilities", [])
+            card_types = data.get("card_types", [])
+            social_platforms = data.get("supported_social_platforms", 0)
+            self.log_test("Profile Cards Health Check", True, f"Capabilities: {len(capabilities)}, Types: {len(card_types)}, Social: {social_platforms}")
+        else:
+            self.log_test("Profile Cards Health Check", False, str(data))
+
+    def test_create_profile_card(self):
+        """Test creating profile card"""
+        print("\n👤 Testing Profile Card Creation...")
+        
+        if not self.auth_token:
+            self.log_test("Profile Card Creation", False, "No auth token available")
+            return
+        
+        card_request = {
+            "display_name": "Test Profile User",
+            "username": "testprofileuser",
+            "role": "buyer",
+            "is_premium": False,
+            "bio": "Test profile card user",
+            "city": "San Francisco",
+            "country": "US",
+            "language": "en",
+            "currency": "USD",
+            "email": "profile@test.com",
+            "phone": "+1234567890",
+            "email_verified": True,
+            "phone_verified": False
+        }
+        
+        success, data = self.make_request("POST", "/profile-cards/create", card_request)
+        
+        if success and isinstance(data, dict) and data.get("success") is True:
+            card_id = data.get("card_id")
+            self.test_card_id = card_id
+            self.log_test("Profile Card Creation", True, f"Created card: {card_id}")
+        else:
+            self.log_test("Profile Card Creation", False, str(data))
+
+    def test_get_my_profile_card(self):
+        """Test getting own profile card"""
+        print("\n👤 Testing Get My Profile Card...")
+        
+        if not self.auth_token:
+            self.log_test("Get My Profile Card", False, "No auth token available")
+            return
+        
+        success, data = self.make_request("GET", "/profile-cards/my-card")
+        
+        if success and isinstance(data, dict) and "user_id" in data:
+            display_name = data.get("display_name", "Unknown")
+            username = data.get("username", "Unknown")
+            self.log_test("Get My Profile Card", True, f"Card: {display_name} (@{username})")
+        else:
+            self.log_test("Get My Profile Card", False, str(data))
+
+    def test_profile_completeness(self):
+        """Test profile completeness analysis"""
+        print("\n👤 Testing Profile Completeness...")
+        
+        if not self.auth_token:
+            self.log_test("Profile Completeness", False, "No auth token available")
+            return
+        
+        success, data = self.make_request("GET", "/profile-cards/completeness")
+        
+        if success and isinstance(data, dict) and "completeness_score" in data:
+            score = data.get("completeness_score", 0)
+            missing_fields = data.get("missing_fields", [])
+            self.log_test("Profile Completeness", True, f"Score: {score}%, Missing: {len(missing_fields)} fields")
+        else:
+            self.log_test("Profile Completeness", False, str(data))
+
+    def test_profile_search(self):
+        """Test profile search functionality"""
+        print("\n👤 Testing Profile Search...")
+        
+        success, data = self.make_request("GET", "/profile-cards/search", {"query": "test", "limit": 10})
+        
+        if success and isinstance(data, dict) and "profiles" in data:
+            profiles = data.get("profiles", [])
+            count = data.get("count", 0)
+            self.log_test("Profile Search", True, f"Found {count} profiles matching 'test'")
+        else:
+            self.log_test("Profile Search", False, str(data))
+
+    def test_profile_reference_data(self):
+        """Test profile reference data endpoints"""
+        print("\n👤 Testing Profile Reference Data...")
+        
+        # Test social platforms
+        success, data = self.make_request("GET", "/profile-cards/social-platforms")
+        if success and isinstance(data, dict) and "platforms" in data:
+            platforms = data.get("platforms", [])
+            self.log_test("Profile Social Platforms", True, f"Found {len(platforms)} social platforms")
+        else:
+            self.log_test("Profile Social Platforms", False, str(data))
+        
+        # Test contact methods
+        success, data = self.make_request("GET", "/profile-cards/contact-methods")
+        if success and isinstance(data, dict) and "contact_methods" in data:
+            methods = data.get("contact_methods", [])
+            self.log_test("Profile Contact Methods", True, f"Found {len(methods)} contact methods")
+        else:
+            self.log_test("Profile Contact Methods", False, str(data))
+        
+        # Test templates
+        success, data = self.make_request("GET", "/profile-cards/templates")
+        if success and isinstance(data, dict) and "templates" in data:
+            templates = data.get("templates", [])
+            self.log_test("Profile Templates", True, f"Found {len(templates)} templates")
+        else:
+            self.log_test("Profile Templates", False, str(data))
+
     # ========== AI SEARCH HUB TESTS ==========
     
     def test_search_hub_health_check(self):
