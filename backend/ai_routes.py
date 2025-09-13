@@ -9,7 +9,7 @@ from db import db
 from ai_service import get_user_agent, locale_service, search_service
 from schemas import ProductOut
 
-router = APIRouter(prefix="/ai", tags=["AI Services"])
+router = APIRouter(prefix="/api/ai", tags=["AI Services"])
 
 # Request/Response models
 class ChatRequest(BaseModel):
