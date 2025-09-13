@@ -102,7 +102,7 @@
 # Testing Data - Main Agent and testing sub agent both should log testing data below this section
 #====================================================================================================
 
-user_problem_statement: "Test the new AI-powered backend API endpoints that were just implemented including AI Chat, Locale Detection, Product Recommendations, Search Enhancement, Intent Analysis, and Onboarding Guidance"
+user_problem_statement: "Test the complete Geographic Targeting System for AisleMarts Phase 2B implementation including Geographic Data Infrastructure, Seller Visibility Management, AI-Powered Geographic Intelligence, and Performance Analytics"
 
 backend:
   - task: "Health Check API"
