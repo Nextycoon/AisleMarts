@@ -1,4 +1,4 @@
-from fastapi import APIRouter, Depends, HTTPException
+from fastapi import APIRouter, Depends, HTTPException, Header
 from pydantic import BaseModel
 from typing import List, Dict, Any, Optional, Literal
 from datetime import datetime
@@ -41,7 +41,7 @@ class GeographicFilterRequest(BaseModel):
     max_distance_km: Optional[float] = None
     include_international: bool = True
 
-async def get_current_user_from_token(authorization: str):
+async def get_current_user(authorization: str | None = Header(None)):
     """Extract user from auth token"""
     if not authorization:
         raise HTTPException(401, "Missing Authorization header")
@@ -99,7 +99,7 @@ async def get_cities(
     except Exception as e:
         raise HTTPException(500, f"Error fetching cities: {str(e)}")
 
-@router.post("/cities/in-radius")
+@router.get("/cities/in-radius")
 async def get_cities_in_radius(
     center_city_id: str,
     radius_km: float
@@ -115,11 +115,10 @@ async def get_cities_in_radius(
 @router.post("/visibility")
 async def create_seller_visibility(
     config: VisibilityConfigRequest,
-    authorization: str = None
+    user = Depends(get_current_user)
 ):
     """Create or update seller visibility settings"""
     try:
-        user = await get_current_user_from_token(authorization)
         if "vendor" not in user.get("roles", []) and "admin" not in user.get("roles", []):
             raise HTTPException(403, "Vendor or admin access required")
         
@@ -145,12 +144,10 @@ async def create_seller_visibility(
 @router.get("/visibility/{vendor_id}")
 async def get_seller_visibility(
     vendor_id: str,
-    authorization: str = None
+    user = Depends(get_current_user)
 ):
     """Get seller visibility settings"""
     try:
-        user = await get_current_user_from_token(authorization)
-        
         # Check permissions
         if "admin" not in user.get("roles", []):
             # Vendors can only see their own visibility
@@ -169,12 +166,10 @@ async def get_seller_visibility(
 @router.post("/market-analysis")
 async def analyze_market_opportunity(
     request: MarketAnalysisRequest,
-    authorization: str = None
+    user = Depends(get_current_user)
 ):
     """Get AI-powered market analysis for product in target locations"""
     try:
-        user = await get_current_user_from_token(authorization)
-        
         analysis = await geographic_service.analyze_market_opportunity(
             request.product_category,
             request.target_locations
@@ -186,12 +181,10 @@ async def analyze_market_opportunity(
 @router.get("/targeting-recommendations/{vendor_id}")
 async def get_targeting_recommendations(
     vendor_id: str,
-    authorization: str = None
+    user = Depends(get_current_user)
 ):
     """Get AI-powered targeting recommendations for vendor"""
     try:
-        user = await get_current_user_from_token(authorization)
-        
         # Check permissions
         if "admin" not in user.get("roles", []):
             vendor = await db().vendors.find_one({"userIdOwner": str(user["_id"])})
@@ -213,12 +206,10 @@ async def get_targeting_recommendations(
 @router.post("/track-performance")
 async def track_performance(
     request: PerformanceTrackingRequest,
-    authorization: str = None
+    user = Depends(get_current_user)
 ):
     """Track geographic performance metrics"""
     try:
-        user = await get_current_user_from_token(authorization)
-        
         # For simplicity, allow any authenticated user to track performance
         # In production, you might want stricter controls
         
@@ -238,12 +229,10 @@ async def track_performance(
 async def get_vendor_analytics(
     vendor_id: str,
     days: int = 30,
-    authorization: str = None
+    user = Depends(get_current_user)
 ):
     """Get comprehensive geographic analytics for vendor"""
     try:
-        user = await get_current_user_from_token(authorization)
-        
         # Check permissions
         if "admin" not in user.get("roles", []):
             vendor = await db().vendors.find_one({"userIdOwner": str(user["_id"])})
@@ -364,12 +353,10 @@ async def filter_products_by_geography(
 @router.get("/insights/{vendor_id}")
 async def get_seller_geographic_insights(
     vendor_id: str,
-    authorization: str = None
+    user = Depends(get_current_user)
 ):
     """Get geographic insights and recommendations for seller dashboard"""
     try:
-        user = await get_current_user_from_token(authorization)
-        
         # Check permissions
         if "admin" not in user.get("roles", []):
             vendor = await db().vendors.find_one({"userIdOwner": str(user["_id"])})
