@@ -922,6 +922,9 @@ class APITester:
         if not self.auth_token:
             self.test_user_login()
         
+        # Login vendor for geographic tests
+        self.test_vendor_login()
+        
         self.test_protected_route()
         self.test_categories_list()
         
