@@ -43,6 +43,34 @@ export default function ProfileScreen() {
       onPress: () => router.push('/orders'),
       color: '#007AFF',
     },
+    {
+      title: '🌍 AI Trade Intelligence',
+      icon: 'globe-outline',
+      onPress: () => router.push('/ai-domain'),
+      color: '#5856D6',
+      isNew: true,
+    },
+    {
+      title: '🤖 AI User Agents',
+      icon: 'hardware-chip-outline',
+      onPress: () => router.push('/ai-agents'),
+      color: '#AF52DE',
+      isNew: true,
+    },
+    {
+      title: '🛡️ Identity & Verification',
+      icon: 'shield-checkmark-outline',
+      onPress: () => router.push('/auth-identity'),
+      color: '#FF9500',
+      isNew: true,
+    },
+    {
+      title: '👤 Profile Card',
+      icon: 'card-outline',
+      onPress: () => router.push('/profile-card'),
+      color: '#34C759',
+      isNew: true,
+    },
     ...(user?.roles.includes('vendor') ? [{
       title: 'Seller Dashboard',
       icon: 'business-outline',
@@ -59,7 +87,7 @@ export default function ProfileScreen() {
       title: 'Shopping Cart',
       icon: 'cart-outline', 
       onPress: () => router.push('/cart'),
-      color: '#34C759',
+      color: '#007AFF',
     },
     {
       title: 'Help & Support',
@@ -76,7 +104,7 @@ export default function ProfileScreen() {
     {
       title: 'About AisleMarts',
       icon: 'information-circle-outline',
-      onPress: () => Alert.alert('About', 'AisleMarts v1.0\nYour AI-powered global marketplace with advanced payment & tax engine'),
+      onPress: () => Alert.alert('About', 'AisleMarts v2.0\nYour AI-powered global marketplace with enterprise-grade features:\n\n🌍 AI Trade Intelligence\n🤖 Personal AI Agents\n🛡️ Advanced Identity System\n👤 Professional Profile Cards\n💳 Global Payment Engine\n📊 Real-time Analytics'),
       color: '#8E8E93',
     },
   ];
