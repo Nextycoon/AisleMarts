@@ -49,6 +49,12 @@ export default function ProfileScreen() {
       onPress: () => router.push('/vendor-dashboard'),
       color: '#34C759',
     }] : []),
+    ...(user?.roles.includes('admin') ? [{
+      title: 'Admin Dashboard',
+      icon: 'analytics-outline',
+      onPress: () => router.push('/admin-dashboard'),
+      color: '#FF3B30',
+    }] : []),
     {
       title: 'Shopping Cart',
       icon: 'cart-outline', 
@@ -70,7 +76,7 @@ export default function ProfileScreen() {
     {
       title: 'About AisleMarts',
       icon: 'information-circle-outline',
-      onPress: () => Alert.alert('About', 'AisleMarts v1.0\nYour global marketplace'),
+      onPress: () => Alert.alert('About', 'AisleMarts v1.0\nYour AI-powered global marketplace with advanced payment & tax engine'),
       color: '#8E8E93',
     },
   ];
