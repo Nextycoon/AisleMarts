@@ -617,9 +617,13 @@ class APITester:
         """Test creating seller visibility settings"""
         print("\n🌍 Testing Seller Visibility Creation...")
         
-        if not self.auth_token:
-            self.log_test("Seller Visibility Creation", False, "No auth token available")
+        if not hasattr(self, 'vendor_auth_token') or not self.vendor_auth_token:
+            self.log_test("Seller Visibility Creation", False, "No vendor auth token available")
             return
+        
+        # Store current token and use vendor token
+        old_token = self.auth_token
+        self.auth_token = self.vendor_auth_token
         
         # Test local visibility
         local_visibility = {
@@ -686,6 +690,9 @@ class APITester:
                 self.test_vendor_id = "test_vendor_" + str(self.user_id)
         else:
             self.log_test("Seller Visibility Creation (Global All)", False, str(data))
+        
+        # Restore original token
+        self.auth_token = old_token
 
     def test_seller_visibility_retrieval(self):
         """Test retrieving seller visibility settings"""
