@@ -20,6 +20,7 @@ import { API } from '../src/api/client';
 import { Product, Category } from '../src/types';
 import { aiService, LocaleInfo } from '../src/services/AIService';
 import AIAssistant from '../src/components/AIAssistant';
+import { AISearchHub } from '../src/components/AISearchHubComponents';
 
 export default function HomeScreen() {
   const { user } = useAuth();
