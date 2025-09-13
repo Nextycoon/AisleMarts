@@ -14,6 +14,131 @@ async def seed_geographic_data():
         result = await geographic_service.initialize_geographic_data()
         print(f"✅ Geographic initialization: {result}")
         
+        # First, create some sample vendors if they don't exist
+        print("🏢 Creating sample vendors...")
+        
+        # Get admin user
+        admin_user = await db().users.find_one({"email": "admin@aislemarts.com"})
+        if not admin_user:
+            print("❌ Admin user not found, creating one...")
+            admin_user_id = str(uuid.uuid4())
+            admin_user = {
+                "_id": admin_user_id,
+                "email": "admin@aislemarts.com",
+                "name": "Admin User",
+                "roles": ["user", "admin"],
+                "created_at": datetime.utcnow()
+            }
+            await db().users.insert_one(admin_user)
+        
+        # Create sample vendors
+        sample_vendors = [
+            {
+                "_id": str(uuid.uuid4()),
+                "userIdOwner": str(admin_user["_id"]),
+                "legalName": "AudioTech Global Inc.",
+                "kycDocs": [],
+                "verifiedAt": datetime.utcnow(),
+                "badge": "verified",
+                "warehouses": [],
+                "created_at": datetime.utcnow(),
+                "updated_at": datetime.utcnow()
+            },
+            {
+                "_id": str(uuid.uuid4()),
+                "userIdOwner": str(admin_user["_id"]),
+                "legalName": "EcoWear Fashion Co.",
+                "kycDocs": [],
+                "verifiedAt": datetime.utcnow(),
+                "badge": "eco_friendly",
+                "warehouses": [],
+                "created_at": datetime.utcnow(),
+                "updated_at": datetime.utcnow()
+            },
+            {
+                "_id": str(uuid.uuid4()),
+                "userIdOwner": str(admin_user["_id"]),
+                "legalName": "SmartHome Solutions LLC",
+                "kycDocs": [],
+                "verifiedAt": datetime.utcnow(),
+                "badge": "tech_innovator",
+                "warehouses": [],
+                "created_at": datetime.utcnow(),
+                "updated_at": datetime.utcnow()
+            },
+            {
+                "_id": str(uuid.uuid4()),
+                "userIdOwner": str(admin_user["_id"]),
+                "legalName": "Global Crafters Ltd.",
+                "kycDocs": [],
+                "verifiedAt": datetime.utcnow(),
+                "badge": "artisan",
+                "warehouses": [],
+                "created_at": datetime.utcnow(),
+                "updated_at": datetime.utcnow()
+            }
+        ]
+        
+        for vendor_data in sample_vendors:
+            existing = await db().vendors.find_one({"legalName": vendor_data["legalName"]})
+            if not existing:
+                await db().vendors.insert_one(vendor_data)
+                print(f"✅ Created vendor: {vendor_data['legalName']}")
+        
+        # Create some sample products for these vendors
+        print("📦 Creating sample products for vendors...")
+        vendors_cursor = db().vendors.find({})
+        vendors = await vendors_cursor.to_list(length=10)
+        
+        for vendor in vendors:
+            vendor_id = str(vendor["_id"])
+            
+            # Create 2-3 products per vendor
+            sample_products = []
+            if "AudioTech" in vendor.get("legalName", ""):
+                sample_products = [
+                    {
+                        "_id": str(uuid.uuid4()),
+                        "vendorId": vendor_id,
+                        "title": "Professional Noise-Cancelling Headphones",
+                        "slug": "professional-headphones-audiotech",
+                        "description": "Premium wireless headphones with advanced noise cancellation",
+                        "price": 299.99,
+                        "currency": "USD",
+                        "images": ["data:image/svg+xml;base64,PHN2ZyB3aWR0aD0iMjAwIiBoZWlnaHQ9IjIwMCIgdmlld0JveD0iMCAwIDIwMCAyMDAiIGZpbGw9Im5vbmUiIHhtbG5zPSJodHRwOi8vd3d3LnczLm9yZy8yMDAwL3N2ZyI+CjxyZWN0IHdpZHRoPSIyMDAiIGhlaWdodD0iMjAwIiBmaWxsPSIjZjBmMGYwIi8+CjxjaXJjbGUgY3g9IjEwMCIgY3k9IjEwMCIgcj0iNDAiIGZpbGw9IiMzMzMiLz4KPHRLEHUGEQ9InQgaWQ9InRleHQiIGZpbGw9IiM2NjYiPgogIDx0c3BhbiB4PSIxMDAiIHk9IjEwNSIgdGV4dC1hbmNob3I9Im1pZGRsZSI+8J+OuTwvdHNwYW4+CjwvdGV4dD4KPC9zdmc+Cg=="],
+                        "brand": "AudioTech",
+                        "attributes": {"type": "headphones", "wireless": "true", "noise_cancelling": "true"},
+                        "stock": 50,
+                        "active": True,
+                        "created_at": datetime.utcnow(),
+                        "updated_at": datetime.utcnow()
+                    }
+                ]
+            elif "EcoWear" in vendor.get("legalName", ""):
+                sample_products = [
+                    {
+                        "_id": str(uuid.uuid4()),
+                        "vendorId": vendor_id,
+                        "title": "Sustainable Organic Cotton T-Shirt",
+                        "slug": "organic-tshirt-ecowear",
+                        "description": "100% organic cotton t-shirt made with sustainable practices",
+                        "price": 34.99,
+                        "currency": "USD",
+                        "images": ["data:image/svg+xml;base64,PHN2ZyB3aWR0aD0iMjAwIiBoZWlnaHQ9IjIwMCIgdmlld0JveD0iMCAwIDIwMCAyMDAiIGZpbGw9Im5vbmUiIHhtbG5zPSJodHRwOi8vd3d3LnczLm9yZy8yMDAwL3N2ZyI+CjxyZWN0IHdpZHRoPSIyMDAiIGhlaWdodD0iMjAwIiBmaWxsPSIjZjBmMGYwIi8+CjxyZWN0IHg9IjYwIiB5PSI0MCIgd2lkdGg9IjgwIiBoZWlnaHQ9IjEyMCIgZmlsbD0iIzMzNyIvPgo8dGV4dCBpZD0idGV4dCIgZmlsbD0iIzY2NiI+CiAgPHRzcGFuIHg9IjEwMCIgeT0iMTA1IiB0ZXh0LWFuY2hvcj0ibWlkZGxlIj7wn5SWPC90c3Bhbj4KPC90ZXh0Pgo8L3N2Zz4K"],
+                        "brand": "EcoWear",
+                        "attributes": {"material": "organic_cotton", "sustainability": "eco_friendly"},
+                        "stock": 100,
+                        "active": True,
+                        "created_at": datetime.utcnow(),
+                        "updated_at": datetime.utcnow()
+                    }
+                ]
+            
+            for product in sample_products:
+                existing = await db().products.find_one({"slug": product["slug"]})
+                if not existing:
+                    await db().products.insert_one(product)
+        
         # Create sample seller visibility settings for existing vendors
         print("🎯 Creating sample seller visibility settings...")
         
