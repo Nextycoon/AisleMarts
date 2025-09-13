@@ -2,8 +2,10 @@
   "name": "aislemarts-mobile",
   "version": "1.0.0",
   "private": true,
+  "main": "index.js",
   "scripts": {
-    "test": "jest"
+    "test": "jest",
+    "start": "react-native start"
   },
   "dependencies": {
     "react": "^18.2.0",
