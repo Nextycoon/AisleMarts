@@ -9,7 +9,7 @@ from emergentintegrations.llm.chat import LlmChat, UserMessage
 from db import db
 from ai_user_agents_models import (
     AgentConfiguration, AgentTask, AgentLearning, AgentRole, DelegationMode, TaskStatus,
-    create_agent_configuration, get_capabilities_for_role, requires_approval, 
+    PriorityRule, AgentStyle, create_agent_configuration, get_capabilities_for_role, requires_approval, 
     estimate_task_duration, TASK_TYPES, SAMPLE_AGENT_TASKS
 )
 
