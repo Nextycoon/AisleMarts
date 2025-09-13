@@ -585,12 +585,11 @@ class APITester:
             self.log_test("Cities in Radius", False, "No city ID available for testing")
             return
         
-        radius_data = {
+        # Use GET with query parameters
+        success, data = self.make_request("GET", "/geographic/cities/in-radius", {
             "center_city_id": self.test_city_id,
             "radius_km": 100
-        }
-        
-        success, data = self.make_request("POST", "/geographic/cities/in-radius", radius_data)
+        })
         
         if success and isinstance(data, dict) and "cities" in data and "count" in data:
             self.log_test("Cities in Radius", True, f"Found {data['count']} cities within 100km radius")
