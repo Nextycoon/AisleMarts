@@ -350,6 +350,12 @@ export default function HomeScreen() {
 
       {/* Search */}
       <View style={styles.searchContainer}>
+        <TouchableOpacity 
+          style={styles.aiHubButton}
+          onPress={() => setShowAISearchHub(true)}
+        >
+          <Text style={styles.aiHubButtonText}>+</Text>
+        </TouchableOpacity>
         <TextInput
           style={styles.searchInput}
           placeholder="Ask AI to find anything..."
