@@ -1,0 +1,33 @@
+# CODEOWNERS file for AisleMarts repository
+# This file defines who owns which parts of the codebase and will be automatically 
+# requested for review when changes are made to those areas.
+
+# Global ownership - Repository owner is default reviewer for all changes
+* @Nextycoon
+
+# Backend API and application code
+/backend/ @Nextycoon
+/apps/api/ @Nextycoon
+
+# Frontend and mobile application code  
+/frontend/ @Nextycoon
+/apps/mobile/ @Nextycoon
+
+# Infrastructure and deployment configuration
+/.github/ @Nextycoon
+/docker-compose.yml @Nextycoon
+/Dockerfile* @Nextycoon
+
+# Security-sensitive files require extra review
+/branch_protection_rules.md @Nextycoon
+/.github/workflows/ @Nextycoon
+/**/requirements.txt @Nextycoon
+/**/package.json @Nextycoon
+
+# Documentation
+/*.md @Nextycoon
+/docs/ @Nextycoon
+
+# Configuration files
+/.env* @Nextycoon
+/backend/app/config/ @Nextycoon
