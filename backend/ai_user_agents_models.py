@@ -421,3 +421,75 @@ def estimate_task_duration(task_type: str) -> int:
     """Estimate task duration in minutes"""
     task_config = TASK_TYPES.get(task_type, {})
     return task_config.get("estimated_duration_minutes", 5)
+
+# Agent Capabilities and Templates
+AGENT_CAPABILITIES = {
+    "buyer_agent": [
+        "shopping_automation",
+        "price_comparison", 
+        "product_research",
+        "order_tracking",
+        "return_processing",
+        "wishlist_management"
+    ],
+    "brand_agent": [
+        "inventory_management",
+        "logistics_coordination",
+        "document_generation",
+        "compliance_screening",
+        "market_research",
+        "customer_communication",
+        "analytics_reporting"
+    ]
+}
+
+TASK_TEMPLATES = {
+    "shopping_basic": {
+        "template_id": "shopping_basic",
+        "name": "Basic Shopping Task",
+        "description": "Automated shopping with basic configuration",
+        "task_type": "shopping.place_order",
+        "default_parameters": {
+            "payment_pref": "auto",
+            "max_budget": 500.0
+        },
+        "required_fields": ["cart_id", "address_id"],
+        "estimated_duration": 10
+    },
+    "logistics_estimate": {
+        "template_id": "logistics_estimate",
+        "name": "Logistics Estimation",
+        "description": "Get shipping estimates and logistics options",
+        "task_type": "logistics.estimate",
+        "default_parameters": {
+            "incoterm": "DDP",
+            "service_level": "balanced"
+        },
+        "required_fields": ["items", "destination"],
+        "estimated_duration": 5
+    },
+    "document_export": {
+        "template_id": "document_export",
+        "name": "Export Documents Generation",
+        "description": "Generate export documentation package",
+        "task_type": "docs.generate_pack",
+        "default_parameters": {
+            "flow": "export",
+            "incoterm": "FOB"
+        },
+        "required_fields": ["items", "destination"],
+        "estimated_duration": 15
+    },
+    "research_market": {
+        "template_id": "research_market",
+        "name": "Market Research",
+        "description": "Research market conditions and opportunities",
+        "task_type": "research.market",
+        "default_parameters": {
+            "scope": "competitive_analysis",
+            "depth": "standard"
+        },
+        "required_fields": ["query", "target_market"],
+        "estimated_duration": 20
+    }
+}
