@@ -146,6 +146,35 @@ export default function HomeScreen() {
     }
   };
 
+  const handleAISearchResults = (query: string, results: any) => {
+    console.log('AI Search Results:', { query, results });
+    
+    // If it's a quick search with product results, update the main products display  
+    if (results && results.results && Array.isArray(results.results)) {
+      // Transform AI search results to match our Product interface
+      const transformedProducts = results.results.map((result: any) => ({
+        _id: result.id,
+        title: result.title,
+        price: result.price,
+        currency: result.currency,
+        image: 'data:image/svg+xml;base64,PHN2ZyB3aWR0aD0iMjAwIiBoZWlnaHQ9IjIwMCIgdmlld0JveD0iMCAwIDIwMCAyMDAiIGZpbGw9Im5vbmUiIHhtbG5zPSJodHRwOi8vd3d3LnczLm9yZy8yMDAwL3N2ZyI+CjxyZWN0IHdpZHRoPSIyMDAiIGhlaWdodD0iMjAwIiBmaWxsPSIjZjBmMGYwIi8+CjxjaXJjbGUgY3g9IjEwMCIgY3k9IjgwIiByPSIzMCIgZmlsbD0iI2ZmZjIwMCIvPgo8cmVjdCB4PSI5NSIgeT0iMTEwIiB3aWR0aD0iMTAiIGhlaWdodD0iMzAiIGZpbGw9IiM2NjYiLz4KPHRLEHUGEQ9InQgaWQ9InRleHQiIGZpbGw9IiM2NjYiPgogIDx0c3BhbiB4PSIxMDAiIHk9IjE2NSIgdGV4dC1hbmNob3I9Im1pZGRsZSI+QUk8L3RzcGFuPgo8L3RleHQ+Cjwvc3ZnPgo=',
+        category: result.category || 'general',
+        brand: result.seller?.name || 'Unknown',
+        slug: result.id,
+        description: `Product from ${result.seller?.country || 'Unknown'}`,
+        brand_slug: 'unknown',
+        created_at: new Date(),
+        stock: 100
+      }));
+      
+      setProducts(transformedProducts);
+      setSearchQuery(query);
+    }
+    
+    // Close the AI Search Hub
+    setShowAISearchHub(false);
+  };
+
   const startVoiceSearch = async () => {
     try {
       setIsVoiceSearching(true);
