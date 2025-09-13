@@ -334,9 +334,197 @@ class APITester:
         else:
             self.log_test("Invalid Product ID Error", False, f"Expected 404 error, got: {data}")
     
+    def test_ai_chat_anonymous(self):
+        """Test AI chat endpoint without authentication"""
+        print("\n🔍 Testing AI Chat (Anonymous)...")
+        
+        chat_data = {
+            "message": "I need headphones for work",
+            "context": {"user_type": "anonymous"}
+        }
+        
+        success, data = self.make_request("POST", "/ai/chat", chat_data, headers={})
+        
+        if success and isinstance(data, dict) and "response" in data:
+            self.log_test("AI Chat (Anonymous)", True, f"Response received: {data.get('response')[:100]}...")
+        else:
+            self.log_test("AI Chat (Anonymous)", False, str(data))
+    
+    def test_ai_chat_authenticated(self):
+        """Test AI chat endpoint with authentication"""
+        print("\n🔍 Testing AI Chat (Authenticated)...")
+        
+        if not self.auth_token:
+            self.log_test("AI Chat (Authenticated)", False, "No auth token available")
+            return
+        
+        chat_data = {
+            "message": "Find me affordable electronics",
+            "context": {"user_type": "authenticated", "budget": "under_100"}
+        }
+        
+        success, data = self.make_request("POST", "/ai/chat", chat_data)
+        
+        if success and isinstance(data, dict) and "response" in data:
+            self.log_test("AI Chat (Authenticated)", True, f"Agent ID: {data.get('agent_id')}")
+        else:
+            self.log_test("AI Chat (Authenticated)", False, str(data))
+    
+    def test_ai_locale_detection(self):
+        """Test AI locale detection endpoint"""
+        print("\n🔍 Testing AI Locale Detection...")
+        
+        success, data = self.make_request("GET", "/ai/locale-detection")
+        
+        if success and isinstance(data, dict) and "country" in data and "currency" in data:
+            self.log_test("AI Locale Detection", True, f"Country: {data.get('country')}, Currency: {data.get('currency')}")
+        else:
+            self.log_test("AI Locale Detection", False, str(data))
+    
+    def test_ai_product_recommendations_anonymous(self):
+        """Test AI product recommendations without authentication"""
+        print("\n🔍 Testing AI Product Recommendations (Anonymous)...")
+        
+        rec_data = {
+            "query": "I need headphones for work",
+            "max_results": 5
+        }
+        
+        success, data = self.make_request("POST", "/ai/recommendations", rec_data, headers={})
+        
+        if success and isinstance(data, dict) and "recommendations" in data:
+            recommendations = data.get("recommendations", [])
+            self.log_test("AI Product Recommendations (Anonymous)", True, f"Found {len(recommendations)} recommendations")
+        else:
+            self.log_test("AI Product Recommendations (Anonymous)", False, str(data))
+    
+    def test_ai_product_recommendations_authenticated(self):
+        """Test AI product recommendations with authentication"""
+        print("\n🔍 Testing AI Product Recommendations (Authenticated)...")
+        
+        if not self.auth_token:
+            self.log_test("AI Product Recommendations (Authenticated)", False, "No auth token available")
+            return
+        
+        rec_data = {
+            "query": "find me affordable electronics",
+            "max_results": 10
+        }
+        
+        success, data = self.make_request("POST", "/ai/recommendations", rec_data)
+        
+        if success and isinstance(data, dict) and "recommendations" in data:
+            recommendations = data.get("recommendations", [])
+            ai_explanation = data.get("ai_explanation", "")
+            self.log_test("AI Product Recommendations (Authenticated)", True, f"Found {len(recommendations)} recommendations with AI explanation")
+        else:
+            self.log_test("AI Product Recommendations (Authenticated)", False, str(data))
+    
+    def test_ai_search_enhancement(self):
+        """Test AI search enhancement endpoint"""
+        print("\n🔍 Testing AI Search Enhancement...")
+        
+        search_data = {
+            "query": "cheap phone",
+            "context": {"budget": "low", "category": "electronics"}
+        }
+        
+        success, data = self.make_request("POST", "/ai/search/enhance", search_data)
+        
+        if success and isinstance(data, dict) and ("enhanced_keywords" in data or "original_query" in data):
+            self.log_test("AI Search Enhancement", True, f"Enhanced query processed")
+        else:
+            self.log_test("AI Search Enhancement", False, str(data))
+    
+    def test_ai_intent_analysis_anonymous(self):
+        """Test AI intent analysis without authentication"""
+        print("\n🔍 Testing AI Intent Analysis (Anonymous)...")
+        
+        success, data = self.make_request("POST", "/ai/intent-analysis", {"message": "I need headphones for work"}, headers={})
+        
+        if success and isinstance(data, dict) and ("intent_type" in data or "extracted_keywords" in data):
+            self.log_test("AI Intent Analysis (Anonymous)", True, f"Intent analyzed: {data.get('intent_type', 'unknown')}")
+        else:
+            self.log_test("AI Intent Analysis (Anonymous)", False, str(data))
+    
+    def test_ai_intent_analysis_authenticated(self):
+        """Test AI intent analysis with authentication"""
+        print("\n🔍 Testing AI Intent Analysis (Authenticated)...")
+        
+        if not self.auth_token:
+            self.log_test("AI Intent Analysis (Authenticated)", False, "No auth token available")
+            return
+        
+        success, data = self.make_request("POST", "/ai/intent-analysis", {"message": "find me affordable electronics"})
+        
+        if success and isinstance(data, dict) and ("intent_type" in data or "extracted_keywords" in data):
+            self.log_test("AI Intent Analysis (Authenticated)", True, f"Intent: {data.get('intent_type', 'unknown')}")
+        else:
+            self.log_test("AI Intent Analysis (Authenticated)", False, str(data))
+    
+    def test_ai_onboarding_anonymous(self):
+        """Test AI onboarding guidance without authentication"""
+        print("\n🔍 Testing AI Onboarding (Anonymous)...")
+        
+        onboarding_data = {
+            "user_info": {
+                "interests": ["electronics", "fashion"],
+                "budget": "medium",
+                "location": "US"
+            }
+        }
+        
+        success, data = self.make_request("POST", "/ai/onboarding", onboarding_data, headers={})
+        
+        if success and isinstance(data, dict) and "guidance" in data:
+            self.log_test("AI Onboarding (Anonymous)", True, f"Guidance provided for {data.get('user_role', 'unknown')} role")
+        else:
+            self.log_test("AI Onboarding (Anonymous)", False, str(data))
+    
+    def test_ai_onboarding_authenticated(self):
+        """Test AI onboarding guidance with authentication"""
+        print("\n🔍 Testing AI Onboarding (Authenticated)...")
+        
+        if not self.auth_token:
+            self.log_test("AI Onboarding (Authenticated)", False, "No auth token available")
+            return
+        
+        onboarding_data = {
+            "user_info": {
+                "interests": ["electronics", "home"],
+                "budget": "high",
+                "shopping_style": "quality_first"
+            }
+        }
+        
+        success, data = self.make_request("POST", "/ai/onboarding", onboarding_data)
+        
+        if success and isinstance(data, dict) and "guidance" in data:
+            self.log_test("AI Onboarding (Authenticated)", True, f"Personalized guidance for {data.get('user_role', 'buyer')}")
+        else:
+            self.log_test("AI Onboarding (Authenticated)", False, str(data))
+    
+    def test_ai_error_scenarios(self):
+        """Test AI endpoints error handling"""
+        print("\n🔍 Testing AI Error Scenarios...")
+        
+        # Test chat with empty message
+        success, data = self.make_request("POST", "/ai/chat", {"message": ""}, headers={})
+        if not success or (isinstance(data, dict) and "response" in data):
+            self.log_test("AI Chat Empty Message", True, "Handled empty message appropriately")
+        else:
+            self.log_test("AI Chat Empty Message", False, "Should handle empty messages")
+        
+        # Test recommendations with invalid query
+        success, data = self.make_request("POST", "/ai/recommendations", {"query": "", "max_results": 0}, headers={})
+        if success and isinstance(data, dict):
+            self.log_test("AI Recommendations Invalid Query", True, "Handled invalid query")
+        else:
+            self.log_test("AI Recommendations Invalid Query", False, str(data))
+    
     def run_all_tests(self):
         """Run all tests in sequence"""
-        print(f"🚀 Starting AisleMarts Backend API Tests")
+        print(f"🚀 Starting AisleMarts Backend API Tests (Including AI Endpoints)")
         print(f"📍 Testing against: {API_URL}")
         print("=" * 60)
         
@@ -359,6 +547,20 @@ class APITester:
         self.test_user_orders()
         self.test_order_details()
         self.test_error_scenarios()
+        
+        # AI Endpoint Tests
+        print("\n" + "🤖" * 20 + " AI ENDPOINTS TESTING " + "🤖" * 20)
+        self.test_ai_chat_anonymous()
+        self.test_ai_chat_authenticated()
+        self.test_ai_locale_detection()
+        self.test_ai_product_recommendations_anonymous()
+        self.test_ai_product_recommendations_authenticated()
+        self.test_ai_search_enhancement()
+        self.test_ai_intent_analysis_anonymous()
+        self.test_ai_intent_analysis_authenticated()
+        self.test_ai_onboarding_anonymous()
+        self.test_ai_onboarding_authenticated()
+        self.test_ai_error_scenarios()
         
         # Print summary
         print("\n" + "=" * 60)
