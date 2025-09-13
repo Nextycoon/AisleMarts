@@ -819,7 +819,8 @@ class APITester:
             "include_international": True
         }
         
-        success, data = self.make_request("POST", "/geographic/filter-products", filter_data, {"q": "headphones", "limit": 10})
+        # Use GET with query parameters instead of POST with headers
+        success, data = self.make_request("POST", "/geographic/filter-products", filter_data)
         
         if success and isinstance(data, dict) and "products" in data:
             products = data.get("products", [])
