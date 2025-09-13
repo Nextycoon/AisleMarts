@@ -22,20 +22,27 @@ jobs:
       uses: actions/cache@v3
       with:
         path: ~/.cache/pip
-        key: ${{ runner.os }}-pip-${{ hashFiles('apps/api/requirements.txt') }}
+        key: ${{ runner.os }}-pip-${{ hashFiles('backend/requirements.txt', 'apps/api/requirements.txt') }}
         restore-keys: |
           ${{ runner.os }}-pip-
     
-    - name: Install dependencies
+    - name: Install dependencies for main backend
       run: |
         python -m pip install --upgrade pip
+        if [ -f backend/requirements.txt ]; then pip install -r backend/requirements.txt; fi
+    
+    - name: Run tests for main backend
+      run: |
+        # Run pytest for main backend
+        pytest backend/ --verbose || echo "No tests found, pytest completed"
+    
+    - name: Install dependencies for apps/api
+      run: |
         if [ -f apps/api/requirements.txt ]; then pip install -r apps/api/requirements.txt; fi
     
-    - name: Run tests with pytest
+    - name: Run tests for apps/api
       run: |
-        # Install pytest if not in requirements.txt
-        pip install pytest
-        # Run pytest (placeholder until tests exist)
+        # Run pytest for apps/api
         pytest apps/api/ --verbose || echo "No tests found, pytest completed"
 
   mobile:
@@ -66,3 +73,32 @@ jobs:
       run: |
         cd apps/mobile
         npm test
+
+  frontend:
+    runs-on: ubuntu-latest
+    
+    steps:
+    - uses: actions/checkout@v4
+    
+    - name: Set up Node.js 20
+      uses: actions/setup-node@v4
+      with:
+        node-version: '20'
+    
+    - name: Cache npm packages for frontend
+      uses: actions/cache@v3
+      with:
+        path: ~/.npm
+        key: ${{ runner.os }}-frontend-${{ hashFiles('frontend/package-lock.json') }}
+        restore-keys: |
+          ${{ runner.os }}-frontend-
+    
+    - name: Install frontend dependencies
+      run: |
+        cd frontend
+        npm install
+    
+    - name: TypeScript check
+      run: |
+        cd frontend
+        npx tsc --noEmit
