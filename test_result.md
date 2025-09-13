@@ -102,7 +102,7 @@
 # Testing Data - Main Agent and testing sub agent both should log testing data below this section
 #====================================================================================================
 
-user_problem_statement: "Test the AisleMarts backend API thoroughly including health check, authentication, products, categories, cart/checkout, and error handling"
+user_problem_statement: "Test the new AI-powered backend API endpoints that were just implemented including AI Chat, Locale Detection, Product Recommendations, Search Enhancement, Intent Analysis, and Onboarding Guidance"
 
 backend:
   - task: "Health Check API"
@@ -188,6 +188,78 @@ backend:
         - working: true
           agent: "testing"
           comment: "Error handling working correctly - returns proper 401 for invalid credentials, 404 for invalid product IDs, and 401 for unauthorized access."
+
+  - task: "AI Chat Endpoint"
+    implemented: true
+    working: true
+    file: "/app/backend/ai_routes.py"
+    stuck_count: 0
+    priority: "high"
+    needs_retesting: false
+    status_history:
+        - working: true
+          agent: "testing"
+          comment: "AI Chat endpoint /api/ai/chat working perfectly for both anonymous and authenticated users. Provides intelligent, contextual responses using Emergent LLM. Tested with queries like 'I need headphones for work' and 'find me affordable electronics'."
+
+  - task: "AI Locale Detection"
+    implemented: true
+    working: true
+    file: "/app/backend/ai_routes.py"
+    stuck_count: 0
+    priority: "high"
+    needs_retesting: false
+    status_history:
+        - working: true
+          agent: "testing"
+          comment: "AI Locale Detection endpoint /api/ai/locale-detection working correctly. Returns country, language, currency, and AI-powered recommendations for user's locale."
+
+  - task: "AI Product Recommendations"
+    implemented: true
+    working: true
+    file: "/app/backend/ai_routes.py"
+    stuck_count: 0
+    priority: "high"
+    needs_retesting: false
+    status_history:
+        - working: true
+          agent: "testing"
+          comment: "AI Product Recommendations endpoint /api/ai/recommendations working excellently for both anonymous and authenticated users. Provides intelligent product suggestions with AI explanations based on user queries."
+
+  - task: "AI Search Enhancement"
+    implemented: true
+    working: true
+    file: "/app/backend/ai_routes.py"
+    stuck_count: 0
+    priority: "high"
+    needs_retesting: false
+    status_history:
+        - working: true
+          agent: "testing"
+          comment: "AI Search Enhancement endpoint /api/ai/search/enhance working correctly. Enhances user search queries with AI-powered keyword expansion and suggestions."
+
+  - task: "AI Intent Analysis"
+    implemented: true
+    working: true
+    file: "/app/backend/ai_routes.py"
+    stuck_count: 0
+    priority: "high"
+    needs_retesting: false
+    status_history:
+        - working: true
+          agent: "testing"
+          comment: "AI Intent Analysis endpoint /api/ai/intent-analysis working perfectly for both anonymous and authenticated users. Analyzes user queries and returns intent type, extracted keywords, suggested actions, and urgency level."
+
+  - task: "AI Onboarding Guidance"
+    implemented: true
+    working: true
+    file: "/app/backend/ai_routes.py"
+    stuck_count: 0
+    priority: "high"
+    needs_retesting: false
+    status_history:
+        - working: true
+          agent: "testing"
+          comment: "AI Onboarding Guidance endpoint /api/ai/onboarding working excellently for both anonymous and authenticated users. Provides personalized welcome messages and guidance based on user information."
 
 frontend:
   - task: "App Launch & Home Screen"
