@@ -888,9 +888,9 @@ class APITester:
     
     def run_all_tests(self):
         """Run all tests in sequence"""
-        print(f"🚀 Starting AisleMarts Backend API Tests (Including AI Endpoints)")
+        print(f"🚀 Starting AisleMarts Backend API Tests (Including Geographic Targeting System)")
         print(f"📍 Testing against: {API_URL}")
-        print("=" * 60)
+        print("=" * 80)
         
         # Core functionality tests
         self.test_health_check()
@@ -926,10 +926,26 @@ class APITester:
         self.test_ai_onboarding_authenticated()
         self.test_ai_error_scenarios()
         
+        # Geographic Targeting System Tests
+        print("\n" + "🌍" * 15 + " GEOGRAPHIC TARGETING SYSTEM TESTING " + "🌍" * 15)
+        self.test_geographic_data_initialization()
+        self.test_countries_list()
+        self.test_cities_list()
+        self.test_cities_in_radius()
+        self.test_seller_visibility_creation()
+        self.test_seller_visibility_retrieval()
+        self.test_ai_market_analysis()
+        self.test_ai_targeting_recommendations()
+        self.test_performance_tracking()
+        self.test_vendor_analytics()
+        self.test_geographic_product_filtering()
+        self.test_seller_geographic_insights()
+        self.test_geographic_authentication_controls()
+        
         # Print summary
-        print("\n" + "=" * 60)
+        print("\n" + "=" * 80)
         print("📊 TEST SUMMARY")
-        print("=" * 60)
+        print("=" * 80)
         
         passed = sum(1 for result in self.test_results if result["success"])
         total = len(self.test_results)
