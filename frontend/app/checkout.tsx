@@ -410,6 +410,27 @@ const styles = StyleSheet.create({
   scrollView: {
     flex: 1,
   },
+  header: {
+    flexDirection: 'row',
+    alignItems: 'center',
+    justifyContent: 'space-between',
+    paddingHorizontal: 16,
+    paddingVertical: 12,
+    backgroundColor: 'white',
+    borderBottomWidth: 1,
+    borderBottomColor: '#eee',
+  },
+  backButton: {
+    padding: 8,
+  },
+  headerTitle: {
+    fontSize: 18,
+    fontWeight: 'bold',
+    color: '#333',
+  },
+  headerRight: {
+    width: 40,
+  },
   section: {
     backgroundColor: 'white',
     marginBottom: 8,
@@ -457,47 +478,51 @@ const styles = StyleSheet.create({
     color: '#333',
     marginLeft: 12,
   },
-  summaryRow: {
+  countryOptions: {
     flexDirection: 'row',
-    justifyContent: 'space-between',
-    alignItems: 'center',
-    paddingVertical: 4,
+    flexWrap: 'wrap',
+    gap: 8,
   },
-  summaryLabel: {
+  countryOption: {
+    paddingHorizontal: 16,
+    paddingVertical: 8,
+    borderRadius: 20,
+    backgroundColor: '#f0f0f0',
+    borderWidth: 1,
+    borderColor: '#e0e0e0',
+  },
+  countryOptionSelected: {
+    backgroundColor: '#007AFF',
+    borderColor: '#007AFF',
+  },
+  countryOptionText: {
+    fontSize: 14,
+    color: '#666',
+    fontWeight: '500',
+  },
+  countryOptionTextSelected: {
+    color: 'white',
+  },
+  optimizationOption: {
+    paddingHorizontal: 12,
+    paddingVertical: 8,
+    borderRadius: 16,
+    backgroundColor: '#f0f0f0',
+    borderWidth: 1,
+    borderColor: '#e0e0e0',
+    minWidth: 80,
+    alignItems: 'center',
+  },
+  loadingContainer: {
+    alignItems: 'center',
+    padding: 32,
+    backgroundColor: 'white',
+    marginBottom: 8,
+  },
+  loadingText: {
     fontSize: 16,
     color: '#666',
-  },
-  summaryValue: {
-    fontSize: 16,
-    color: '#333',
-  },
-  totalRow: {
     marginTop: 12,
-    paddingTop: 12,
-    borderTopWidth: 1,
-    borderTopColor: '#f0f0f0',
-  },
-  totalLabel: {
-    fontSize: 18,
-    fontWeight: 'bold',
-    color: '#333',
-  },
-  totalValue: {
-    fontSize: 20,
-    fontWeight: 'bold',
-    color: '#007AFF',
-  },
-  paymentMethod: {
-    flexDirection: 'row',
-    alignItems: 'center',
-    padding: 12,
-    backgroundColor: '#f9f9f9',
-    borderRadius: 8,
-  },
-  paymentMethodText: {
-    fontSize: 16,
-    color: '#333',
-    marginLeft: 12,
   },
   footer: {
     backgroundColor: 'white',
