@@ -1,4 +1,4 @@
-import apiClient from './client';
+import apiClient from '../api/client';
 
 // AI Domain Specialization Service - Trade Intelligence
 export interface HSCodeSuggestion {
