@@ -508,5 +508,154 @@ Provide city recommendations with:
         except Exception as e:
             return {"error": str(e)}
 
+    async def create_agent_configuration(self, config_data: Dict[str, Any]) -> str:
+        """Create AI agent configuration for user"""
+        try:
+            agent_id = str(uuid.uuid4())
+            
+            config: AgentConfiguration = {
+                "_id": agent_id,
+                "user_id": config_data["user_id"],
+                "agent_role": AgentRole(config_data["agent_role"]),
+                "tasks_enabled": config_data.get("tasks_enabled", []),
+                "priority_rules": [PriorityRule(rule) for rule in config_data.get("priority_rules", [])],
+                "interest_tags": config_data.get("interest_tags", []),
+                "agent_style": AgentStyle(config_data["agent_style"]),
+                "default_mode": DelegationMode(config_data["default_mode"]),
+                "spend_limits": config_data.get("spend_limits", {"daily": 100.0, "monthly": 1000.0}),
+                "learning_enabled": config_data.get("learning_enabled", True),
+                "privacy_mode": config_data.get("privacy_mode", False),
+                "created_at": datetime.utcnow(),
+                "updated_at": datetime.utcnow()
+            }
+            
+            await db().agent_configurations.insert_one(config)
+            return agent_id
+            
+        except Exception as e:
+            raise Exception(f"Failed to create agent configuration: {str(e)}")
+
+    async def get_agent_configuration(self, user_id: str) -> Optional[AgentConfiguration]:
+        """Get user's agent configuration"""
+        try:
+            config = await db().agent_configurations.find_one({"user_id": user_id})
+            return config
+        except Exception:
+            return None
+
+    async def get_user_tasks(self, user_id: str, status: Optional[TaskStatus] = None, limit: int = 50) -> List[AgentTask]:
+        """Get user's agent tasks"""
+        try:
+            query = {"user_id": user_id}
+            if status:
+                query["status"] = status.value if hasattr(status, 'value') else status
+            
+            cursor = db().agent_tasks.find(query).sort("created_at", -1).limit(limit)
+            tasks = await cursor.to_list(length=limit)
+            return tasks
+            
+        except Exception:
+            return []
+
+    async def get_task(self, task_id: str, user_id: str) -> Optional[AgentTask]:
+        """Get task by ID"""
+        try:
+            task = await db().agent_tasks.find_one({"_id": task_id, "user_id": user_id})
+            return task
+        except Exception:
+            return None
+
+    async def update_task_status(self, task_id: str, user_id: str, action: str, feedback: Optional[str] = None) -> bool:
+        """Update task status based on action"""
+        try:
+            task = await self.get_task(task_id, user_id)
+            if not task:
+                return False
+            
+            if action == "approve":
+                task["status"] = TaskStatus.APPROVED.value
+                task["approved_at"] = datetime.utcnow()
+            elif action == "reject":
+                task["status"] = TaskStatus.CANCELLED.value
+            elif action == "cancel":
+                task["status"] = TaskStatus.CANCELLED.value
+            elif action == "retry":
+                task["status"] = TaskStatus.PENDING.value
+            
+            if feedback:
+                task["execution_log"].append({
+                    "timestamp": datetime.utcnow(),
+                    "action": action,
+                    "feedback": feedback
+                })
+            
+            task["updated_at"] = datetime.utcnow()
+            
+            await db().agent_tasks.replace_one(
+                {"_id": task_id, "user_id": user_id},
+                task
+            )
+            
+            return True
+            
+        except Exception:
+            return False
+
+    async def create_task_new(self, task_data: Dict[str, Any]) -> str:
+        """Create new task for AI agent (new API compatible method)"""
+        try:
+            user_id = task_data["user_id"]
+            task_type = task_data["task_type"]
+            
+            # Get or create agent configuration
+            config = await self.get_agent_configuration(user_id)
+            if not config:
+                # Create default configuration
+                default_config = {
+                    "user_id": user_id,
+                    "agent_role": "buyer_agent",
+                    "tasks_enabled": [task_type],
+                    "priority_rules": ["cost"],
+                    "interest_tags": [],
+                    "agent_style": "concise",
+                    "default_mode": "manual",
+                    "spend_limits": {"daily": 100.0, "monthly": 1000.0},
+                    "learning_enabled": True,
+                    "privacy_mode": False
+                }
+                await self.create_agent_configuration(default_config)
+                config = await self.get_agent_configuration(user_id)
+            
+            # Create task
+            task_id = str(uuid.uuid4())
+            
+            task: AgentTask = {
+                "_id": task_id,
+                "user_id": user_id,
+                "agent_id": config["_id"],
+                "task_type": task_type,
+                "task_name": task_data.get("task_name", task_type),
+                "description": task_data.get("description", f"Execute {task_type} task"),
+                "input_data": task_data.get("parameters", {}),
+                "status": TaskStatus.PENDING,
+                "delegation_mode": DelegationMode(task_data.get("mode", "manual")),
+                "requires_approval": True,  # Default to requiring approval
+                "output_data": None,
+                "execution_log": [],
+                "created_at": datetime.utcnow(),
+                "approved_at": None,
+                "started_at": None,
+                "completed_at": None,
+                "estimated_cost": task_data.get("budget_limit", 0.0),
+                "actual_cost": None,
+                "execution_time_seconds": None
+            }
+            
+            await db().agent_tasks.insert_one(task)
+            return task_id
+            
+        except Exception as e:
+            raise Exception(f"Failed to create task: {str(e)}")
+
 # Global AI user agents service instance
 ai_user_agents_service = AIUserAgentsService()
