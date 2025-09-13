@@ -11,6 +11,7 @@ class Settings(BaseSettings):
     STRIPE_WEBHOOK_SECRET: str = os.getenv("STRIPE_WEBHOOK_SECRET", "whsec_")
     FRONTEND_ORIGIN: str = os.getenv("FRONTEND_ORIGIN", "exp+aislemarts://localhost")
     OPENAI_API_KEY: str | None = os.getenv("OPENAI_API_KEY")
+    EMERGENT_LLM_KEY: str | None = os.getenv("EMERGENT_LLM_KEY")
 
     class Config:
         env_file = ".env"
