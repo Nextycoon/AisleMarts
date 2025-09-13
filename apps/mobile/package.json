@@ -3,7 +3,8 @@
   "version": "1.0.0",
   "private": true,
   "scripts": {
-    "test": "jest"
+  "test": "jest",
+  "start": "react-native start"
   },
   "dependencies": {
     "react": "^18.2.0",
