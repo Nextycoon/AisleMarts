@@ -79,11 +79,12 @@ Always prioritize:
             # Return default configuration on error
             return create_agent_configuration(user_id, role)
 
-    async def update_agent_configuration(self, user_id: str, role: AgentRole, updates: Dict[str, Any]) -> bool:
+    async def update_agent_configuration(self, user_id: str, updates: Dict[str, Any]) -> bool:
         """Update agent configuration"""
         try:
+            # Update the user's existing configuration (any role)
             result = await db().agent_configurations.update_one(
-                {"user_id": user_id, "agent_role": role.value},
+                {"user_id": user_id},
                 {"$set": {**updates, "updated_at": datetime.utcnow()}}
             )
             return result.modified_count > 0
