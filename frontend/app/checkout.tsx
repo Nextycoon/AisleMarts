@@ -1,4 +1,4 @@
-import React, { useState } from 'react';
+import React, { useState, useEffect } from 'react';
 import {
   View,
   Text,
@@ -15,15 +15,77 @@ import { Ionicons } from '@expo/vector-icons';
 import { useAuth } from '../src/context/AuthContext';
 import { useCart, CartItem } from '../src/context/CartContext';
 import { API } from '../src/api/client';
+import { 
+  paymentsTaxService, 
+  EnhancedPaymentIntent,
+  PaymentMethod,
+  TaxCalculation 
+} from '../src/services/PaymentsTaxService';
+import { 
+  PaymentMethodCard, 
+  TaxBreakdown, 
+  FraudAssessmentCard, 
+  AIInsightsCard 
+} from '../src/components/PaymentsComponents';
 
 export default function CheckoutScreen() {
   const { user } = useAuth();
   const { items, totalAmount, clearCart } = useCart();
   const [loading, setLoading] = useState(false);
+  const [paymentIntent, setPaymentIntent] = useState<EnhancedPaymentIntent | null>(null);
+  const [selectedPaymentMethod, setSelectedPaymentMethod] = useState<PaymentMethod | null>(null);
+  const [userCountry, setUserCountry] = useState('US'); // Default to US
+  const [userCurrency, setCurrency] = useState('USD'); // Default to USD
+  const [optimizationFocus, setOptimizationFocus] = useState<'cost' | 'speed' | 'security'>('cost');
+
+  useEffect(() => {
+    if (user && items.length > 0) {
+      loadPaymentData();
+    }
+  }, [user, items, userCountry, userCurrency, optimizationFocus]);
+
+  const loadPaymentData = async () => {
+    if (!user || items.length === 0) return;
+
+    setLoading(true);
+    try {
+      // Convert cart items to the format expected by the API
+      const apiItems = items.map(item => ({
+        sku: item.product_id,
+        category: 'electronics', // Default category - in production this would come from product data
+        price: item.price,
+        quantity: item.quantity,
+      }));
+
+      const intent = await paymentsTaxService.createEnhancedPaymentIntent(
+        apiItems,
+        userCountry,
+        userCurrency,
+        'B2C', // Assuming B2C for now
+        undefined,
+        optimizationFocus
+      );
+
+      setPaymentIntent(intent);
+      
+      // Auto-select the best payment method
+      if (intent.payment_methods.methods.length > 0) {
+        setSelectedPaymentMethod(intent.payment_methods.methods[0]);
+      }
+    } catch (error: any) {
+      console.error('Failed to load payment data:', error);
+      Alert.alert(
+        'Payment Setup Error',
+        'Failed to load payment options. Please try again.'
+      );
+    } finally {
+      setLoading(false);
+    }
+  };
 
   const handlePayment = async () => {
-    if (!user) {
-      Alert.alert('Error', 'Please sign in to continue');
+    if (!user || !paymentIntent || !selectedPaymentMethod) {
+      Alert.alert('Error', 'Please select a payment method');
       return;
     }
 
@@ -32,11 +94,36 @@ export default function CheckoutScreen() {
       return;
     }
 
+    // Check fraud assessment
+    if (paymentIntent.fraud_assessment.action === 'block') {
+      Alert.alert(
+        'Payment Blocked',
+        'This transaction has been flagged for security reasons. Please contact support.',
+        [{ text: 'OK', onPress: () => router.replace('/profile') }]
+      );
+      return;
+    }
+
+    if (paymentIntent.fraud_assessment.action === 'require_verification') {
+      Alert.alert(
+        'Verification Required',
+        'Additional verification is required for this transaction. Please contact support to complete your purchase.',
+        [{ text: 'Contact Support', onPress: () => router.replace('/profile') }]
+      );
+      return;
+    }
+
     // For web platform, show a message that payment is not supported
     if (Platform.OS === 'web') {
       Alert.alert(
         'Payment Not Available',
-        'Payment processing is only available on mobile devices. Please use the mobile app to complete your purchase.',
+        `Payment processing is only available on mobile devices. 
+
+Selected Method: ${selectedPaymentMethod.display_name}
+Total: $${paymentIntent.total_with_tax.toFixed(2)}
+Tax: $${paymentIntent.tax_calculation.total_tax.toFixed(2)}
+
+Please use the mobile app to complete your purchase.`,
         [
           {
             text: 'OK',
@@ -50,7 +137,7 @@ export default function CheckoutScreen() {
     setLoading(true);
 
     try {
-      // Create payment intent
+      // Create payment intent with the original API (enhanced with tax calculation)
       const cartItems = items.map(item => ({
         product_id: item.product_id,
         quantity: item.quantity,
@@ -58,8 +145,12 @@ export default function CheckoutScreen() {
 
       const paymentResponse = await API.post('/checkout/payment-intent', {
         items: cartItems,
-        currency: 'USD',
-        shipping_address: null, // TODO: Add address collection
+        currency: userCurrency,
+        shipping_address: null,
+        // Add enhanced payment data
+        selected_payment_method: selectedPaymentMethod.processor,
+        tax_amount: paymentIntent.tax_calculation.total_tax,
+        country: userCountry,
       });
 
       const { clientSecret, paymentIntentId, orderId } = paymentResponse.data;
@@ -67,7 +158,12 @@ export default function CheckoutScreen() {
       // For now, just simulate successful payment
       Alert.alert(
         'Payment Successful!',
-        'Your order has been placed successfully.',
+        `Your order has been placed successfully.
+
+Payment Method: ${selectedPaymentMethod.display_name}
+Subtotal: $${paymentIntent.subtotal.toFixed(2)}
+Tax: $${paymentIntent.tax_calculation.total_tax.toFixed(2)}
+Total: $${paymentIntent.total_with_tax.toFixed(2)}`,
         [
           {
             text: 'View Order',
@@ -102,6 +198,60 @@ export default function CheckoutScreen() {
       <Text style={styles.itemTotal}>
         ${(item.price * item.quantity).toFixed(2)}
       </Text>
+    </View>
+  );
+
+  const renderCountrySelector = () => (
+    <View style={styles.section}>
+      <Text style={styles.sectionTitle}>Billing Country</Text>
+      <View style={styles.countryOptions}>
+        {['US', 'GB', 'TR', 'DE', 'JP'].map(country => (
+          <TouchableOpacity
+            key={country}
+            style={[
+              styles.countryOption,
+              userCountry === country && styles.countryOptionSelected
+            ]}
+            onPress={() => setUserCountry(country)}
+          >
+            <Text style={[
+              styles.countryOptionText,
+              userCountry === country && styles.countryOptionTextSelected
+            ]}>
+              {country}
+            </Text>
+          </TouchableOpacity>
+        ))}
+      </View>
+    </View>
+  );
+
+  const renderOptimizationSelector = () => (
+    <View style={styles.section}>
+      <Text style={styles.sectionTitle}>Optimize For</Text>
+      <View style={styles.countryOptions}>
+        {[
+          { key: 'cost', label: '💰 Cost', icon: 'cash-outline' },
+          { key: 'speed', label: '⚡ Speed', icon: 'flash-outline' },
+          { key: 'security', label: '🛡️ Security', icon: 'shield-outline' }
+        ].map(option => (
+          <TouchableOpacity
+            key={option.key}
+            style={[
+              styles.optimizationOption,
+              optimizationFocus === option.key && styles.countryOptionSelected
+            ]}
+            onPress={() => setOptimizationFocus(option.key as any)}
+          >
+            <Text style={[
+              styles.countryOptionText,
+              optimizationFocus === option.key && styles.countryOptionTextSelected
+            ]}>
+              {option.label}
+            </Text>
+          </TouchableOpacity>
+        ))}
+      </View>
     </View>
   );
 
@@ -145,73 +295,109 @@ export default function CheckoutScreen() {
   return (
     <SafeAreaView style={styles.container}>
       <ScrollView style={styles.scrollView}>
+        {/* Header */}
+        <View style={styles.header}>
+          <TouchableOpacity 
+            style={styles.backButton}
+            onPress={() => router.back()}
+          >
+            <Ionicons name="arrow-back" size={24} color="#333" />
+          </TouchableOpacity>
+          <Text style={styles.headerTitle}>Checkout</Text>
+          <View style={styles.headerRight} />
+        </View>
+
+        {/* Country and Optimization Selectors */}
+        {renderCountrySelector()}
+        {renderOptimizationSelector()}
+
         {/* Order Summary */}
         <View style={styles.section}>
           <Text style={styles.sectionTitle}>Order Summary</Text>
           {items.map(renderOrderItem)}
         </View>
 
-        {/* User Info */}
-        <View style={styles.section}>
-          <Text style={styles.sectionTitle}>Customer Information</Text>
-          <View style={styles.userInfo}>
-            <Ionicons name="person-outline" size={20} color="#666" />
-            <Text style={styles.userInfoText}>{user.name || user.email}</Text>
+        {loading ? (
+          <View style={styles.loadingContainer}>
+            <ActivityIndicator size="large" color="#007AFF" />
+            <Text style={styles.loadingText}>Loading payment options...</Text>
           </View>
-        </View>
+        ) : paymentIntent ? (
+          <>
+            {/* Tax Breakdown */}
+            <TaxBreakdown 
+              taxCalculation={paymentIntent.tax_calculation}
+              subtotal={paymentIntent.subtotal}
+            />
 
-        {/* Payment Summary */}
-        <View style={styles.section}>
-          <Text style={styles.sectionTitle}>Payment Summary</Text>
-          <View style={styles.summaryRow}>
-            <Text style={styles.summaryLabel}>Subtotal:</Text>
-            <Text style={styles.summaryValue}>${totalAmount.toFixed(2)}</Text>
-          </View>
-          <View style={styles.summaryRow}>
-            <Text style={styles.summaryLabel}>Shipping:</Text>
-            <Text style={styles.summaryValue}>Free</Text>
-          </View>
-          <View style={styles.summaryRow}>
-            <Text style={styles.summaryLabel}>Tax:</Text>
-            <Text style={styles.summaryValue}>$0.00</Text>
-          </View>
-          <View style={[styles.summaryRow, styles.totalRow]}>
-            <Text style={styles.totalLabel}>Total:</Text>
-            <Text style={styles.totalValue}>${totalAmount.toFixed(2)}</Text>
-          </View>
-        </View>
+            {/* Fraud Assessment */}
+            <FraudAssessmentCard assessment={paymentIntent.fraud_assessment} />
 
-        {/* Payment Method */}
-        <View style={styles.section}>
-          <Text style={styles.sectionTitle}>Payment Method</Text>
-          <View style={styles.paymentMethod}>
-            <Ionicons name="card-outline" size={20} color="#666" />
-            <Text style={styles.paymentMethodText}>
-              {Platform.OS === 'web' ? 'Not Available on Web' : 'Credit/Debit Card'}
-            </Text>
-          </View>
-        </View>
+            {/* Payment Methods */}
+            <View style={styles.section}>
+              <Text style={styles.sectionTitle}>Payment Methods</Text>
+              {paymentIntent.payment_methods.methods.map((method, index) => (
+                <PaymentMethodCard
+                  key={index}
+                  method={method}
+                  selected={selectedPaymentMethod?.display_name === method.display_name}
+                  onSelect={() => setSelectedPaymentMethod(method)}
+                />
+              ))}
+            </View>
+
+            {/* AI Insights */}
+            <AIInsightsCard
+              title="Payment Insights"
+              insights={paymentIntent.payment_methods.ai_insights}
+              icon="card-outline"
+            />
+
+            {/* Currency Conversion (if applicable) */}
+            {paymentIntent.currency_conversion && (
+              <AIInsightsCard
+                title="Currency Conversion"
+                insights={`${paymentIntent.currency_conversion.amount} ${paymentIntent.currency_conversion.from_currency} = ${paymentIntent.currency_conversion.converted_amount} ${paymentIntent.currency_conversion.to_currency} (Rate: ${paymentIntent.currency_conversion.rate}). ${paymentIntent.currency_conversion.ai_insights}`}
+                icon="repeat-outline"
+              />
+            )}
+
+            {/* User Info */}
+            <View style={styles.section}>
+              <Text style={styles.sectionTitle}>Customer Information</Text>
+              <View style={styles.userInfo}>
+                <Ionicons name="person-outline" size={20} color="#666" />
+                <Text style={styles.userInfoText}>{user.name || user.email}</Text>
+              </View>
+            </View>
+          </>
+        ) : null}
       </ScrollView>
 
       {/* Pay Button */}
-      <View style={styles.footer}>
-        <TouchableOpacity
-          style={[styles.payButton, loading && styles.payButtonDisabled]}
-          onPress={handlePayment}
-          disabled={loading}
-        >
-          {loading ? (
-            <ActivityIndicator color="white" />
-          ) : (
-            <>
-              <Ionicons name="card-outline" size={20} color="white" />
-              <Text style={styles.payButtonText}>
-                Pay ${totalAmount.toFixed(2)}
-              </Text>
-            </>
-          )}
-        </TouchableOpacity>
-      </View>
+      {paymentIntent && (
+        <View style={styles.footer}>
+          <TouchableOpacity
+            style={[
+              styles.payButton, 
+              (loading || !selectedPaymentMethod || paymentIntent.fraud_assessment.action === 'block') && styles.payButtonDisabled
+            ]}
+            onPress={handlePayment}
+            disabled={loading || !selectedPaymentMethod || paymentIntent.fraud_assessment.action === 'block'}
+          >
+            {loading ? (
+              <ActivityIndicator color="white" />
+            ) : (
+              <>
+                <Ionicons name="card-outline" size={20} color="white" />
+                <Text style={styles.payButtonText}>
+                  Pay ${paymentIntent.total_with_tax.toFixed(2)}
+                </Text>
+              </>
+            )}
+          </TouchableOpacity>
+        </View>
+      )}
     </SafeAreaView>
   );
 }
