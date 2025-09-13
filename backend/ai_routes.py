@@ -28,6 +28,9 @@ class SearchEnhanceRequest(BaseModel):
     query: str
     context: Optional[Dict[str, Any]] = None
 
+class IntentAnalysisRequest(BaseModel):
+    message: str
+
 class ProductRecommendationRequest(BaseModel):
     query: str
     max_results: Optional[int] = 10
