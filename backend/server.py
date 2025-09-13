@@ -270,7 +270,12 @@ async def stripe_webhook(request: Request):
     
     return {"received": True}
 
-# Include the router in the main app
+from ai_routes import router as ai_router
+
+# Include AI routes
+app.include_router(ai_router)
+
+# Include the main API router
 app.include_router(api_router)
 
 if __name__ == "__main__":
