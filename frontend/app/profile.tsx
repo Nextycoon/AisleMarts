@@ -266,6 +266,14 @@ const styles = StyleSheet.create({
     backgroundColor: 'white',
     marginTop: 8,
   },
+  sectionHeader: {
+    fontSize: 16,
+    fontWeight: 'bold',
+    color: '#333',
+    padding: 16,
+    paddingBottom: 8,
+    backgroundColor: '#f8f9fa',
+  },
   menuItem: {
     flexDirection: 'row',
     alignItems: 'center',
@@ -286,9 +294,25 @@ const styles = StyleSheet.create({
     alignItems: 'center',
     marginRight: 16,
   },
+  menuItemTextContainer: {
+    flexDirection: 'row',
+    alignItems: 'center',
+  },
   menuItemText: {
     fontSize: 16,
     color: '#333',
+  },
+  newBadge: {
+    backgroundColor: '#FF3B30',
+    paddingHorizontal: 6,
+    paddingVertical: 2,
+    borderRadius: 8,
+    marginLeft: 8,
+  },
+  newBadgeText: {
+    color: 'white',
+    fontSize: 10,
+    fontWeight: 'bold',
   },
   signOutSection: {
     backgroundColor: 'white',
