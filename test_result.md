@@ -1000,10 +1000,10 @@ metadata:
 
 test_plan:
   current_focus:
-    - "Enhanced Checkout with Payment & Tax Engine"
-    - "Payment & Tax Service Integration"
-    - "Payment Components Library"
-    - "Admin Dashboard for Analytics"
+    - "AI Domain Specialization - Trade Intelligence"
+    - "Auth Identity & Verification System"
+    - "AI User Agents Framework"
+    - "Profile Card System"
   stuck_tasks: []
   test_all: false
   test_priority: "high_first"
