@@ -271,9 +271,13 @@ async def stripe_webhook(request: Request):
     return {"received": True}
 
 from ai_routes import router as ai_router
+from geographic_routes import router as geographic_router
 
 # Include AI routes
 app.include_router(ai_router)
+
+# Include Geographic routes
+app.include_router(geographic_router)
 
 # Include the main API router
 app.include_router(api_router)
