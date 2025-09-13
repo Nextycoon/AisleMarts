@@ -455,6 +455,14 @@ export default function HomeScreen() {
           locale_info: localeInfo
         }}
       />
+
+      {/* AI Search Hub Modal */}
+      <AISearchHub
+        visible={showAISearchHub}
+        onClose={() => setShowAISearchHub(false)}
+        onSearch={handleAISearchResults}
+        initialQuery={searchQuery}
+      />
     </SafeAreaView>
   );
 }
