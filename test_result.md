@@ -999,12 +999,9 @@ metadata:
   run_ui: false
 
 test_plan:
-  current_focus:
-    - "AI Domain Specialization - Trade Intelligence"
-    - "Auth Identity & Verification System"
+  current_focus: []
+  stuck_tasks:
     - "AI User Agents Framework"
-    - "Profile Card System"
-  stuck_tasks: []
   test_all: false
   test_priority: "high_first"
 
