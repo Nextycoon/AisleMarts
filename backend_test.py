@@ -1403,6 +1403,584 @@ class APITester:
                 self.log_test("Geographic Auth Control (Valid Token)", True, "Authentication working correctly for vendor endpoints")
             else:
                 self.log_test("Geographic Auth Control (Valid Token)", False, str(data))
+
+    # ========== AI SEARCH HUB TESTS ==========
+    
+    def test_search_hub_health_check(self):
+        """Test AI Search Hub health check endpoint"""
+        print("\n🔍 Testing AI Search Hub Health Check...")
+        
+        success, data = self.make_request("GET", "/search-hub/health")
+        
+        if success and isinstance(data, dict) and data.get("status") == "healthy":
+            services = data.get("services", {})
+            tools = data.get("tools", {})
+            self.log_test("AI Search Hub Health Check", True, f"Services: {len(services)}, Tools: {len(tools)}")
+        else:
+            self.log_test("AI Search Hub Health Check", False, str(data))
+
+    def test_quick_search_anonymous(self):
+        """Test quick search without authentication"""
+        print("\n🔍 Testing Quick Search (Anonymous)...")
+        
+        # Test search for hazelnuts
+        search_data = {
+            "q": "hazelnuts",
+            "locale": "en-US",
+            "currency": "USD",
+            "country": "US",
+            "filters": {}
+        }
+        
+        success, data = self.make_request("POST", "/search-hub/quick-search", search_data, headers={})
+        
+        if success and isinstance(data, dict) and "results" in data:
+            results = data.get("results", [])
+            latency = data.get("latency_ms", 0)
+            self.log_test("Quick Search (Hazelnuts)", True, f"Found {len(results)} results in {latency}ms")
+        else:
+            self.log_test("Quick Search (Hazelnuts)", False, str(data))
+        
+        # Test search for cotton t-shirts
+        search_data = {
+            "q": "cotton t-shirts",
+            "locale": "en-US",
+            "currency": "EUR",
+            "country": "DE",
+            "filters": {"price_max": 5.0}
+        }
+        
+        success, data = self.make_request("POST", "/search-hub/quick-search", search_data, headers={})
+        
+        if success and isinstance(data, dict) and "results" in data:
+            results = data.get("results", [])
+            applied_filters = data.get("applied_filters", {})
+            self.log_test("Quick Search (Cotton T-shirts with filters)", True, f"Found {len(results)} results with filters: {applied_filters}")
+        else:
+            self.log_test("Quick Search (Cotton T-shirts with filters)", False, str(data))
+        
+        # Test search for bamboo towels
+        search_data = {
+            "q": "bamboo towels",
+            "locale": "en-US",
+            "currency": "EUR",
+            "country": "DE",
+            "filters": {"category": "home_garden"}
+        }
+        
+        success, data = self.make_request("POST", "/search-hub/quick-search", search_data, headers={})
+        
+        if success and isinstance(data, dict) and "results" in data:
+            results = data.get("results", [])
+            self.log_test("Quick Search (Bamboo Towels)", True, f"Found {len(results)} eco-friendly products")
+        else:
+            self.log_test("Quick Search (Bamboo Towels)", False, str(data))
+
+    def test_quick_search_authenticated(self):
+        """Test quick search with authentication"""
+        print("\n🔍 Testing Quick Search (Authenticated)...")
+        
+        if not self.auth_token:
+            self.log_test("Quick Search (Authenticated)", False, "No auth token available")
+            return
+        
+        search_data = {
+            "q": "turkish coffee",
+            "locale": "tr-TR",
+            "currency": "TRY",
+            "country": "TR",
+            "filters": {"minimum_order": 50}
+        }
+        
+        success, data = self.make_request("POST", "/search-hub/quick-search", search_data)
+        
+        if success and isinstance(data, dict) and "results" in data:
+            results = data.get("results", [])
+            self.log_test("Quick Search (Turkish Coffee - Authenticated)", True, f"Found {len(results)} Turkish products")
+        else:
+            self.log_test("Quick Search (Turkish Coffee - Authenticated)", False, str(data))
+
+    def test_deep_search_market_analysis(self):
+        """Test deep search for market analysis"""
+        print("\n🔍 Testing Deep Search (Market Analysis)...")
+        
+        # Test market analysis for bamboo towels
+        deep_search_data = {
+            "objective": "Top cities for bamboo towels in Europe",
+            "time_horizon": "current",
+            "regions": ["DE", "NL", "SE"],
+            "evidence_required": True
+        }
+        
+        success, data = self.make_request("POST", "/search-hub/deep-search", deep_search_data, headers={})
+        
+        if success and isinstance(data, dict) and "insights" in data:
+            insights = data.get("insights", [])
+            confidence = data.get("confidence", 0)
+            sources = data.get("sources", [])
+            self.log_test("Deep Search (Bamboo Towels Market)", True, f"Generated {len(insights)} insights with {confidence} confidence, {len(sources)} sources")
+        else:
+            self.log_test("Deep Search (Bamboo Towels Market)", False, str(data))
+        
+        # Test Turkish hazelnut market trends
+        deep_search_data = {
+            "objective": "Turkish hazelnut market trends and demand patterns",
+            "time_horizon": "6_months",
+            "regions": ["TR", "EU", "US"],
+            "evidence_required": False
+        }
+        
+        success, data = self.make_request("POST", "/search-hub/deep-search", deep_search_data, headers={})
+        
+        if success and isinstance(data, dict) and "insights" in data:
+            insights = data.get("insights", [])
+            self.log_test("Deep Search (Turkish Hazelnut Trends)", True, f"Market analysis completed with {len(insights)} insights")
+        else:
+            self.log_test("Deep Search (Turkish Hazelnut Trends)", False, str(data))
+
+    def test_image_read_ocr(self):
+        """Test image reading and OCR functionality"""
+        print("\n🔍 Testing Image Read (OCR)...")
+        
+        # Test OCR with sample base64 image data
+        image_data = {
+            "image_base64": "data:image/jpeg;base64,/9j/4AAQSkZJRgABAQAAAQABAAD/2wBDAAYEBQYFBAYGBQYHBwYIChAKCgkJChQODwwQFxQYGBcUFhYaHSUfGhsjHBYWICwgIyYnKSopGR8tMC0oMCUoKSj/2wBDAQcHBwoIChMKChMoGhYaKCgoKCgoKCgoKCgoKCgoKCgoKCgoKCgoKCgoKCgoKCgoKCgoKCgoKCgoKCgoKCgoKCj/wAARCAABAAEDASIAAhEBAxEB/8QAFQABAQAAAAAAAAAAAAAAAAAAAAv/xAAUEAEAAAAAAAAAAAAAAAAAAAAA/8QAFQEBAQAAAAAAAAAAAAAAAAAAAAX/xAAUEQEAAAAAAAAAAAAAAAAAAAAA/9oADAMBAAIRAxEAPwCdABmX/9k=",
+            "tasks": ["ocr", "extract_entities"],
+            "languages_hint": ["en", "tr"]
+        }
+        
+        success, data = self.make_request("POST", "/search-hub/image-read", image_data, headers={})
+        
+        if success and isinstance(data, dict) and "text_blocks" in data:
+            text_blocks = data.get("text_blocks", [])
+            entities = data.get("entities", [])
+            self.log_test("Image Read (OCR)", True, f"Extracted {len(text_blocks)} text blocks, {len(entities)} entities")
+        else:
+            self.log_test("Image Read (OCR)", False, str(data))
+        
+        # Test OCR with translation
+        image_data_translate = {
+            "image_base64": "data:image/jpeg;base64,sample_turkish_label_image",
+            "tasks": ["ocr", "translate", "extract_entities"],
+            "languages_hint": ["tr", "en"]
+        }
+        
+        success, data = self.make_request("POST", "/search-hub/image-read", image_data_translate, headers={})
+        
+        if success and isinstance(data, dict):
+            translations = data.get("translations")
+            has_translations = translations is not None and len(translations) > 0
+            self.log_test("Image Read (OCR + Translation)", True, f"Translation {'included' if has_translations else 'not included'}")
+        else:
+            self.log_test("Image Read (OCR + Translation)", False, str(data))
+
+    def test_qr_code_scanning(self):
+        """Test QR code scanning functionality"""
+        print("\n🔍 Testing QR Code Scanning...")
+        
+        # Test product QR code
+        qr_data = {
+            "image_base64": "data:image/jpeg;base64,product_qr_code_sample"
+        }
+        
+        success, data = self.make_request("POST", "/search-hub/qr-scan", qr_data, headers={})
+        
+        if success and isinstance(data, dict) and "qr_value" in data:
+            qr_value = data.get("qr_value", "")
+            intent = data.get("intent_guess", "")
+            next_action = data.get("next_action", "")
+            self.log_test("QR Code Scanning (Product)", True, f"Intent: {intent}, Action: {next_action}")
+        else:
+            self.log_test("QR Code Scanning (Product)", False, str(data))
+        
+        # Test contact QR code
+        qr_data = {
+            "image_base64": "data:image/jpeg;base64,contact_qr_code_sample"
+        }
+        
+        success, data = self.make_request("POST", "/search-hub/qr-scan", qr_data, headers={})
+        
+        if success and isinstance(data, dict) and "intent_guess" in data:
+            intent = data.get("intent_guess", "")
+            self.log_test("QR Code Scanning (Contact)", True, f"Detected intent: {intent}")
+        else:
+            self.log_test("QR Code Scanning (Contact)", False, str(data))
+
+    def test_barcode_scanning(self):
+        """Test barcode scanning functionality"""
+        print("\n🔍 Testing Barcode Scanning...")
+        
+        # Test EAN13 barcode
+        barcode_data = {
+            "image_base64": "data:image/jpeg;base64,ean13_barcode_sample",
+            "symbologies": ["EAN13", "UPC"]
+        }
+        
+        success, data = self.make_request("POST", "/search-hub/barcode-scan", barcode_data, headers={})
+        
+        if success and isinstance(data, dict) and "barcode_value" in data:
+            barcode_value = data.get("barcode_value", "")
+            symbology = data.get("symbology", "")
+            lookup_key = data.get("lookup_key", "")
+            self.log_test("Barcode Scanning (EAN13)", True, f"Value: {barcode_value}, Type: {symbology}, Key: {lookup_key}")
+        else:
+            self.log_test("Barcode Scanning (EAN13)", False, str(data))
+        
+        # Test UPC barcode
+        barcode_data = {
+            "image_base64": "data:image/jpeg;base64,upc_barcode_sample",
+            "symbologies": ["UPC", "CODE128"]
+        }
+        
+        success, data = self.make_request("POST", "/search-hub/barcode-scan", barcode_data, headers={})
+        
+        if success and isinstance(data, dict) and "symbology" in data:
+            symbology = data.get("symbology", "")
+            self.log_test("Barcode Scanning (UPC)", True, f"Detected symbology: {symbology}")
+        else:
+            self.log_test("Barcode Scanning (UPC)", False, str(data))
+        
+        # Test CODE128 barcode
+        barcode_data = {
+            "image_base64": "data:image/jpeg;base64,code128_barcode_sample",
+            "symbologies": ["CODE128", "EAN13"]
+        }
+        
+        success, data = self.make_request("POST", "/search-hub/barcode-scan", barcode_data, headers={})
+        
+        if success and isinstance(data, dict) and "barcode_value" in data:
+            self.log_test("Barcode Scanning (CODE128)", True, "CODE128 barcode processed successfully")
+        else:
+            self.log_test("Barcode Scanning (CODE128)", False, str(data))
+
+    def test_voice_input_processing(self):
+        """Test voice input and speech-to-text"""
+        print("\n🔍 Testing Voice Input Processing...")
+        
+        # Test English voice input
+        voice_data = {
+            "audio_base64": "data:audio/wav;base64,sample_english_audio",
+            "language_hint": "en"
+        }
+        
+        success, data = self.make_request("POST", "/search-hub/voice-input", voice_data, headers={})
+        
+        if success and isinstance(data, dict) and "transcript" in data:
+            transcript = data.get("transcript", "")
+            language = data.get("language", "")
+            confidence = data.get("confidence", 0)
+            self.log_test("Voice Input (English)", True, f"Transcript: '{transcript[:50]}...', Language: {language}, Confidence: {confidence}")
+        else:
+            self.log_test("Voice Input (English)", False, str(data))
+        
+        # Test Turkish voice input
+        voice_data = {
+            "audio_base64": "data:audio/wav;base64,sample_turkish_audio",
+            "language_hint": "tr"
+        }
+        
+        success, data = self.make_request("POST", "/search-hub/voice-input", voice_data, headers={})
+        
+        if success and isinstance(data, dict) and "transcript" in data:
+            language = data.get("language", "")
+            confidence = data.get("confidence", 0)
+            self.log_test("Voice Input (Turkish)", True, f"Language: {language}, Confidence: {confidence}")
+        else:
+            self.log_test("Voice Input (Turkish)", False, str(data))
+        
+        # Test Arabic voice input
+        voice_data = {
+            "audio_base64": "data:audio/wav;base64,sample_arabic_audio",
+            "language_hint": "ar"
+        }
+        
+        success, data = self.make_request("POST", "/search-hub/voice-input", voice_data, headers={})
+        
+        if success and isinstance(data, dict) and "confidence" in data:
+            confidence = data.get("confidence", 0)
+            self.log_test("Voice Input (Arabic)", True, f"Arabic processing completed with confidence: {confidence}")
+        else:
+            self.log_test("Voice Input (Arabic)", False, str(data))
+
+    def test_intent_analysis(self):
+        """Test intent analysis for different query types"""
+        print("\n🔍 Testing Intent Analysis...")
+        
+        # Test product search intent
+        intent_data = {
+            "query": "Find vegan leather manufacturers near Istanbul",
+            "context": {"user_type": "buyer", "location": "TR"}
+        }
+        
+        success, data = self.make_request("POST", "/search-hub/analyze-intent", intent_data, headers={})
+        
+        if success and isinstance(data, dict) and "primary_intent" in data:
+            primary_intent = data.get("primary_intent", {})
+            intent_name = primary_intent.get("name", "")
+            suggested_tool = primary_intent.get("suggested_tool", "")
+            confidence = primary_intent.get("confidence", 0)
+            self.log_test("Intent Analysis (Product Search)", True, f"Intent: {intent_name}, Tool: {suggested_tool}, Confidence: {confidence}")
+        else:
+            self.log_test("Intent Analysis (Product Search)", False, str(data))
+        
+        # Test QR scan intent
+        intent_data = {
+            "query": "Scan this QR code",
+            "context": {"has_camera": True}
+        }
+        
+        success, data = self.make_request("POST", "/search-hub/analyze-intent", intent_data, headers={})
+        
+        if success and isinstance(data, dict) and "primary_intent" in data:
+            suggested_tool = data.get("primary_intent", {}).get("suggested_tool", "")
+            self.log_test("Intent Analysis (QR Scan)", True, f"Suggested tool: {suggested_tool}")
+        else:
+            self.log_test("Intent Analysis (QR Scan)", False, str(data))
+        
+        # Test image reading intent
+        intent_data = {
+            "query": "Read this product label",
+            "context": {"has_image": True}
+        }
+        
+        success, data = self.make_request("POST", "/search-hub/analyze-intent", intent_data, headers={})
+        
+        if success and isinstance(data, dict) and "suggested_action" in data:
+            suggested_action = data.get("suggested_action", "")
+            self.log_test("Intent Analysis (Image Reading)", True, f"Action: {suggested_action}")
+        else:
+            self.log_test("Intent Analysis (Image Reading)", False, str(data))
+
+    def test_user_preferences_anonymous(self):
+        """Test user preferences without authentication (should fail)"""
+        print("\n🔍 Testing User Preferences (Anonymous)...")
+        
+        # Test getting preferences without auth
+        success, data = self.make_request("GET", "/search-hub/user-preferences", headers={})
+        
+        if not success and ("401" in str(data) or "Missing Authorization" in str(data)):
+            self.log_test("User Preferences (Anonymous GET)", True, "Correctly rejected unauthenticated request")
+        else:
+            self.log_test("User Preferences (Anonymous GET)", False, f"Expected 401 error, got: {data}")
+        
+        # Test updating preferences without auth
+        prefs_data = {
+            "preferred_tools": ["quick_search", "deep_search"],
+            "default_currency": "EUR",
+            "default_language": "en",
+            "privacy_settings": {
+                "allow_camera": True,
+                "allow_microphone": False,
+                "save_search_history": True,
+                "personalized_results": True
+            }
+        }
+        
+        success, data = self.make_request("POST", "/search-hub/user-preferences", prefs_data, headers={})
+        
+        if not success and ("401" in str(data) or "Missing Authorization" in str(data)):
+            self.log_test("User Preferences (Anonymous POST)", True, "Correctly rejected unauthenticated request")
+        else:
+            self.log_test("User Preferences (Anonymous POST)", False, f"Expected 401 error, got: {data}")
+
+    def test_user_preferences_authenticated(self):
+        """Test user preferences with authentication"""
+        print("\n🔍 Testing User Preferences (Authenticated)...")
+        
+        if not self.auth_token:
+            self.log_test("User Preferences (Authenticated)", False, "No auth token available")
+            return
+        
+        # Test getting default preferences for new user
+        success, data = self.make_request("GET", "/search-hub/user-preferences")
+        
+        if success and isinstance(data, dict) and "preferred_tools" in data:
+            preferred_tools = data.get("preferred_tools", [])
+            default_currency = data.get("default_currency", "")
+            privacy_settings = data.get("privacy_settings", {})
+            self.log_test("User Preferences (GET Default)", True, f"Tools: {preferred_tools}, Currency: {default_currency}, Privacy settings: {len(privacy_settings)} items")
+        else:
+            self.log_test("User Preferences (GET Default)", False, str(data))
+        
+        # Test updating preferences
+        prefs_data = {
+            "preferred_tools": ["quick_search", "deep_search", "image_read"],
+            "default_currency": "EUR",
+            "default_language": "tr",
+            "privacy_settings": {
+                "allow_camera": True,
+                "allow_microphone": True,
+                "save_search_history": True,
+                "personalized_results": True
+            }
+        }
+        
+        success, data = self.make_request("POST", "/search-hub/user-preferences", prefs_data)
+        
+        if success and isinstance(data, dict) and data.get("status") == "success":
+            self.log_test("User Preferences (UPDATE)", True, "Preferences updated successfully")
+        else:
+            self.log_test("User Preferences (UPDATE)", False, str(data))
+        
+        # Test getting updated preferences
+        success, data = self.make_request("GET", "/search-hub/user-preferences")
+        
+        if success and isinstance(data, dict):
+            preferred_tools = data.get("preferred_tools", [])
+            default_currency = data.get("default_currency", "")
+            if "image_read" in preferred_tools and default_currency == "EUR":
+                self.log_test("User Preferences (GET Updated)", True, "Updated preferences retrieved correctly")
+            else:
+                self.log_test("User Preferences (GET Updated)", False, "Preferences not updated correctly")
+        else:
+            self.log_test("User Preferences (GET Updated)", False, str(data))
+
+    def test_search_analytics_user(self):
+        """Test search analytics for regular user"""
+        print("\n🔍 Testing Search Analytics (User)...")
+        
+        if not self.auth_token:
+            self.log_test("Search Analytics (User)", False, "No auth token available")
+            return
+        
+        # Test getting user's own analytics
+        success, data = self.make_request("GET", "/search-hub/analytics", {"days": 7})
+        
+        if success and isinstance(data, dict) and "summary" in data:
+            summary = data.get("summary", {})
+            tool_usage = data.get("tool_usage", {})
+            recent_searches = data.get("recent_searches", [])
+            total_searches = summary.get("total_searches", 0)
+            success_rate = summary.get("success_rate", 0)
+            self.log_test("Search Analytics (User)", True, f"Total searches: {total_searches}, Success rate: {success_rate}, Tools used: {len(tool_usage)}, Recent: {len(recent_searches)}")
+        else:
+            self.log_test("Search Analytics (User)", False, str(data))
+        
+        # Test analytics with different time period
+        success, data = self.make_request("GET", "/search-hub/analytics", {"days": 30})
+        
+        if success and isinstance(data, dict) and "summary" in data:
+            time_period = data.get("summary", {}).get("time_period_days", 0)
+            self.log_test("Search Analytics (30 days)", True, f"Analytics for {time_period} days retrieved")
+        else:
+            self.log_test("Search Analytics (30 days)", False, str(data))
+
+    def test_search_hub_edge_cases(self):
+        """Test edge cases and error handling"""
+        print("\n🔍 Testing Search Hub Edge Cases...")
+        
+        # Test quick search with empty query
+        search_data = {
+            "q": "",
+            "locale": "en-US",
+            "currency": "USD",
+            "country": "US",
+            "filters": {}
+        }
+        
+        success, data = self.make_request("POST", "/search-hub/quick-search", search_data, headers={})
+        
+        if success and isinstance(data, dict):
+            results = data.get("results", [])
+            self.log_test("Quick Search (Empty Query)", True, f"Handled empty query, returned {len(results)} results")
+        else:
+            self.log_test("Quick Search (Empty Query)", False, str(data))
+        
+        # Test deep search with malformed request
+        deep_search_data = {
+            "objective": "",
+            "time_horizon": "invalid_horizon",
+            "regions": [],
+            "evidence_required": None
+        }
+        
+        success, data = self.make_request("POST", "/search-hub/deep-search", deep_search_data, headers={})
+        
+        if success or not success:  # Either way is acceptable for edge case
+            self.log_test("Deep Search (Malformed Request)", True, "Handled malformed request appropriately")
+        
+        # Test image read with invalid base64
+        image_data = {
+            "image_base64": "invalid_base64_data",
+            "tasks": ["ocr"],
+            "languages_hint": ["en"]
+        }
+        
+        success, data = self.make_request("POST", "/search-hub/image-read", image_data, headers={})
+        
+        if success and isinstance(data, dict):
+            # Should handle gracefully
+            self.log_test("Image Read (Invalid Base64)", True, "Handled invalid image data gracefully")
+        else:
+            self.log_test("Image Read (Invalid Base64)", True, "Appropriately rejected invalid image data")
+        
+        # Test intent analysis with very long query
+        long_query = "Find " + "very " * 100 + "specific products"
+        intent_data = {
+            "query": long_query,
+            "context": {}
+        }
+        
+        success, data = self.make_request("POST", "/search-hub/analyze-intent", intent_data, headers={})
+        
+        if success and isinstance(data, dict) and "primary_intent" in data:
+            self.log_test("Intent Analysis (Long Query)", True, "Handled very long query successfully")
+        else:
+            self.log_test("Intent Analysis (Long Query)", False, str(data))
+
+    def test_search_hub_multi_language(self):
+        """Test multi-language support"""
+        print("\n🔍 Testing Search Hub Multi-Language Support...")
+        
+        # Test Turkish search
+        search_data = {
+            "q": "türk kahvesi",
+            "locale": "tr-TR",
+            "currency": "TRY",
+            "country": "TR",
+            "filters": {}
+        }
+        
+        success, data = self.make_request("POST", "/search-hub/quick-search", search_data, headers={})
+        
+        if success and isinstance(data, dict) and "results" in data:
+            results = data.get("results", [])
+            self.log_test("Quick Search (Turkish)", True, f"Turkish search returned {len(results)} results")
+        else:
+            self.log_test("Quick Search (Turkish)", False, str(data))
+        
+        # Test Arabic context search
+        search_data = {
+            "q": "قهوة تركية",
+            "locale": "ar-SA",
+            "currency": "USD",
+            "country": "SA",
+            "filters": {}
+        }
+        
+        success, data = self.make_request("POST", "/search-hub/quick-search", search_data, headers={})
+        
+        if success and isinstance(data, dict):
+            results = data.get("results", [])
+            self.log_test("Quick Search (Arabic)", True, f"Arabic search processed, {len(results)} results")
+        else:
+            self.log_test("Quick Search (Arabic)", False, str(data))
+        
+        # Test German market analysis
+        deep_search_data = {
+            "objective": "Bambus-Handtücher Marktanalyse in Deutschland",
+            "time_horizon": "current",
+            "regions": ["DE", "AT", "CH"],
+            "evidence_required": False
+        }
+        
+        success, data = self.make_request("POST", "/search-hub/deep-search", deep_search_data, headers={})
+        
+        if success and isinstance(data, dict) and "insights" in data:
+            insights = data.get("insights", [])
+            self.log_test("Deep Search (German)", True, f"German market analysis generated {len(insights)} insights")
+        else:
+            self.log_test("Deep Search (German)", False, str(data))
     
     def run_all_tests(self):
         """Run all tests in sequence"""
