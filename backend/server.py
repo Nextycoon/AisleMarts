@@ -275,6 +275,9 @@ from geographic_routes import router as geographic_router
 from payments_tax_routes import router as payments_tax_router
 from ai_search_hub_routes import router as search_hub_router
 from ai_domain_routes import router as trade_router
+from auth_identity_routes import router as identity_router
+from ai_user_agents_routes import router as agents_router
+from profile_card_routes import router as profile_cards_router
 
 # Include AI routes
 app.include_router(ai_router)
@@ -290,6 +293,15 @@ app.include_router(search_hub_router)
 
 # Include AI Trade Intelligence routes
 app.include_router(trade_router)
+
+# Include Auth Identity routes
+app.include_router(identity_router)
+
+# Include AI User Agents routes
+app.include_router(agents_router)
+
+# Include Profile Cards routes
+app.include_router(profile_cards_router)
 
 # Include the main API router
 app.include_router(api_router)
