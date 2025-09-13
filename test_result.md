@@ -406,6 +406,66 @@ frontend:
           agent: "testing"
           comment: "✅ WORKING: Checkout process is accessible and implemented. Stripe dependencies removed and replaced with web-compatible payment flow. Shows appropriate message for web platform that payment is only available on mobile devices."
 
+  - task: "AI Sparkles Button & Assistant Modal"
+    implemented: true
+    working: false
+    file: "/app/frontend/app/index.tsx"
+    stuck_count: 1
+    priority: "high"
+    needs_retesting: true
+    status_history:
+        - working: false
+          agent: "testing"
+          comment: "❌ CRITICAL: AI sparkles button (✨) not visible in header despite being implemented in code. Icon rendering issue prevents access to AI Assistant modal. This blocks the primary AI interaction feature. Code shows button should be at line 298-302 with Ionicons sparkles icon, but not rendering on web platform."
+
+  - task: "Voice Search Integration"
+    implemented: true
+    working: false
+    file: "/app/frontend/app/index.tsx"
+    stuck_count: 1
+    priority: "high"
+    needs_retesting: true
+    status_history:
+        - working: false
+          agent: "testing"
+          comment: "❌ CRITICAL: Voice search button (🎤) not visible despite implementation. Code shows mic icon button at lines 329-339, but not rendering properly. This prevents users from accessing voice search functionality, a key AI feature."
+
+  - task: "AI Recommendations Display"
+    implemented: true
+    working: false
+    file: "/app/frontend/app/index.tsx"
+    stuck_count: 1
+    priority: "high"
+    needs_retesting: true
+    status_history:
+        - working: false
+          agent: "testing"
+          comment: "❌ ISSUE: AI Recommendations section not displaying on home screen. Code shows renderAIRecommendations() function at lines 244-279, but section not visible. May be related to AI service calls not returning data or conditional rendering logic."
+
+  - task: "AI-Enhanced Welcome & Locale Detection"
+    implemented: true
+    working: true
+    file: "/app/frontend/app/index.tsx"
+    stuck_count: 0
+    priority: "high"
+    needs_retesting: false
+    status_history:
+        - working: true
+          agent: "testing"
+          comment: "✅ WORKING: AI-powered welcome message displays correctly ('Welcome to AisleMarts! 🌍 Your AI-powered global marketplace. What can I help you find today?'). Locale detection showing '📍 US • USD' properly. AI service integration for welcome messages and locale detection functioning."
+
+  - task: "AI-Enhanced Search Placeholder"
+    implemented: true
+    working: true
+    file: "/app/frontend/app/index.tsx"
+    stuck_count: 0
+    priority: "medium"
+    needs_retesting: false
+    status_history:
+        - working: true
+          agent: "testing"
+          comment: "✅ WORKING: Search input shows AI-enhanced placeholder 'Ask AI to find anything...' correctly. This indicates AI integration is working for search enhancement features."
+
 metadata:
   created_by: "testing_agent"
   version: "1.1"
