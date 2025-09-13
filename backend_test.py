@@ -113,6 +113,23 @@ class APITester:
             self.log_test("User Registration", True, f"User may already exist: {data}")
             self.test_user_login()  # Try login instead
     
+    def test_vendor_login(self):
+        """Test vendor login for geographic features"""
+        print("\n🔍 Testing Vendor Login...")
+        
+        login_data = {
+            "email": "vendor@aislemarts.com",
+            "password": "password123"
+        }
+        
+        success, data = self.make_request("POST", "/auth/login", login_data)
+        
+        if success and isinstance(data, dict) and "access_token" in data:
+            self.vendor_auth_token = data["access_token"]
+            self.log_test("Vendor Login", True, "Successfully logged in vendor and got token")
+        else:
+            self.log_test("Vendor Login", False, str(data))
+    
     def test_user_login(self):
         """Test user login"""
         print("\n🔍 Testing User Login...")
