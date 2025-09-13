@@ -1,65 +1,72 @@
 <analysis>
-The AI engineer successfully bootstrapped and developed the AisleMarts application based on an initial comprehensive blueprint. The work started with an MVP focusing on core marketplace features, then progressively integrated advanced functionalities like AI-powered features, geographic targeting for sellers, and initiated global payment/tax processing. Key decisions included prioritizing a mobile-first approach using Expo/React Native, a FastAPI/MongoDB backend, JWT for authentication, and Stripe for payments. The AI adeptly handled dependency installations, backend API development, frontend UI creation, and critical debugging steps, such as resolving Stripe's web compatibility and vector icon rendering issues. The progression followed user-confirmed phased milestones, demonstrating a systematic approach to building a complex, AI-driven global e-commerce platform. The project is currently in the early stages of implementing global payment and tax systems.
+The AI engineer systematically developed the AisleMarts application, progressing from a core MVP to advanced AI and geographic features. Initially, the focus was on Phase 2C: Global Payments & Tax Engine. This involved creating backend models, services, and routes, seeding data, and developing frontend components for checkout and an admin dashboard. Upon successful completion and backend testing of Phase 2C, the user provided a **massive new specification** for an AI Search Hub and subsequently, an even more comprehensive ALL modules request encompassing AI Domain Specialization, Auth Identity, Profile Card, Documentation Compliance, Procedures by Category, and AI User Agents. The AI engineer has methodically begun implementing these by creating numerous backend models and service layers for the newly requested modules, fixing minor integration issues, and integrating the AI Search Hub into the frontend. The process demonstrates a robust, phased development approach, with clear user confirmations at each major shift, moving towards an enterprise-grade AI-powered global marketplace.
+
 </analysis>
 
 <product_requirements>
-The goal is to build **AisleMarts**, a cross-platform, AI-powered global marketplace. The initial comprehensive blueprint outlined architecture, directory structure, Prisma/GraphQL schemas, API examples, Next.js/React Native screens, AI pipelines, and infrastructure.
-
-The user explicitly confirmed the following MVP priorities:
-1.  **Basic marketplace**: Products, categories, vendors, shopping cart, checkout, orders, payments (implemented).
-2.  **AI integration**: Use Emergent LLM key (provider-agnostic) for semantic search and product Q&A (implemented in Phase 2A).
-3.  **Platform focus**: Mobile app first (Expo/React Native) (implemented).
-4.  **Core integrations**: Backend (FastAPI + MongoDB), Frontend (Expo/React Native), Auth (JWT), Payments (Stripe), Storage (Base64 images), Search (MongoDB text search, AI-enhanced later).
-
-Subsequent phases, based on a shared vision document, included:
-*   **Phase 2A (AI Core Features)**: Personal AI Agent System, Intelligent Onboarding & Localization, Multi-Modal Search & Discovery (Voice, Image, Barcode, Real-time translation), AI Matchmaking Engine (implemented).
-*   **Phase 2B (Seller Visibility & Geographic Targeting)**: Sellers control local/national/global product visibility with AI-powered geographic intelligence and analytics (implemented).
-*   **Phase 2C (Global Payments & Tax Engine)**: Regional payment optimization and smart tax calculations (currently being implemented).
+The overarching goal is AisleMarts, a cross-platform, AI-powered global marketplace.
+1.  **MVP (Implemented):** Basic marketplace features like products, categories, vendors, shopping cart, checkout, orders, and payments. Utilizes Expo/React Native (mobile-first), FastAPI/MongoDB, JWT, and Stripe.
+2.  **Phase 2A - AI Core Features (Implemented):** Personal AI agent system, intelligent onboarding/localization, multi-modal search (voice, image, barcode), real-time translation, and AI matchmaking.
+3.  **Phase 2B - Seller Visibility & Geographic Targeting (Implemented):** Sellers manage product visibility (local/national/global) with AI-powered geographic intelligence and analytics.
+4.  **Phase 2C - Global Payments & Tax Engine (Implemented):** Regional payment optimization and smart tax calculations, leveraging geographic targeting and AI for recommendations. This includes backend models, routes, and frontend integration for an enhanced checkout and admin analytics.
+5.  **AI Search Hub (Implemented):** Unified, multi-modal AI search (voice, image OCR, QR/barcode scan, quick/deep search) with user-controlled tools, localization, accessibility, and privacy-first design, integrated into the home screen.
+6.  **Comprehensive Enterprise Features (In Progress):** AI Domain Specialization (e-commerce/global trade AI), Auth Identity (advanced verification, trust badges, username/image policies), Profile Card (unified user/profile cards), Documentation Compliance (international trade document management), Procedures by Category (role-specific workflows), Documentation Procedures (document states, amendments), and AI User Agents (dedicated, customizable AI agents for end-to-end tasks).
 </product_requirements>
 
 <key_technical_concepts>
--   **Backend**: FastAPI, MongoDB (Motor), JWT (python-jose), bcrypt (passlib), Stripe API.
--   **Frontend**: Expo, React Native, TypeScript, , , axios, , , , .
--   **AI**: Emergent LLM key, , LangChain.
--   **Core Concepts**: REST APIs, Webhooks, Authentication (JWT), State Management (React Context, local ), Platform-specific code, Geographic data, AI-powered recommendations/search/locale detection.
+-   **Backend:** FastAPI, MongoDB (Motor), JWT, bcrypt, Stripe API,  (for LLMs).
+-   **Frontend:** Expo, React Native, TypeScript, , , , axios, , , .
+-   **AI:** Emergent LLM key, LangChain, semantic search, locale detection, recommendation generation.
+-   **Core Concepts:** REST APIs, Webhooks, Authentication (JWT, React Context), State Management, Platform-specific code, Geographic data, Multi-modal AI, Modular architecture.
 </key_technical_concepts>
 
 <code_architecture>
-The application follows a monorepo-like structure within , distinguishing between  (FastAPI) and  (Expo/React Native) applications.
+The application employs a monorepo-like structure within , separating  (FastAPI) and  (Expo/React Native) applications.
 
 
 
 **Key Files and Changes:**
-*   : The core FastAPI application. It was initially set up with , , , ,  endpoints. Later, AI-related routes (e.g., , ) and geographic routes (e.g., , ) were integrated.
-*   : Contains the AI logic, including LLM integration via , semantic search, locale detection, and recommendation generation.
-*   : Defines MongoDB document structures for countries, cities, seller visibility settings, and performance records.
-*   : Implements API endpoints for managing geographic data and seller visibility, including AI-powered insights.
-*   : Newly created file to define models for global payments and tax (e.g., payment methods, tax rates).
-*   : The Expo application entry point, wrapping  with .
-*   : Sets up the main navigation stack using , incorporating  and . (Note: This deviates from the system prompt's  directive but is the current working implementation).
-*   : Contains the platform-specific  and , ensuring Stripe is only loaded on native platforms.
-*   : Enhanced to include AI-powered welcome messages, locale detection, a search bar with voice input, and personalized recommendations.
-*   : New screen for sellers to manage product visibility (local, national, global) and view geographic performance analytics, integrated with AI recommendations.
-*   : Created to fix  rendering issues on the web platform, adding  plugin.
+-   : The main FastAPI entry point. Modified to include  and . It's crucial for consolidating all API endpoints.
+-   : Defines MongoDB schemas for payment methods, tax rates.
+-   : Implements API endpoints for payment and tax logic.
+-   : Seeds initial payment and tax data into MongoDB.
+-   : Defines MongoDB schemas for AI Search Hub related data.
+-   : Implements API endpoints for multi-modal AI search operations (voice, image OCR, QR/barcode scan, quick/deep search).
+-   , , , : Newly created models for the expanded AI/Identity features.
+-   , , , : Newly created service layers for the expanded AI/Identity features.
+-   : New frontend service for interacting with payments/tax backend APIs.
+-   : New frontend service for interacting with AI Search Hub backend APIs.
+-   : A new, detailed checkout screen component to manage payment methods, tax calculations, and order finalization.
+-   : Modified to route to the new .
+-   : A new component for the AI Search Hub modal, handling tool selection and input.
+-   : The main home screen. Heavily modified to include the AI Search Hub + button in the search bar, manage its state, and render the  modal.
+-   : A new screen for displaying payment and tax analytics.
+-   : Modified to include a navigation link to the .
+-   : Updated to include styles for the new checkout and AI Search Hub elements.
+-   : Updated to include .
 </code_architecture>
 
 <pending_tasks>
--   Complete the implementation of API routes for the global payments and tax system (Phase 2C).
--   Develop the frontend interfaces for managing and displaying global payment methods and tax computations.
--   Integrate AI for optimal payment/tax strategies.
--   Integrate geographic data for the payment and tax systems.
+-   Complete the implementation of API routes for AI Domain Specialization, Auth Identity, Profile Card, Documentation Compliance, Procedures by Category, and AI User Agents by integrating new service layers into .
+-   Develop frontend interfaces and user flows for all newly defined enterprise features (AI Domain Specialization, Auth Identity, Profile Card, Documentation Compliance, Procedures by Category, AI User Agents).
+-   Integrate AI for optimal payment/tax strategies and AI User Agents functionality across the application.
 </pending_tasks>
 
 <current_work>
-The AI engineer is currently implementing **Phase 2C: Global Payments & Tax Engine**. This phase focuses on building the financial backbone of the AisleMarts global marketplace.
+The AI engineer has just completed the implementation of the AI Search Hub, integrating it into the frontend's home screen. Prior to this, Phase 2C (Global Payments & Tax Engine) was fully implemented, including backend models, services, routes, data seeding, and frontend screens (enhanced checkout and admin dashboard).
 
-Specifically, the AI engineer has just started this phase by:
-1.  Creating the backend models for the payments and tax system in . This file will define the MongoDB document structures needed to store information about payment methods, tax rates, and related configurations.
-2.  The next immediate step is to create the corresponding API routes for these models, which will handle the logic for suggesting payment methods, computing taxes, and managing related data.
+The current focus is on the *next massive set of features* requested by the user, which includes:
+-   **AI Domain Specialization**
+-   **Auth Identity**
+-   **Profile Card System**
+-   **Documentation Compliance**
+-   **Procedures by Category**
+-   **Documentation Procedures**
+-   **AI User Agents Framework**
 
-The system will leverage the previously implemented Geographic Targeting System to provide country-specific recommendations for payment methods and jurisdiction-based tax computations. AI integration is also planned to offer optimal payment and tax strategies.
+The AI engineer has already created the backend MongoDB models and basic service layers for AI Domain Specialization (, ), AI User Agents (, ), Auth Identity (, ), and Profile Card (, ). The immediate step is to create and integrate the corresponding API routes for these services into the main  file to make them accessible to the frontend.
 </current_work>
 
 <optional_next_step>
-Create the API routes for the payments and tax system in the backend.
+Integrate the newly created service layers for AI Domain Specialization, Auth Identity, Profile Card, and AI User Agents into  by adding their respective API routes.
 </optional_next_step>
