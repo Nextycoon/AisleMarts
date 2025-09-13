@@ -8,7 +8,7 @@ from db import db
 from geographic_service import geographic_service
 from schemas import ProductOut
 
-router = APIRouter(prefix="/geographic", tags=["Geographic Targeting"])
+router = APIRouter(prefix="/api/geographic", tags=["Geographic Targeting"])
 
 # Request/Response models
 class VisibilityConfigRequest(BaseModel):
