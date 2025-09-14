@@ -333,6 +333,11 @@ const styles = StyleSheet.create({
     borderBottomWidth: 1,
     borderBottomColor: '#f0f0f0',
   },
+  featuredMenuItem: {
+    backgroundColor: '#F8F9FF',
+    borderLeftWidth: 4,
+    borderLeftColor: '#0A2540',
+  },
   menuItemLeft: {
     flexDirection: 'row',
     alignItems: 'center',
