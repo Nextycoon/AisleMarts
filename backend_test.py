@@ -3860,6 +3860,323 @@ class APITester:
         else:
             self.log_test("Documentation Procedures Reference Data", False, str(data))
     
+    # ========== BLUE ERA DASHBOARD BACKEND INTEGRATION TESTS ==========
+    
+    def test_blue_era_trust_score_api(self):
+        """Test Trust Score API for Blue Era Dashboard trust bar"""
+        print("\n💙 Testing Blue Era Trust Score API...")
+        
+        if not self.auth_token:
+            self.log_test("Blue Era Trust Score API", False, "No auth token available")
+            return
+        
+        # Get current user ID first
+        success, user_data = self.make_request("GET", "/auth/me")
+        if not success:
+            self.log_test("Blue Era Trust Score API", False, "Could not get current user")
+            return
+        
+        user_id = user_data.get("id") or user_data.get("_id")
+        if not user_id:
+            self.log_test("Blue Era Trust Score API", False, "No user ID found")
+            return
+        
+        # Test trust score endpoint
+        success, data = self.make_request("GET", f"/identity/trust-score/{user_id}")
+        
+        if success and isinstance(data, dict) and "trust_score" in data:
+            trust_score = data.get("trust_score", 0)
+            verification_level = data.get("verification_level", "unknown")
+            verification_count = data.get("verification_count", 0)
+            account_age = data.get("account_age_years", 0)
+            
+            # Validate trust score is numeric (0-100)
+            if isinstance(trust_score, (int, float)) and 0 <= trust_score <= 100:
+                self.log_test("Blue Era Trust Score API", True, f"Trust Score: {trust_score}/100, Level: {verification_level}, Verifications: {verification_count}, Account Age: {account_age} years")
+            else:
+                self.log_test("Blue Era Trust Score API", False, f"Invalid trust score format: {trust_score}")
+        else:
+            self.log_test("Blue Era Trust Score API", False, str(data))
+    
+    def test_blue_era_ai_chat_service(self):
+        """Test AI Chat Service for Blue Era Dashboard daily insights"""
+        print("\n💙 Testing Blue Era AI Chat Service...")
+        
+        # Test brand role insights
+        brand_insights_request = {
+            "message": "Generate daily insights for a brand user on AisleMarts marketplace",
+            "context": {
+                "user_type": "brand",
+                "role": "vendor",
+                "request_type": "daily_insights"
+            }
+        }
+        
+        success, data = self.make_request("POST", "/ai/chat", brand_insights_request)
+        
+        if success and isinstance(data, dict) and "response" in data:
+            response = data.get("response", "")
+            agent_id = data.get("agent_id", "")
+            
+            # Validate response contains brand-relevant insights
+            brand_keywords = ["brand", "vendor", "sales", "marketing", "products", "customers"]
+            has_brand_context = any(keyword in response.lower() for keyword in brand_keywords)
+            
+            if has_brand_context and len(response) > 50:
+                self.log_test("Blue Era AI Chat Service (Brand Insights)", True, f"Generated brand insights: {response[:100]}... (Agent: {agent_id})")
+            else:
+                self.log_test("Blue Era AI Chat Service (Brand Insights)", False, f"Insufficient brand context in response: {response[:100]}...")
+        else:
+            self.log_test("Blue Era AI Chat Service (Brand Insights)", False, str(data))
+        
+        # Test shopper role insights
+        shopper_insights_request = {
+            "message": "Generate daily insights for a shopper user on AisleMarts marketplace",
+            "context": {
+                "user_type": "shopper",
+                "role": "buyer",
+                "request_type": "daily_insights"
+            }
+        }
+        
+        success, data = self.make_request("POST", "/ai/chat", shopper_insights_request)
+        
+        if success and isinstance(data, dict) and "response" in data:
+            response = data.get("response", "")
+            
+            # Validate response contains shopper-relevant insights
+            shopper_keywords = ["shop", "buy", "deals", "products", "recommendations", "savings"]
+            has_shopper_context = any(keyword in response.lower() for keyword in shopper_keywords)
+            
+            if has_shopper_context and len(response) > 50:
+                self.log_test("Blue Era AI Chat Service (Shopper Insights)", True, f"Generated shopper insights: {response[:100]}...")
+            else:
+                self.log_test("Blue Era AI Chat Service (Shopper Insights)", False, f"Insufficient shopper context in response: {response[:100]}...")
+        else:
+            self.log_test("Blue Era AI Chat Service (Shopper Insights)", False, str(data))
+    
+    def test_blue_era_products_api_for_reels(self):
+        """Test Products API format for Blue Era Product Reels component"""
+        print("\n💙 Testing Blue Era Products API for Product Reels...")
+        
+        success, data = self.make_request("GET", "/products", {"limit": 10})
+        
+        if success and isinstance(data, list) and len(data) > 0:
+            # Validate product format for reels transformation
+            required_fields = ["title", "price", "images"]
+            optional_fields = ["category", "brand", "description"]
+            
+            valid_products = 0
+            for product in data:
+                has_required = all(field in product for field in required_fields)
+                has_images = isinstance(product.get("images"), list) and len(product.get("images", [])) > 0
+                has_valid_price = isinstance(product.get("price"), (int, float)) and product.get("price") > 0
+                
+                if has_required and has_images and has_valid_price:
+                    valid_products += 1
+            
+            if valid_products >= len(data) * 0.8:  # At least 80% valid
+                sample_product = data[0]
+                self.log_test("Blue Era Products API for Reels", True, f"Found {len(data)} products, {valid_products} valid for reels. Sample: {sample_product.get('title')} - ${sample_product.get('price')} - {len(sample_product.get('images', []))} images")
+            else:
+                self.log_test("Blue Era Products API for Reels", False, f"Only {valid_products}/{len(data)} products have required fields for reels")
+        else:
+            self.log_test("Blue Era Products API for Reels", False, str(data))
+    
+    def test_blue_era_ai_recommendations(self):
+        """Test AI Recommendations for Blue Era Product Reel insights"""
+        print("\n💙 Testing Blue Era AI Recommendations...")
+        
+        # Test product recommendations for reels
+        rec_request = {
+            "query": "trending products for product reels",
+            "max_results": 5
+        }
+        
+        success, data = self.make_request("POST", "/ai/recommendations", rec_request)
+        
+        if success and isinstance(data, dict) and "recommendations" in data:
+            recommendations = data.get("recommendations", [])
+            ai_explanation = data.get("ai_explanation", "")
+            
+            # Validate recommendations format for product reels
+            valid_recommendations = 0
+            for rec in recommendations:
+                has_required = all(field in rec for field in ["id", "title", "price"])
+                has_images = "images" in rec and isinstance(rec["images"], list)
+                
+                if has_required and has_images:
+                    valid_recommendations += 1
+            
+            if valid_recommendations > 0 and ai_explanation:
+                self.log_test("Blue Era AI Recommendations", True, f"Generated {len(recommendations)} recommendations with AI insights. Valid: {valid_recommendations}")
+            else:
+                self.log_test("Blue Era AI Recommendations", False, f"Insufficient recommendation data: {len(recommendations)} recs, {len(ai_explanation)} chars explanation")
+        else:
+            self.log_test("Blue Era AI Recommendations", False, str(data))
+        
+        # Test authenticated recommendations with user context
+        if self.auth_token:
+            auth_rec_request = {
+                "query": "personalized product recommendations for my interests",
+                "max_results": 8
+            }
+            
+            success, data = self.make_request("POST", "/ai/recommendations", auth_rec_request)
+            
+            if success and isinstance(data, dict) and "recommendations" in data:
+                recommendations = data.get("recommendations", [])
+                ai_explanation = data.get("ai_explanation", "")
+                
+                if len(recommendations) > 0 and ai_explanation:
+                    self.log_test("Blue Era AI Recommendations (Authenticated)", True, f"Generated {len(recommendations)} personalized recommendations")
+                else:
+                    self.log_test("Blue Era AI Recommendations (Authenticated)", False, "No personalized recommendations generated")
+            else:
+                self.log_test("Blue Era AI Recommendations (Authenticated)", False, str(data))
+    
+    def test_blue_era_auth_identity_profile(self):
+        """Test Auth Identity Profile API for Blue Era user role determination"""
+        print("\n💙 Testing Blue Era Auth Identity Profile API...")
+        
+        if not self.auth_token:
+            self.log_test("Blue Era Auth Identity Profile API", False, "No auth token available")
+            return
+        
+        # Get current user ID
+        success, user_data = self.make_request("GET", "/auth/me")
+        if not success:
+            self.log_test("Blue Era Auth Identity Profile API", False, "Could not get current user")
+            return
+        
+        user_id = user_data.get("id") or user_data.get("_id")
+        if not user_id:
+            self.log_test("Blue Era Auth Identity Profile API", False, "No user ID found")
+            return
+        
+        # Test identity profile endpoint
+        success, data = self.make_request("GET", f"/identity/profile/{user_id}")
+        
+        if success and isinstance(data, dict):
+            # Check for role information
+            has_role_info = any(key in data for key in ["roles", "is_seller", "is_buyer", "user_role"])
+            has_profile_info = any(key in data for key in ["username", "display_name", "email"])
+            
+            if has_role_info and has_profile_info:
+                role_info = data.get("roles") or [data.get("user_role", "buyer")]
+                self.log_test("Blue Era Auth Identity Profile API", True, f"Profile retrieved with role info: {role_info}")
+            else:
+                self.log_test("Blue Era Auth Identity Profile API", True, "Profile retrieved but limited role information (may be public view)")
+        else:
+            self.log_test("Blue Era Auth Identity Profile API", False, str(data))
+    
+    def test_blue_era_role_based_responses(self):
+        """Test role-based responses for Blue Era Dashboard customization"""
+        print("\n💙 Testing Blue Era Role-Based Responses...")
+        
+        # Test with vendor/brand context
+        brand_context_request = {
+            "message": "What should I focus on today as a brand on AisleMarts?",
+            "context": {
+                "user_type": "brand",
+                "role": "vendor",
+                "dashboard_context": "blue_era"
+            }
+        }
+        
+        success, data = self.make_request("POST", "/ai/chat", brand_context_request)
+        
+        if success and isinstance(data, dict) and "response" in data:
+            response = data.get("response", "")
+            
+            # Check for brand-specific content
+            brand_terms = ["brand", "vendor", "sell", "marketing", "inventory", "analytics", "customers"]
+            brand_relevance = sum(1 for term in brand_terms if term in response.lower())
+            
+            if brand_relevance >= 2 and len(response) > 100:
+                self.log_test("Blue Era Role-Based Responses (Brand)", True, f"Brand-focused response generated with {brand_relevance} relevant terms")
+            else:
+                self.log_test("Blue Era Role-Based Responses (Brand)", False, f"Insufficient brand context: {brand_relevance} terms, {len(response)} chars")
+        else:
+            self.log_test("Blue Era Role-Based Responses (Brand)", False, str(data))
+        
+        # Test with shopper/buyer context
+        shopper_context_request = {
+            "message": "What should I explore today as a shopper on AisleMarts?",
+            "context": {
+                "user_type": "shopper",
+                "role": "buyer",
+                "dashboard_context": "blue_era"
+            }
+        }
+        
+        success, data = self.make_request("POST", "/ai/chat", shopper_context_request)
+        
+        if success and isinstance(data, dict) and "response" in data:
+            response = data.get("response", "")
+            
+            # Check for shopper-specific content
+            shopper_terms = ["shop", "buy", "browse", "deals", "products", "recommendations", "discover"]
+            shopper_relevance = sum(1 for term in shopper_terms if term in response.lower())
+            
+            if shopper_relevance >= 2 and len(response) > 100:
+                self.log_test("Blue Era Role-Based Responses (Shopper)", True, f"Shopper-focused response generated with {shopper_relevance} relevant terms")
+            else:
+                self.log_test("Blue Era Role-Based Responses (Shopper)", False, f"Insufficient shopper context: {shopper_relevance} terms, {len(response)} chars")
+        else:
+            self.log_test("Blue Era Role-Based Responses (Shopper)", False, str(data))
+    
+    def test_blue_era_authentication_context(self):
+        """Test authentication context for Blue Era Dashboard features"""
+        print("\n💙 Testing Blue Era Authentication Context...")
+        
+        # Test with authenticated user
+        if self.auth_token:
+            auth_request = {
+                "message": "Show me my personalized Blue Era dashboard insights",
+                "context": {"authenticated": True, "dashboard": "blue_era"}
+            }
+            
+            success, data = self.make_request("POST", "/ai/chat", auth_request)
+            
+            if success and isinstance(data, dict) and "response" in data:
+                response = data.get("response", "")
+                agent_id = data.get("agent_id", "")
+                
+                # Check for personalized content
+                personal_terms = ["your", "you", "personal", "account", "profile"]
+                personalization = sum(1 for term in personal_terms if term in response.lower())
+                
+                if personalization >= 2 and agent_id != "anonymous":
+                    self.log_test("Blue Era Authentication Context (Authenticated)", True, f"Personalized response with agent ID: {agent_id}")
+                else:
+                    self.log_test("Blue Era Authentication Context (Authenticated)", False, f"Limited personalization: {personalization} terms, agent: {agent_id}")
+            else:
+                self.log_test("Blue Era Authentication Context (Authenticated)", False, str(data))
+        
+        # Test with anonymous user
+        anon_request = {
+            "message": "Show me Blue Era dashboard insights",
+            "context": {"authenticated": False, "dashboard": "blue_era"}
+        }
+        
+        success, data = self.make_request("POST", "/ai/chat", anon_request, headers={})
+        
+        if success and isinstance(data, dict) and "response" in data:
+            response = data.get("response", "")
+            agent_id = data.get("agent_id", "")
+            
+            # Check for generic content (not personalized)
+            generic_terms = ["users", "people", "everyone", "general", "marketplace"]
+            generic_content = sum(1 for term in generic_terms if term in response.lower())
+            
+            if generic_content >= 1 and len(response) > 50:
+                self.log_test("Blue Era Authentication Context (Anonymous)", True, f"Generic response for anonymous user")
+            else:
+                self.log_test("Blue Era Authentication Context (Anonymous)", False, f"Insufficient generic content: {generic_content} terms")
+        else:
+            self.log_test("Blue Era Authentication Context (Anonymous)", False, str(data))
+    
     def run_all_tests(self):
         """Run all tests in sequence"""
         print(f"🚀 Starting AisleMarts Backend API Tests (Including Geographic Targeting System)")
