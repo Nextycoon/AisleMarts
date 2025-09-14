@@ -14,9 +14,11 @@ import { Ionicons } from '@expo/vector-icons';
 import { LinearGradient } from 'expo-linear-gradient';
 import { useAuth } from '../src/context/AuthContext';
 import { useCart } from '../src/context/CartContext';
+import { useTheme } from '../src/context/ThemeContext';
 import AisleAvatar from '../src/components/AisleAvatar';
 import ProductReels from '../src/components/ProductReels';
 import QuickAccessDock from '../src/components/QuickAccessDock';
+import ThemeToggle from '../src/components/ThemeToggle';
 import { aiService } from '../src/services/AIService';
 import { authIdentityService } from '../src/services/AuthIdentityService';
 
