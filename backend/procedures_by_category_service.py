@@ -1,74 +1,77 @@
 from dotenv import load_dotenv
 import os
 import uuid
+import json
 from typing import List, Dict, Any, Optional
 from datetime import datetime, timedelta
 from emergentintegrations.llm.chat import LlmChat, UserMessage
 
 from db import db
 from procedures_by_category_models import (
-    UserRole, UserProcedure, OnboardingStep, VerificationBadge, Permission,
+    UserProcedure, UserRole, OnboardingStep, VerificationBadge, Permission,
     get_category_config, get_next_onboarding_step, calculate_onboarding_progress,
     get_required_permissions, validate_step_completion, get_badge_for_role,
-    USER_CATEGORIES, BADGE_CONFIG
+    should_show_public_notice, USER_CATEGORIES, BADGE_CONFIG, STEP_REQUIREMENTS
 )
 
 load_dotenv()
 
 class ProceduresByCategoryService:
-    """Procedures by Category Service - Role-specific workflows"""
+    """Procedures by Category Service - Role-specific workflows for companies/brands vs. buyers/visitors"""
     
     def __init__(self):
         self.chat = LlmChat(
             api_key=os.getenv("EMERGENT_LLM_KEY"),
             session_id="aislemarts_procedures_ai",
-            system_message="""You are the User Procedures Expert for AisleMarts.
+            system_message="""You are the Procedures by Category Expert for AisleMarts.
 
 Your expertise covers:
-- Role-based onboarding workflows (Companies/Brands vs Buyers/Visitors)
-- KYC/KYB verification processes and compliance
-- User authentication and authorization systems
-- Badge and trust systems for different user types
-- Global compliance requirements (FATF AML/CFT, EU AMLD6 & GDPR, US FinCEN)
+- Role-specific onboarding workflows (Companies/Brands vs. Visitors/Buyers)
+- User verification and trust badge systems (Blue badges for verified brands, Green badges for verified buyers)
+- Authentication and authorization procedures
+- KYC/KYB compliance requirements
+- Permission and access control management
+- Onboarding step validation and progress tracking
 
-You help manage user procedures that ensure:
-1. Proper user classification (seller_brand vs buyer vs visitor)
-2. Appropriate verification levels (Blue badge for brands, Green for buyers)
-3. Role-specific permissions and capabilities
-4. Compliance with global verification standards
-5. Smooth onboarding experiences tailored to user type
+You help users navigate through:
+1. Account creation and email/phone verification
+2. Two-factor authentication setup
+3. Business profile setup (for brands) or personal profile (for buyers)
+4. Document submission and verification processes
+5. Payment method and bank account verification
+6. Badge earning and permission granting
 
-For Companies & Brands (Blue Badge):
-- Strict KYB with business license, tax ID, bank verification
-- Enhanced permissions: product listing, B2B trading, cross-border
-- Higher trust requirements and verification standards
+User Categories:
+- Companies & Brands: Blue verified badge, comprehensive KYB process, seller permissions
+- Visitors & Buyers: Green verified badge, simplified verification, buyer permissions
 
-For Buyers & Visitors (Green Badge):
-- Light KYC with payment method and optional ID verification
-- Consumer permissions: browse, buy, wishlist, reviews
-- Streamlined onboarding process
+Always provide clear guidance on:
+- Required vs. optional steps for each user category
+- Next steps in onboarding process  
+- Verification requirements and timelines
+- Permission implications and access levels
+- Badge requirements and display rules
+- Public notice requirements for profile changes
 
-Always consider:
-- User's intended role and business model
-- Regulatory requirements for their jurisdiction
-- Trust and safety implications
-- User experience and conversion optimization"""
+Generate responses that are helpful, compliant, and role-appropriate."""
         ).with_model("openai", "gpt-4o-mini")
 
     async def create_user_procedure(self, user_id: str, role: UserRole) -> str:
-        """Create user procedure for role-based onboarding"""
+        """Create new user procedure workflow"""
         try:
             procedure_id = str(uuid.uuid4())
-            
             config = get_category_config(role)
+            
             if not config:
-                raise Exception(f"No configuration found for role: {role.value}")
+                raise Exception(f"Invalid user role: {role}")
+            
+            first_step = config["onboarding"]["steps"][0] if config["onboarding"]["steps"] else OnboardingStep.CREATE_ACCOUNT
             
             procedure: UserProcedure = {
                 "_id": procedure_id,
                 "user_id": user_id,
                 "category": role,
-                "current_step": config["onboarding"]["steps"][0],
+                "current_step": first_step,
                 "completed_steps": [],
                 "verification_status": {},
                 "badge_earned": VerificationBadge.NONE,
@@ -87,9 +90,10 @@ Always consider:
                 
                 # Audit trail
                 "step_history": [{
+                    "step": first_step.value,
+                    "action": "started",
                     "timestamp": datetime.utcnow(),
-                    "action": "procedure_created",
-                    "step": config["onboarding"]["steps"][0].value,
+                    "user_id": user_id,
                     "details": {"role": role.value}
                 }],
                 "verification_history": []
@@ -111,110 +115,119 @@ Always consider:
         except Exception:
             return None
 
-    async def complete_onboarding_step(self, user_id: str, step: OnboardingStep, step_data: Dict[str, Any]) -> bool:
+    async def complete_onboarding_step(self, user_id: str, step: OnboardingStep, step_data: Dict[str, Any]) -> Dict[str, Any]:
         """Complete an onboarding step"""
         try:
             procedure = await self.get_user_procedure(user_id)
             if not procedure:
-                return False
+                raise Exception("User procedure not found")
             
             # Validate step completion
-            validation = validate_step_completion(step, step_data, procedure["category"])
-            if not validation["valid"]:
-                raise Exception(f"Step validation failed: {validation['reason']}")
+            validation_result = validate_step_completion(step, step_data, procedure["category"])
+            if not validation_result["valid"]:
+                return {
+                    "success": False,
+                    "error": validation_result["reason"],
+                    "missing_fields": validation_result.get("missing_fields", [])
+                }
             
             # Check if step is current or next
-            config = get_category_config(procedure["category"])
-            if not config:
-                return False
+            current_step = procedure["current_step"]
+            next_step = get_next_onboarding_step(current_step, procedure["category"])
             
-            expected_steps = config["onboarding"]["steps"]
-            if step not in expected_steps:
-                return False
+            if step != current_step and step != next_step:
+                return {
+                    "success": False,
+                    "error": f"Cannot complete step {step.value}. Current step is {current_step.value}"
+                }
             
             # Update procedure
             completed_steps = procedure["completed_steps"]
             if step not in completed_steps:
                 completed_steps.append(step)
             
-            # Determine next step
-            next_step = get_next_onboarding_step(step, procedure["category"])
+            new_current_step = get_next_onboarding_step(step, procedure["category"])
             
             # Check if onboarding is complete
-            onboarding_complete = len(completed_steps) == len(expected_steps)
+            config = get_category_config(procedure["category"])
+            is_complete = set(completed_steps) >= set(config["onboarding"]["steps"])
             
-            # Update verification status
-            verification_status = procedure["verification_status"].copy()
-            verification_status[step.value] = True
+            update_data = {
+                "completed_steps": completed_steps,
+                "current_step": new_current_step,
+                "updated_at": datetime.utcnow(),
+                "verification_status.{step.value}": True,
+                "onboarding_completed_at": datetime.utcnow() if is_complete else None,
+                "status": "completed" if is_complete else "in_progress"
+            }
             
-            # Grant badge if onboarding complete
-            badge = VerificationBadge.NONE
-            permissions = procedure["permissions_granted"]
+            # Grant badge and permissions if onboarding complete
+            if is_complete:
+                update_data["badge_earned"] = config["verification"]["badge"]
+                update_data["permissions_granted"] = get_required_permissions(procedure["category"])
+                
+                # Set reverification due date
+                reverification_days = config["verification"]["reverification_interval_days"]
+                update_data["next_reverification_due"] = datetime.utcnow() + timedelta(days=reverification_days)
             
-            if onboarding_complete:
-                badge = config["verification"]["badge"]
-                permissions = get_required_permissions(procedure["category"])
+            # Add to audit trail
+            step_entry = {
+                "step": step.value,
+                "action": "completed",
+                "timestamp": datetime.utcnow(),
+                "user_id": user_id,
+                "details": step_data
+            }
             
-            # Update database
             await db().user_procedures.update_one(
                 {"user_id": user_id},
                 {
-                    "$set": {
-                        "current_step": next_step.value if next_step else step.value,
-                        "completed_steps": [s.value for s in completed_steps],
-                        "verification_status": verification_status,
-                        "badge_earned": badge.value,
-                        "permissions_granted": [p.value for p in permissions],
-                        "updated_at": datetime.utcnow(),
-                        "onboarding_completed_at": datetime.utcnow() if onboarding_complete else None,
-                        "status": "completed" if onboarding_complete else "in_progress"
-                    },
-                    "$push": {
-                        "step_history": {
-                            "timestamp": datetime.utcnow(),
-                            "action": "step_completed",
-                            "step": step.value,
-                            "details": step_data
-                        }
-                    }
+                    "$set": update_data,
+                    "$push": {"step_history": step_entry}
                 }
             )
             
-            return True
+            # Calculate progress
+            progress = calculate_onboarding_progress(completed_steps, procedure["category"])
+            
+            return {
+                "success": True,
+                "step_completed": step.value,
+                "next_step": new_current_step.value if new_current_step else None,
+                "onboarding_complete": is_complete,
+                "progress": progress,
+                "badge_earned": config["verification"]["badge"].value if is_complete else None,
+                "permissions_granted": get_required_permissions(procedure["category"]) if is_complete else []
+            }
             
         except Exception as e:
-            return False
+            return {
+                "success": False,
+                "error": str(e)
+            }
 
     async def get_onboarding_progress(self, user_id: str) -> Dict[str, Any]:
         """Get user's onboarding progress"""
         try:
             procedure = await self.get_user_procedure(user_id)
             if not procedure:
-                return {"error": "No procedure found"}
+                return {"error": "User procedure not found"}
             
-            # Convert string enums back to enum objects for calculation
-            completed_steps = [OnboardingStep(step) for step in procedure["completed_steps"]]
-            progress = calculate_onboarding_progress(completed_steps, procedure["category"])
-            
-            # Add current step info
+            progress = calculate_onboarding_progress(procedure["completed_steps"], procedure["category"])
             config = get_category_config(procedure["category"])
-            if config:
-                all_steps = config["onboarding"]["steps"]
-                current_step_index = -1
-                try:
-                    current_step_index = all_steps.index(OnboardingStep(procedure["current_step"]))
-                except ValueError:
-                    pass
-                
-                progress.update({
-                    "current_step": procedure["current_step"],
-                    "current_step_index": current_step_index,
-                    "total_steps": len(all_steps),
-                    "status": procedure["status"],
-                    "badge_earned": procedure["badge_earned"]
-                })
             
-            return progress
+            return {
+                "user_id": user_id,
+                "category": procedure["category"].value,
+                "current_step": procedure["current_step"].value if procedure["current_step"] else None,
+                "progress": progress,
+                "badge_earned": procedure["badge_earned"].value,
+                "permissions": procedure["permissions_granted"],
+                "status": procedure["status"],
+                "onboarding_complete": procedure["onboarding_completed_at"] is not None,
+                "next_reverification_due": procedure["next_reverification_due"].isoformat() if procedure["next_reverification_due"] else None,
+                "category_config": config
+            }
             
         except Exception as e:
             return {"error": str(e)}
@@ -226,7 +239,7 @@ Always consider:
             if not procedure:
                 return []
             
-            return procedure.get("permissions_granted", [])
+            return [perm.value for perm in procedure["permissions_granted"]]
             
         except Exception:
             return []
@@ -239,164 +252,164 @@ Always consider:
         except Exception:
             return False
 
-    async def update_verification_status(self, user_id: str, verification_updates: Dict[str, bool]) -> bool:
-        """Update user's verification status"""
+    async def get_user_badge(self, user_id: str) -> Dict[str, Any]:
+        """Get user's verification badge information"""
         try:
             procedure = await self.get_user_procedure(user_id)
             if not procedure:
-                return False
+                return {"badge": "none", "verified": False}
             
-            # Update verification status
-            verification_status = procedure["verification_status"].copy()
-            verification_status.update(verification_updates)
+            badge_config = get_badge_for_role(procedure["category"])
             
-            # Log verification changes
-            verification_entry = {
-                "timestamp": datetime.utcnow(),
-                "updates": verification_updates,
-                "updated_by": user_id
+            return {
+                "badge": procedure["badge_earned"].value,
+                "verified": procedure["badge_earned"] != VerificationBadge.NONE,
+                "config": badge_config,
+                "category": procedure["category"].value,
+                "earned_at": procedure["onboarding_completed_at"].isoformat() if procedure["onboarding_completed_at"] else None
             }
             
+        except Exception:
+            return {"badge": "none", "verified": False}
+
+    async def request_reverification(self, user_id: str) -> Dict[str, Any]:
+        """Request user reverification"""
+        try:
+            procedure = await self.get_user_procedure(user_id)
+            if not procedure:
+                return {"success": False, "error": "User procedure not found"}
+            
+            config = get_category_config(procedure["category"])
+            reverification_days = config["verification"]["reverification_interval_days"]
+            
+            # Reset verification status and start reverification
             await db().user_procedures.update_one(
                 {"user_id": user_id},
                 {
                     "$set": {
-                        "verification_status": verification_status,
+                        "verification_status": {},
+                        "status": "under_review",
+                        "next_reverification_due": datetime.utcnow() + timedelta(days=reverification_days),
                         "updated_at": datetime.utcnow()
                     },
                     "$push": {
-                        "verification_history": verification_entry
+                        "verification_history": {
+                            "timestamp": datetime.utcnow(),
+                            "action": "reverification_requested",
+                            "user_id": user_id,
+                            "reason": "periodic_reverification"
+                        }
                     }
                 }
             )
             
-            return True
+            return {
+                "success": True,
+                "message": "Reverification process started",
+                "due_date": (datetime.utcnow() + timedelta(days=reverification_days)).isoformat()
+            }
             
-        except Exception:
-            return False
+        except Exception as e:
+            return {"success": False, "error": str(e)}
 
-    async def get_user_badge_info(self, user_id: str) -> Dict[str, Any]:
-        """Get user's badge information"""
+    async def generate_onboarding_guidance(self, user_id: str, context: Dict[str, Any] = {}) -> Dict[str, Any]:
+        """Generate AI-powered onboarding guidance"""
         try:
             procedure = await self.get_user_procedure(user_id)
             if not procedure:
-                return {"badge": "none", "tooltip": "No verification"}
+                return {"error": "User procedure not found"}
             
-            badge_config = get_badge_for_role(procedure["category"])
-            badge_earned = procedure.get("badge_earned", "none")
+            config = get_category_config(procedure["category"])
+            progress = calculate_onboarding_progress(procedure["completed_steps"], procedure["category"])
             
-            return {
-                "badge": badge_earned,
-                "config": badge_config,
-                "verification_level": procedure["category"].value,
-                "tooltip": badge_config.get("tooltip", "User badge")
-            }
-            
-        except Exception:
-            return {"badge": "none", "tooltip": "Error loading badge"}
+            prompt = f"""Provide personalized onboarding guidance for a {procedure["category"].value} user.
 
-    async def get_category_requirements(self, role: UserRole) -> Dict[str, Any]:
-        """Get requirements for user category"""
-        try:
-            config = get_category_config(role)
-            if not config:
-                return {"error": "Category not found"}
+Current Status:
+- Category: {procedure["category"].value}
+- Current Step: {procedure["current_step"].value if procedure["current_step"] else "Completed"}
+- Progress: {progress["percentage"]}% ({progress["completed"]}/{progress["total"]} steps)
+- Badge Status: {procedure["badge_earned"].value}
+- Status: {procedure["status"]}
+
+Remaining Steps: {', '.join([step.value for step in progress.get("remaining_steps", [])])}
+
+User Context: {json.dumps(context, default=str) if context else "None provided"}
+
+Please provide:
+1. Congratulations on completed steps
+2. Clear next action items
+3. Estimated time to completion
+4. Benefits they'll unlock
+5. Any tips or requirements for next steps
+
+Keep the response encouraging, specific, and actionable."""
+
+            ai_response = await self.chat.send_message(UserMessage(text=prompt))
             
             return {
-                "category": role.value,
-                "label": config["label"],
-                "onboarding_steps": [step.value for step in config["onboarding"]["steps"]],
-                "required_documents": [doc.value for doc in config["verification"]["required_documents"]],
-                "target_badge": config["target_badge"],
-                "permissions": config["permissions"]["permissions"],
-                "sla": config["onboarding"]["sla"]
+                "guidance": ai_response,
+                "progress": progress,
+                "current_step": procedure["current_step"].value if procedure["current_step"] else None,
+                "badge_status": procedure["badge_earned"].value,
+                "generated_at": datetime.utcnow().isoformat()
             }
             
         except Exception as e:
             return {"error": str(e)}
 
-    async def suggest_onboarding_improvements(self, user_id: str) -> str:
-        """Get AI suggestions for improving onboarding completion"""
-        try:
-            procedure = await self.get_user_procedure(user_id)
-            if not procedure:
-                return "No procedure found to analyze"
-            
-            progress = await self.get_onboarding_progress(user_id)
-            
-            prompt = f"""Analyze this user's onboarding progress and provide personalized suggestions:
-
-User Role: {procedure['category'].value}
-Current Status: {procedure['status']}
-Progress: {progress.get('percentage', 0)}% complete
-Completed Steps: {len(procedure['completed_steps'])}/{progress.get('total_steps', 0)}
-Current Step: {procedure.get('current_step', 'unknown')}
-Badge Status: {procedure.get('badge_earned', 'none')}
-
-Remaining Steps: {', '.join(progress.get('remaining_steps', []))}
-Verification Status: {procedure.get('verification_status', {})}
-
-Provide specific, actionable suggestions to:
-1. Complete remaining onboarding steps efficiently
-2. Improve verification status and trust score
-3. Unlock additional permissions and features
-4. Address any compliance requirements
-5. Optimize the user experience
-
-Focus on practical next steps the user can take immediately."""
-
-            ai_response = await self.chat.send_message(UserMessage(text=prompt))
-            return ai_response
-            
-        except Exception as e:
-            return f"Error getting suggestions: {str(e)}"
+    async def get_category_configurations(self) -> Dict[str, Any]:
+        """Get all user category configurations"""
+        return {
+            "categories": USER_CATEGORIES,
+            "badges": BADGE_CONFIG,
+            "step_requirements": STEP_REQUIREMENTS
+        }
 
     async def get_user_analytics(self, user_id: str) -> Dict[str, Any]:
         """Get user procedure analytics"""
         try:
             procedure = await self.get_user_procedure(user_id)
             if not procedure:
-                return {"error": "No procedure found"}
+                return {"error": "User procedure not found"}
             
-            # Calculate time spent on onboarding
+            # Calculate metrics
             created_at = procedure["created_at"]
-            completed_at = procedure.get("onboarding_completed_at")
+            now = datetime.utcnow()
+            days_since_start = (now - created_at).days
             
-            time_to_complete = None
-            if completed_at:
-                time_to_complete = (completed_at - created_at).total_seconds() / 3600  # hours
+            config = get_category_config(procedure["category"])
+            total_steps = len(config["onboarding"]["steps"])
+            completed_steps = len(procedure["completed_steps"])
             
-            # Calculate completion rate
-            progress = await self.get_onboarding_progress(user_id)
-            
-            # Count verification items
-            verification_count = sum(1 for v in procedure["verification_status"].values() if v)
+            # Calculate velocity
+            steps_per_day = completed_steps / max(days_since_start, 1)
+            estimated_completion_days = (total_steps - completed_steps) / max(steps_per_day, 0.1)
             
             return {
                 "user_id": user_id,
                 "category": procedure["category"].value,
-                "status": procedure["status"],
-                "progress_percentage": progress.get("percentage", 0),
-                "completed_steps": len(procedure["completed_steps"]),
-                "total_steps": progress.get("total_steps", 0),
-                "verification_count": verification_count,
-                "badge_earned": procedure.get("badge_earned", "none"),
-                "permissions_count": len(procedure.get("permissions_granted", [])),
-                "time_to_complete_hours": time_to_complete,
-                "created_at": procedure["created_at"].isoformat(),
-                "last_activity": procedure["updated_at"].isoformat()
+                "metrics": {
+                    "days_since_start": days_since_start,
+                    "completion_percentage": (completed_steps / total_steps) * 100,
+                    "steps_completed": completed_steps,
+                    "steps_remaining": total_steps - completed_steps,
+                    "average_steps_per_day": round(steps_per_day, 2),
+                    "estimated_completion_days": round(estimated_completion_days, 1)
+                },
+                "milestones": {
+                    "account_created": created_at.isoformat(),
+                    "onboarding_completed": procedure["onboarding_completed_at"].isoformat() if procedure["onboarding_completed_at"] else None,
+                    "badge_earned": procedure["onboarding_completed_at"].isoformat() if procedure["badge_earned"] != VerificationBadge.NONE else None,
+                    "next_reverification": procedure["next_reverification_due"].isoformat() if procedure["next_reverification_due"] else None
+                },
+                "activity": {
+                    "total_step_actions": len(procedure["step_history"]),
+                    "verification_events": len(procedure["verification_history"])
+                }
             }
             
         except Exception as e:
             return {"error": str(e)}
 
-    async def get_available_categories(self) -> Dict[str, Any]:
-        """Get all available user categories"""
-        return {
-            "categories": USER_CATEGORIES,
-            "badge_config": BADGE_CONFIG,
-            "roles": [role.value for role in UserRole]
-        }
-
-# Global procedures service instance
+# Global procedures by category service instance
 procedures_by_category_service = ProceduresByCategoryService()
