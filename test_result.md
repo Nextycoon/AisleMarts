@@ -102,7 +102,7 @@
 # Testing Data - Main Agent and testing sub agent both should log testing data below this section
 #====================================================================================================
 
-user_problem_statement: "Implement Phase 2C: Global Payments & Tax Engine for AisleMarts including AI-powered payment method recommendations, intelligent tax calculations, fraud assessment, currency conversion, and comprehensive analytics dashboard"
+user_problem_statement: "Implement Blue Era Dashboard for AisleMarts - the human-centered AI experience featuring Aisle Avatar System with animated character, Welcome & Role Selection Flow, personalized AI greetings, video-first product reels, and Quick Access Dock - transforming commerce from transactional to relational following the Blue Era philosophy"
 
 backend:
   - task: "Payments & Tax Data Initialization"
