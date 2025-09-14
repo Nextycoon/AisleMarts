@@ -278,6 +278,9 @@ from ai_domain_routes import router as trade_router
 from auth_identity_routes import router as identity_router
 from ai_user_agents_routes import router as agents_router
 from profile_card_routes import router as profile_cards_router
+from documentation_compliance_routes import router as documentation_compliance_router
+from procedures_by_category_routes import router as procedures_by_category_router
+from documentation_procedures_routes import router as documentation_procedures_router
 
 # Include AI routes
 app.include_router(ai_router)
