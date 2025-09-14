@@ -133,6 +133,8 @@ export default function BlueEraHomeScreen() {
             size="large"
             showSpeechBubble={true}
             message="I'm here to help you succeed! 🌟"
+            enableVoice={true}
+            voiceMessage="Hi, I'm Aisle. I'm here to help you succeed today!"
           />
           
           <Text style={styles.welcomeTitle}>
