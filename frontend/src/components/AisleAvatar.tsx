@@ -18,6 +18,8 @@ interface AisleAvatarProps {
   onPress?: () => void;
   size?: 'small' | 'medium' | 'large';
   showSpeechBubble?: boolean;
+  enableVoice?: boolean;
+  voiceMessage?: string;
 }
 
 export default function AisleAvatar({
