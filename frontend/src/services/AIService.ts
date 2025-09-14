@@ -314,6 +314,33 @@ class AIService {
   }
 
   /**
+   * Get AI-powered insights for dashboard
+   */
+  async getInsights(user?: any, prompt?: string): Promise<ChatResponse> {
+    const defaultPrompt = user?.roles?.includes('vendor') 
+      ? "Generate a brief business insight for today - market trends, opportunities, or actionable advice for a seller"
+      : "Generate a brief shopping insight for today - deals, trends, or personalized recommendations";
+
+    try {
+      const context = {
+        user_name: user?.name,
+        user_roles: user?.roles,
+        insight_type: 'daily_dashboard'
+      };
+
+      const response = await this.chatWithAgent(prompt || defaultPrompt, context);
+      return response;
+    } catch (error) {
+      console.error('AI insights failed:', error);
+      return {
+        response: "Keep exploring! New opportunities await you today.",
+        agent_id: 'fallback',
+        timestamp: new Date().toISOString()
+      };
+    }
+  }
+
+  /**
    * Get contextual help based on current screen
    */
   async getContextualHelp(screenName: string, context?: any): Promise<string> {
