@@ -112,25 +112,7 @@ export default function AisleAvatar({
     }
   };
 
-  useEffect(() => {
-    switch (pose) {
-      case 'wave':
-        performWave();
-        break;
-      case 'speak':
-        showSpeechBubble && animateSpeechBubble();
-        break;
-      case 'protective':
-        performPulse('#FF9500');
-        break;
-      case 'caring':
-        performPulse('#34C759');
-        break;
-      default:
-        // Idle pose
-        break;
-    }
-  }, [pose, showSpeechBubble]);
+
 
   const performBlink = () => {
     setIsBlinking(true);
