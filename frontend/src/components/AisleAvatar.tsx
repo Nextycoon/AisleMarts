@@ -6,8 +6,10 @@ import {
   Animated,
   Easing,
   TouchableOpacity,
+  Alert,
 } from 'react-native';
 import { Ionicons } from '@expo/vector-icons';
+import { voiceService } from '../services/VoiceService';
 
 interface AisleAvatarProps {
   pose?: 'wave' | 'idle' | 'speak' | 'protective' | 'caring';
