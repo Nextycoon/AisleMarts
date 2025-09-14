@@ -603,6 +603,17 @@ const styles = StyleSheet.create({
     alignItems: 'center',
     padding: 32,
   },
+  loadingContainer: {
+    flex: 1,
+    justifyContent: 'center',
+    alignItems: 'center',
+    padding: 32,
+  },
+  loadingText: {
+    fontSize: 16,
+    color: '#666',
+    textAlign: 'center',
+  },
   emptyText: {
     fontSize: 16,
     color: '#666',
