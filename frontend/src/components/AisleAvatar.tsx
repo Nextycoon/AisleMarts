@@ -286,6 +286,13 @@ export default function AisleAvatar({
             <Text style={styles.blueEraText}>💙</Text>
           </View>
 
+          {/* Speaking indicator */}
+          {isSpeaking && (
+            <View style={styles.speakingIndicator}>
+              <Text style={styles.speakingText}>🎤</Text>
+            </View>
+          )}
+
           {/* Pose-specific overlays */}
           {pose === 'wave' && (
             <View style={styles.waveEmoji}>
