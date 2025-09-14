@@ -358,6 +358,10 @@ const styles = StyleSheet.create({
     fontSize: 16,
     color: '#333',
   },
+  featuredText: {
+    fontWeight: 'bold',
+    color: '#0A2540',
+  },
   newBadge: {
     backgroundColor: '#FF3B30',
     paddingHorizontal: 6,
