@@ -111,6 +111,8 @@ export default function AisleAvatar({
       handleVoiceMessage();
     }
   };
+
+  useEffect(() => {
     switch (pose) {
       case 'wave':
         performWave();
