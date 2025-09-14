@@ -256,7 +256,7 @@ export default function AisleAvatar({
       )}
 
       {/* Avatar */}
-      <TouchableOpacity onPress={onPress} disabled={!onPress}>
+      <TouchableOpacity onPress={handleAvatarPress} disabled={false}>
         <Animated.View
           style={[
             styles.avatar,
