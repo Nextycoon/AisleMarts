@@ -325,6 +325,22 @@ export default function ProductReels({
     </View>
   );
 
+  if (loading) {
+    return (
+      <View style={styles.container}>
+        <View style={styles.header}>
+          <Text style={styles.headerTitle}>
+            {userRole === 'brand' ? '🎬 Featured Products' : '🛍️ Discover Products'}
+          </Text>
+          <Text style={styles.headerSubtitle}>Loading curated reels...</Text>
+        </View>
+        <View style={styles.loadingContainer}>
+          <Text style={styles.loadingText}>✨ Preparing your personalized reels...</Text>
+        </View>
+      </View>
+    );
+  }
+
   if (reels.length === 0) {
     return (
       <View style={styles.emptyState}>
