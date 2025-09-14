@@ -306,6 +306,15 @@ app.include_router(agents_router)
 # Include Profile Cards routes
 app.include_router(profile_cards_router)
 
+# Include Documentation Compliance routes
+app.include_router(documentation_compliance_router)
+
+# Include Procedures by Category routes
+app.include_router(procedures_by_category_router)
+
+# Include Documentation Procedures routes
+app.include_router(documentation_procedures_router)
+
 # Include the main API router
 app.include_router(api_router)
 
