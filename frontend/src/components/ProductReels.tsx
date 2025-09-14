@@ -97,15 +97,114 @@ const MOCK_REELS: ProductReel[] = [
 ];
 
 export default function ProductReels({
-  reels = MOCK_REELS,
+  reels: initialReels = [],
   onReelPress,
   onAddToCart,
   userRole = 'shopper',
 }: ProductReelsProps) {
   const [currentIndex, setCurrentIndex] = useState(0);
   const [autoPlay, setAutoPlay] = useState(true);
+  const [reels, setReels] = useState<ProductReel[]>(initialReels);
+  const [loading, setLoading] = useState(false);
   const scrollViewRef = useRef<ScrollView>(null);
   const fadeAnim = useRef(new Animated.Value(1)).current;
+
+  useEffect(() => {
+    if (initialReels.length === 0) {
+      loadDynamicReels();
+    } else {
+      setReels(initialReels);
+    }
+  }, [initialReels]);
+
+  const loadDynamicReels = async () => {
+    try {
+      setLoading(true);
+      
+      // Get products from backend
+      const productsResponse = await API.get('/products', {
+        params: { limit: 6 } // Limit to 6 products for video reels
+      });
+      
+      const products = productsResponse.data;
+      
+      // Transform products to ProductReel format with AI insights
+      const productReels: ProductReel[] = await Promise.all(
+        products.map(async (product: any) => {
+          // Generate AI insight for each product
+          let aiInsight = 'Perfect addition to your collection';
+          try {
+            const insightResponse = await aiService.getInsights(
+              undefined,
+              `Generate a brief 1-sentence marketing insight for: ${product.title}`
+            );
+            aiInsight = insightResponse.response;
+          } catch (error) {
+            console.log('AI insight generation failed for product:', product.title);
+          }
+
+          return {
+            id: product._id || product.id,
+            title: product.title,
+            brand: product.brand,
+            price: product.price,
+            currency: product.currency || 'USD',
+            video: 'mock-video', // In real implementation, products would have video URLs
+            thumbnail: product.images?.[0] || generatePlaceholderImage(product.title),
+            goalTag: determineGoalTag(product.category_id || product.category),
+            description: product.description || `Premium ${product.title}`,
+            seller: {
+              name: product.brand || 'Verified Seller',
+              country: product.seller_country || 'Global',
+              verified: true,
+            },
+            aiInsight: aiInsight.length > 80 ? aiInsight.substring(0, 77) + '...' : aiInsight,
+          };
+        })
+      );
+      
+      setReels(productReels);
+    } catch (error) {
+      console.error('Failed to load dynamic reels:', error);
+      // Fallback to mock data
+      setReels(MOCK_REELS);
+    } finally {
+      setLoading(false);
+    }
+  };
+
+  const generatePlaceholderImage = (title: string): string => {
+    // Generate a simple SVG placeholder based on product title
+    const colors = ['#FF6B6B', '#4ECDC4', '#45B7D1', '#96CEB4', '#FFEAA7', '#DDA0DD'];
+    const colorIndex = title.length % colors.length;
+    const color = colors[colorIndex];
+    
+    return `data:image/svg+xml;base64,${btoa(`
+      <svg width="300" height="400" viewBox="0 0 300 400" fill="none" xmlns="http://www.w3.org/2000/svg">
+        <rect width="300" height="400" fill="${color}"/>
+        <circle cx="150" cy="200" r="60" fill="white" opacity="0.8"/>
+        <text x="150" y="210" text-anchor="middle" fill="white" font-size="14" font-weight="bold">
+          ${title.substring(0, 20)}
+        </text>
+      </svg>
+    `)}`;
+  };
+
+  const determineGoalTag = (category: string): string => {
+    const categoryMappings: { [key: string]: string } = {
+      'electronics': 'Tech',
+      'fashion': 'Style',
+      'home': 'Lifestyle',
+      'business': 'Business',
+      'health': 'Wellness',
+      'sports': 'Fitness',
+      'beauty': 'Beauty',
+      'books': 'Learning',
+    };
+    
+    const lowerCategory = (category || '').toLowerCase();
+    return categoryMappings[lowerCategory] || 'Featured';
+  };
 
   useEffect(() => {
     if (autoPlay && reels.length > 1) {
