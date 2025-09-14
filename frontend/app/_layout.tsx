@@ -22,6 +22,7 @@ export default function RootLayout() {
             }}
           >
             <Stack.Screen name="index" options={{ title: 'AisleMarts' }} />
+            <Stack.Screen name="blue-era-home" options={{ title: 'Blue Era', headerShown: false }} />
             <Stack.Screen name="auth" options={{ title: 'Sign In' }} />
             <Stack.Screen name="product/[id]" options={{ title: 'Product' }} />
             <Stack.Screen name="cart" options={{ title: 'Shopping Cart' }} />
