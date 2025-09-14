@@ -518,6 +518,18 @@ const styles = StyleSheet.create({
     justifyContent: 'center',
     alignItems: 'center',
   },
+  blueEraButton: {
+    width: 36,
+    height: 36,
+    borderRadius: 18,
+    backgroundColor: '#0A2540',
+    justifyContent: 'center',
+    alignItems: 'center',
+    marginRight: 8,
+  },
+  blueEraButtonText: {
+    fontSize: 16,
+  },
   cartButton: {
     position: 'relative',
   },
