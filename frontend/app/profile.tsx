@@ -71,6 +71,27 @@ export default function ProfileScreen() {
       color: '#34C759',
       isNew: true,
     },
+    {
+      title: '📄 Documentation Compliance',
+      icon: 'document-text-outline',
+      onPress: () => router.push('/documentation-compliance'),
+      color: '#007AFF',
+      isNew: true,
+    },
+    {
+      title: '🏢 Procedures by Category',
+      icon: 'layers-outline',
+      onPress: () => router.push('/procedures-by-category'),
+      color: '#FF9500',
+      isNew: true,
+    },
+    {
+      title: '⚖️ Documentation Procedures',
+      icon: 'git-branch-outline',
+      onPress: () => router.push('/documentation-procedures'),
+      color: '#8B5CF6',
+      isNew: true,
+    },
     ...(user?.roles.includes('vendor') ? [{
       title: 'Seller Dashboard',
       icon: 'business-outline',
