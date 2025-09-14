@@ -262,14 +262,17 @@ export default function BlueEraDashboardScreen() {
   return (
     <SafeAreaView style={styles.container}>
       {/* Header */}
-      <View style={styles.header}>
+      <View style={[styles.header, { backgroundColor: theme.bg, borderBottomColor: theme.border }]}>
         <TouchableOpacity onPress={() => router.back()}>
-          <Ionicons name="arrow-back" size={24} color="#333" />
+          <Ionicons name="arrow-back" size={24} color={theme.ink} />
         </TouchableOpacity>
-        <Text style={styles.headerTitle}>Blue Era Dashboard</Text>
-        <TouchableOpacity onPress={() => router.push('/profile')}>
-          <Ionicons name="person-circle" size={28} color="#007AFF" />
-        </TouchableOpacity>
+        <Text style={[styles.headerTitle, { color: theme.ink }]}>Blue Era Dashboard</Text>
+        <View style={styles.headerRight}>
+          <ThemeToggle size="small" showLabel={false} style={{ marginRight: 8 }} />
+          <TouchableOpacity onPress={() => router.push('/profile')}>
+            <Ionicons name="person-circle" size={28} color={theme.primary} />
+          </TouchableOpacity>
+        </View>
       </View>
 
       {/* Trust Bar */}
