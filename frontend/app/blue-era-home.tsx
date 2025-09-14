@@ -116,11 +116,7 @@ export default function BlueEraHomeScreen() {
     
     // Navigate to appropriate dashboard after a brief delay
     setTimeout(() => {
-      if (role === 'brand') {
-        router.push('/vendor-dashboard');
-      } else {
-        router.push('/');
-      }
+      router.push('/blue-era-dashboard');
     }, 2000);
   };
 
