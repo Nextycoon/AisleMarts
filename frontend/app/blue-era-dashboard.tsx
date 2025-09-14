@@ -290,6 +290,7 @@ export default function BlueEraDashboardScreen() {
 
         {/* Product Reels */}
         <ProductReels
+          reels={[]} // Let component load dynamic reels from backend
           userRole={userRole}
           onReelPress={(reel) => {
             Alert.alert('Product Reel', `Opening ${reel.title}...`);
