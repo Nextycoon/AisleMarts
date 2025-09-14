@@ -125,7 +125,7 @@ export default function ProfileScreen() {
     {
       title: 'About AisleMarts',
       icon: 'information-circle-outline',
-      onPress: () => Alert.alert('About', 'AisleMarts v2.0\nYour AI-powered global marketplace with enterprise-grade features:\n\n🌍 AI Trade Intelligence\n🤖 Personal AI Agents\n🛡️ Advanced Identity System\n👤 Professional Profile Cards\n💳 Global Payment Engine\n📊 Real-time Analytics'),
+      onPress: () => Alert.alert('About', 'AisleMarts v2.0\nYour AI-powered global marketplace with enterprise-grade features:\n\n🌍 AI Trade Intelligence\n🤖 Personal AI Agents\n🛡️ Advanced Identity System\n👤 Professional Profile Cards\n📄 Documentation Compliance\n🏢 Role-based Procedures\n⚖️ Workflow Management\n💳 Global Payment Engine\n📊 Real-time Analytics'),
       color: '#8E8E93',
     },
   ];
