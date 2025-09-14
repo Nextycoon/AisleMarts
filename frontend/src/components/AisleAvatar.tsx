@@ -357,6 +357,14 @@ const styles = StyleSheet.create({
     bottom: -10,
     right: -10,
   },
+  speakingIndicator: {
+    position: 'absolute',
+    top: -10,
+    left: -10,
+  },
+  speakingText: {
+    fontSize: 14,
+  },
   emojiText: {
     fontSize: 16,
   },
