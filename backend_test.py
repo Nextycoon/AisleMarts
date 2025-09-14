@@ -3024,6 +3024,841 @@ class APITester:
             self.log_test("Deep Search (German)", True, f"German market analysis generated {len(insights)} insights")
         else:
             self.log_test("Deep Search (German)", False, str(data))
+
+    # ========== DOCUMENTATION SUITE TESTS ==========
+    
+    # Documentation Compliance Tests
+    def test_documentation_compliance_health_check(self):
+        """Test Documentation Compliance service health check"""
+        print("\n📄 Testing Documentation Compliance Health Check...")
+        
+        success, data = self.make_request("GET", "/documents/health")
+        
+        if success and isinstance(data, dict) and data.get("status") == "healthy":
+            capabilities = data.get("capabilities", [])
+            document_types = data.get("document_types", 0)
+            compliance_standards = data.get("compliance_standards", [])
+            supported_countries = data.get("supported_countries", [])
+            self.log_test("Documentation Compliance Health Check", True, f"Capabilities: {len(capabilities)}, Types: {document_types}, Standards: {len(compliance_standards)}, Countries: {len(supported_countries)}")
+        else:
+            self.log_test("Documentation Compliance Health Check", False, str(data))
+
+    def test_create_document(self):
+        """Test creating a new document"""
+        print("\n📄 Testing Document Creation...")
+        
+        if not self.auth_token:
+            self.log_test("Document Creation", False, "No auth token available")
+            return
+        
+        document_request = {
+            "document_type": "commercial_invoice",
+            "title": "Test Commercial Invoice",
+            "country": "US",
+            "currency": "USD",
+            "incoterm": "FOB",
+            "parties": [
+                {
+                    "type": "seller",
+                    "name": "Test Seller Inc.",
+                    "address": "123 Business St, New York, NY 10001",
+                    "country": "US"
+                },
+                {
+                    "type": "buyer", 
+                    "name": "Test Buyer Ltd.",
+                    "address": "456 Commerce Ave, Los Angeles, CA 90001",
+                    "country": "US"
+                }
+            ],
+            "items": [
+                {
+                    "description": "Premium Coffee Beans",
+                    "quantity": 100,
+                    "unit": "kg",
+                    "unit_price": 15.50,
+                    "total": 1550.00,
+                    "hs_code": "0901.21"
+                }
+            ],
+            "terms": {
+                "payment_terms": "30 days net",
+                "delivery_terms": "FOB New York"
+            },
+            "totals": {
+                "subtotal": 1550.00,
+                "tax": 124.00,
+                "total": 1674.00
+            },
+            "tags": ["coffee", "premium", "export"],
+            "notes": "High quality arabica coffee beans for export",
+            "ai_generated": False
+        }
+        
+        success, data = self.make_request("POST", "/documents/create", document_request)
+        
+        if success and isinstance(data, dict) and data.get("success") is True:
+            document_id = data.get("document_id")
+            self.test_document_id = document_id
+            self.log_test("Document Creation", True, f"Created document: {document_id}")
+        else:
+            self.log_test("Document Creation", False, str(data))
+
+    def test_list_user_documents(self):
+        """Test listing user documents"""
+        print("\n📄 Testing List User Documents...")
+        
+        if not self.auth_token:
+            self.log_test("List User Documents", False, "No auth token available")
+            return
+        
+        success, data = self.make_request("GET", "/documents/list")
+        
+        if success and isinstance(data, dict) and "documents" in data:
+            documents = data.get("documents", [])
+            count = data.get("count", 0)
+            self.log_test("List User Documents", True, f"Found {count} documents")
+        else:
+            self.log_test("List User Documents", False, str(data))
+
+    def test_get_document(self):
+        """Test getting document by ID"""
+        print("\n📄 Testing Get Document...")
+        
+        if not self.auth_token:
+            self.log_test("Get Document", False, "No auth token available")
+            return
+        
+        if not hasattr(self, 'test_document_id'):
+            self.log_test("Get Document", False, "No document ID available")
+            return
+        
+        success, data = self.make_request("GET", f"/documents/{self.test_document_id}")
+        
+        if success and isinstance(data, dict) and "document_type" in data:
+            document_type = data.get("document_type")
+            title = data.get("title", "")
+            self.log_test("Get Document", True, f"Retrieved {document_type}: {title}")
+        else:
+            self.log_test("Get Document", False, str(data))
+
+    def test_submit_document(self):
+        """Test submitting document for validation"""
+        print("\n📄 Testing Submit Document...")
+        
+        if not self.auth_token:
+            self.log_test("Submit Document", False, "No auth token available")
+            return
+        
+        if not hasattr(self, 'test_document_id'):
+            self.log_test("Submit Document", False, "No document ID available")
+            return
+        
+        success, data = self.make_request("POST", f"/documents/{self.test_document_id}/submit")
+        
+        if success and isinstance(data, dict) and data.get("success") is True:
+            message = data.get("message", "")
+            self.log_test("Submit Document", True, f"Document submitted: {message}")
+        else:
+            self.log_test("Submit Document", False, str(data))
+
+    def test_amend_document(self):
+        """Test creating document amendment"""
+        print("\n📄 Testing Amend Document...")
+        
+        if not self.auth_token:
+            self.log_test("Amend Document", False, "No auth token available")
+            return
+        
+        if not hasattr(self, 'test_document_id'):
+            self.log_test("Amend Document", False, "No document ID available")
+            return
+        
+        amendment_request = {
+            "level": "minor",
+            "changes": {
+                "items[0].quantity": 120,
+                "totals.subtotal": 1860.00,
+                "totals.total": 2008.80
+            },
+            "reason": "Quantity adjustment requested by buyer",
+            "verification_completed": {
+                "quantity_verified": True,
+                "pricing_verified": True
+            }
+        }
+        
+        success, data = self.make_request("POST", f"/documents/{self.test_document_id}/amend", amendment_request)
+        
+        if success and isinstance(data, dict) and data.get("success") is True:
+            amendment_id = data.get("amendment_id")
+            self.log_test("Amend Document", True, f"Amendment created: {amendment_id}")
+        else:
+            self.log_test("Amend Document", False, str(data))
+
+    def test_ai_generate_document(self):
+        """Test AI document generation"""
+        print("\n📄 Testing AI Generate Document...")
+        
+        if not self.auth_token:
+            self.log_test("AI Generate Document", False, "No auth token available")
+            return
+        
+        ai_request = {
+            "document_type": "packing_list",
+            "context": {
+                "seller": "Global Coffee Exporters Ltd.",
+                "buyer": "Premium Coffee Importers Inc.",
+                "product": "Organic Arabica Coffee Beans",
+                "quantity": "500 kg",
+                "destination": "Hamburg, Germany",
+                "incoterm": "CIF"
+            }
+        }
+        
+        success, data = self.make_request("POST", "/documents/generate-ai", ai_request)
+        
+        if success and isinstance(data, dict) and data.get("success") is True:
+            generated_content = data.get("generated_content", {})
+            self.log_test("AI Generate Document", True, f"AI generated document with {len(generated_content)} fields")
+        else:
+            self.log_test("AI Generate Document", False, str(data))
+
+    def test_document_templates(self):
+        """Test getting document templates"""
+        print("\n📄 Testing Document Templates...")
+        
+        success, data = self.make_request("GET", "/documents/templates/list")
+        
+        if success and isinstance(data, dict) and "templates" in data:
+            templates = data.get("templates", [])
+            count = data.get("count", 0)
+            self.log_test("Document Templates", True, f"Found {count} templates")
+        else:
+            self.log_test("Document Templates", False, str(data))
+
+    def test_compliance_standards(self):
+        """Test getting compliance standards"""
+        print("\n📄 Testing Compliance Standards...")
+        
+        success, data = self.make_request("GET", "/documents/compliance/standards")
+        
+        if success and isinstance(data, dict):
+            self.log_test("Compliance Standards", True, "Compliance standards retrieved")
+        else:
+            self.log_test("Compliance Standards", False, str(data))
+
+    def test_document_types(self):
+        """Test getting document types"""
+        print("\n📄 Testing Document Types...")
+        
+        success, data = self.make_request("GET", "/documents/types")
+        
+        if success and isinstance(data, dict) and "document_types" in data:
+            document_types = data.get("document_types", [])
+            statuses = data.get("statuses", [])
+            amendment_levels = data.get("amendment_levels", [])
+            self.log_test("Document Types", True, f"Types: {len(document_types)}, Statuses: {len(statuses)}, Amendment levels: {len(amendment_levels)}")
+        else:
+            self.log_test("Document Types", False, str(data))
+
+    # Procedures by Category Tests
+    def test_procedures_by_category_health_check(self):
+        """Test Procedures by Category service health check"""
+        print("\n👥 Testing Procedures by Category Health Check...")
+        
+        success, data = self.make_request("GET", "/procedures/health")
+        
+        if success and isinstance(data, dict) and data.get("status") == "healthy":
+            capabilities = data.get("capabilities", [])
+            user_categories = data.get("user_categories", 0)
+            onboarding_steps = data.get("onboarding_steps", 0)
+            permissions = data.get("permissions", 0)
+            verification_badges = data.get("verification_badges", [])
+            self.log_test("Procedures by Category Health Check", True, f"Capabilities: {len(capabilities)}, Categories: {user_categories}, Steps: {onboarding_steps}, Permissions: {permissions}, Badges: {len(verification_badges)}")
+        else:
+            self.log_test("Procedures by Category Health Check", False, str(data))
+
+    def test_create_user_procedure(self):
+        """Test creating user procedure"""
+        print("\n👥 Testing Create User Procedure...")
+        
+        if not self.auth_token:
+            self.log_test("Create User Procedure", False, "No auth token available")
+            return
+        
+        procedure_request = {
+            "role": "seller_brand"
+        }
+        
+        success, data = self.make_request("POST", "/procedures/create", procedure_request)
+        
+        if success and isinstance(data, dict) and data.get("success") is True:
+            procedure_id = data.get("procedure_id")
+            role = data.get("role")
+            existing = data.get("existing", False)
+            self.test_procedure_id = procedure_id
+            status = "existing" if existing else "created"
+            self.log_test("Create User Procedure", True, f"Procedure {status}: {procedure_id}, Role: {role}")
+        else:
+            self.log_test("Create User Procedure", False, str(data))
+
+    def test_get_my_procedure(self):
+        """Test getting user's procedure"""
+        print("\n👥 Testing Get My Procedure...")
+        
+        if not self.auth_token:
+            self.log_test("Get My Procedure", False, "No auth token available")
+            return
+        
+        success, data = self.make_request("GET", "/procedures/my-procedure")
+        
+        if success and isinstance(data, dict) and "role" in data:
+            role = data.get("role")
+            user_id = data.get("user_id")
+            self.log_test("Get My Procedure", True, f"Role: {role}, User: {user_id}")
+        else:
+            self.log_test("Get My Procedure", False, str(data))
+
+    def test_onboarding_progress(self):
+        """Test getting onboarding progress"""
+        print("\n👥 Testing Onboarding Progress...")
+        
+        if not self.auth_token:
+            self.log_test("Onboarding Progress", False, "No auth token available")
+            return
+        
+        success, data = self.make_request("GET", "/procedures/progress")
+        
+        if success and isinstance(data, dict) and "progress_percentage" in data:
+            progress = data.get("progress_percentage", 0)
+            completed_steps = data.get("completed_steps", [])
+            remaining_steps = data.get("remaining_steps", [])
+            self.log_test("Onboarding Progress", True, f"Progress: {progress}%, Completed: {len(completed_steps)}, Remaining: {len(remaining_steps)}")
+        else:
+            self.log_test("Onboarding Progress", False, str(data))
+
+    def test_complete_onboarding_step(self):
+        """Test completing onboarding step"""
+        print("\n👥 Testing Complete Onboarding Step...")
+        
+        if not self.auth_token:
+            self.log_test("Complete Onboarding Step", False, "No auth token available")
+            return
+        
+        step_request = {
+            "step": "company_verification",
+            "step_data": {
+                "company_name": "Test Company Ltd.",
+                "registration_number": "12345678",
+                "tax_id": "TAX123456",
+                "business_type": "manufacturer",
+                "verification_documents": ["certificate_of_incorporation.pdf"]
+            }
+        }
+        
+        success, data = self.make_request("POST", "/procedures/complete-step", step_request)
+        
+        if success and isinstance(data, dict) and data.get("success") is True:
+            step = data.get("step")
+            badge_earned = data.get("badge_earned")
+            self.log_test("Complete Onboarding Step", True, f"Step completed: {step}, Badge: {badge_earned}")
+        else:
+            self.log_test("Complete Onboarding Step", False, str(data))
+
+    def test_user_permissions(self):
+        """Test getting user permissions"""
+        print("\n👥 Testing User Permissions...")
+        
+        if not self.auth_token:
+            self.log_test("User Permissions", False, "No auth token available")
+            return
+        
+        success, data = self.make_request("GET", "/procedures/permissions")
+        
+        if success and isinstance(data, dict) and "permissions" in data:
+            permissions = data.get("permissions", [])
+            count = data.get("count", 0)
+            self.log_test("User Permissions", True, f"Found {count} permissions")
+        else:
+            self.log_test("User Permissions", False, str(data))
+
+    def test_check_user_permission(self):
+        """Test checking specific user permission"""
+        print("\n👥 Testing Check User Permission...")
+        
+        if not self.auth_token:
+            self.log_test("Check User Permission", False, "No auth token available")
+            return
+        
+        success, data = self.make_request("GET", "/procedures/permissions/create_products/check")
+        
+        if success and isinstance(data, dict) and "granted" in data:
+            permission = data.get("permission")
+            granted = data.get("granted")
+            self.log_test("Check User Permission", True, f"Permission {permission}: {'granted' if granted else 'denied'}")
+        else:
+            self.log_test("Check User Permission", False, str(data))
+
+    def test_user_badge(self):
+        """Test getting user badge"""
+        print("\n👥 Testing User Badge...")
+        
+        if not self.auth_token:
+            self.log_test("User Badge", False, "No auth token available")
+            return
+        
+        success, data = self.make_request("GET", "/procedures/badge")
+        
+        if success and isinstance(data, dict) and "badge_type" in data:
+            badge_type = data.get("badge_type")
+            verification_level = data.get("verification_level")
+            self.log_test("User Badge", True, f"Badge: {badge_type}, Level: {verification_level}")
+        else:
+            self.log_test("User Badge", False, str(data))
+
+    def test_request_reverification(self):
+        """Test requesting reverification"""
+        print("\n👥 Testing Request Reverification...")
+        
+        if not self.auth_token:
+            self.log_test("Request Reverification", False, "No auth token available")
+            return
+        
+        success, data = self.make_request("POST", "/procedures/reverification")
+        
+        if success and isinstance(data, dict) and data.get("success") is True:
+            message = data.get("message", "")
+            self.log_test("Request Reverification", True, f"Reverification requested: {message}")
+        else:
+            self.log_test("Request Reverification", False, str(data))
+
+    def test_generate_onboarding_guidance(self):
+        """Test generating AI onboarding guidance"""
+        print("\n👥 Testing Generate Onboarding Guidance...")
+        
+        if not self.auth_token:
+            self.log_test("Generate Onboarding Guidance", False, "No auth token available")
+            return
+        
+        guidance_request = {
+            "context": {
+                "user_type": "seller_brand",
+                "industry": "food_beverage",
+                "target_markets": ["US", "EU"],
+                "experience_level": "beginner"
+            }
+        }
+        
+        success, data = self.make_request("POST", "/procedures/guidance", guidance_request)
+        
+        if success and isinstance(data, dict) and "guidance" in data:
+            guidance = data.get("guidance", "")
+            next_steps = data.get("next_steps", [])
+            self.log_test("Generate Onboarding Guidance", True, f"AI guidance generated with {len(next_steps)} next steps")
+        else:
+            self.log_test("Generate Onboarding Guidance", False, str(data))
+
+    def test_user_analytics(self):
+        """Test getting user analytics"""
+        print("\n👥 Testing User Analytics...")
+        
+        if not self.auth_token:
+            self.log_test("User Analytics", False, "No auth token available")
+            return
+        
+        success, data = self.make_request("GET", "/procedures/analytics")
+        
+        if success and isinstance(data, dict) and "analytics" in data:
+            analytics = data.get("analytics", {})
+            self.log_test("User Analytics", True, f"Analytics retrieved with {len(analytics)} metrics")
+        else:
+            self.log_test("User Analytics", False, str(data))
+
+    def test_category_configurations(self):
+        """Test getting category configurations"""
+        print("\n👥 Testing Category Configurations...")
+        
+        success, data = self.make_request("GET", "/procedures/categories")
+        
+        if success and isinstance(data, dict):
+            self.log_test("Category Configurations", True, "Category configurations retrieved")
+        else:
+            self.log_test("Category Configurations", False, str(data))
+
+    def test_procedures_reference_data(self):
+        """Test getting procedures reference data"""
+        print("\n👥 Testing Procedures Reference Data...")
+        
+        success, data = self.make_request("GET", "/procedures/reference-data")
+        
+        if success and isinstance(data, dict) and "user_roles" in data:
+            user_roles = data.get("user_roles", [])
+            onboarding_steps = data.get("onboarding_steps", [])
+            permissions = data.get("permissions", [])
+            verification_badges = data.get("verification_badges", [])
+            self.log_test("Procedures Reference Data", True, f"Roles: {len(user_roles)}, Steps: {len(onboarding_steps)}, Permissions: {len(permissions)}, Badges: {len(verification_badges)}")
+        else:
+            self.log_test("Procedures Reference Data", False, str(data))
+
+    # Documentation Procedures Tests
+    def test_documentation_procedures_health_check(self):
+        """Test Documentation Procedures service health check"""
+        print("\n🔄 Testing Documentation Procedures Health Check...")
+        
+        success, data = self.make_request("GET", "/doc-procedures/health")
+        
+        if success and isinstance(data, dict) and data.get("status") == "healthy":
+            capabilities = data.get("capabilities", [])
+            workflow_states = data.get("workflow_states", 0)
+            approval_levels = data.get("approval_levels", 0)
+            reviewer_roles = data.get("reviewer_roles", 0)
+            workflow_templates = data.get("workflow_templates", 0)
+            self.log_test("Documentation Procedures Health Check", True, f"Capabilities: {len(capabilities)}, States: {workflow_states}, Levels: {approval_levels}, Roles: {reviewer_roles}, Templates: {workflow_templates}")
+        else:
+            self.log_test("Documentation Procedures Health Check", False, str(data))
+
+    def test_create_document_procedure(self):
+        """Test creating document procedure"""
+        print("\n🔄 Testing Create Document Procedure...")
+        
+        if not self.auth_token:
+            self.log_test("Create Document Procedure", False, "No auth token available")
+            return
+        
+        if not hasattr(self, 'test_document_id'):
+            # Create a mock document ID for testing
+            self.test_document_id = "test-doc-12345"
+        
+        procedure_request = {
+            "document_id": self.test_document_id,
+            "document_data": {
+                "document_type": "commercial_invoice",
+                "title": "Test Invoice for Procedure",
+                "value": 5000.00,
+                "currency": "USD",
+                "parties": ["Test Seller", "Test Buyer"],
+                "priority": "high",
+                "compliance_requirements": ["ISO_9001", "WTO_TFA"]
+            }
+        }
+        
+        success, data = self.make_request("POST", "/doc-procedures/create", procedure_request)
+        
+        if success and isinstance(data, dict) and data.get("success") is True:
+            procedure_id = data.get("procedure_id")
+            self.test_doc_procedure_id = procedure_id
+            self.log_test("Create Document Procedure", True, f"Procedure created: {procedure_id}")
+        else:
+            self.log_test("Create Document Procedure", False, str(data))
+
+    def test_get_document_procedure(self):
+        """Test getting document procedure"""
+        print("\n🔄 Testing Get Document Procedure...")
+        
+        if not self.auth_token:
+            self.log_test("Get Document Procedure", False, "No auth token available")
+            return
+        
+        if not hasattr(self, 'test_doc_procedure_id'):
+            self.log_test("Get Document Procedure", False, "No procedure ID available")
+            return
+        
+        success, data = self.make_request("GET", f"/doc-procedures/{self.test_doc_procedure_id}")
+        
+        if success and isinstance(data, dict) and "workflow_state" in data:
+            workflow_state = data.get("workflow_state")
+            document_id = data.get("document_id")
+            self.log_test("Get Document Procedure", True, f"State: {workflow_state}, Document: {document_id}")
+        else:
+            self.log_test("Get Document Procedure", False, str(data))
+
+    def test_submit_for_review(self):
+        """Test submitting document for review"""
+        print("\n🔄 Testing Submit for Review...")
+        
+        if not self.auth_token:
+            self.log_test("Submit for Review", False, "No auth token available")
+            return
+        
+        if not hasattr(self, 'test_doc_procedure_id'):
+            self.log_test("Submit for Review", False, "No procedure ID available")
+            return
+        
+        success, data = self.make_request("POST", f"/doc-procedures/{self.test_doc_procedure_id}/submit")
+        
+        if success and isinstance(data, dict) and data.get("success") is True:
+            new_state = data.get("new_state")
+            message = data.get("message", "")
+            self.log_test("Submit for Review", True, f"New state: {new_state}, {message}")
+        else:
+            self.log_test("Submit for Review", False, str(data))
+
+    def test_approve_document(self):
+        """Test approving document"""
+        print("\n🔄 Testing Approve Document...")
+        
+        if not self.auth_token:
+            self.log_test("Approve Document", False, "No auth token available")
+            return
+        
+        if not hasattr(self, 'test_doc_procedure_id'):
+            self.log_test("Approve Document", False, "No procedure ID available")
+            return
+        
+        approval_request = {
+            "approver_name": "Test Approver",
+            "approver_role": "compliance_officer",
+            "comments": "Document meets all compliance requirements",
+            "conditions": ["Final review by senior officer required"],
+            "signature_hash": "abc123def456"
+        }
+        
+        success, data = self.make_request("POST", f"/doc-procedures/{self.test_doc_procedure_id}/approve", approval_request)
+        
+        if success and isinstance(data, dict) and data.get("success") is True:
+            new_state = data.get("new_state")
+            approval_level = data.get("approval_level")
+            self.log_test("Approve Document", True, f"Approved at level: {approval_level}, New state: {new_state}")
+        else:
+            self.log_test("Approve Document", False, str(data))
+
+    def test_reject_document(self):
+        """Test rejecting document"""
+        print("\n🔄 Testing Reject Document...")
+        
+        if not self.auth_token:
+            self.log_test("Reject Document", False, "No auth token available")
+            return
+        
+        # Create a new procedure for rejection test
+        if not hasattr(self, 'test_document_id'):
+            self.test_document_id = "test-doc-reject-12345"
+        
+        # First create a procedure to reject
+        procedure_request = {
+            "document_id": self.test_document_id + "-reject",
+            "document_data": {
+                "document_type": "packing_list",
+                "title": "Test Packing List for Rejection",
+                "value": 1000.00,
+                "currency": "USD"
+            }
+        }
+        
+        success, proc_data = self.make_request("POST", "/doc-procedures/create", procedure_request)
+        
+        if not success or not proc_data.get("success"):
+            self.log_test("Reject Document", False, "Could not create procedure for rejection test")
+            return
+        
+        reject_procedure_id = proc_data.get("procedure_id")
+        
+        rejection_request = {
+            "reviewer_name": "Test Reviewer",
+            "reviewer_role": "quality_control",
+            "comments": "Document contains errors and must be corrected before approval"
+        }
+        
+        success, data = self.make_request("POST", f"/doc-procedures/{reject_procedure_id}/reject", rejection_request)
+        
+        if success and isinstance(data, dict) and data.get("success") is True:
+            new_state = data.get("new_state")
+            rejection_reason = data.get("rejection_reason", "")
+            self.log_test("Reject Document", True, f"Rejected, New state: {new_state}")
+        else:
+            self.log_test("Reject Document", False, str(data))
+
+    def test_request_revision(self):
+        """Test requesting document revision"""
+        print("\n🔄 Testing Request Revision...")
+        
+        if not self.auth_token:
+            self.log_test("Request Revision", False, "No auth token available")
+            return
+        
+        if not hasattr(self, 'test_doc_procedure_id'):
+            self.log_test("Request Revision", False, "No procedure ID available")
+            return
+        
+        revision_request = {
+            "reviewer_name": "Test Reviewer",
+            "reviewer_role": "senior_officer",
+            "comments": "Please update the quantities and recalculate totals",
+            "attachments": [
+                {
+                    "name": "revision_notes.pdf",
+                    "url": "https://example.com/revision_notes.pdf"
+                }
+            ]
+        }
+        
+        success, data = self.make_request("POST", f"/doc-procedures/{self.test_doc_procedure_id}/request-revision", revision_request)
+        
+        if success and isinstance(data, dict) and data.get("success") is True:
+            new_state = data.get("new_state")
+            revision_id = data.get("revision_id")
+            self.log_test("Request Revision", True, f"Revision requested: {revision_id}, New state: {new_state}")
+        else:
+            self.log_test("Request Revision", False, str(data))
+
+    def test_add_comment(self):
+        """Test adding comment to procedure"""
+        print("\n🔄 Testing Add Comment...")
+        
+        if not self.auth_token:
+            self.log_test("Add Comment", False, "No auth token available")
+            return
+        
+        if not hasattr(self, 'test_doc_procedure_id'):
+            self.log_test("Add Comment", False, "No procedure ID available")
+            return
+        
+        comment_request = {
+            "comment": "This document looks good overall, just need minor adjustments",
+            "user_name": "Test Commenter",
+            "user_role": "reviewer",
+            "is_internal": False,
+            "attachments": []
+        }
+        
+        success, data = self.make_request("POST", f"/doc-procedures/{self.test_doc_procedure_id}/comment", comment_request)
+        
+        if success and isinstance(data, dict) and data.get("success") is True:
+            comment_id = data.get("comment_id")
+            self.log_test("Add Comment", True, f"Comment added: {comment_id}")
+        else:
+            self.log_test("Add Comment", False, str(data))
+
+    def test_escalate_procedure(self):
+        """Test escalating procedure"""
+        print("\n🔄 Testing Escalate Procedure...")
+        
+        if not self.auth_token:
+            self.log_test("Escalate Procedure", False, "No auth token available")
+            return
+        
+        if not hasattr(self, 'test_doc_procedure_id'):
+            self.log_test("Escalate Procedure", False, "No procedure ID available")
+            return
+        
+        escalation_request = {
+            "trigger": "sla_breach",
+            "reason": "Document has been pending review for over 48 hours",
+            "escalated_by": "System Auto-Escalation"
+        }
+        
+        success, data = self.make_request("POST", f"/doc-procedures/{self.test_doc_procedure_id}/escalate", escalation_request)
+        
+        if success and isinstance(data, dict) and data.get("success") is True:
+            escalation_level = data.get("escalation_level")
+            assigned_to = data.get("assigned_to", "")
+            self.log_test("Escalate Procedure", True, f"Escalated to level: {escalation_level}, Assigned to: {assigned_to}")
+        else:
+            self.log_test("Escalate Procedure", False, str(data))
+
+    def test_get_my_procedures(self):
+        """Test getting user's procedures"""
+        print("\n🔄 Testing Get My Procedures...")
+        
+        if not self.auth_token:
+            self.log_test("Get My Procedures", False, "No auth token available")
+            return
+        
+        success, data = self.make_request("GET", "/doc-procedures/my-procedures")
+        
+        if success and isinstance(data, dict) and "procedures" in data:
+            procedures = data.get("procedures", [])
+            count = data.get("count", 0)
+            filters = data.get("filters", {})
+            self.log_test("Get My Procedures", True, f"Found {count} procedures")
+        else:
+            self.log_test("Get My Procedures", False, str(data))
+
+    def test_get_pending_reviews(self):
+        """Test getting pending reviews"""
+        print("\n🔄 Testing Get Pending Reviews...")
+        
+        if not self.auth_token:
+            self.log_test("Get Pending Reviews", False, "No auth token available")
+            return
+        
+        success, data = self.make_request("GET", "/doc-procedures/pending-reviews")
+        
+        if success and isinstance(data, dict) and "procedures" in data:
+            procedures = data.get("procedures", [])
+            count = data.get("count", 0)
+            message = data.get("message", "")
+            self.log_test("Get Pending Reviews", True, f"Found {count} pending reviews")
+        else:
+            self.log_test("Get Pending Reviews", False, str(data))
+
+    def test_generate_workflow_insights(self):
+        """Test generating AI workflow insights"""
+        print("\n🔄 Testing Generate Workflow Insights...")
+        
+        if not self.auth_token:
+            self.log_test("Generate Workflow Insights", False, "No auth token available")
+            return
+        
+        insights_request = {
+            "context": {
+                "time_period": "last_30_days",
+                "document_types": ["commercial_invoice", "packing_list"],
+                "focus_areas": ["bottlenecks", "efficiency", "compliance"]
+            }
+        }
+        
+        success, data = self.make_request("POST", "/doc-procedures/workflow-insights", insights_request)
+        
+        if success and isinstance(data, dict) and "insights" in data:
+            insights = data.get("insights", [])
+            recommendations = data.get("recommendations", [])
+            self.log_test("Generate Workflow Insights", True, f"Generated {len(insights)} insights, {len(recommendations)} recommendations")
+        else:
+            self.log_test("Generate Workflow Insights", False, str(data))
+
+    def test_get_workflow_analytics(self):
+        """Test getting workflow analytics"""
+        print("\n🔄 Testing Get Workflow Analytics...")
+        
+        success, data = self.make_request("GET", "/doc-procedures/analytics", {"time_period_days": 30})
+        
+        if success and isinstance(data, dict) and "summary" in data:
+            summary = data.get("summary", {})
+            performance_metrics = data.get("performance_metrics", {})
+            self.log_test("Get Workflow Analytics", True, f"Analytics retrieved for 30 days")
+        else:
+            self.log_test("Get Workflow Analytics", False, str(data))
+
+    def test_workflow_templates(self):
+        """Test getting workflow templates"""
+        print("\n🔄 Testing Workflow Templates...")
+        
+        success, data = self.make_request("GET", "/doc-procedures/templates")
+        
+        if success and isinstance(data, dict) and "templates" in data:
+            templates = data.get("templates", [])
+            count = data.get("count", 0)
+            self.log_test("Workflow Templates", True, f"Found {count} workflow templates")
+        else:
+            self.log_test("Workflow Templates", False, str(data))
+
+    def test_documentation_procedures_reference_data(self):
+        """Test getting documentation procedures reference data"""
+        print("\n🔄 Testing Documentation Procedures Reference Data...")
+        
+        success, data = self.make_request("GET", "/doc-procedures/reference-data")
+        
+        if success and isinstance(data, dict) and "workflow_states" in data:
+            workflow_states = data.get("workflow_states", [])
+            approval_levels = data.get("approval_levels", [])
+            priority_levels = data.get("priority_levels", [])
+            workflow_actions = data.get("workflow_actions", [])
+            reviewer_roles = data.get("reviewer_roles", [])
+            self.log_test("Documentation Procedures Reference Data", True, f"States: {len(workflow_states)}, Levels: {len(approval_levels)}, Priorities: {len(priority_levels)}, Actions: {len(workflow_actions)}, Roles: {len(reviewer_roles)}")
+        else:
+            self.log_test("Documentation Procedures Reference Data", False, str(data))
     
     def run_all_tests(self):
         """Run all tests in sequence"""
