@@ -18,6 +18,7 @@ import AisleAvatar from '../src/components/AisleAvatar';
 import ProductReels from '../src/components/ProductReels';
 import QuickAccessDock from '../src/components/QuickAccessDock';
 import { aiService } from '../src/services/AIService';
+import { authIdentityService } from '../src/services/AuthIdentityService';
 
 export default function BlueEraDashboardScreen() {
   const { user } = useAuth();
