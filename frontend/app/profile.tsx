@@ -38,6 +38,14 @@ export default function ProfileScreen() {
 
   const menuItems = [
     {
+      title: '💙 Blue Era Dashboard',
+      icon: 'diamond-outline',
+      onPress: () => router.push('/blue-era-dashboard'),
+      color: '#0A2540',
+      isNew: true,
+      featured: true,
+    },
+    {
       title: 'My Orders',
       icon: 'receipt-outline',
       onPress: () => router.push('/orders'),
