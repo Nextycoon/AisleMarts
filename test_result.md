@@ -1233,15 +1233,18 @@ test_plan:
 
   - task: "Blue Era Backend Integration"
     implemented: true
-    working: "NA"
+    working: false
     file: "/app/frontend/app/blue-era-dashboard.tsx"
-    stuck_count: 0
+    stuck_count: 1
     priority: "high"
-    needs_retesting: true
+    needs_retesting: false
     status_history:
         - working: "NA"
           agent: "main"
           comment: "Integrated Blue Era Dashboard with real backend APIs: Trust Score from Auth Identity service, AI-powered daily insights from AI chat service, and dynamic product reels from products API with AI-generated insights for each product"
+        - working: false
+          agent: "testing"
+          comment: "❌ CRITICAL ROUTING ISSUE: Blue Era Dashboard routes (/blue-era-home and /blue-era-dashboard) are not functioning properly. Navigation to Blue Era routes redirects back to regular AisleMarts home page instead of loading the Blue Era experience. The Blue Era components are implemented correctly in the codebase (blue-era-home.tsx and blue-era-dashboard.tsx exist with proper Aisle Avatar, role selection, trust protection, product reels, and quick access dock), but there's a routing configuration issue preventing access. The Blue Era button (💙) is visible in header but clicking it doesn't navigate to the Blue Era experience. This blocks comprehensive testing of the Blue Era Dashboard UX features including Aisle Avatar animations, role-based routing, AI-powered insights, product reels autoplay, trust protection bar, and quick access dock functionality."
 
 agent_communication:
     - agent: "main"
