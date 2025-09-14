@@ -25,6 +25,7 @@ import { authIdentityService } from '../src/services/AuthIdentityService';
 export default function BlueEraDashboardScreen() {
   const { user } = useAuth();
   const { itemCount } = useCart();
+  const { theme, isDark } = useTheme();
   const [userRole, setUserRole] = useState<'brand' | 'shopper'>('shopper');
   const [greeting, setGreeting] = useState('');
   const [trustScore, setTrustScore] = useState(85);
