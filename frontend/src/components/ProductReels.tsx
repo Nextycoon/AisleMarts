@@ -11,6 +11,8 @@ import {
 } from 'react-native';
 import { Ionicons } from '@expo/vector-icons';
 import { LinearGradient } from 'expo-linear-gradient';
+import { API } from '../api/client';
+import { aiService } from '../services/AIService';
 
 const { width, height } = Dimensions.get('window');
 
