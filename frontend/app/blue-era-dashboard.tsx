@@ -86,6 +86,28 @@ export default function BlueEraDashboardScreen() {
     return greetings[role][timeOfDay];
   };
 
+  const getDailyInsightFromAI = async (role: 'brand' | 'shopper'): Promise<string> => {
+    try {
+      // Use AI service to generate personalized insights
+      const contextPrompt = role === 'brand' 
+        ? `Generate a daily business insight for a brand/seller on AisleMarts. Focus on market trends, opportunities, or actionable advice. Keep it under 100 characters.`
+        : `Generate a daily shopping insight for a consumer on AisleMarts. Focus on deals, trends, or personalized recommendations. Keep it under 100 characters.`;
+      
+      const aiResponse = await aiService.getInsights(user || undefined, contextPrompt);
+      
+      // Extract insight from AI response
+      if (aiResponse && aiResponse.response) {
+        return aiResponse.response;
+      }
+      
+      // Fallback to curated insights if AI fails
+      return getDailyInsight(role);
+    } catch (error) {
+      console.log('AI insight failed, using fallback:', error);
+      return getDailyInsight(role);
+    }
+  };
+
   const getDailyInsight = async (role: 'brand' | 'shopper'): Promise<string> => {
     const insights = {
       brand: [
