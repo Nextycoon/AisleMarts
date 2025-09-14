@@ -181,8 +181,30 @@ export default function ProfileScreen() {
 
         {/* Menu Items */}
         <View style={styles.menuSection}>
+          <Text style={styles.sectionHeader}>💙 Blue Era Experience</Text>
+          {menuItems.filter(item => item.featured).map((item, index) => (
+            <TouchableOpacity
+              key={`featured-${index}`}
+              style={[styles.menuItem, styles.featuredMenuItem]}
+              onPress={item.onPress}
+            >
+              <View style={styles.menuItemLeft}>
+                <View style={[styles.menuIcon, { backgroundColor: item.color }]}>
+                  <Ionicons name={item.icon as any} size={20} color="white" />
+                </View>
+                <View style={styles.menuItemTextContainer}>
+                  <Text style={[styles.menuItemText, styles.featuredText]}>{item.title}</Text>
+                  <View style={styles.newBadge}>
+                    <Text style={styles.newBadgeText}>NEW</Text>
+                  </View>
+                </View>
+              </View>
+              <Ionicons name="chevron-forward" size={20} color="#8E8E93" />
+            </TouchableOpacity>
+          ))}
+          
           <Text style={styles.sectionHeader}>🚀 Enterprise Features</Text>
-          {menuItems.filter(item => item.isNew).map((item, index) => (
+          {menuItems.filter(item => item.isNew && !item.featured).map((item, index) => (
             <TouchableOpacity
               key={`new-${index}`}
               style={styles.menuItem}
