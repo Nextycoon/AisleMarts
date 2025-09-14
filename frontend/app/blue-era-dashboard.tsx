@@ -260,7 +260,7 @@ export default function BlueEraDashboardScreen() {
   );
 
   return (
-    <SafeAreaView style={styles.container}>
+    <SafeAreaView style={[styles.container, { backgroundColor: theme.bgSecondary }]}>
       {/* Header */}
       <View style={[styles.header, { backgroundColor: theme.bg, borderBottomColor: theme.border }]}>
         <TouchableOpacity onPress={() => router.back()}>
