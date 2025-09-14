@@ -52,8 +52,65 @@ export default function AisleAvatar({
     return () => clearInterval(blinkInterval);
   }, []);
 
-  // Handle pose animations
+  // Handle voice message effect
   useEffect(() => {
+    if (enableVoice && voiceMessage && pose === 'speak') {
+      handleVoiceMessage();
+    }
+  }, [enableVoice, voiceMessage, pose]);
+
+  const handleVoiceMessage = async () => {
+    try {
+      if (!voiceService.isVoiceEnabled()) {
+        // Request permission
+        const permission = await voiceService.requestVoicePermission();
+        Alert.alert(
+          'Voice Mode',
+          permission.message,
+          [
+            { 
+              text: 'Not Now', 
+              style: 'cancel',
+              onPress: () => setShowVoicePermission(false)
+            },
+            { 
+              text: 'Enable Voice', 
+              onPress: async () => {
+                await voiceService.enableVoice();
+                speakMessage();
+              }
+            }
+          ]
+        );
+        return;
+      }
+      
+      speakMessage();
+    } catch (error) {
+      console.error('Voice message failed:', error);
+    }
+  };
+
+  const speakMessage = async () => {
+    try {
+      setIsSpeaking(true);
+      const messageToSpeak = voiceMessage || message || "Hello! I'm Aisle.";
+      await voiceService.speakAisle(messageToSpeak);
+    } catch (error) {
+      console.error('Failed to speak:', error);
+    } finally {
+      setIsSpeaking(false);
+    }
+  };
+
+  const handleAvatarPress = () => {
+    if (onPress) {
+      onPress();
+    } else if (enableVoice) {
+      // Default behavior: request voice permission or speak welcome
+      handleVoiceMessage();
+    }
+  };
     switch (pose) {
       case 'wave':
         performWave();
