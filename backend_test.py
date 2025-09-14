@@ -3162,6 +3162,56 @@ class APITester:
         self.test_profile_search()
         self.test_profile_reference_data()
         
+        # DOCUMENTATION SUITE TESTS
+        print("\n" + "📋" * 15 + " DOCUMENTATION SUITE TESTING " + "📋" * 15)
+        
+        # Documentation Compliance Testing
+        print("\n📄 Documentation Compliance Testing...")
+        self.test_documentation_compliance_health_check()
+        self.test_create_document()
+        self.test_list_user_documents()
+        self.test_get_document()
+        self.test_submit_document()
+        self.test_amend_document()
+        self.test_ai_generate_document()
+        self.test_document_templates()
+        self.test_compliance_standards()
+        self.test_document_types()
+        
+        # Procedures by Category Testing
+        print("\n👥 Procedures by Category Testing...")
+        self.test_procedures_by_category_health_check()
+        self.test_create_user_procedure()
+        self.test_get_my_procedure()
+        self.test_onboarding_progress()
+        self.test_complete_onboarding_step()
+        self.test_user_permissions()
+        self.test_check_user_permission()
+        self.test_user_badge()
+        self.test_request_reverification()
+        self.test_generate_onboarding_guidance()
+        self.test_user_analytics()
+        self.test_category_configurations()
+        self.test_procedures_reference_data()
+        
+        # Documentation Procedures Testing
+        print("\n🔄 Documentation Procedures Testing...")
+        self.test_documentation_procedures_health_check()
+        self.test_create_document_procedure()
+        self.test_get_document_procedure()
+        self.test_submit_for_review()
+        self.test_approve_document()
+        self.test_reject_document()
+        self.test_request_revision()
+        self.test_add_comment()
+        self.test_escalate_procedure()
+        self.test_get_my_procedures()
+        self.test_get_pending_reviews()
+        self.test_generate_workflow_insights()
+        self.test_get_workflow_analytics()
+        self.test_workflow_templates()
+        self.test_documentation_procedures_reference_data()
+        
         # Print summary
         print("\n" + "=" * 80)
         print("📊 TEST SUMMARY")
