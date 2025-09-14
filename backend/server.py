@@ -281,6 +281,7 @@ from profile_card_routes import router as profile_cards_router
 from documentation_compliance_routes import router as documentation_compliance_router
 from procedures_by_category_routes import router as procedures_by_category_router
 from documentation_procedures_routes import router as documentation_procedures_router
+from localization_routes import router as localization_router
 
 # Include AI routes
 app.include_router(ai_router)
