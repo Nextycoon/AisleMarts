@@ -326,6 +326,12 @@ export default function HomeScreen() {
         </View>
         <View style={styles.headerRight}>
           <TouchableOpacity
+            style={styles.blueEraButton}
+            onPress={() => router.push('/blue-era-home')}
+          >
+            <Text style={styles.blueEraButtonText}>💙</Text>
+          </TouchableOpacity>
+          <TouchableOpacity
             style={styles.aiButton}
             onPress={() => setShowAIAssistant(true)}
           >
