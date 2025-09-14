@@ -29,9 +29,13 @@ export default function AisleAvatar({
   onPress,
   size = 'medium',
   showSpeechBubble = false,
+  enableVoice = false,
+  voiceMessage,
 }: AisleAvatarProps) {
   const [currentExpression, setCurrentExpression] = useState(expression);
   const [isBlinking, setIsBlinking] = useState(false);
+  const [isSpeaking, setIsSpeaking] = useState(false);
+  const [showVoicePermission, setShowVoicePermission] = useState(false);
   
   // Animation values
   const waveAnim = useRef(new Animated.Value(0)).current;
