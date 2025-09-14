@@ -3903,6 +3903,16 @@ class APITester:
         self.test_ai_onboarding_authenticated()
         self.test_ai_error_scenarios()
         
+        # BLUE ERA DASHBOARD BACKEND INTEGRATION TESTS
+        print("\n" + "💙" * 15 + " BLUE ERA DASHBOARD BACKEND INTEGRATION TESTING " + "💙" * 15)
+        self.test_blue_era_trust_score_api()
+        self.test_blue_era_ai_chat_service()
+        self.test_blue_era_products_api_for_reels()
+        self.test_blue_era_ai_recommendations()
+        self.test_blue_era_auth_identity_profile()
+        self.test_blue_era_role_based_responses()
+        self.test_blue_era_authentication_context()
+        
         # Geographic Targeting System Tests
         print("\n" + "🌍" * 15 + " GEOGRAPHIC TARGETING SYSTEM TESTING " + "🌍" * 15)
         self.test_geographic_data_initialization()
