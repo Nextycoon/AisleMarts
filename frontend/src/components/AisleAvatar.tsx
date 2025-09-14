@@ -221,6 +221,27 @@ export default function AisleAvatar({
     outputRange: ['0deg', '15deg'],
   });
 
+  // Handle pose changes with proper animations
+  useEffect(() => {
+    switch (pose) {
+      case 'wave':
+        performWave();
+        break;
+      case 'speak':
+        showSpeechBubble && animateSpeechBubble();
+        break;
+      case 'protective':
+        performPulse('#FF9500');
+        break;
+      case 'caring':
+        performPulse('#34C759');
+        break;
+      default:
+        // Idle pose
+        break;
+    }
+  }, [pose, showSpeechBubble]);
+
   return (
     <View style={styles.container}>
       {/* Speech Bubble */}
