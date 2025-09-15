@@ -31,10 +31,15 @@ class SellerProductsService:
             
             # Return created product
             created_product = await self.products.find_one({"_id": result.inserted_id})
-            created_product['id'] = str(created_product['_id'])
-            
-            logger.info(f"Created product {created_product['id']} for seller {seller_id}")
-            return created_product
+            if created_product:
+                # Convert ObjectId to string for JSON serialization
+                created_product['id'] = str(created_product['_id'])
+                created_product['_id'] = str(created_product['_id'])
+                
+                logger.info(f"Created product {created_product['id']} for seller {seller_id}")
+                return created_product
+            else:
+                raise Exception("Failed to retrieve created product")
             
         except Exception as e:
             logger.error(f"Error creating product: {e}")
