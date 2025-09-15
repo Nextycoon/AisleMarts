@@ -201,7 +201,7 @@ const OfflineIndicator: React.FC = () => {
           {!isConnected ? '📶 No Connection' : '🌐 Limited Internet'}
         </Text>
         <Text style={{ color: 'white', fontSize: 12, opacity: 0.9 }}>
-          {queuedOperations.length > 0 
+          {queuedOperations && queuedOperations.length > 0 
             ? `${queuedOperations.length} actions queued`
             : 'Working offline'
           }
