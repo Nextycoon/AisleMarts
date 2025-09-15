@@ -31,6 +31,25 @@ export default function ProductEditor() {
     }
   }, [editing, id]);
 
+  const addVariant = () => {
+    const newVariant: Variant = {
+      id: Date.now().toString(),
+      name: '',
+      sku: '',
+      priceDelta: 0,
+      stock: 0
+    };
+    setVariants([...variants, newVariant]);
+  };
+
+  const updateVariant = (id: string, updatedVariant: Variant) => {
+    setVariants(variants.map(v => v.id === id ? updatedVariant : v));
+  };
+
+  const removeVariant = (id: string) => {
+    setVariants(variants.filter(v => v.id !== id));
+  };
+
   const loadProduct = async (productId: string) => {
     try {
       const response = await axios.get(`${API_BASE_URL}/api/seller/products/${productId}`);
