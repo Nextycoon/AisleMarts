@@ -205,7 +205,7 @@ class KenyaPilotValidator:
         print("\n🔥 P0 CRITICAL: Multi-Language AI System")
         
         # Health Check
-        success, data = self.make_request("GET", "/multilang-ai/health")
+        success, data = self.make_request("GET", "/multilang/health")
         if success and isinstance(data, dict) and data.get("status") == "healthy":
             languages_count = data.get("languages_supported", 0)
             features_count = data.get("features_enabled", 0)
