@@ -77,7 +77,9 @@ class SellerProductsService:
             })
             
             if product:
+                # Convert ObjectId to string for JSON serialization
                 product['id'] = str(product['_id'])
+                product['_id'] = str(product['_id'])
                 
             return product
             
