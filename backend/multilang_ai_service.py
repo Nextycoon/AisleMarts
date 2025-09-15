@@ -104,7 +104,7 @@ class MultiLanguageAIService:
             cultural_prompt = self._build_cultural_prompt(user_message, language, cultural_info, user_context)
             
             # Get AI response with cultural context
-            ai_response = await self.ai_service.chat_completion(cultural_prompt)
+            ai_response = await self.ai_agent.chat_completion(cultural_prompt)
             
             # Add language-specific formatting
             formatted_response = self._format_response(ai_response, language, cultural_info)
