@@ -208,7 +208,7 @@ const OfflineIndicator: React.FC = () => {
         </Text>
       </View>
       
-      {isConnected && queuedOperations.length > 0 && (
+      {isConnected && queuedOperations && queuedOperations.length > 0 && (
         <TouchableOpacity
           onPress={retryQueue}
           style={{
