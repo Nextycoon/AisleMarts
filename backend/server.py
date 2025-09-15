@@ -325,12 +325,14 @@ app.include_router(procedures_by_category_router)
 app.include_router(documentation_procedures_router)
 app.include_router(localization_router)
 
-# Include new seller, M-Pesa, multi-language, and AI intents routes
+# Include new seller, M-Pesa, multi-language, AI intents, seller products, and order management routes
 app.include_router(seller_router)
 app.include_router(mpesa_router)
 app.include_router(multilang_router)
 app.include_router(ai_intents_router)
 app.include_router(seller_products_router)
+app.include_router(order_management_router)
+app.include_router(mpesa_webhook_router)
 
 # Include the main API router
 app.include_router(api_router)
