@@ -182,7 +182,10 @@ class OrderManagementService:
             result = await self.orders.insert_one(order_dict)
             
             created_order = await self.orders.find_one({"_id": result.inserted_id})
-            created_order['id'] = str(created_order['_id'])
+            if created_order:
+                # Convert ObjectId to string for JSON serialization
+                created_order['id'] = str(created_order['_id'])
+                del created_order['_id']  # Remove the ObjectId field
             
             logger.info(f"Created demo order {order_id} for seller {seller_id}")
             return created_order
