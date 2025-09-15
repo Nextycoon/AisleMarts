@@ -228,18 +228,72 @@ export default function AvatarHomeScreen() {
   return (
     <SafeAreaView style={{ flex: 1, backgroundColor: theme.colors.bg }}>
       <ScrollView style={{ flex: 1, padding: theme.space.md }}>
-        {/* AI-First Header */}
+        {/* AI-First Header with Language Toggle */}
         <View style={{ gap: theme.space.xs, marginBottom: theme.space.lg }}>
-          <Text style={{ 
-            color: theme.colors.text, 
-            fontSize: 22, 
-            fontWeight: '700' 
+          <View style={{ 
+            flexDirection: 'row', 
+            justifyContent: 'space-between', 
+            alignItems: 'center' 
           }}>
-            {getLocalizedText('title', 'AisleMarts — AI for Shopping')}
-          </Text>
+            <Text style={{ 
+              color: theme.colors.text, 
+              fontSize: 22, 
+              fontWeight: '700',
+              flex: 1
+            }}>
+              {getLocalizedText('title', 'AisleMarts — AI for Shopping')}
+            </Text>
+            
+            {/* Language Toggle */}
+            <TouchableOpacity
+              onPress={() => {
+                const newLocale = locale === 'en' ? 'sw' : 'en';
+                setLocale(newLocale);
+                AsyncStorage.setItem('user_locale', newLocale);
+              }}
+              style={{
+                backgroundColor: theme.colors.card,
+                paddingHorizontal: theme.space.sm,
+                paddingVertical: theme.space.xs,
+                borderRadius: theme.radius.sm,
+                borderWidth: 1,
+                borderColor: '#4A9EFF',
+                flexDirection: 'row',
+                alignItems: 'center',
+                gap: theme.space.xs
+              }}
+            >
+              <Text style={{ fontSize: 16 }}>🇰🇪</Text>
+              <Text style={{ 
+                color: '#4A9EFF', 
+                fontSize: 12, 
+                fontWeight: '600' 
+              }}>
+                {locale === 'en' ? 'EN' : 'SW'}
+              </Text>
+            </TouchableOpacity>
+          </View>
+          
           <Text style={{ color: theme.colors.textDim }}>
             {getLocalizedText('subtitle', 'Smarter. Faster. Everywhere.')}
           </Text>
+          
+          {/* Kenya Context Indicator */}
+          <View style={{ 
+            flexDirection: 'row', 
+            alignItems: 'center', 
+            gap: theme.space.xs,
+            marginTop: theme.space.xs
+          }}>
+            <Text style={{ fontSize: 12, opacity: 0.7 }}>📍</Text>
+            <Text style={{ 
+              color: theme.colors.textDim, 
+              fontSize: 12,
+              opacity: 0.8
+            }}>
+              {locale === 'sw' ? 'Nairobi, Kenya • KES' : 'Nairobi, Kenya • KES'}
+            </Text>
+          </View>
         </View>
 
         {/* Multi-modal Input Bar */}
