@@ -1,0 +1,51 @@
+{
+  "products": [
+    {
+      "id": "p1",
+      "title": "Wireless Earbuds X",
+      "price": 39.99,
+      "stock": 120,
+      "sku": "WX-100",
+      "active": true
+    },
+    {
+      "id": "p2",
+      "title": "Noise Cancelling Headphones",
+      "price": 99.0,
+      "stock": 45,
+      "sku": "NC-200",
+      "active": true
+    },
+    {
+      "id": "p3",
+      "title": "Travel Charger 65W",
+      "price": 29.0,
+      "stock": 0,
+      "sku": "TC-65",
+      "active": false
+    }
+  ],
+  "orders": [
+    {
+      "id": "O-10023",
+      "createdAt": "2025-09-10",
+      "total": 128.5,
+      "status": "paid",
+      "customer": "A. Njeri"
+    },
+    {
+      "id": "O-10024",
+      "createdAt": "2025-09-11",
+      "total": 39.99,
+      "status": "shipped",
+      "customer": "B. Otieno"
+    }
+  ],
+  "analytics": {
+    "revenue30": 12450,
+    "orders30": 312,
+    "aov": 39.9,
+    "ctr": 3.4,
+    "aiShare": 0.62
+  }
+}

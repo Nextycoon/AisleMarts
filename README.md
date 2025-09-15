@@ -1,22 +1,22 @@
-# AisleMarts — AI for Shopping
-Smarter. Faster. Everywhere.
+# AisleMarts Multi-Vendor Starter Kit
 
-**Drop-in package** to realign the app to AI-first.
+This kit adds **seller dashboards, orders, and analytics** to your AI-first foundation.
 
-## Files
-- `src/theme/theme.ts` — brand tokens
-- `src/screens/Splash.tsx` — identity splash
-- `src/screens/AvatarHome.tsx` — AI-first home (multimodal)
-- `src/cards/CompareCard.tsx`, `src/cards/ConnectStoreCard.tsx` — SmartCards
-- `api/openapi.yaml` — backend contracts
-- `i18n/*.json` — EN/AR/TR/SW seeds
-- `mocks/ai_intents.json` — sample response
-- `tests/ai_cards.test.ts` — unit test skeleton
+## Includes
+- `src/screens/SellerDashboard.tsx` — KPIs + product list + quick actions
+- `src/screens/ProductEditor.tsx` — create/edit product
+- `src/screens/Orders.tsx` & `OrderDetail.tsx` — seller order management
+- `src/screens/Analytics.tsx` — KPI tiles + timeseries placeholder
+- `src/components/ProductListItem.tsx`, `StatTile.tsx` — reusable UI
+- `api/openapi.yaml` — endpoints for products, orders, analytics
+- `mocks/sample.json` — seed data
+- `tests/*.test.ts` — test skeletons
 
-## Wire-in (Expo)
-1. Add `Splash.tsx` as your initial route.
-2. Set `AvatarHome` as the default tab.
-3. Implement `POST /ai/intents` & render SmartCards by type.
-4. Load `i18n/en.json` (and others) at app init based on `GET /localize/bootstrap`.
+## Wire-up Notes
+1. Add routes/tabs for **Dashboard, Products, Orders, Analytics** in your seller app shell.
+2. Connect screens to backend endpoints listed in `api/openapi.yaml`.
+3. Use M-Pesa webhooks to transition orders `pending -> paid`.
+4. Persist product `active` flag to control AI suggestions surfacing.
+5. Expose analytics timeseries for `revenue, orders, views, ctr, ai_share`.
 
-Generated: 2025-09-15T01:50:43.807465Z
+Generated: 2025-09-15T03:32:04.820451Z

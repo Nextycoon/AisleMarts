@@ -1,84 +1,102 @@
 openapi: 3.0.3
 info:
-  title: AisleMarts AI Core
+  title: AisleMarts Multi-Vendor APIs
   version: 1.0.0
 paths:
-  /ai/intents:
-    post:
-      summary: Parse multimodal input and return SmartCards
-      requestBody:
-        required: true
-        content:
-          application/json:
-            schema:
-              type: object
-              properties:
-                input:
-                  type: object
-                  properties:
-                    type: { type: string, enum: [text, voice, image, barcode, prompt] }
-                    text: { type: string }
-                    uri: { type: string }
-                locale: { type: string }
-                currency: { type: string }
-                lat: { type: number }
-                lng: { type: number }
-      responses:
-        '200':
-          description: OK
-          content:
-            application/json:
-              schema:
-                type: object
-                properties:
-                  cards:
-                    type: array
-                    items:
-                      type: object
-                      properties:
-                        type: { type: string }
-                        data: { type: object }
-  /seller/connect:
-    post:
-      summary: Connect external commerce store
-      requestBody:
-        required: true
-        content:
-          application/json:
-            schema:
-              type: object
-              properties:
-                platform:
-                  type: string
-                  enum: [shopify, woo, cscart]
-                oauthCode:
-                  type: string
-                region:
-                  type: string
-      responses:
-        '200':
-          description: Linked
-          content:
-            application/json:
-              schema:
-                type: object
-                properties:
-                  status: { type: string }
-                  catalogImported: { type: boolean }
-                  items: { type: integer }
-  /localize/bootstrap:
+  /seller/products:
     get:
-      summary: Bootstrap localization
+      summary: List seller products
       responses:
         '200':
           description: OK
-          content:
-            application/json:
-              schema:
-                type: object
-                properties:
-                  locale: { type: string }
-                  currency: { type: string }
-                  units: { type: string }
-                  country: { type: string }
-                  taxRegion: { type: string }
+    post:
+      summary: Create product
+      responses:
+        '201':
+          description: Created
+  /seller/products/{id}:
+    get:
+      summary: Read product
+      parameters:
+        - in: path
+          name: id
+          required: true
+          schema: { type: string }
+      responses:
+        '200': { description: OK }
+    put:
+      summary: Update product
+      parameters:
+        - in: path
+          name: id
+          required: true
+          schema: { type: string }
+      responses:
+        '200': { description: Updated }
+    delete:
+      summary: Delete product
+      parameters:
+        - in: path
+          name: id
+          required: true
+          schema: { type: string }
+      responses:
+        '204': { description: Deleted }
+  /seller/products/{id}/toggle:
+    post:
+      summary: Toggle product active/pause
+      parameters:
+        - in: path
+          name: id
+          required: true
+          schema: { type: string }
+      responses:
+        '200': { description: OK }
+  /seller/orders:
+    get:
+      summary: List seller orders
+      responses:
+        '200': { description: OK }
+  /seller/orders/{id}:
+    get:
+      summary: Get order detail
+      parameters:
+        - in: path
+          name: id
+          required: true
+          schema: { type: string }
+      responses:
+        '200': { description: OK }
+    post:
+      summary: Update order status
+      parameters:
+        - in: path
+          name: id
+          required: true
+          schema: { type: string }
+      requestBody:
+        required: true
+        content:
+          application/json:
+            schema:
+              type: object
+              properties:
+                status:
+                  type: string
+                  enum: [pending, paid, shipped, delivered, cancelled]
+      responses:
+        '200': { description: Updated }
+  /seller/analytics/summary:
+    get:
+      summary: Seller KPIs for dashboard
+      responses:
+        '200': { description: OK }
+  /seller/analytics/timeseries:
+    get:
+      summary: KPI timeseries for charts
+      parameters:
+        - in: query
+          name: metric
+          schema: { type: string, enum: [revenue, orders, views, ctr, ai_share] }
+      responses:
+        '200': { description: OK }
