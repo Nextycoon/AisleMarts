@@ -1,14 +1,32 @@
-from fastapi import APIRouter, HTTPException, Request, Depends
+from fastapi import APIRouter, HTTPException, Request, Depends, Header
 from pydantic import BaseModel
 from typing import Dict, Optional
 from bson import ObjectId
 from mpesa_service import mpesa_service
 from commission_service import commission_service
 from seller_service import seller_service
-from security import get_current_user
+from security import decode_access_token
 from datetime import datetime
+from db import db
 
 router = APIRouter(prefix="/api/mpesa", tags=["M-Pesa"])
+
+async def get_current_user(authorization: str | None = Header(None)):
+    """Extract user from auth token"""
+    if not authorization:
+        raise HTTPException(401, "Missing Authorization header")
+    try:
+        token = authorization.split()[1]
+        payload = decode_access_token(token)
+        user_id = payload.get("sub")
+        if not user_id:
+            raise HTTPException(401, "Invalid token")
+        user = await db().users.find_one({"_id": user_id})
+        if not user:
+            raise HTTPException(401, "User not found")
+        return user
+    except Exception as e:
+        raise HTTPException(401, f"Invalid token: {str(e)}")
 
 class MPesaPaymentRequest(BaseModel):
     phone_number: str
