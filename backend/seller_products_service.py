@@ -2,7 +2,7 @@ from typing import List, Optional, Dict, Any
 from datetime import datetime, timedelta
 from bson import ObjectId
 from motor.motor_asyncio import AsyncIOMotorDatabase
-from .seller_products_models import SellerProduct, SellerProductCreate, SellerProductUpdate, SellerOrder, SellerAnalytics
+from seller_products_models import SellerProduct, SellerProductCreate, SellerProductUpdate, SellerOrder, SellerAnalytics
 import logging
 
 logger = logging.getLogger(__name__)
