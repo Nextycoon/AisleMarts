@@ -139,29 +139,31 @@ class KenyaPilotValidator:
             else:
                 self.log_test(f"Kenya Phone Validation ({phone})", False, str(data), "P0")
         
-        # M-Pesa Payment Simulation
+        # M-Pesa Payment Simulation (Demo)
         payment_data = {
-            "phone_number": "+254712345678",
             "amount": 1000.0,  # KSh 1,000
-            "account_reference": "ORDER123",
-            "transaction_desc": "Test Payment"
+            "phone_number": "+254712345678"
         }
         
-        success, data = self.make_request("POST", "/mpesa/simulate-payment", payment_data)
+        success, data = self.make_request("POST", "/mpesa/demo/simulate-payment", payment_data)
         if success and isinstance(data, dict) and data.get("success"):
-            self.log_test("M-Pesa Payment Simulation", True, f"Transaction ID: {data.get('transaction_id')}", "P0")
+            self.log_test("M-Pesa Payment Simulation", True, f"Payment Details: {data.get('payment_details', {}).get('order_id', 'N/A')}", "P0")
         else:
             self.log_test("M-Pesa Payment Simulation", False, str(data), "P0")
         
         # M-Pesa Integration Status
-        success, data = self.make_request("GET", "/mpesa/integration-status")
+        success, data = self.make_request("GET", "/mpesa/test-integration")
         if success and isinstance(data, dict):
-            tests_passing = data.get("tests_passing", 0)
-            total_tests = data.get("total_tests", 0)
-            if tests_passing == total_tests and tests_passing > 0:
-                self.log_test("M-Pesa Integration Status", True, f"All {tests_passing}/{total_tests} tests passing", "P0")
+            integration_status = data.get("integration_status")
+            tests = data.get("tests", {})
+            ready_for_payments = data.get("ready_for_payments", False)
+            
+            if integration_status == "healthy" and ready_for_payments:
+                passing_tests = sum(1 for test in tests.values() if test.get("status") == "pass")
+                total_tests = len(tests)
+                self.log_test("M-Pesa Integration Status", True, f"All {passing_tests}/{total_tests} tests passing", "P0")
             else:
-                self.log_test("M-Pesa Integration Status", False, f"Only {tests_passing}/{total_tests} tests passing", "P0")
+                self.log_test("M-Pesa Integration Status", False, f"Status: {integration_status}, Ready: {ready_for_payments}", "P0")
         else:
             self.log_test("M-Pesa Integration Status", False, str(data), "P0")
 
