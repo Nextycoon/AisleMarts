@@ -188,7 +188,7 @@ async def get_seller_analytics(
 ):
     """Get seller's performance analytics"""
     try:
-        user_id = ObjectId(current_user["user_id"])
+        user_id = current_user["_id"]
         seller_profile = await seller_service.get_seller_profile(user_id)
         
         if not seller_profile:
@@ -197,7 +197,7 @@ async def get_seller_analytics(
                 detail="Seller profile not found"
             )
         
-        analytics = await seller_service.get_seller_analytics(seller_profile.id, period)
+        analytics = await seller_service.get_seller_analytics(seller_profile['_id'], period)
         
         return analytics
         
@@ -211,7 +211,7 @@ async def get_seller_earnings(
 ):
     """Get seller's earnings summary"""
     try:
-        user_id = ObjectId(current_user["user_id"])
+        user_id = current_user["_id"]
         seller_profile = await seller_service.get_seller_profile(user_id)
         
         if not seller_profile:
@@ -220,7 +220,7 @@ async def get_seller_earnings(
                 detail="Seller profile not found"
             )
         
-        earnings = await commission_service.get_seller_earnings(seller_profile.id, period)
+        earnings = await commission_service.get_seller_earnings(seller_profile['_id'], period)
         
         return earnings
         
@@ -235,7 +235,7 @@ async def get_seller_commissions(
 ):
     """Get seller's commission history"""
     try:
-        user_id = ObjectId(current_user["user_id"])
+        user_id = current_user["_id"]
         seller_profile = await seller_service.get_seller_profile(user_id)
         
         if not seller_profile:
@@ -245,21 +245,21 @@ async def get_seller_commissions(
             )
         
         commissions = await commission_service.get_seller_commissions(
-            seller_profile.id, limit, offset
+            seller_profile['_id'], limit, offset
         )
         
         return {
             "commissions": [
                 {
-                    "id": str(c.id),
-                    "order_id": str(c.order_id),
-                    "gross_amount": c.gross_amount,
-                    "commission_amount": c.commission_amount,
-                    "seller_payout": c.seller_payout,
-                    "currency": c.currency,
-                    "status": c.status,
-                    "created_at": c.created_at,
-                    "processed_at": c.processed_at
+                    "id": c['_id'],
+                    "order_id": c['order_id'],
+                    "gross_amount": c['gross_amount'],
+                    "commission_amount": c['commission_amount'],
+                    "seller_payout": c['seller_payout'],
+                    "currency": c['currency'],
+                    "status": c['status'],
+                    "created_at": c['created_at'],
+                    "processed_at": c.get('processed_at')
                 }
                 for c in commissions
             ],
@@ -277,7 +277,7 @@ async def generate_payout(
 ):
     """Generate monthly payout for seller"""
     try:
-        user_id = ObjectId(current_user["user_id"])
+        user_id = current_user["_id"]
         seller_profile = await seller_service.get_seller_profile(user_id)
         
         if not seller_profile:
@@ -287,7 +287,7 @@ async def generate_payout(
             )
         
         payout = await commission_service.generate_monthly_payout(
-            seller_profile.id, year, month
+            seller_profile['_id'], year, month
         )
         
         if not payout:
@@ -297,12 +297,12 @@ async def generate_payout(
             )
         
         return {
-            "payout_id": str(payout.id),
-            "period": payout.payout_period,
-            "net_payout": payout.net_payout,
-            "currency": payout.currency,
-            "status": payout.payout_status,
-            "payout_method": payout.payout_method
+            "payout_id": payout['_id'],
+            "period": payout['payout_period'],
+            "net_payout": payout['net_payout'],
+            "currency": payout['currency'],
+            "status": payout['payout_status'],
+            "payout_method": payout['payout_method']
         }
         
     except Exception as e:
@@ -316,7 +316,7 @@ async def simulate_sale(
 ):
     """Simulate a sale for demo purposes"""
     try:
-        user_id = ObjectId(current_user["user_id"])
+        user_id = current_user["_id"]
         seller_profile = await seller_service.get_seller_profile(user_id)
         
         if not seller_profile:
@@ -326,7 +326,7 @@ async def simulate_sale(
             )
         
         simulation = await commission_service.simulate_order_completion(
-            seller_profile.id, amount, currency
+            seller_profile['_id'], amount, currency
         )
         
         return {
