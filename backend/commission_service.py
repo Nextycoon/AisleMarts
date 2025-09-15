@@ -1,7 +1,7 @@
 from typing import Dict, List
 from datetime import datetime, timedelta
 from bson import ObjectId
-from seller_models import Commission, SellerPayout
+from seller_models import CommissionDoc, SellerPayoutDoc
 from models import Order, User
 from localization_service import localization_service
 from dotenv import load_dotenv
@@ -12,7 +12,7 @@ class CommissionService:
     def __init__(self):
         self.default_commission_rate = 0.01  # 1%
     
-    async def calculate_commission(self, order_dict: dict) -> Commission:
+    async def calculate_commission(self, order_dict: dict) -> CommissionDoc:
         """Calculate commission for a completed order"""
         
         # Get seller's commission rate (default 1%)
@@ -24,7 +24,7 @@ class CommissionService:
         seller_payout = gross_amount - commission_amount
         
         # Create commission record
-        commission = Commission(
+        commission = CommissionDoc(
             order_id=ObjectId(order_dict['order_id']) if isinstance(order_dict['order_id'], str) else order_dict['order_id'],
             seller_id=ObjectId(order_dict['seller_id']) if isinstance(order_dict['seller_id'], str) else order_dict['seller_id'],
             buyer_id=ObjectId(order_dict['buyer_id']) if isinstance(order_dict['buyer_id'], str) else order_dict['buyer_id'],
@@ -42,7 +42,7 @@ class CommissionService:
     
     async def process_commission(self, commission_id: ObjectId) -> bool:
         """Mark commission as processed (order completed)"""
-        commission = await Commission.get(commission_id)
+        commission = await CommissionDoc.get(commission_id)
         if commission:
             commission.status = "processed"
             commission.processed_at = datetime.utcnow()
@@ -68,7 +68,7 @@ class CommissionService:
             end_date = now
         
         # Query commissions for period
-        commissions = await Commission.find({
+        commissions = await CommissionDoc.find({
             "seller_id": seller_id,
             "created_at": {"$gte": start_date, "$lte": end_date},
             "status": {"$in": ["processed", "paid"]}
@@ -89,15 +89,15 @@ class CommissionService:
             "commission_rate": self.default_commission_rate * 100  # 1%
         }
     
-    async def get_seller_commissions(self, seller_id: ObjectId, limit: int = 50, offset: int = 0) -> List[Commission]:
+    async def get_seller_commissions(self, seller_id: ObjectId, limit: int = 50, offset: int = 0) -> List[CommissionDoc]:
         """Get seller's commission history"""
-        commissions = await Commission.find({
+        commissions = await CommissionDoc.find({
             "seller_id": seller_id
         }).skip(offset).limit(limit).to_list()
         
         return commissions
     
-    async def generate_monthly_payout(self, seller_id: ObjectId, year: int, month: int) -> SellerPayout:
+    async def generate_monthly_payout(self, seller_id: ObjectId, year: int, month: int) -> SellerPayoutDoc:
         """Generate monthly payout for seller"""
         
         # Calculate period dates
@@ -110,7 +110,7 @@ class CommissionService:
         period_str = f"{year}-{month:02d}"
         
         # Get all processed commissions for the period
-        commissions = await Commission.find({
+        commissions = await CommissionDoc.find({
             "seller_id": seller_id,
             "created_at": {"$gte": period_start, "$lte": period_end},
             "status": "processed"
@@ -125,7 +125,7 @@ class CommissionService:
         net_payout = sum(c.seller_payout for c in commissions)
         
         # Create payout record
-        payout = SellerPayout(
+        payout = SellerPayoutDoc(
             seller_id=seller_id,
             payout_period=period_str,
             total_sales=total_sales,
