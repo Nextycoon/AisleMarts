@@ -1,11 +1,24 @@
 import React from 'react';
 import { render, fireEvent } from '@testing-library/react-native';
-import ProductEditor from '../frontend/src/screens/ProductEditor';
+// Mock expo-router
+jest.mock('expo-router', () => ({
+  useRouter: () => ({
+    push: jest.fn(),
+    back: jest.fn(),
+  }),
+  useLocalSearchParams: () => ({}),
+}));
 
-describe('ProductEditor — Variants', () => {
-  it('adds a variant row', () => {
-    const { getByText, queryAllByText } = render(<ProductEditor />);
-    fireEvent.press(getByText('+ Add Variant'));
-    expect(queryAllByText('Variant').length).toBeGreaterThan(0);
+// Mock axios
+jest.mock('axios');
+
+import ProductEditor from '../src/screens/ProductEditor';
+
+describe('ProductEditor', () => {
+  it('adds a variant row successfully', () => {
+    const { getByText } = render(<ProductEditor />);
+    const addButton = getByText('+ Add Variant');
+    fireEvent.press(addButton);
+    expect(getByText('Variant')).toBeTruthy();
   });
 });
