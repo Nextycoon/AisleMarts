@@ -241,7 +241,7 @@ class KenyaPilotValidator:
             self.log_test("Swahili AI Chat", False, str(data), "P0")
         
         # Multi-Language Support Test
-        success, data = self.make_request("GET", "/multilang-ai/languages")
+        success, data = self.make_request("GET", "/multilang/languages")
         if success and isinstance(data, dict) and "languages" in data:
             languages = data.get("languages", [])
             swahili_supported = any(lang.get("code") == "sw" for lang in languages)
