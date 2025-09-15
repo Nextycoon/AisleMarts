@@ -229,7 +229,7 @@ class KenyaPilotValidator:
             self.log_test("Swahili Greeting Generation", False, str(data), "P0")
         
         # Swahili AI Chat Test
-        success, data = self.make_request("POST", "/multilang-ai/chat", {
+        success, data = self.make_request("POST", "/multilang/chat", {
             "message": "Nahitaji simu ya biashara",  # "I need a business phone"
             "language": "sw",
             "context": {"location": "Kenya"}
