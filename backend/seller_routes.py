@@ -345,6 +345,7 @@ async def seller_health_check():
         "status": "healthy",
         "service": "seller_service",
         "commission_rate": "1%",
+        "currency": "KES",
         "supported_currency": "KES",
         "payment_methods": ["m_pesa", "bank_transfer"],
         "timestamp": datetime.utcnow()
