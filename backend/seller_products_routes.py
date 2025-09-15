@@ -1,9 +1,9 @@
 from fastapi import APIRouter, Depends, HTTPException, Query
 from typing import List, Optional
-from .seller_products_service import SellerProductsService
-from .seller_products_models import SellerProductCreate, SellerProductUpdate
-from .security import get_current_user, get_current_user_optional
-from .db import get_database
+from seller_products_service import SellerProductsService
+from seller_products_models import SellerProductCreate, SellerProductUpdate
+from security import get_current_user, get_current_user_optional
+from db import get_database
 from motor.motor_asyncio import AsyncIOMotorDatabase
 import logging
 
