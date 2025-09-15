@@ -63,76 +63,35 @@ export default function AvatarHomeScreen() {
   const sendToAI = async (payload: any) => {
     setLoading(true);
     try {
-      // For now, use our multi-language AI service
-      if (payload.type === 'text' || payload.type === 'prompt') {
-        const response = await axios.post(`${API_BASE_URL}/api/multilang/chat`, {
-          message: payload.text || payload.prompt,
-          language: locale === 'sw' ? 'sw' : 'en',
-          context: {
-            type: 'shopping_assistant',
-            capabilities: ['find_products', 'compare_items', 'create_bundles', 'seller_support']
-          }
-        });
+      // Use our new AI intents API
+      const response = await axios.post(`${API_BASE_URL}/api/ai/intents`, {
+        input: payload,
+        locale: locale,
+        currency: 'KES',
+        lat: null,
+        lng: null
+      });
 
-        if (response.data.success) {
-          // Convert AI response to cards
-          const aiResponse = response.data.ai_response.response;
-          
-          // Mock card generation based on AI response
-          const generatedCards: AICard[] = [];
-          
-          if (payload.text && payload.text.toLowerCase().includes('compare')) {
-            generatedCards.push({
-              type: 'compare',
-              data: {
-                items: [
-                  { title: 'iPhone 15', price: 999, rating: 4.8, eta: 'Tomorrow' },
-                  { title: 'Samsung Galaxy S24', price: 899, rating: 4.6, eta: '2 days' }
-                ]
-              }
-            });
-          } else if (payload.text && payload.text.toLowerCase().includes('sell')) {
-            generatedCards.push({
-              type: 'connect_store',
-              data: {}
-            });
-          } else {
-            generatedCards.push({
-              type: 'product',
-              data: {
-                title: 'AI Assistant Response',
-                description: aiResponse,
-                price: 0,
-                rating: 5.0,
-                eta: 'Now'
-              }
-            });
-          }
-          
-          setCards(generatedCards);
-        }
-      } else if (payload.type === 'image') {
-        // Mock image recognition
-        setCards([
-          {
-            type: 'product',
-            data: {
-              title: 'Visual Search Results',
-              description: 'I can identify products from images! Upload an image to get started.',
-              price: 0,
-              rating: 4.9,
-              eta: 'Instant'
-            }
-          }
-        ]);
-      } else if (payload.type === 'voice') {
-        Alert.alert('Voice Input', 'Voice recognition is coming soon! For now, try typing your request.');
-      } else if (payload.type === 'barcode') {
-        Alert.alert('Barcode Scanner', 'Barcode scanning is coming soon! For now, try typing the product name.');
+      if (response.data.cards) {
+        setCards(response.data.cards);
       }
     } catch (error) {
       console.error('AI request failed:', error);
-      Alert.alert('Error', 'Failed to process your request. Please try again.');
+      
+      // Fallback to show some demo cards
+      const fallbackCards: AICard[] = [
+        {
+          type: 'product',
+          data: {
+            title: 'AI Assistant Ready',
+            description: 'I can help you find products, compare prices, and connect your store to AisleMarts!',
+            price: 0,
+            rating: 5.0,
+            eta: 'Always available'
+          }
+        }
+      ];
+      setCards(fallbackCards);
     }
     setLoading(false);
   };
