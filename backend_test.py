@@ -5310,6 +5310,22 @@ class APITester:
         self.test_seller_order_details()
         self.test_seller_order_status_update()
         
+        # ========== PHASE 2 ORDER MANAGEMENT TESTS ==========
+        print("\n" + "📦" * 15 + " PHASE 2 ORDER MANAGEMENT TESTING " + "📦" * 15)
+        
+        # Phase 2 Order Management Tests
+        print("\n📦 Phase 2 Order Management Testing...")
+        self.test_order_management_health_check()
+        self.test_seller_orders_get()
+        self.test_create_demo_order()
+        self.test_get_order_details()
+        self.test_update_order_status()
+        self.test_mpesa_stk_callback_success()
+        self.test_mpesa_stk_callback_failure()
+        self.test_order_lifecycle_management()
+        self.test_kes_currency_handling()
+        self.test_order_authentication_requirements()
+        
         # Seller Analytics Tests
         print("\n📊 Seller Analytics Testing...")
         self.test_seller_analytics_summary()
