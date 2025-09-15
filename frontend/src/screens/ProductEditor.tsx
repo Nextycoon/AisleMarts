@@ -20,6 +20,8 @@ export default function ProductEditor() {
   const [sku, setSku] = useState('');
   const [description, setDescription] = useState('');
   const [category, setCategory] = useState('');
+  const [images, setImages] = useState<string[]>([]);
+  const [variants, setVariants] = useState<Variant[]>([]);
   const [loading, setLoading] = useState(false);
   const [loadingProduct, setLoadingProduct] = useState(editing);
 
