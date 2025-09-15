@@ -2,7 +2,7 @@ from typing import List, Optional, Dict, Any
 from datetime import datetime
 from bson import ObjectId
 from motor.motor_asyncio import AsyncIOMotorDatabase
-from .order_management_models import Order, OrderItem, OrderCustomer, OrderEvent, OrderStatusUpdate
+from order_management_models import Order, OrderItem, OrderCustomer, OrderEvent, OrderStatusUpdate
 import logging
 
 logger = logging.getLogger(__name__)
