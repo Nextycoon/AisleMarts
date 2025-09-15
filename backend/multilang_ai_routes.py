@@ -1,11 +1,27 @@
-from fastapi import APIRouter, HTTPException, Depends
+from fastapi import APIRouter, HTTPException, Depends, Header
 from pydantic import BaseModel
 from typing import Dict, List, Optional
 from multilang_ai_service import multilang_ai_service
-from security import get_current_user_optional
+from security import decode_access_token
 from datetime import datetime
+from db import db
 
 router = APIRouter(prefix="/api/multilang", tags=["Multi-Language AI"])
+
+async def get_current_user_optional(authorization: str | None = Header(None)):
+    """Extract user from auth token (optional)"""
+    if not authorization:
+        return None
+    try:
+        token = authorization.split()[1]
+        payload = decode_access_token(token)
+        user_id = payload.get("sub")
+        if not user_id:
+            return None
+        user = await db().users.find_one({"_id": user_id})
+        return user
+    except Exception:
+        return None
 
 class MultiLangChatRequest(BaseModel):
     message: str
