@@ -5,7 +5,7 @@ from bson import ObjectId
 from seller_service import seller_service
 from commission_service import commission_service
 from seller_models import SellerProfileDoc, SellerStoreDoc, CommissionDoc
-from security import get_current_user
+from server import get_current_user
 from datetime import datetime
 
 router = APIRouter(prefix="/api/seller", tags=["Seller"])
