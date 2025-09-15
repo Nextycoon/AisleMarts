@@ -4374,6 +4374,34 @@ class APITester:
         self.test_workflow_templates()
         self.test_documentation_procedures_reference_data()
         
+        # ========== KENYA PILOT WEEK 2 TESTS ==========
+        print("\n" + "🇰🇪" * 15 + " KENYA PILOT WEEK 2 TESTING " + "🇰🇪" * 15)
+        
+        # Seller Onboarding & Commission Engine Tests
+        print("\n🏪 Seller Onboarding & Commission Engine Testing...")
+        self.test_seller_health_check()
+        self.test_seller_registration()
+        self.test_seller_profile()
+        self.test_seller_demo_simulate_sale()
+        self.test_seller_earnings_current_month()
+        self.test_seller_commissions()
+        
+        # M-Pesa Integration Tests
+        print("\n💰 M-Pesa Integration Testing...")
+        self.test_mpesa_health_check()
+        self.test_mpesa_validate_phone()
+        self.test_mpesa_demo_simulate_payment()
+        self.test_mpesa_test_integration()
+        
+        # Multi-Language AI Tests
+        print("\n🌍 Multi-Language AI Testing...")
+        self.test_multilang_health_check()
+        self.test_multilang_languages()
+        self.test_multilang_greeting_swahili()
+        self.test_multilang_chat_swahili()
+        self.test_multilang_demo_conversation_swahili()
+        self.test_multilang_test_languages()
+        
         # Print summary
         print("\n" + "=" * 80)
         print("📊 TEST SUMMARY")
