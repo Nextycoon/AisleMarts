@@ -1,0 +1,12 @@
+# Week1_Summary — paste into column B
+B3: =AVERAGEIF(Daily_Log!E2:E,">0")
+B4: =AVERAGEIF(Daily_Log!D2:D,">0")
+B5: =AVERAGEIF(Daily_Log!G2:G,">0")
+B6: =SUM(Daily_Log!H2:H)
+B7: =COUNTIFS(Daily_Log!I2:I,"<>None")
+B8: =COUNTIF(Daily_Log!J2:J,"Y")
+
+# Alert_Candidates — thresholds
+B3: =IFERROR(Week1_Summary!B3-0.05, 0.90)
+B4: =IFERROR(PERCENTILE.INC(Daily_Log!F2:F,0.9), 3)
+B5: =IFERROR(Week1_Summary!B5*0.7, 0)

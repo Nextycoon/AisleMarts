@@ -1,0 +1,3 @@
+Date,Reviewer,Review_Time,Total_Orders_24h,MPesa_Success_Rate,Orders_Pending_4h_Plus,Gross_Revenue_KES,Commission_KES,Anomalies_Issues,Seller_Complaints,Peak_Hours_Observed,Action_Items,Notes
+09/22/2025,Name1,Morning,18,0.962,1,25999,259.99,None,N,"7-9am, 6-8pm",Verify STK latency spike at 07:40,All good; two pending cleared in 1h
+09/22/2025,Name2,Evening,21,0.948,2,29999,299.99,Payment Failures,Y,6-8pm,Call Seller#3 re: 2 failed STK,Two failures at 19:10; retry succeeded
