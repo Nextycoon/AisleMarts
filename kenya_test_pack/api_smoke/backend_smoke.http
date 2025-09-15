@@ -1,0 +1,25 @@
+// VSCode REST Client — Backend Phase 1 smoke
+GET http://localhost:8000/health
+
+### Products
+GET http://localhost:8000/seller/products
+
+### Create Product
+POST http://localhost:8000/seller/products
+Content-Type: application/json
+
+{
+  "title":"Kenya Powerbank 20k",
+  "price":2499,
+  "stock":30,
+  "sku":"KE-PB20K",
+  "desc":"Fast charging powerbank for Nairobi commuters",
+  "images":[],
+  "variants":[{"id":"v1","name":"Black","sku":"KE-PB20K-BLK","stock":20}]
+}
+
+### Commissions
+GET http://localhost:8000/seller/commissions/summary
+
+### Analytics
+GET http://localhost:8000/seller/analytics/summary
