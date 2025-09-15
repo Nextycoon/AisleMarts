@@ -1124,7 +1124,12 @@ metadata:
   run_ui: false
 
 test_plan:
-  current_focus: []
+  current_focus:
+    - "Seller Onboarding Flow"
+    - "Commission Engine Implementation"
+    - "M-Pesa Integration"
+    - "Multi-language AI Support"
+    - "Kenya Pilot Testing Execution"
   stuck_tasks: []
   test_all: false
   test_priority: "high_first"
