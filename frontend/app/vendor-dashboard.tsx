@@ -49,6 +49,11 @@ export default function VendorDashboardScreen() {
   const [aiRecommendations, setAIRecommendations] = useState<any[]>([]);
   const [selectedVisibilityType, setSelectedVisibilityType] = useState<string>('national');
 
+  // Navigate to Enhanced Seller Dashboard
+  const goToSellerDashboard = () => {
+    router.push('/seller-dashboard');
+  };
+
   useEffect(() => {
     if (user && user.roles.includes('vendor')) {
       loadVendorData();
