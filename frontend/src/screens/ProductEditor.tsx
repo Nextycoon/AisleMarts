@@ -61,6 +61,8 @@ export default function ProductEditor() {
         setSku(product.sku || '');
         setDescription(product.description || '');
         setCategory(product.category || '');
+        setImages(product.images || []);
+        setVariants(product.variants || []);
       }
     } catch (error) {
       console.error('Load product error:', error);
