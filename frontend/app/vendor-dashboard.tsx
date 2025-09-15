@@ -280,6 +280,27 @@ export default function VendorDashboardScreen() {
           </TouchableOpacity>
         </View>
 
+        {/* Enhanced Seller Dashboard Access */}
+        <View style={styles.section}>
+          <TouchableOpacity 
+            style={styles.enhancedDashboardCard}
+            onPress={goToSellerDashboard}
+          >
+            <View style={styles.enhancedDashboardContent}>
+              <View style={styles.enhancedDashboardIcon}>
+                <Ionicons name="storefront" size={20} color="white" />
+              </View>
+              <View style={styles.enhancedDashboardText}>
+                <Text style={styles.enhancedDashboardTitle}>Enhanced Seller Dashboard</Text>
+                <Text style={styles.enhancedDashboardSubtitle}>
+                  Manage products, orders & analytics
+                </Text>
+              </View>
+              <Ionicons name="arrow-forward" size={20} color="#007AFF" />
+            </View>
+          </TouchableOpacity>
+        </View>
+
         {/* Current Visibility Status */}
         {visibility && (
           <View style={styles.section}>
