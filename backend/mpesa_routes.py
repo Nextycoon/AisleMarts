@@ -273,6 +273,7 @@ async def mpesa_health_check():
         "status": "healthy",
         "service": "mpesa_service",
         "supported_networks": ["Safaricom M-Pesa"],
+        "currency": "KES",
         "supported_currency": "KES",
         "min_amount": "KSh 1.00",
         "max_amount": "KSh 150,000.00",
