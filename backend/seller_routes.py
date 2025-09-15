@@ -1,14 +1,32 @@
-from fastapi import APIRouter, Depends, HTTPException, status
+from fastapi import APIRouter, Depends, HTTPException, status, Header
 from pydantic import BaseModel
 from typing import Dict, List, Optional
 from bson import ObjectId
 from seller_service import seller_service
 from commission_service import commission_service
 from seller_models import SellerProfileDoc, SellerStoreDoc, CommissionDoc
-from server import get_current_user
+from security import decode_access_token
 from datetime import datetime
+from db import db
 
 router = APIRouter(prefix="/api/seller", tags=["Seller"])
+
+async def get_current_user(authorization: str | None = Header(None)):
+    """Extract user from auth token"""
+    if not authorization:
+        raise HTTPException(401, "Missing Authorization header")
+    try:
+        token = authorization.split()[1]
+        payload = decode_access_token(token)
+        user_id = payload.get("sub")
+        if not user_id:
+            raise HTTPException(401, "Invalid token")
+        user = await db().users.find_one({"_id": user_id})
+        if not user:
+            raise HTTPException(401, "User not found")
+        return user
+    except Exception as e:
+        raise HTTPException(401, f"Invalid token: {str(e)}")
 
 # Pydantic models for API requests
 class SellerRegistrationRequest(BaseModel):
