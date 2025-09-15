@@ -283,6 +283,11 @@ from procedures_by_category_routes import router as procedures_by_category_route
 from documentation_procedures_routes import router as documentation_procedures_router
 from localization_routes import router as localization_router
 
+# Import new seller, commission, M-Pesa, and multi-language routes
+from seller_routes import router as seller_router
+from mpesa_routes import router as mpesa_router
+from multilang_ai_routes import router as multilang_router
+
 # Include AI routes
 app.include_router(ai_router)
 
