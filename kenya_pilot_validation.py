@@ -226,7 +226,7 @@ class KenyaPilotValidator:
             if "Habari" in greeting or "Hujambo" in greeting:
                 self.log_test("Swahili Greeting Generation", True, f"Generated: {greeting[:50]}...", "P0")
             else:
-                self.log_test("Swahili Greeting Generation", False, f"Greeting doesn't seem Swahili: {greeting}", "P0")
+                self.log_test("Swahili Greeting Generation", False, f"Swahili greeting validation issue", "P0")
         else:
             self.log_test("Swahili Greeting Generation", False, str(data), "P0")
         
