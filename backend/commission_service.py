@@ -1,9 +1,10 @@
 from typing import Dict, List
 from datetime import datetime, timedelta
-from bson import ObjectId
+import uuid
 from seller_models import CommissionDoc, SellerPayoutDoc
 from models import OrderDoc, UserDoc
 from localization_service import localization_service
+from db import db
 from dotenv import load_dotenv
 
 load_dotenv()
@@ -12,7 +13,7 @@ class CommissionService:
     def __init__(self):
         self.default_commission_rate = 0.01  # 1%
     
-    async def calculate_commission(self, order_dict: dict) -> CommissionDoc:
+    async def calculate_commission(self, order_dict: dict) -> dict:
         """Calculate commission for a completed order"""
         
         # Get seller's commission rate (default 1%)
@@ -24,33 +25,42 @@ class CommissionService:
         seller_payout = gross_amount - commission_amount
         
         # Create commission record
-        commission = CommissionDoc(
-            order_id=ObjectId(order_dict['order_id']) if isinstance(order_dict['order_id'], str) else order_dict['order_id'],
-            seller_id=ObjectId(order_dict['seller_id']) if isinstance(order_dict['seller_id'], str) else order_dict['seller_id'],
-            buyer_id=ObjectId(order_dict['buyer_id']) if isinstance(order_dict['buyer_id'], str) else order_dict['buyer_id'],
-            gross_amount=gross_amount,
-            commission_rate=commission_rate,
-            commission_amount=round(commission_amount, 2),
-            seller_payout=round(seller_payout, 2),
-            currency=order_dict.get('currency', 'KES'),
-            payment_method=order_dict.get('payment_method', 'm_pesa'),
-            status="pending"
-        )
+        commission: CommissionDoc = {
+            '_id': str(uuid.uuid4()),
+            'order_id': order_dict['order_id'] if isinstance(order_dict['order_id'], str) else str(order_dict['order_id']),
+            'seller_id': order_dict['seller_id'] if isinstance(order_dict['seller_id'], str) else str(order_dict['seller_id']),
+            'buyer_id': order_dict['buyer_id'] if isinstance(order_dict['buyer_id'], str) else str(order_dict['buyer_id']),
+            'gross_amount': gross_amount,
+            'commission_rate': commission_rate,
+            'commission_amount': round(commission_amount, 2),
+            'seller_payout': round(seller_payout, 2),
+            'currency': order_dict.get('currency', 'KES'),
+            'payment_method': order_dict.get('payment_method', 'm_pesa'),
+            'status': "pending",
+            'processed_at': None,
+            'paid_at': None,
+            'payment_reference': None,
+            'created_at': datetime.utcnow()
+        }
         
-        await commission.insert()
+        # Insert into database
+        await db().commissions.insert_one(commission)
         return commission
     
-    async def process_commission(self, commission_id: ObjectId) -> bool:
+    async def process_commission(self, commission_id: str) -> bool:
         """Mark commission as processed (order completed)"""
-        commission = await CommissionDoc.get(commission_id)
-        if commission:
-            commission.status = "processed"
-            commission.processed_at = datetime.utcnow()
-            await commission.save()
-            return True
-        return False
+        result = await db().commissions.update_one(
+            {"_id": commission_id},
+            {
+                "$set": {
+                    "status": "processed",
+                    "processed_at": datetime.utcnow()
+                }
+            }
+        )
+        return result.modified_count > 0
     
-    async def get_seller_earnings(self, seller_id: ObjectId, period: str = "current_month") -> Dict:
+    async def get_seller_earnings(self, seller_id: str, period: str = "current_month") -> Dict:
         """Get seller's earnings summary"""
         
         # Calculate date range
@@ -68,16 +78,17 @@ class CommissionService:
             end_date = now
         
         # Query commissions for period
-        commissions = await CommissionDoc.find({
+        cursor = db().commissions.find({
             "seller_id": seller_id,
             "created_at": {"$gte": start_date, "$lte": end_date},
             "status": {"$in": ["processed", "paid"]}
-        }).to_list()
+        })
+        commissions = await cursor.to_list(length=None)
         
         # Calculate totals
-        total_sales = sum(c.gross_amount for c in commissions)
-        total_commission = sum(c.commission_amount for c in commissions)
-        net_earnings = sum(c.seller_payout for c in commissions)
+        total_sales = sum(c.get('gross_amount', 0) for c in commissions)
+        total_commission = sum(c.get('commission_amount', 0) for c in commissions)
+        net_earnings = sum(c.get('seller_payout', 0) for c in commissions)
         
         return {
             "period": period,
@@ -85,19 +96,20 @@ class CommissionService:
             "total_commission": total_commission,
             "net_earnings": net_earnings,
             "transaction_count": len(commissions),
-            "currency": commissions[0].currency if commissions else "KES",
+            "currency": commissions[0].get('currency', 'KES') if commissions else "KES",
             "commission_rate": self.default_commission_rate * 100  # 1%
         }
     
-    async def get_seller_commissions(self, seller_id: ObjectId, limit: int = 50, offset: int = 0) -> List[CommissionDoc]:
+    async def get_seller_commissions(self, seller_id: str, limit: int = 50, offset: int = 0) -> List[dict]:
         """Get seller's commission history"""
-        commissions = await CommissionDoc.find({
+        cursor = db().commissions.find({
             "seller_id": seller_id
-        }).skip(offset).limit(limit).to_list()
+        }).skip(offset).limit(limit)
+        commissions = await cursor.to_list(length=limit)
         
         return commissions
     
-    async def generate_monthly_payout(self, seller_id: ObjectId, year: int, month: int) -> SellerPayoutDoc:
+    async def generate_monthly_payout(self, seller_id: str, year: int, month: int) -> dict:
         """Generate monthly payout for seller"""
         
         # Calculate period dates
@@ -110,51 +122,64 @@ class CommissionService:
         period_str = f"{year}-{month:02d}"
         
         # Get all processed commissions for the period
-        commissions = await CommissionDoc.find({
+        cursor = db().commissions.find({
             "seller_id": seller_id,
             "created_at": {"$gte": period_start, "$lte": period_end},
             "status": "processed"
-        }).to_list()
+        })
+        commissions = await cursor.to_list(length=None)
         
         if not commissions:
             return None
         
         # Calculate payout totals
-        total_sales = sum(c.gross_amount for c in commissions)
-        total_commission = sum(c.commission_amount for c in commissions)
-        net_payout = sum(c.seller_payout for c in commissions)
+        total_sales = sum(c.get('gross_amount', 0) for c in commissions)
+        total_commission = sum(c.get('commission_amount', 0) for c in commissions)
+        net_payout = sum(c.get('seller_payout', 0) for c in commissions)
         
         # Create payout record
-        payout = SellerPayoutDoc(
-            seller_id=seller_id,
-            payout_period=period_str,
-            total_sales=total_sales,
-            total_commission=total_commission,
-            net_payout=net_payout,
-            currency=commissions[0].currency,
-            commission_ids=[c.id for c in commissions],
-            payout_method="m_pesa",  # Default for Kenya
-            period_start=period_start,
-            period_end=period_end
-        )
+        payout: SellerPayoutDoc = {
+            '_id': str(uuid.uuid4()),
+            'seller_id': seller_id,
+            'payout_period': period_str,
+            'total_sales': total_sales,
+            'total_commission': total_commission,
+            'net_payout': net_payout,
+            'currency': commissions[0].get('currency', 'KES'),
+            'commission_ids': [c['_id'] for c in commissions],
+            'payout_method': "m_pesa",  # Default for Kenya
+            'payout_reference': None,
+            'payout_status': "pending",
+            'period_start': period_start,
+            'period_end': period_end,
+            'payout_date': None,
+            'created_at': datetime.utcnow()
+        }
         
-        await payout.insert()
+        # Insert payout record
+        await db().seller_payouts.insert_one(payout)
         
         # Mark commissions as paid
-        for commission in commissions:
-            commission.status = "paid"
-            commission.paid_at = datetime.utcnow()
-            await commission.save()
+        commission_ids = [c['_id'] for c in commissions]
+        await db().commissions.update_many(
+            {"_id": {"$in": commission_ids}},
+            {
+                "$set": {
+                    "status": "paid",
+                    "paid_at": datetime.utcnow()
+                }
+            }
+        )
         
         return payout
     
-    async def simulate_order_completion(self, seller_id: ObjectId, amount: float, currency: str = "KES") -> Dict:
+    async def simulate_order_completion(self, seller_id: str, amount: float, currency: str = "KES") -> Dict:
         """Simulate an order completion for testing purposes"""
         # Create a simulated order for commission calculation
         simulated_order = {
-            "order_id": ObjectId(),
+            "order_id": str(uuid.uuid4()),
             "seller_id": seller_id,
-            "buyer_id": ObjectId(),  # Fake buyer ID
+            "buyer_id": str(uuid.uuid4()),  # Fake buyer ID
             "total_amount": amount,
             "currency": currency,
             "payment_method": "m_pesa"
@@ -164,15 +189,15 @@ class CommissionService:
         commission = await self.calculate_commission(simulated_order)
         
         # Process it immediately for demo
-        await self.process_commission(commission.id)
+        await self.process_commission(commission['_id'])
         
         return {
-            "order_id": str(simulated_order["order_id"]),
-            "commission_id": str(commission.id),
-            "gross_amount": commission.gross_amount,
-            "commission_amount": commission.commission_amount,
-            "seller_payout": commission.seller_payout,
-            "commission_rate": f"{commission.commission_rate * 100}%",
+            "order_id": simulated_order["order_id"],
+            "commission_id": commission['_id'],
+            "gross_amount": commission['gross_amount'],
+            "commission_amount": commission['commission_amount'],
+            "seller_payout": commission['seller_payout'],
+            "commission_rate": f"{commission['commission_rate'] * 100}%",
             "status": "processed"
         }
 
