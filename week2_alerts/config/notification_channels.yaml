@@ -1,0 +1,20 @@
+# Multi-channel targets (fill these in; ENV vars override these values)
+slack:
+  webhook_url: "YOUR_SLACK_WEBHOOK_URL"
+  channel: "#ops-kenya"
+  username: "AisleMarts Alerts"
+
+email:
+  smtp_host: "smtp.yourdomain.com"
+  smtp_port: 587
+  smtp_user: "alerts@yourdomain.com"
+  smtp_password: "YOUR_SMTP_PASSWORD"
+  from: "AisleMarts Alerts <alerts@yourdomain.com>"
+  to: ["ops@yourdomain.com","management@yourdomain.com"]
+
+sms:
+  provider: "twilio"         # or "custom"
+  account_sid: "TWILIO_SID"
+  auth_token: "TWILIO_TOKEN"
+  from: "+1234567890"
+  to: ["+2547XXXXXXX","+2547YYYYYYY"]

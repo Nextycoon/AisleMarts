@@ -1,0 +1,15 @@
+# Escalation windows expressed in minutes
+levels:
+  L1:
+    name: "Minor anomaly"
+    escalate_after_minutes: 120   # 2 hours
+  L2:
+    name: "Pattern issue"
+    escalate_after_minutes: 60    # 1 hour
+  L3:
+    name: "Critical failure"      # final level
+
+business_hours:
+  timezone: "Africa/Nairobi"
+  start_hour: 8
+  end_hour: 20

@@ -1,0 +1,25 @@
+# Week-2 Smart Alerts - Kenya Pilot (replace placeholders using Week-1 baselines)
+# Use numeric values (percent as decimals, e.g., 0.912 for 91.2%)
+thresholds:
+  mpesa_success_rate:
+    trigger_below: WEEK1_AVG_MINUS_5_PCT   # e.g., 0.912 for 91.2%
+    level: L2
+
+  orders_pending_over_4h:
+    trigger_above: WEEK1_P90_PENDING       # e.g., 3
+    level: L1
+
+  daily_revenue_kes:
+    trigger_below: WEEK1_AVG_REVENUE_X0_7  # e.g., 19950 (if avg 28,500)
+    level: L2
+
+  commission_accuracy:
+    # Expected commission rate is 1.00% (0.01). Trigger if outside +/- 0.0001 (0.01%)
+    expected_rate: 0.01
+    tolerance: 0.0001
+    level: L2
+
+  api_error_burst:
+    # Trigger if more than this many consecutive API failures occur
+    trigger_over: 3
+    level: L1
