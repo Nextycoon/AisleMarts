@@ -100,7 +100,10 @@ export default function ProductEditor() {
         stock: Number(stock),
         sku: sku.trim() || undefined,
         description: description.trim() || undefined,
-        category: category.trim() || undefined
+        category: category.trim() || undefined,
+        image_url: images.length > 0 ? images[0] : undefined, // Use first image as main image
+        images: images,
+        variants: variants.filter(v => v.name.trim()) // Only include variants with names
       };
 
       let response;
