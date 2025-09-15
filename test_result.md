@@ -1244,14 +1244,17 @@ metadata:
 
 test_plan:
   current_focus:
-    - "Seller Onboarding Flow"
-    - "Commission Engine Implementation"
-    - "M-Pesa Integration"
-    - "Multi-language AI Support"
-    - "Kenya Pilot Testing Execution"
+    - "Kenya Pilot Go-Live Gate Validation"
+    - "M-Pesa Integration Critical Path Testing"
+    - "Seller Dashboard End-to-End Flow"
+    - "Multi-Language AI (Swahili) Validation"
+    - "Mobile Performance & Network Resilience"
+    - "Cultural Authenticity & Trust Signals"
+    - "Commission Engine Accuracy"
+    - "Overall System Health Check"
   stuck_tasks: []
-  test_all: false
-  test_priority: "high_first"
+  test_all: true
+  test_priority: "kenya_pilot_launch"
 
   - task: "AI Domain Specialization - Trade Intelligence"
     implemented: true
