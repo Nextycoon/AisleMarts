@@ -694,4 +694,38 @@ const styles = StyleSheet.create({
     fontSize: 16,
     color: '#666',
   },
+  enhancedDashboardCard: {
+    backgroundColor: '#f9f9f9',
+    borderRadius: 12,
+    padding: 16,
+    borderWidth: 2,
+    borderColor: '#007AFF',
+    marginBottom: 8,
+  },
+  enhancedDashboardContent: {
+    flexDirection: 'row',
+    alignItems: 'center',
+  },
+  enhancedDashboardIcon: {
+    width: 40,
+    height: 40,
+    borderRadius: 20,
+    backgroundColor: '#007AFF',
+    justifyContent: 'center',
+    alignItems: 'center',
+    marginRight: 12,
+  },
+  enhancedDashboardText: {
+    flex: 1,
+  },
+  enhancedDashboardTitle: {
+    fontSize: 16,
+    fontWeight: '700',
+    color: '#333',
+    marginBottom: 4,
+  },
+  enhancedDashboardSubtitle: {
+    fontSize: 14,
+    color: '#666',
+  },
 });
