@@ -7,6 +7,27 @@ import logging
 
 logger = logging.getLogger(__name__)
 
+def clean_mongo_document(doc: Dict[str, Any]) -> Dict[str, Any]:
+    """Clean MongoDB document by converting ObjectIds to strings and removing _id"""
+    if doc is None:
+        return None
+    
+    # Convert _id to id string
+    if '_id' in doc:
+        doc['id'] = str(doc['_id'])
+        del doc['_id']
+    
+    # Recursively clean nested documents
+    for key, value in doc.items():
+        if isinstance(value, ObjectId):
+            doc[key] = str(value)
+        elif isinstance(value, list):
+            doc[key] = [clean_mongo_document(item) if isinstance(item, dict) else str(item) if isinstance(item, ObjectId) else item for item in value]
+        elif isinstance(value, dict):
+            doc[key] = clean_mongo_document(value)
+    
+    return doc
+
 class OrderManagementService:
     def __init__(self, db: AsyncIOMotorDatabase):
         self.db = db
