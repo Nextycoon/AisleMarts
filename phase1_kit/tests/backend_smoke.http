@@ -1,0 +1,15 @@
+// VSCode REST Client smoke tests
+GET http://localhost:8000/health
+
+###
+GET http://localhost:8000/seller/products
+
+###
+POST http://localhost:8000/seller/products
+Content-Type: application/json
+
+{
+  "title":"Wireless Mouse",
+  "price":25.5,
+  "stock":50
+}

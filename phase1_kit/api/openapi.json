@@ -1,0 +1,54 @@
+{
+  "openapi": "3.0.3",
+  "info": {
+    "title": "AisleMarts Phase 1 APIs",
+    "version": "1.0.0"
+  },
+  "paths": {
+    "/seller/products": {
+      "get": {},
+      "post": {}
+    },
+    "/seller/products/{id}": {
+      "get": {},
+      "put": {},
+      "delete": {}
+    },
+    "/seller/products/{id}/toggle": {
+      "post": {}
+    },
+    "/seller/profile": {
+      "get": {},
+      "put": {}
+    },
+    "/seller/commissions/summary": {
+      "get": {}
+    },
+    "/seller/commissions/history": {
+      "get": {}
+    },
+    "/seller/analytics/summary": {
+      "get": {}
+    },
+    "/seller/analytics/timeseries": {
+      "get": {
+        "parameters": [
+          {
+            "in": "query",
+            "name": "metric"
+          }
+        ]
+      }
+    },
+    "/seller/orders": {
+      "get": {}
+    },
+    "/seller/orders/{id}": {
+      "get": {},
+      "post": {}
+    },
+    "/health": {
+      "get": {}
+    }
+  }
+}

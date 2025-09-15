@@ -1,0 +1,60 @@
+{
+  "info": {
+    "name": "AisleMarts Phase 1",
+    "schema": "https://schema.getpostman.com/json/collection/v2.1.0/collection.json"
+  },
+  "item": [
+    {
+      "name": "Health",
+      "request": {
+        "method": "GET",
+        "url": "{{base}}/health"
+      }
+    },
+    {
+      "name": "List Products",
+      "request": {
+        "method": "GET",
+        "url": "{{base}}/seller/products"
+      }
+    },
+    {
+      "name": "Create Product",
+      "request": {
+        "method": "POST",
+        "url": "{{base}}/seller/products",
+        "body": {
+          "mode": "raw",
+          "raw": "{\"title\": \"Sample\", \"price\": 39.99, \"stock\": 10}"
+        }
+      }
+    },
+    {
+      "name": "Commissions Summary",
+      "request": {
+        "method": "GET",
+        "url": "{{base}}/seller/commissions/summary"
+      }
+    },
+    {
+      "name": "Analytics Summary",
+      "request": {
+        "method": "GET",
+        "url": "{{base}}/seller/analytics/summary"
+      }
+    },
+    {
+      "name": "List Orders",
+      "request": {
+        "method": "GET",
+        "url": "{{base}}/seller/orders"
+      }
+    }
+  ],
+  "variable": [
+    {
+      "key": "base",
+      "value": "http://localhost:8000"
+    }
+  ]
+}
