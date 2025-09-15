@@ -329,6 +329,7 @@ app.include_router(seller_router)
 app.include_router(mpesa_router)
 app.include_router(multilang_router)
 app.include_router(ai_intents_router)
+app.include_router(seller_products_router)
 
 # Include the main API router
 app.include_router(api_router)
