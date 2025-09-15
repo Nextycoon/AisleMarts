@@ -3,7 +3,7 @@ from typing import List, Optional
 from seller_products_service import SellerProductsService
 from seller_products_models import SellerProductCreate, SellerProductUpdate
 from security import get_current_user, get_current_user_optional
-from db import get_database
+from db import db
 from motor.motor_asyncio import AsyncIOMotorDatabase
 import logging
 
@@ -11,7 +11,7 @@ logger = logging.getLogger(__name__)
 
 router = APIRouter(prefix="/api/seller", tags=["seller-products"])
 
-async def get_seller_products_service(db: AsyncIOMotorDatabase = Depends(get_database)) -> SellerProductsService:
+async def get_seller_products_service(database: AsyncIOMotorDatabase = Depends(lambda: db)) -> SellerProductsService:
     return SellerProductsService(db)
 
 @router.get("/products/health")
