@@ -1,0 +1,43 @@
+{
+  "cards": [
+    {
+      "type": "product",
+      "data": {
+        "title": "Noise-Canceling Headphones",
+        "price": 99.0,
+        "rating": 4.6,
+        "eta": "Tomorrow"
+      }
+    },
+    {
+      "type": "compare",
+      "data": {
+        "items": [
+          {
+            "title": "Model A",
+            "price": 89,
+            "rating": 4.2,
+            "eta": "2 days"
+          },
+          {
+            "title": "Model B",
+            "price": 99,
+            "rating": 4.6,
+            "eta": "Tomorrow"
+          }
+        ]
+      }
+    },
+    {
+      "type": "bundle",
+      "data": {
+        "total": 180,
+        "savings": 22
+      }
+    },
+    {
+      "type": "connect_store",
+      "data": {}
+    }
+  ]
+}

@@ -1,0 +1,8 @@
+{
+  "identity.title": "AisleMarts — AI for Shopping",
+  "identity.sub": "Smarter. Faster. Everywhere.",
+  "prompt.findNearby": "Best deal nearby",
+  "prompt.compare": "Compare two products",
+  "prompt.bundle": "Bundle under {{amount}}",
+  "connect.title": "Connect your store"
+}

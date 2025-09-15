@@ -1,0 +1,8 @@
+{
+  "identity.title": "AisleMarts — Alışveriş için Yapay Zekâ",
+  "identity.sub": "Daha akıllı. Daha hızlı. Her yerde.",
+  "prompt.findNearby": "Yakınımdaki en iyi fırsat",
+  "prompt.compare": "İki ürünü karşılaştır",
+  "prompt.bundle": "{{amount}} altında paket",
+  "connect.title": "Mağazanı bağla"
+}

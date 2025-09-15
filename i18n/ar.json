@@ -1,0 +1,8 @@
+{
+  "identity.title": "AisleMarts — ذكاء اصطناعي للتسوق",
+  "identity.sub": "أذكى. أسرع. في كل مكان.",
+  "prompt.findNearby": "أفضل عرض قريب",
+  "prompt.compare": "قارن منتجين",
+  "prompt.bundle": "سلة تحت {{amount}}",
+  "connect.title": "اربط متجرك"
+}

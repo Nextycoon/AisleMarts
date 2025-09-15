@@ -1,0 +1,84 @@
+openapi: 3.0.3
+info:
+  title: AisleMarts AI Core
+  version: 1.0.0
+paths:
+  /ai/intents:
+    post:
+      summary: Parse multimodal input and return SmartCards
+      requestBody:
+        required: true
+        content:
+          application/json:
+            schema:
+              type: object
+              properties:
+                input:
+                  type: object
+                  properties:
+                    type: { type: string, enum: [text, voice, image, barcode, prompt] }
+                    text: { type: string }
+                    uri: { type: string }
+                locale: { type: string }
+                currency: { type: string }
+                lat: { type: number }
+                lng: { type: number }
+      responses:
+        '200':
+          description: OK
+          content:
+            application/json:
+              schema:
+                type: object
+                properties:
+                  cards:
+                    type: array
+                    items:
+                      type: object
+                      properties:
+                        type: { type: string }
+                        data: { type: object }
+  /seller/connect:
+    post:
+      summary: Connect external commerce store
+      requestBody:
+        required: true
+        content:
+          application/json:
+            schema:
+              type: object
+              properties:
+                platform:
+                  type: string
+                  enum: [shopify, woo, cscart]
+                oauthCode:
+                  type: string
+                region:
+                  type: string
+      responses:
+        '200':
+          description: Linked
+          content:
+            application/json:
+              schema:
+                type: object
+                properties:
+                  status: { type: string }
+                  catalogImported: { type: boolean }
+                  items: { type: integer }
+  /localize/bootstrap:
+    get:
+      summary: Bootstrap localization
+      responses:
+        '200':
+          description: OK
+          content:
+            application/json:
+              schema:
+                type: object
+                properties:
+                  locale: { type: string }
+                  currency: { type: string }
+                  units: { type: string }
+                  country: { type: string }
+                  taxRegion: { type: string }
