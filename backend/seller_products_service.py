@@ -56,7 +56,9 @@ class SellerProductsService:
             products = []
             
             async for product in cursor:
+                # Convert ObjectId to string for JSON serialization
                 product['id'] = str(product['_id'])
+                product['_id'] = str(product['_id'])
                 products.append(product)
                 
             logger.info(f"Retrieved {len(products)} products for seller {seller_id}")
