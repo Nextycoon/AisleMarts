@@ -107,6 +107,93 @@ export default function AvatarHomeScreen() {
     );
   };
 
+  // Enhanced contextual examples based on user location/language
+  const getContextualExamples = (locale: string, userType: 'buyer' | 'seller' = 'buyer') => {
+    const examples = {
+      buyer: {
+        en: [
+          "Find electronics under KES 15,000 in Nairobi",
+          "Compare Samsung vs Infinix phones for business", 
+          "Bundle laptop + accessories within my budget",
+          "Best M-Pesa friendly stores near me",
+          "Show me phones with good cameras under KES 25,000",
+          "Find reliable electronics sellers in Mombasa"
+        ],
+        sw: [
+          "Tafuta simu za biashara chini ya KES 20,000",
+          "Linganisha bei za laptop za ufundi", 
+          "Nipatie bundle ya mahitaji ya duka",
+          "Maduka mazuri ya M-Pesa karibu nami",
+          "Onyesha simu zenye kamera nzuri chini ya KES 25,000",
+          "Tafuta wachuuzi wa kuaminika Mombasa"
+        ]
+      },
+      seller: {
+        en: [
+          "Help me price my electronics competitively",
+          "Create product bundle suggestions",
+          "Optimize my store for Kenya market", 
+          "Generate product descriptions that sell",
+          "Show me trending products in my category",
+          "Help me understand my competitor pricing"
+        ],
+        sw: [
+          "Nisaidie kuweka bei za ushindani",
+          "Tengeneza mipango ya bidhaa",
+          "Boresha duka langu kwa soko la Kenya",
+          "Tunga maelezo ya bidhaa yanayouzwa",
+          "Onyesha bidhaa zinazovuma katika aina yangu",
+          "Nisaidie kuelewa bei za washindani"
+        ]
+      }
+    };
+    return examples[userType][locale] || examples[userType]['en'];
+  };
+
+  // Dynamic placeholder rotation
+  const [currentExample, setCurrentExample] = useState(0);
+  const [displayedExample, setDisplayedExample] = useState('');
+
+  useEffect(() => {
+    const examples = getContextualExamples(locale, 'buyer');
+    const interval = setInterval(() => {
+      setCurrentExample(prev => (prev + 1) % examples.length);
+    }, 4000); // Change every 4 seconds
+    return () => clearInterval(interval);
+  }, [locale]);
+
+  useEffect(() => {
+    const examples = getContextualExamples(locale, 'buyer');
+    setDisplayedExample(examples[currentExample] || examples[0]);
+  }, [currentExample, locale]);
+
+  // Smart suggestions based on time and context
+  const getSmartSuggestions = () => {
+    const hour = new Date().getHours();
+    const isWeekend = [0, 6].includes(new Date().getDay());
+    
+    if (locale === 'sw') {
+      if (hour < 12) {
+        return ['Bidhaa za asubuhi', 'Chakula cha mapema', 'Mahitaji ya kazini', 'Simu za biashara'];
+      } else if (hour < 17) {
+        return ['Vitu vya nyumbani', 'Elektroniki', 'Bidhaa za familia', 'Mahitaji ya jioni'];
+      } else {
+        return ['Burudani za usiku', 'Vifaa vya mapishi', 'Mahitaji ya usiku', 'Bidhaa za familia'];
+      }
+    }
+    
+    // English suggestions
+    if (hour < 12) {
+      return ['Morning electronics', 'Business phones', 'Work essentials', 'Quick breakfast items'];
+    } else if (hour < 17) {
+      return ['Home electronics', 'Family essentials', 'Afternoon deals', 'Kitchen appliances'];
+    } else if (isWeekend) {
+      return ['Weekend projects', 'Family entertainment', 'Home improvement', 'Bulk purchases'];
+    } else {
+      return ['Evening entertainment', 'Home essentials', 'Kitchen gadgets', 'Relaxation items'];
+    }
+  };
+
   const getLocalizedText = (key: string, fallback: string) => {
     const translations: { [key: string]: { [lang: string]: string } } = {
       'title': {
@@ -118,8 +205,8 @@ export default function AvatarHomeScreen() {
         'sw': 'Akili zaidi. Haraka zaidi. Kila mahali.'
       },
       'placeholder': {
-        'en': 'Ask me to find, compare, or bundle…',
-        'sw': 'Niulize kutafuta, kulinganisha, au kuunganisha...'
+        'en': displayedExample || 'Ask me to find, compare, or bundle…',
+        'sw': displayedExample || 'Niulize kutafuta, kulinganisha, au kuunganisha...'
       }
     };
     
