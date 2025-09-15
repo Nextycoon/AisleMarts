@@ -1,5 +1,5 @@
 from typing import Dict, List, Optional
-from ai_service import AIService
+from ai_service import AisleMarts_AI_Agent
 from localization_service import localization_service
 from dotenv import load_dotenv
 import os
@@ -8,7 +8,7 @@ load_dotenv()
 
 class MultiLanguageAIService:
     def __init__(self):
-        self.ai_service = AIService()
+        self.ai_agent = AisleMarts_AI_Agent("system", "assistant")
         self.supported_languages = {
             'en': 'English',
             'tr': 'Turkish',
