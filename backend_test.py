@@ -5291,6 +5291,36 @@ class APITester:
         self.test_multilang_demo_conversation_swahili()
         self.test_multilang_test_languages()
         
+        # ========== SELLER PRODUCTS MANAGEMENT APIS TESTS ==========
+        print("\n" + "🛍️" * 15 + " SELLER PRODUCTS MANAGEMENT APIS TESTING " + "🛍️" * 15)
+        
+        # Seller Products Management Tests
+        print("\n🛍️ Seller Products Management Testing...")
+        self.test_seller_products_health_check()
+        self.test_seller_product_creation()
+        self.test_seller_products_listing()
+        self.test_seller_product_details()
+        self.test_seller_product_update()
+        self.test_seller_product_toggle_status()
+        self.test_seller_product_deletion()
+        
+        # Seller Orders Management Tests
+        print("\n📦 Seller Orders Management Testing...")
+        self.test_seller_orders_listing()
+        self.test_seller_order_details()
+        self.test_seller_order_status_update()
+        
+        # Seller Analytics Tests
+        print("\n📊 Seller Analytics Testing...")
+        self.test_seller_analytics_summary()
+        self.test_seller_analytics_timeseries()
+        
+        # Seller APIs Validation Tests
+        print("\n🔐 Seller APIs Validation Testing...")
+        self.test_seller_apis_authentication()
+        self.test_seller_apis_kes_currency_handling()
+        self.test_seller_commission_calculations()
+        
         # Print summary
         print("\n" + "=" * 80)
         print("📊 TEST SUMMARY")
