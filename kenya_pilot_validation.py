@@ -214,7 +214,7 @@ class KenyaPilotValidator:
             self.log_test("Multi-Language AI Health", False, str(data), "P0")
         
         # Swahili Greeting Test
-        success, data = self.make_request("POST", "/multilang-ai/greeting", {
+        success, data = self.make_request("POST", "/multilang/greeting", {
             "language": "sw",
             "user_name": "Amina",
             "time_of_day": "morning"
