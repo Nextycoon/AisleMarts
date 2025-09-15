@@ -2,6 +2,8 @@ import React, { useState, useEffect } from 'react';
 import { View, Text, TextInput, TouchableOpacity, ScrollView, Alert } from 'react-native';
 import { SafeAreaView } from 'react-native-safe-area-context';
 import { useRouter, useLocalSearchParams } from 'expo-router';
+import ImagePickerRow from '../components/ImagePickerRow';
+import VariantRow, { Variant } from '../components/VariantRow';
 import { theme } from '../theme/theme';
 import axios from 'axios';
 
