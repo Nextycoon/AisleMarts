@@ -315,32 +315,61 @@ export default function AvatarHomeScreen() {
           }}
         />
 
-        {/* Quick Action Chips */}
+        {/* Smart Contextual Action Chips */}
         <View style={{ 
           flexDirection: 'row', 
           flexWrap: 'wrap', 
           gap: theme.space.sm, 
           marginBottom: theme.space.lg 
         }}>
-          {[
-            'Best deal nearby',
-            'Compare two products', 
-            'Bundle under $200',
-            'Help me sell this'
-          ].map((prompt) => (
+          {getSmartSuggestions().map((prompt, index) => (
             <TouchableOpacity
-              key={prompt}
+              key={`${prompt}-${index}`}
               onPress={() => sendToAI({ type: 'prompt', text: prompt })}
               style={{
                 backgroundColor: theme.colors.card,
                 paddingVertical: theme.space.sm,
                 paddingHorizontal: theme.space.md,
-                borderRadius: 999
+                borderRadius: 999,
+                borderWidth: 1,
+                borderColor: index === 0 ? '#4A9EFF' : 'transparent', // Highlight first suggestion
+                shadowColor: '#000',
+                shadowOffset: { width: 0, height: 1 },
+                shadowOpacity: 0.1,
+                shadowRadius: 2,
+                elevation: 2
               }}
             >
-              <Text style={{ color: '#E6EDF3', fontSize: 14 }}>{prompt}</Text>
+              <Text style={{ 
+                color: index === 0 ? '#4A9EFF' : '#E6EDF3', 
+                fontSize: 14,
+                fontWeight: index === 0 ? '600' : '400'
+              }}>
+                {prompt}
+              </Text>
             </TouchableOpacity>
           ))}
+        </View>
+
+        {/* Context Helper Text */}
+        <View style={{
+          backgroundColor: 'rgba(74, 158, 255, 0.1)',
+          padding: theme.space.sm,
+          borderRadius: theme.radius.md,
+          marginBottom: theme.space.md,
+          borderLeftWidth: 3,
+          borderLeftColor: '#4A9EFF'
+        }}>
+          <Text style={{
+            color: '#4A9EFF',
+            fontSize: 12,
+            fontStyle: 'italic'
+          }}>
+            {locale === 'sw' 
+              ? '💡 Tip: Uliza kwa lugha yoyote - nitakuelewa!' 
+              : '💡 Tip: Ask in any language - I understand both English and Swahili!'
+            }
+          </Text>
         </View>
 
         {/* Loading State */}
