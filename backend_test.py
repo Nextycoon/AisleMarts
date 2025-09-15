@@ -4177,6 +4177,333 @@ class APITester:
         else:
             self.log_test("Blue Era Authentication Context (Anonymous)", False, str(data))
     
+    # ========== KENYA PILOT WEEK 2 TESTS ==========
+    
+    # Seller Onboarding & Commission Engine Tests
+    def test_seller_health_check(self):
+        """Test seller service health check"""
+        print("\n🏪 Testing Seller Health Check...")
+        
+        success, data = self.make_request("GET", "/seller/health")
+        
+        if success and isinstance(data, dict) and data.get("status") == "healthy":
+            service = data.get("service", "unknown")
+            commission_rate = data.get("commission_rate", "unknown")
+            currency = data.get("supported_currency", "unknown")
+            self.log_test("Seller Health Check", True, f"Service: {service}, Commission: {commission_rate}, Currency: {currency}")
+        else:
+            self.log_test("Seller Health Check", False, str(data))
+    
+    def test_seller_registration(self):
+        """Test seller registration flow"""
+        print("\n🏪 Testing Seller Registration...")
+        
+        if not self.auth_token:
+            self.log_test("Seller Registration", False, "No auth token available")
+            return
+        
+        # Test seller registration without auth for demo
+        seller_data = {
+            "business_name": "Nairobi Electronics Store",
+            "business_type": "retail",
+            "phone_number": "+254712345678",
+            "business_permit": "BP123456",
+            "m_pesa_number": "+254712345678",
+            "tax_pin": "A123456789P",
+            "business_description": "Electronics and mobile phones retailer in Nairobi",
+            "business_address": "Tom Mboya Street, Nairobi",
+            "business_city": "Nairobi"
+        }
+        
+        success, data = self.make_request("POST", "/seller/register", seller_data)
+        
+        if success and isinstance(data, dict) and data.get("success") is True:
+            seller_id = data.get("seller_id", "unknown")
+            trust_score = data.get("trust_score", "unknown")
+            verification_status = data.get("verification_status", "unknown")
+            self.log_test("Seller Registration", True, f"Seller ID: {seller_id}, Trust Score: {trust_score}, Status: {verification_status}")
+            self.seller_id = seller_id
+        else:
+            # May already be registered
+            if "already registered" in str(data).lower():
+                self.log_test("Seller Registration", True, "Seller already registered (expected)")
+            else:
+                self.log_test("Seller Registration", False, str(data))
+    
+    def test_seller_profile(self):
+        """Test getting seller profile"""
+        print("\n🏪 Testing Seller Profile...")
+        
+        if not self.auth_token:
+            self.log_test("Seller Profile", False, "No auth token available")
+            return
+        
+        success, data = self.make_request("GET", "/seller/profile")
+        
+        if success and isinstance(data, dict) and "seller_profile" in data:
+            profile = data.get("seller_profile", {})
+            business_name = profile.get("business_name", "unknown")
+            trust_score = profile.get("trust_score", "unknown")
+            commission_rate = profile.get("commission_rate", "unknown")
+            self.log_test("Seller Profile", True, f"Business: {business_name}, Trust: {trust_score}, Commission: {commission_rate}")
+        else:
+            self.log_test("Seller Profile", False, str(data))
+    
+    def test_seller_demo_simulate_sale(self):
+        """Test commission calculation simulation"""
+        print("\n🏪 Testing Seller Demo Sale Simulation...")
+        
+        if not self.auth_token:
+            self.log_test("Seller Demo Sale Simulation", False, "No auth token available")
+            return
+        
+        # Test with default amount (15000 KES)
+        success, data = self.make_request("POST", "/seller/demo/simulate-sale", {
+            "amount": 15000.0,
+            "currency": "KES"
+        })
+        
+        if success and isinstance(data, dict) and data.get("success") is True:
+            details = data.get("details", {})
+            commission_amount = details.get("commission_amount", "unknown")
+            seller_payout = details.get("seller_payout", "unknown")
+            self.log_test("Seller Demo Sale Simulation", True, f"Commission: {commission_amount}, Seller Payout: {seller_payout}")
+        else:
+            self.log_test("Seller Demo Sale Simulation", False, str(data))
+    
+    def test_seller_earnings_current_month(self):
+        """Test seller earnings calculation"""
+        print("\n🏪 Testing Seller Earnings (Current Month)...")
+        
+        if not self.auth_token:
+            self.log_test("Seller Earnings Current Month", False, "No auth token available")
+            return
+        
+        success, data = self.make_request("GET", "/seller/earnings/current_month")
+        
+        if success and isinstance(data, dict):
+            total_earnings = data.get("total_earnings", 0)
+            total_sales = data.get("total_sales", 0)
+            commission_earned = data.get("commission_earned", 0)
+            self.log_test("Seller Earnings Current Month", True, f"Earnings: {total_earnings}, Sales: {total_sales}, Commission: {commission_earned}")
+        else:
+            self.log_test("Seller Earnings Current Month", False, str(data))
+    
+    def test_seller_commissions(self):
+        """Test seller commission history"""
+        print("\n🏪 Testing Seller Commissions...")
+        
+        if not self.auth_token:
+            self.log_test("Seller Commissions", False, "No auth token available")
+            return
+        
+        success, data = self.make_request("GET", "/seller/commissions", {"limit": 10})
+        
+        if success and isinstance(data, dict) and "commissions" in data:
+            commissions = data.get("commissions", [])
+            total_count = data.get("total_count", 0)
+            self.log_test("Seller Commissions", True, f"Found {len(commissions)} commissions, Total: {total_count}")
+        else:
+            self.log_test("Seller Commissions", False, str(data))
+    
+    # M-Pesa Integration Tests
+    def test_mpesa_health_check(self):
+        """Test M-Pesa service health check"""
+        print("\n💰 Testing M-Pesa Health Check...")
+        
+        success, data = self.make_request("GET", "/mpesa/health")
+        
+        if success and isinstance(data, dict) and data.get("status") == "healthy":
+            service = data.get("service", "unknown")
+            currency = data.get("supported_currency", "unknown")
+            min_amount = data.get("min_amount", "unknown")
+            max_amount = data.get("max_amount", "unknown")
+            environment = data.get("environment", "unknown")
+            self.log_test("M-Pesa Health Check", True, f"Service: {service}, Currency: {currency}, Range: {min_amount}-{max_amount}, Env: {environment}")
+        else:
+            self.log_test("M-Pesa Health Check", False, str(data))
+    
+    def test_mpesa_validate_phone(self):
+        """Test Kenya phone validation"""
+        print("\n💰 Testing M-Pesa Phone Validation...")
+        
+        # Test valid Kenya phone number
+        test_phone = "+254712345678"
+        success, data = self.make_request("POST", "/mpesa/validate-phone", {
+            "phone_number": test_phone
+        })
+        
+        if success and isinstance(data, dict) and data.get("valid") is True:
+            formatted_number = data.get("formatted_number", "unknown")
+            self.log_test("M-Pesa Phone Validation (Valid)", True, f"Phone: {formatted_number}")
+        else:
+            self.log_test("M-Pesa Phone Validation (Valid)", False, str(data))
+        
+        # Test invalid phone number
+        success, data = self.make_request("POST", "/mpesa/validate-phone", {
+            "phone_number": "+1234567890"
+        })
+        
+        if success and isinstance(data, dict) and data.get("valid") is False:
+            self.log_test("M-Pesa Phone Validation (Invalid)", True, "Correctly rejected invalid phone")
+        else:
+            self.log_test("M-Pesa Phone Validation (Invalid)", False, "Should reject invalid phone numbers")
+    
+    def test_mpesa_demo_simulate_payment(self):
+        """Test M-Pesa payment simulation"""
+        print("\n💰 Testing M-Pesa Demo Payment Simulation...")
+        
+        if not self.auth_token:
+            self.log_test("M-Pesa Demo Payment Simulation", False, "No auth token available")
+            return
+        
+        success, data = self.make_request("POST", "/mpesa/demo/simulate-payment", {
+            "amount": 1000.0,
+            "phone_number": "+254712345678"
+        })
+        
+        if success and isinstance(data, dict) and data.get("success") is True:
+            payment_details = data.get("payment_details", {})
+            amount = payment_details.get("amount", "unknown")
+            phone = payment_details.get("phone_number", "unknown")
+            status = payment_details.get("status", "unknown")
+            self.log_test("M-Pesa Demo Payment Simulation", True, f"Amount: {amount}, Phone: {phone}, Status: {status}")
+        else:
+            self.log_test("M-Pesa Demo Payment Simulation", False, str(data))
+    
+    def test_mpesa_test_integration(self):
+        """Test M-Pesa integration status"""
+        print("\n💰 Testing M-Pesa Integration Status...")
+        
+        success, data = self.make_request("GET", "/mpesa/test-integration")
+        
+        if success and isinstance(data, dict) and data.get("integration_status") == "healthy":
+            tests = data.get("tests", {})
+            phone_test = tests.get("phone_validation", {}).get("status", "unknown")
+            currency_test = tests.get("currency_formatting", {}).get("status", "unknown")
+            service_test = tests.get("service_connection", {}).get("status", "unknown")
+            ready = data.get("ready_for_payments", False)
+            self.log_test("M-Pesa Integration Test", True, f"Phone: {phone_test}, Currency: {currency_test}, Service: {service_test}, Ready: {ready}")
+        else:
+            self.log_test("M-Pesa Integration Test", False, str(data))
+    
+    # Multi-Language AI Tests
+    def test_multilang_health_check(self):
+        """Test multi-language AI service health check"""
+        print("\n🌍 Testing Multi-Language AI Health Check...")
+        
+        success, data = self.make_request("GET", "/multilang/health")
+        
+        if success and isinstance(data, dict) and data.get("status") == "healthy":
+            service = data.get("service", "unknown")
+            total_languages = data.get("total_languages", 0)
+            supported_languages = data.get("supported_languages", [])
+            features = data.get("features", [])
+            self.log_test("Multi-Language AI Health Check", True, f"Service: {service}, Languages: {total_languages}, Features: {len(features)}")
+        else:
+            self.log_test("Multi-Language AI Health Check", False, str(data))
+    
+    def test_multilang_languages(self):
+        """Test getting supported languages"""
+        print("\n🌍 Testing Multi-Language Supported Languages...")
+        
+        success, data = self.make_request("GET", "/multilang/languages")
+        
+        if success and isinstance(data, dict) and data.get("success") is True:
+            languages_info = data.get("languages_info", {})
+            language_count = len(languages_info)
+            # Check for expected languages: English, Turkish, Arabic, Swahili, French
+            expected_languages = ['en', 'tr', 'ar', 'sw', 'fr']
+            found_languages = [lang for lang in expected_languages if lang in languages_info]
+            self.log_test("Multi-Language Supported Languages", True, f"Found {language_count} languages, Expected: {len(found_languages)}/5")
+        else:
+            self.log_test("Multi-Language Supported Languages", False, str(data))
+    
+    def test_multilang_greeting_swahili(self):
+        """Test Swahili greeting"""
+        print("\n🌍 Testing Multi-Language Swahili Greeting...")
+        
+        success, data = self.make_request("POST", "/multilang/greeting", {
+            "language": "sw",
+            "user_name": "Amina",
+            "time_of_day": "morning"
+        })
+        
+        if success and isinstance(data, dict) and data.get("success") is True:
+            greeting = data.get("localized_greeting", {})
+            greeting_text = greeting.get("greeting", "")
+            # Check if greeting contains "Hujambo" or similar Swahili greeting
+            if "hujambo" in greeting_text.lower() or "habari" in greeting_text.lower() or "salama" in greeting_text.lower():
+                self.log_test("Multi-Language Swahili Greeting", True, f"Swahili greeting: {greeting_text[:50]}...")
+            else:
+                self.log_test("Multi-Language Swahili Greeting", False, f"Expected Swahili greeting, got: {greeting_text}")
+        else:
+            self.log_test("Multi-Language Swahili Greeting", False, str(data))
+    
+    def test_multilang_chat_swahili(self):
+        """Test Swahili AI chat"""
+        print("\n🌍 Testing Multi-Language Swahili Chat...")
+        
+        success, data = self.make_request("POST", "/multilang/chat", {
+            "message": "Nahitaji simu ya biashara",
+            "language": "sw",
+            "user_name": "Amina"
+        })
+        
+        if success and isinstance(data, dict) and data.get("success") is True:
+            ai_response = data.get("ai_response", {})
+            response_text = ai_response.get("response", "")
+            cultural_style = ai_response.get("cultural_style", "")
+            request_language = data.get("request_language", "")
+            if request_language == "sw" and len(response_text) > 0:
+                self.log_test("Multi-Language Swahili Chat", True, f"Response in {cultural_style} style: {response_text[:50]}...")
+            else:
+                self.log_test("Multi-Language Swahili Chat", False, f"Expected Swahili response, got: {response_text}")
+        else:
+            self.log_test("Multi-Language Swahili Chat", False, str(data))
+    
+    def test_multilang_demo_conversation_swahili(self):
+        """Test Swahili conversation demo"""
+        print("\n🌍 Testing Multi-Language Swahili Demo Conversation...")
+        
+        success, data = self.make_request("POST", "/multilang/demo/conversation", {
+            "language": "sw",
+            "user_name": "Amina"
+        })
+        
+        if success and isinstance(data, dict) and data.get("success") is True:
+            conversation_flow = data.get("conversation_flow", [])
+            demo_language = data.get("demo_language", "")
+            language_name = data.get("language_name", "")
+            communication_style = data.get("communication_style", "")
+            if demo_language == "sw" and len(conversation_flow) > 0:
+                self.log_test("Multi-Language Swahili Demo Conversation", True, f"Language: {language_name}, Steps: {len(conversation_flow)}, Style: {communication_style}")
+            else:
+                self.log_test("Multi-Language Swahili Demo Conversation", False, f"Expected Swahili demo, got: {demo_language}")
+        else:
+            self.log_test("Multi-Language Swahili Demo Conversation", False, str(data))
+    
+    def test_multilang_test_languages(self):
+        """Test all supported languages"""
+        print("\n🌍 Testing Multi-Language All Languages Test...")
+        
+        success, data = self.make_request("GET", "/multilang/test-languages")
+        
+        if success and isinstance(data, dict) and data.get("success") is True:
+            summary = data.get("summary", {})
+            total_languages = summary.get("total_languages", 0)
+            successful_languages = summary.get("successful_languages", 0)
+            success_rate = summary.get("success_rate", "0%")
+            failed_languages = summary.get("failed_languages", [])
+            
+            # Expect at least 4/5 languages to work (80% success rate)
+            if successful_languages >= 4:
+                self.log_test("Multi-Language All Languages Test", True, f"Success Rate: {success_rate} ({successful_languages}/{total_languages})")
+            else:
+                self.log_test("Multi-Language All Languages Test", False, f"Low success rate: {success_rate}, Failed: {failed_languages}")
+        else:
+            self.log_test("Multi-Language All Languages Test", False, str(data))
+
     def run_all_tests(self):
         """Run all tests in sequence"""
         print(f"🚀 Starting AisleMarts Backend API Tests (Including Geographic Targeting System)")
