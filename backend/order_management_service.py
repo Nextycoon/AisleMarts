@@ -45,8 +45,8 @@ class OrderManagementService:
             orders = []
             
             async for order in cursor:
-                order['id'] = str(order['_id'])
-                orders.append(order)
+                clean_order = clean_mongo_document(order)
+                orders.append(clean_order)
                 
             logger.info(f"Retrieved {len(orders)} orders for seller {seller_id}")
             return orders
@@ -64,9 +64,9 @@ class OrderManagementService:
             })
             
             if order:
-                order['id'] = str(order['_id'])
+                return clean_mongo_document(order)
                 
-            return order
+            return None
             
         except Exception as e:
             logger.error(f"Error getting order {order_id}: {e}")
