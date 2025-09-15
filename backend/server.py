@@ -288,6 +288,7 @@ from seller_routes import router as seller_router
 from mpesa_routes import router as mpesa_router
 from multilang_ai_routes import router as multilang_router
 from ai_intents_routes import router as ai_intents_router
+from seller_products_routes import router as seller_products_router
 
 # Include AI routes
 app.include_router(ai_router)
