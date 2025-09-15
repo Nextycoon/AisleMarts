@@ -308,6 +308,96 @@ export default function ProductEditor() {
               }} 
             />
           </View>
+
+          {/* Product Images */}
+          <View>
+            <Text style={{
+              color: theme.colors.text, 
+              fontWeight: '600',
+              marginBottom: 8
+            }}>
+              Product Images
+            </Text>
+            <ImagePickerRow
+              images={images}
+              onImagesChange={setImages}
+              maxImages={5}
+            />
+          </View>
+        </View>
+
+        {/* Product Variants */}
+        <View style={{ marginTop: theme.space.lg }}>
+          <View style={{
+            flexDirection: 'row',
+            justifyContent: 'space-between',
+            alignItems: 'center',
+            marginBottom: theme.space.md
+          }}>
+            <View>
+              <Text style={{
+                color: theme.colors.text,
+                fontWeight: '700',
+                fontSize: 18
+              }}>
+                Product Variants
+              </Text>
+              <Text style={{
+                color: theme.colors.textDim,
+                fontSize: 14,
+                marginTop: 2
+              }}>
+                Add variations like size, color, or specifications
+              </Text>
+            </View>
+            <TouchableOpacity 
+              onPress={addVariant}
+              style={{
+                backgroundColor: theme.colors.primary,
+                paddingHorizontal: theme.space.md,
+                paddingVertical: theme.space.sm,
+                borderRadius: theme.radius.sm
+              }}
+            >
+              <Text style={{
+                color: 'white',
+                fontWeight: '600',
+                fontSize: 14
+              }}>
+                + Add Variant
+              </Text>
+            </TouchableOpacity>
+          </View>
+
+          {variants.length === 0 ? (
+            <View style={{
+              backgroundColor: theme.colors.card,
+              borderRadius: theme.radius.md,
+              padding: theme.space.lg,
+              alignItems: 'center',
+              borderWidth: 2,
+              borderStyle: 'dashed',
+              borderColor: theme.colors.textDim + '40'
+            }}>
+              <Text style={{
+                color: theme.colors.textDim,
+                fontSize: 16,
+                textAlign: 'center'
+              }}>
+                No variants yet{'\n'}
+                Add variants for different sizes, colors, or specifications
+              </Text>
+            </View>
+          ) : (
+            variants.map(variant => (
+              <VariantRow
+                key={variant.id}
+                variant={variant}
+                onChange={(updatedVariant) => updateVariant(variant.id, updatedVariant)}
+                onRemove={() => removeVariant(variant.id)}
+              />
+            ))
+          )}
         </View>
 
         {/* Save Button */}
