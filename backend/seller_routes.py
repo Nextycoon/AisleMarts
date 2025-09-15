@@ -66,7 +66,7 @@ async def register_seller(
 ):
     """Register as a seller"""
     try:
-        user_id = ObjectId(current_user["user_id"])
+        user_id = current_user["_id"]
         
         # Check if user is already a seller
         existing_seller = await seller_service.get_seller_profile(user_id)
@@ -84,9 +84,9 @@ async def register_seller(
         
         return {
             "success": True,
-            "seller_id": str(seller_profile.id),
-            "trust_score": seller_profile.trust_score,
-            "verification_status": seller_profile.verification_status,
+            "seller_id": seller_profile['_id'],
+            "trust_score": seller_profile['trust_score'],
+            "verification_status": seller_profile['verification_status'],
             "message": "Seller registration successful! You can now set up your store."
         }
         
@@ -102,7 +102,7 @@ async def setup_store(
 ):
     """Set up seller's store"""
     try:
-        user_id = ObjectId(current_user["user_id"])
+        user_id = current_user["_id"]
         
         # Get seller profile
         seller_profile = await seller_service.get_seller_profile(user_id)
@@ -113,7 +113,7 @@ async def setup_store(
             )
         
         # Check if store already exists
-        existing_store = await seller_service.get_seller_store(seller_profile.id)
+        existing_store = await seller_service.get_seller_store(seller_profile['_id'])
         if existing_store:
             raise HTTPException(
                 status_code=400,
@@ -122,15 +122,15 @@ async def setup_store(
         
         # Create store
         store = await seller_service.create_seller_store(
-            seller_id=seller_profile.id,
+            seller_id=seller_profile['_id'],
             store_data=store_data.dict()
         )
         
         return {
             "success": True,
-            "store_id": str(store.id),
-            "store_slug": store.store_slug,
-            "store_url": f"aislemarts.com/store/{store.store_slug}",
+            "store_id": store['_id'],
+            "store_slug": store['store_slug'],
+            "store_url": f"aislemarts.com/store/{store['store_slug']}",
             "message": "Store setup successful! You can now add products."
         }
         
@@ -141,7 +141,7 @@ async def setup_store(
 async def get_seller_profile(current_user: dict = Depends(get_current_user)):
     """Get seller's profile information"""
     try:
-        user_id = ObjectId(current_user["user_id"])
+        user_id = current_user["_id"]
         seller_profile = await seller_service.get_seller_profile(user_id)
         
         if not seller_profile:
@@ -151,30 +151,30 @@ async def get_seller_profile(current_user: dict = Depends(get_current_user)):
             )
         
         # Get store info if exists
-        store = await seller_service.get_seller_store(seller_profile.id)
+        store = await seller_service.get_seller_store(seller_profile['_id'])
         
         return {
             "seller_profile": {
-                "id": str(seller_profile.id),
-                "business_name": seller_profile.business_name,
-                "business_type": seller_profile.business_type,
-                "phone_number": seller_profile.phone_number,
-                "verification_status": seller_profile.verification_status,
-                "trust_score": seller_profile.trust_score,
-                "business_city": seller_profile.business_city,
-                "business_country": seller_profile.business_country,
-                "preferred_currency": seller_profile.preferred_currency,
-                "commission_rate": f"{seller_profile.commission_rate * 100}%",
-                "created_at": seller_profile.created_at
+                "id": seller_profile['_id'],
+                "business_name": seller_profile['business_name'],
+                "business_type": seller_profile['business_type'],
+                "phone_number": seller_profile['phone_number'],
+                "verification_status": seller_profile['verification_status'],
+                "trust_score": seller_profile['trust_score'],
+                "business_city": seller_profile['business_city'],
+                "business_country": seller_profile['business_country'],
+                "preferred_currency": seller_profile['preferred_currency'],
+                "commission_rate": f"{seller_profile['commission_rate'] * 100}%",
+                "created_at": seller_profile['created_at']
             },
             "store": {
-                "id": str(store.id) if store else None,
-                "store_name": store.store_name if store else None,
-                "store_slug": store.store_slug if store else None,
-                "store_url": f"aislemarts.com/store/{store.store_slug}" if store else None,
-                "is_active": store.is_active if store else False,
-                "total_sales": store.total_sales if store else 0,
-                "total_orders": store.total_orders if store else 0
+                "id": store['_id'] if store else None,
+                "store_name": store['store_name'] if store else None,
+                "store_slug": store['store_slug'] if store else None,
+                "store_url": f"aislemarts.com/store/{store['store_slug']}" if store else None,
+                "is_active": store['is_active'] if store else False,
+                "total_sales": store['total_sales'] if store else 0,
+                "total_orders": store['total_orders'] if store else 0
             } if store else None
         }
         
