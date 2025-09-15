@@ -283,12 +283,13 @@ from procedures_by_category_routes import router as procedures_by_category_route
 from documentation_procedures_routes import router as documentation_procedures_router
 from localization_routes import router as localization_router
 
-# Import new seller, commission, M-Pesa, multi-language, and AI intents routes
+# Import new seller, commission, M-Pesa, multi-language, AI intents, and order management routes
 from seller_routes import router as seller_router
 from mpesa_routes import router as mpesa_router
 from multilang_ai_routes import router as multilang_router
 from ai_intents_routes import router as ai_intents_router
 from seller_products_routes import router as seller_products_router
+from order_management_routes import router as order_management_router, mpesa_router as mpesa_webhook_router
 
 # Include AI routes
 app.include_router(ai_router)
