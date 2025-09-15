@@ -2,7 +2,7 @@ from typing import Dict, List
 from datetime import datetime, timedelta
 from bson import ObjectId
 from seller_models import CommissionDoc, SellerPayoutDoc
-from models import Order, User
+from models import OrderDoc, UserDoc
 from localization_service import localization_service
 from dotenv import load_dotenv
 
