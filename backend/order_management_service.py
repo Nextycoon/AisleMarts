@@ -81,16 +81,16 @@ class OrderManagementService:
                 description=status_update.notes or f"Order marked as {status_update.status}"
             )
             
-            # Update order
-            update_data = {
-                "status": status_update.status,
-                "updated_at": datetime.utcnow(),
-                "$push": {"events": event.dict()}
-            }
-            
+            # Update order with both set and push operations
             result = await self.orders.update_one(
                 {"order_id": order_id, "seller_id": seller_id},
-                {"$set": update_data}
+                {
+                    "$set": {
+                        "status": status_update.status,
+                        "updated_at": datetime.utcnow()
+                    },
+                    "$push": {"events": event.dict()}
+                }
             )
             
             if result.modified_count > 0:
