@@ -57,8 +57,8 @@
 ##   test_priority: "high_first"  # or "sequential" or "stuck_first"
 ##
 ## agent_communication:
-##     -agent: "main"  # or "testing" or "user"
-##     -message: "Communication message between agents"
+##     - agent: "main"
+##       message: "Starting Sprint K-1 Day 1-2: Pilot Readiness Validation. Conducting comprehensive smoke test suite focusing on critical Go-Live Gate checklist items: end-to-end buyer flows, M-Pesa payments (STK success), seller orders management, commission calculations, and mobile optimization. Previous testing shows 94.4% success rate on Kenya pilot features - validating current status and identifying any P0/P1 issues before pilot launch."
 
 # Protocol Guidelines for Main agent
 #
