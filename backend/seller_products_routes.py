@@ -11,8 +11,8 @@ logger = logging.getLogger(__name__)
 
 router = APIRouter(prefix="/api/seller", tags=["seller-products"])
 
-async def get_seller_products_service(database: AsyncIOMotorDatabase = Depends(lambda: db)) -> SellerProductsService:
-    return SellerProductsService(database)
+async def get_seller_products_service() -> SellerProductsService:
+    return SellerProductsService(db())
 
 @router.get("/products/health")
 async def seller_products_health():
