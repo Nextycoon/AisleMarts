@@ -221,10 +221,10 @@ class KenyaPilotValidator:
             "user_name": "Amina",
             "time_of_day": "morning"
         })
-        if success and isinstance(data, dict) and "greeting" in data:
-            greeting = data.get("greeting", "")
-            if "Habari" in greeting or "Hujambo" in greeting:
-                self.log_test("Swahili Greeting Generation", True, f"Generated: {greeting[:50]}...", "P0")
+        if success and isinstance(data, dict) and data.get("success"):
+            greeting_data = data.get("localized_greeting", {})
+            if greeting_data.get("language") == "sw" and "Habari" in greeting_data.get("greeting", ""):
+                self.log_test("Swahili Greeting Generation", True, f"Generated: {greeting_data.get('greeting')}", "P0")
             else:
                 self.log_test("Swahili Greeting Generation", False, f"Swahili greeting validation issue", "P0")
         else:
