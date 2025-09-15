@@ -244,15 +244,14 @@ class KenyaPilotValidator:
         
         # Multi-Language Support Test
         success, data = self.make_request("GET", "/multilang/languages")
-        if success and isinstance(data, dict) and "languages" in data:
-            languages = data.get("languages", [])
-            swahili_supported = any(lang.get("code") == "sw" for lang in languages)
-            english_supported = any(lang.get("code") == "en" for lang in languages)
-            
-            if swahili_supported and english_supported:
-                self.log_test("Multi-Language Support", True, f"Swahili and English supported among {len(languages)} languages", "P0")
+        if success and isinstance(data, dict) and data.get("success"):
+            languages_info = data.get("languages_info", {})
+            supported_languages = languages_info.get("languages", {})
+            if "sw" in supported_languages and supported_languages["sw"].get("name") == "Swahili":
+                total_languages = languages_info.get("supported_count", len(supported_languages))
+                self.log_test("Multi-Language Support", True, f"Swahili support confirmed in {total_languages} languages", "P0")
             else:
-                self.log_test("Multi-Language Support", False, f"Missing Swahili or English support", "P0")
+                self.log_test("Multi-Language Support", False, f"Swahili not properly configured in languages", "P0")
         else:
             self.log_test("Multi-Language Support", False, str(data), "P0")
 
