@@ -230,15 +230,15 @@ class KenyaPilotValidator:
         else:
             self.log_test("Swahili Greeting Generation", False, str(data), "P0")
         
-        # Swahili AI Chat Test
-        success, data = self.make_request("POST", "/multilang/chat", {
-            "message": "Nahitaji simu ya biashara",  # "I need a business phone"
-            "language": "sw",
-            "context": {"location": "Kenya"}
-        })
-        if success and isinstance(data, dict) and "response" in data:
-            response = data.get("response", "")
-            self.log_test("Swahili AI Chat", True, f"Response length: {len(response)} chars", "P0")
+        # Swahili AI chat
+        success, data = self.make_request("POST", "/multilang/chat", {"message": "Nataka kununua simu", "language": "sw"})
+        if success and isinstance(data, dict) and data.get("success"):
+            ai_response = data.get("ai_response", {})
+            response_text = ai_response.get("response", "")
+            if ai_response.get("language") == "sw" and any(word in response_text.lower() for word in ["simu", "hujambo", "karibu", "nipo", "aislemarts"]):
+                self.log_test("Swahili AI Chat", True, f"Response: {response_text[:50]}...", "P0")
+            else:
+                self.log_test("Swahili AI Chat", False, f"Swahili AI chat validation issue", "P0")
         else:
             self.log_test("Swahili AI Chat", False, str(data), "P0")
         
