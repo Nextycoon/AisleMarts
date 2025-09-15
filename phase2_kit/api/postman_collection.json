@@ -1,0 +1,57 @@
+{
+  "info": {
+    "name": "AisleMarts Phase 2 \u2014 Orders",
+    "schema": "https://schema.getpostman.com/json/collection/v2.1.0/collection.json"
+  },
+  "item": [
+    {
+      "name": "Health",
+      "request": {
+        "method": "GET",
+        "url": "{{base}}/health"
+      }
+    },
+    {
+      "name": "Seller \u2014 List Orders",
+      "request": {
+        "method": "GET",
+        "url": "{{base}}/seller/orders"
+      }
+    },
+    {
+      "name": "Seller \u2014 Get Order",
+      "request": {
+        "method": "GET",
+        "url": "{{base}}/seller/orders/O-10023"
+      }
+    },
+    {
+      "name": "Seller \u2014 Update Status",
+      "request": {
+        "method": "POST",
+        "url": "{{base}}/seller/orders/O-10023",
+        "body": {
+          "mode": "raw",
+          "raw": "{\"status\": \"shipped\"}"
+        }
+      }
+    },
+    {
+      "name": "M-Pesa \u2014 STK Callback (simulate success)",
+      "request": {
+        "method": "POST",
+        "url": "{{base}}/mpesa/stk/callback",
+        "body": {
+          "mode": "raw",
+          "raw": "{\"MerchantRequestID\": \"m1\", \"CheckoutRequestID\": \"chk1\", \"ResultCode\": 0, \"ResultDesc\": \"Success\"}"
+        }
+      }
+    }
+  ],
+  "variable": [
+    {
+      "key": "base",
+      "value": "http://localhost:8000"
+    }
+  ]
+}
