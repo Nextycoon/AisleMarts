@@ -1,6 +1,6 @@
 import React from 'react';
 import { render, fireEvent } from '@testing-library/react-native';
-import StoreProfileEditor from '../frontend/src/screens/StoreProfileEditor';
+import StoreProfileEditor from '../src/screens/StoreProfileEditor';
 
 describe('StoreProfileEditor — Kenya specifics', () => {
   it('renders core fields and accepts +254 phone format', () => {
