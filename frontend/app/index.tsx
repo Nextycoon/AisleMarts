@@ -1,53 +1,50 @@
 import React, { useEffect, useState } from 'react';
-import {
-  View,
-  Text,
-  StyleSheet,
-  FlatList,
-  TouchableOpacity,
-  Image,
-  TextInput,
-  ScrollView,
-  Alert,
-  RefreshControl,
-} from 'react-native';
-import { SafeAreaView } from 'react-native-safe-area-context';
-import { router } from 'expo-router';
-import { Ionicons } from '@expo/vector-icons';
-import { useAuth } from '../src/context/AuthContext';
-import { useCart } from '../src/context/CartContext';
-import { API } from '../src/api/client';
-import { Product, Category } from '../src/types';
-import { aiService, LocaleInfo } from '../src/services/AIService';
-import AIAssistant from '../src/components/AIAssistant';
-import { AISearchHub } from '../src/components/AISearchHubComponents';
+import { View, Text, Alert } from 'react-native';
+import { useRouter, Redirect } from 'expo-router';
+import AsyncStorage from '@react-native-async-storage/async-storage';
+import SplashScreen from '../src/screens/SplashScreen';
+import AvatarHomeScreen from '../src/screens/AvatarHomeScreen';
 
-export default function HomeScreen() {
-  const { user } = useAuth();
-  const { itemCount } = useCart();
-  const [products, setProducts] = useState<Product[]>([]);
-  const [categories, setCategories] = useState<Category[]>([]);
-  const [loading, setLoading] = useState(true);
-  const [refreshing, setRefreshing] = useState(false);
-  const [searchQuery, setSearchQuery] = useState('');
-  const [selectedCategory, setSelectedCategory] = useState<string | null>(null);
-  const [showAIAssistant, setShowAIAssistant] = useState(false);
-  const [showAISearchHub, setShowAISearchHub] = useState(false);
-  const [aiRecommendations, setAIRecommendations] = useState<any>(null);
-  const [localeInfo, setLocaleInfo] = useState<LocaleInfo | null>(null);
-  const [welcomeMessage, setWelcomeMessage] = useState('');
-  const [isVoiceSearching, setIsVoiceSearching] = useState(false);
+export default function App() {
+  const [isLoading, setIsLoading] = useState(true);
+  const [showSplash, setShowSplash] = useState(false);
+  const router = useRouter();
 
   useEffect(() => {
-    loadData();
-    initializeAI();
+    checkFirstLaunch();
   }, []);
 
-  useEffect(() => {
-    if (user) {
-      loadPersonalizedContent();
+  const checkFirstLaunch = async () => {
+    try {
+      const hasLaunched = await AsyncStorage.getItem('has_launched');
+      
+      if (!hasLaunched) {
+        // First time launch - show splash
+        setShowSplash(true);
+        await AsyncStorage.setItem('has_launched', 'true');
+        
+        // Auto-hide splash after 2.5 seconds
+        setTimeout(() => {
+          setShowSplash(false);
+          setIsLoading(false);
+        }, 2500);
+      } else {
+        // Skip splash for subsequent launches
+        setIsLoading(false);
+      }
+    } catch (error) {
+      console.error('Error checking first launch:', error);
+      setIsLoading(false);
     }
-  }, [user]);
+  };
+
+  if (isLoading || showSplash) {
+    return <SplashScreen />;
+  }
+
+  // Main app content - AI-First AvatarHome as default
+  return <AvatarHomeScreen />;
+}
 
   const initializeAI = async () => {
     try {
