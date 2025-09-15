@@ -81,7 +81,7 @@ class OrderManagementService:
                 description=status_update.notes or f"Order marked as {status_update.status}"
             )
             
-            # Update order with both set and push operations
+            # Update order with both set and push operations in correct MongoDB syntax
             result = await self.orders.update_one(
                 {"order_id": order_id, "seller_id": seller_id},
                 {
@@ -89,7 +89,9 @@ class OrderManagementService:
                         "status": status_update.status,
                         "updated_at": datetime.utcnow()
                     },
-                    "$push": {"events": event.dict()}
+                    "$push": {
+                        "events": event.dict()
+                    }
                 }
             )
             
