@@ -812,6 +812,54 @@ backend:
           agent: "testing"
           comment: "✅ WORKING: Seller Analytics APIs functioning perfectly. ✅ Analytics Summary working (KES currency, 65% AI share, comprehensive metrics), ✅ Timeseries Data working (30 data points with valid structure for charts), ✅ Revenue tracking, orders count, views, commission calculations all operational. Analytics dashboard ready for seller insights and performance monitoring."
 
+  - task: "Enhanced Search Models and Collections"
+    implemented: false
+    working: "NA"
+    file: "/app/backend/search_models.py"
+    stuck_count: 0
+    priority: "high"
+    needs_retesting: true
+    status_history:
+        - working: "NA"
+          agent: "main"
+          comment: "Phase 1: Adding merchants, offers, locations MongoDB collections with data models, indexes for multilingual search (EN/SW/AR/TR), GTIN lookup, brand/title clustering for deduplication"
+
+  - task: "Enhanced Search API Endpoints"
+    implemented: false
+    working: "NA"
+    file: "/app/backend/search_routes.py"
+    stuck_count: 0
+    priority: "high"
+    needs_retesting: true
+    status_history:
+        - working: "NA"
+          agent: "main"
+          comment: "Phase 1: /v1/search endpoint with multilingual query support, mode filtering (retail/b2b/all), geo-spatial filtering, image/barcode search hooks, and /v1/products/{id}/offers endpoint for offer comparison"
+
+  - task: "Search Aggregation and Scoring Engine"
+    implemented: false
+    working: "NA"
+    file: "/app/backend/search_service.py"
+    stuck_count: 0
+    priority: "high"
+    needs_retesting: true
+    status_history:
+        - working: "NA"
+          agent: "main"
+          comment: "Phase 1: MongoDB aggregation pipelines for search with Best Pick scoring (price .35, eta .2, trust .25, culture .15, stock .05), offer deduplication by GTIN/brand/title/image_hash, multilingual token matching"
+
+  - task: "Redis Search Caching Layer"
+    implemented: false
+    working: "NA"
+    file: "/app/backend/search_cache.py"
+    stuck_count: 0
+    priority: "medium"
+    needs_retesting: true
+    status_history:
+        - working: "NA"
+          agent: "main"
+          comment: "Phase 1: Redis caching for hot search results with normalized query keys, 60-120s TTL, cache hit ratio tracking, and background cache warming for popular queries"
+
 frontend:
   - task: "Aisle Avatar System"
     implemented: true
