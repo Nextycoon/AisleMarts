@@ -111,9 +111,9 @@ user_problem_statement: "Week 3 UI Wiring & Notification Integration for AisleMa
 backend:
   - task: "Week 3 Pickup Windows & Advanced Reservations System"
     implemented: true
-    working: true
+    working: false
     file: "/app/backend/pickup_windows_routes.py, /app/backend/pickup_windows_service.py, /app/backend/pickup_windows_models.py"
-    stuck_count: 0
+    stuck_count: 1
     priority: "high"
     needs_retesting: false
     status_history:
@@ -123,6 +123,9 @@ backend:
         - working: true
           agent: "testing"
           comment: "✅ PRODUCTION READY: Week 3 Backend Test Blitz PASSED with 100% success rate (12/12 tests). CRITICAL FEATURES VALIDATED: ✅ Pickup System Health (healthy status, 6 features enabled), ✅ Window Creation API (correctly enforces merchant access control), ✅ Window Availability API (proper capacity/availability tracking), ✅ Reservation Scheduling (validates reservation existence), ✅ Reservation Extension (validates ownership and extension policies), ✅ Reservation Modification (audit history and validation), ✅ Partial Pickup Processing (inventory reconciliation), ✅ Expired Reservations Cleanup (admin access control), ✅ Analytics Validation (location-specific and global analytics). SECURITY & ACCESS CONTROL: All APIs properly enforce authentication, merchant privileges for location access, admin privileges for cleanup operations, and reservation ownership validation. PASS GATES MET: No 5xx errors, all state transitions valid, proper access control enforcement, comprehensive audit trails. System demonstrates production-ready reliability with robust error handling and security controls."
+        - working: false
+          agent: "testing"
+          comment: "❌ CRITICAL ISSUES FOUND: Comprehensive Week 3 Pickup System Backend Integration Test revealed 53.3% success rate (8/15 tests passed). HIGH PRIORITY FAILURES: ❌ Window Creation API returning empty arrays instead of created windows, ❌ Reservation Scheduling failing due to missing window IDs, ❌ Reservation Extension not granting extensions properly, ❌ Reservation Modification missing modification IDs in response, ❌ Partial Pickup Processing has incorrect request schema validation. WORKING COMPONENTS: ✅ Pickup System Health Check (6/6 features enabled), ✅ Window Availability API (proper capacity tracking), ✅ Reservation Status retrieval, ✅ Analytics APIs (both window and reservation analytics functional). ISSUES IDENTIFIED: Window creation API has response format issues, reservation workflow broken due to missing window IDs, advanced reservation management endpoints have schema/validation problems. System requires fixes before production deployment."
 
   - task: "Week 3 UI Wiring - Merchant Pickup Screen Implementation"
     implemented: true
