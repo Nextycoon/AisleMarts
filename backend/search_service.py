@@ -469,9 +469,14 @@ class SearchService:
         description = product_data.get("description", "")
         brand = product_data.get("brand", "")
         
+        # Create tokens for all supported languages
+        base_text = f"{title} {description} {brand}"
         lang_tokens = {
-            SearchLanguages.ENGLISH: self._tokenize_query(f"{title} {description} {brand}"),
-            # TODO: Add other language tokenization
+            SearchLanguages.ENGLISH: self._tokenize_query(base_text),
+            SearchLanguages.SWAHILI: self._tokenize_query(base_text),  # For now, use same tokens
+            SearchLanguages.ARABIC: self._tokenize_query(base_text),
+            SearchLanguages.TURKISH: self._tokenize_query(base_text),
+            SearchLanguages.FRENCH: self._tokenize_query(base_text)
         }
         
         # Update product with enhanced fields
