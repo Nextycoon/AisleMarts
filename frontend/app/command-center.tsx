@@ -14,7 +14,7 @@ import { getDuration } from '../src/theme/motion';
 export default function CommandCenter() {
   const top = useSafeAreaInsets().top;
   const router = useRouter();
-  const { trackScreenView, trackProfileTileClick } = useAnalytics();
+  const { trackScreenView, trackProfileTileClick, track } = useAnalytics();
   
   // Get features for current user (demo: assume user role for now)
   const userRoles = ["user", "merchant"]; // In real app, get from auth context
