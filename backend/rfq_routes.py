@@ -112,7 +112,7 @@ async def publish_rfq(
 ):
     """Publish RFQ to make it visible to suppliers"""
     try:
-        success = await rfq_service.publish_rfq(rfq_id, current_user["id"])
+        success = await rfq_service.publish_rfq(rfq_id, current_user["_id"])
         if not success:
             raise HTTPException(404, "RFQ not found or already published")
         
