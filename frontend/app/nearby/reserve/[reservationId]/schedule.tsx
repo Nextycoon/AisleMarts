@@ -90,16 +90,16 @@ export default function SchedulePickupScreen() {
 
       const result = await scheduleReservation(reservationId, window.id);
       
-      Alert.alert(
-        'Pickup Scheduled! 🎉',
-        `Your pickup is confirmed for ${formatPickupDate(result.scheduled_slot.date)} at ${formatTimeSlot(result.scheduled_slot.time_slot)}.\n\nConfirmation code: ${result.confirmation_code}`,
-        [
-          {
-            text: 'View Details',
-            onPress: () => router.replace(`/nearby/reserve/${reservationId}/details`)
-          }
-        ]
-      );
+      // Show notification for successful scheduling
+      showPickupNotification('scheduled', {
+        timeSlot: formatTimeSlot(result.scheduled_slot.time_slot),
+        pickupCode: result.confirmation_code
+      });
+
+      // Navigate to details after brief delay
+      setTimeout(() => {
+        router.replace(`/nearby/reserve/${reservationId}/details`);
+      }, 1500);
 
     } catch (error: any) {
       console.error('Scheduling failed:', error);
