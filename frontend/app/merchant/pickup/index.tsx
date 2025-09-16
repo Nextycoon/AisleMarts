@@ -485,33 +485,44 @@ export default function MerchantPickupScreen() {
 const styles = StyleSheet.create({
   container: {
     flex: 1,
-    backgroundColor: '#f8f9fa',
+    backgroundColor: '#0C0F14',
   },
   header: {
+    marginHorizontal: 16,
+    marginTop: 8,
+    borderRadius: 12,
+    overflow: 'hidden',
+    borderWidth: 1,
+    borderColor: 'rgba(255,255,255,0.1)',
+  },
+  headerBlur: {
     flexDirection: 'row',
     alignItems: 'center',
     justifyContent: 'space-between',
     paddingHorizontal: 16,
     paddingVertical: 12,
-    backgroundColor: 'white',
-    borderBottomWidth: 1,
-    borderBottomColor: '#e0e0e0',
+    backgroundColor: 'rgba(255,255,255,0.05)',
   },
   headerTitle: {
     fontSize: 18,
     fontWeight: '600',
-    color: '#333',
+    color: 'white',
   },
   controlsCard: {
-    backgroundColor: 'white',
+    marginHorizontal: 16,
+    marginTop: 16,
+    borderRadius: 12,
+    overflow: 'hidden',
+    borderWidth: 1,
+    borderColor: 'rgba(255,255,255,0.1)',
+  },
+  controlsGradient: {
     padding: 16,
-    borderBottomWidth: 1,
-    borderBottomColor: '#e0e0e0',
   },
   controlsTitle: {
     fontSize: 16,
     fontWeight: '600',
-    color: '#333',
+    color: 'white',
     marginBottom: 12,
   },
   inputRow: {
@@ -524,26 +535,29 @@ const styles = StyleSheet.create({
   },
   inputLabel: {
     fontSize: 12,
-    color: '#666',
+    color: 'rgba(255,255,255,0.7)',
     marginBottom: 4,
     fontWeight: '500',
   },
   textInput: {
     borderWidth: 1,
-    borderColor: '#ddd',
+    borderColor: 'rgba(255,255,255,0.2)',
     borderRadius: 8,
     paddingHorizontal: 12,
     paddingVertical: 10,
     fontSize: 14,
-    backgroundColor: '#f8f9fa',
+    backgroundColor: 'rgba(255,255,255,0.05)',
+    color: 'white',
   },
   loadButton: {
+    borderRadius: 8,
+    overflow: 'hidden',
+  },
+  loadButtonGradient: {
     flexDirection: 'row',
     alignItems: 'center',
     justifyContent: 'center',
-    backgroundColor: '#007AFF',
     paddingVertical: 12,
-    borderRadius: 8,
     gap: 8,
   },
   loadButtonText: {
@@ -552,15 +566,20 @@ const styles = StyleSheet.create({
     fontWeight: '600',
   },
   pickupCard: {
-    backgroundColor: 'white',
+    marginHorizontal: 16,
+    marginTop: 16,
+    borderRadius: 12,
+    overflow: 'hidden',
+    borderWidth: 1,
+    borderColor: 'rgba(255,255,255,0.1)',
+  },
+  pickupGradient: {
     padding: 16,
-    borderBottomWidth: 1,
-    borderBottomColor: '#e0e0e0',
   },
   pickupTitle: {
     fontSize: 16,
     fontWeight: '600',
-    color: '#333',
+    color: 'white',
     marginBottom: 12,
   },
   codeInputRow: {
@@ -570,20 +589,23 @@ const styles = StyleSheet.create({
   codeInput: {
     flex: 1,
     borderWidth: 1,
-    borderColor: '#ddd',
+    borderColor: 'rgba(255,255,255,0.2)',
     borderRadius: 8,
     paddingHorizontal: 12,
     paddingVertical: 10,
     fontSize: 14,
-    backgroundColor: '#f8f9fa',
+    backgroundColor: 'rgba(255,255,255,0.05)',
+    color: 'white',
   },
   processButton: {
+    borderRadius: 8,
+    overflow: 'hidden',
+  },
+  processButtonGradient: {
     flexDirection: 'row',
     alignItems: 'center',
-    backgroundColor: '#34C759',
     paddingHorizontal: 16,
     paddingVertical: 10,
-    borderRadius: 8,
     gap: 4,
   },
   processButtonText: {
@@ -592,15 +614,20 @@ const styles = StyleSheet.create({
     fontWeight: '600',
   },
   analyticsCard: {
-    backgroundColor: 'white',
+    marginHorizontal: 16,
+    marginTop: 16,
+    borderRadius: 12,
+    overflow: 'hidden',
+    borderWidth: 1,
+    borderColor: 'rgba(255,255,255,0.1)',
+  },
+  analyticsGradient: {
     padding: 16,
-    borderBottomWidth: 1,
-    borderBottomColor: '#e0e0e0',
   },
   analyticsTitle: {
     fontSize: 16,
     fontWeight: '600',
-    color: '#333',
+    color: 'white',
     marginBottom: 12,
   },
   analyticsGrid: {
@@ -613,11 +640,11 @@ const styles = StyleSheet.create({
   analyticsValue: {
     fontSize: 20,
     fontWeight: 'bold',
-    color: '#007AFF',
+    color: '#4facfe',
   },
   analyticsLabel: {
     fontSize: 12,
-    color: '#666',
+    color: 'rgba(255,255,255,0.7)',
     marginTop: 2,
   },
   windowsContainer: {
@@ -633,7 +660,7 @@ const styles = StyleSheet.create({
   windowsTitle: {
     fontSize: 18,
     fontWeight: '600',
-    color: '#333',
+    color: 'white',
   },
   createSmallButton: {
     flexDirection: 'row',
@@ -642,11 +669,11 @@ const styles = StyleSheet.create({
     paddingVertical: 6,
     borderRadius: 6,
     borderWidth: 1,
-    borderColor: '#007AFF',
+    borderColor: '#4facfe',
     gap: 4,
   },
   createSmallButtonText: {
-    color: '#007AFF',
+    color: '#4facfe',
     fontSize: 12,
     fontWeight: '500',
   },
@@ -654,21 +681,14 @@ const styles = StyleSheet.create({
     paddingBottom: 16,
   },
   windowItem: {
-    backgroundColor: 'white',
     borderRadius: 12,
-    padding: 16,
+    overflow: 'hidden',
     marginBottom: 12,
-    ...Platform.select({
-      ios: {
-        shadowColor: '#000',
-        shadowOffset: { width: 0, height: 1 },
-        shadowOpacity: 0.1,
-        shadowRadius: 4,
-      },
-      android: {
-        elevation: 2,
-      },
-    }),
+    borderWidth: 1,
+    borderColor: 'rgba(255,255,255,0.1)',
+  },
+  windowGradient: {
+    padding: 16,
   },
   windowHeader: {
     flexDirection: 'row',
@@ -679,17 +699,7 @@ const styles = StyleSheet.create({
   windowTime: {
     fontSize: 18,
     fontWeight: '600',
-    color: '#333',
-  },
-  statusIndicator: {
-    paddingHorizontal: 8,
-    paddingVertical: 4,
-    borderRadius: 12,
-  },
-  statusText: {
     color: 'white',
-    fontSize: 10,
-    fontWeight: '600',
   },
   windowStats: {
     flexDirection: 'row',
@@ -702,18 +712,19 @@ const styles = StyleSheet.create({
   statValue: {
     fontSize: 20,
     fontWeight: 'bold',
-    color: '#333',
+    color: 'white',
   },
   statLabel: {
     fontSize: 12,
-    color: '#666',
+    color: 'rgba(255,255,255,0.7)',
     marginTop: 2,
   },
   utilizationBar: {
     height: 6,
-    backgroundColor: '#f0f0f0',
+    backgroundColor: 'rgba(255,255,255,0.1)',
     borderRadius: 3,
     marginBottom: 6,
+    overflow: 'hidden',
   },
   utilizationFill: {
     height: '100%',
@@ -721,12 +732,12 @@ const styles = StyleSheet.create({
   },
   utilizationText: {
     fontSize: 12,
-    color: '#666',
+    color: 'rgba(255,255,255,0.7)',
     textAlign: 'center',
   },
   windowNotes: {
     fontSize: 12,
-    color: '#666',
+    color: 'rgba(255,255,255,0.6)',
     fontStyle: 'italic',
     marginTop: 8,
   },
@@ -739,42 +750,7 @@ const styles = StyleSheet.create({
   loadingText: {
     marginTop: 16,
     fontSize: 16,
-    color: '#666',
+    color: 'rgba(255,255,255,0.7)',
     textAlign: 'center',
-  },
-  emptyContainer: {
-    flex: 1,
-    justifyContent: 'center',
-    alignItems: 'center',
-    paddingHorizontal: 32,
-  },
-  emptyTitle: {
-    fontSize: 20,
-    fontWeight: '600',
-    color: '#333',
-    marginTop: 16,
-    marginBottom: 8,
-    textAlign: 'center',
-  },
-  emptyMessage: {
-    fontSize: 16,
-    color: '#666',
-    textAlign: 'center',
-    lineHeight: 24,
-    marginBottom: 24,
-  },
-  createButton: {
-    flexDirection: 'row',
-    alignItems: 'center',
-    backgroundColor: '#007AFF',
-    paddingHorizontal: 24,
-    paddingVertical: 12,
-    borderRadius: 8,
-    gap: 8,
-  },
-  createButtonText: {
-    color: 'white',
-    fontSize: 16,
-    fontWeight: '600',
   },
 });
