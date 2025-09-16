@@ -527,7 +527,7 @@ export default function NearbyCommerceScreen() {
 
         {activeTab === 'reservations' && (
           <FadeInView>
-            {reservations.length > 0 ? (
+            {reservations && reservations.length > 0 ? (
               <View style={styles.reservationsList}>
                 {reservations.map((reservation, index) => (
                   <SlideInView key={reservation.id} delay={index * 100} style={styles.reservationItem}>
