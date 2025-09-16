@@ -7243,6 +7243,13 @@ SKU-CSV-002,8,15000,9876543210987,KES,red,large,new"""
         self.test_inventory_sync_authentication()
         self.test_inventory_sync_error_handling()
         
+        # ========== WEEK 3 BACKEND TEST BLITZ: PICKUP WINDOWS & ADVANCED RESERVATIONS ==========
+        print("\n" + "🚚" * 15 + " WEEK 3 PICKUP WINDOWS & ADVANCED RESERVATIONS TESTING " + "🚚" * 15)
+        
+        # Week 3 Pickup Windows & Advanced Reservations Tests
+        print("\n🚚 Week 3 Pickup Windows & Advanced Reservations Testing...")
+        self.test_week3_pickup_windows_advanced_reservations()
+        
         # Print summary
         print("\n" + "=" * 80)
         print("📊 TEST SUMMARY")
