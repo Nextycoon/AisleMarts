@@ -246,34 +246,64 @@ export default function AvatarHomeScreen() {
               {getLocalizedText('title', 'AisleMarts — AI for Shopping')}
             </Text>
             
-            {/* Language Toggle */}
-            <TouchableOpacity
-              onPress={() => {
-                const newLocale = locale === 'en' ? 'sw' : 'en';
-                setLocale(newLocale);
-                AsyncStorage.setItem('user_locale', newLocale);
-              }}
-              style={{
-                backgroundColor: theme.colors.card,
-                paddingHorizontal: theme.space.sm,
-                paddingVertical: theme.space.xs,
-                borderRadius: theme.radius.sm,
-                borderWidth: 1,
-                borderColor: '#4A9EFF',
-                flexDirection: 'row',
-                alignItems: 'center',
-                gap: theme.space.xs
-              }}
-            >
-              <Text style={{ fontSize: 16 }}>🇰🇪</Text>
-              <Text style={{ 
-                color: '#4A9EFF', 
-                fontSize: 12, 
-                fontWeight: '600' 
-              }}>
-                {locale === 'en' ? 'EN' : 'SW'}
-              </Text>
-            </TouchableOpacity>
+            <View style={{ flexDirection: 'row', alignItems: 'center', gap: theme.space.sm }}>
+              {/* Enhanced Discover Button */}
+              <TouchableOpacity
+                onPress={() => router.push('/discover')}
+                style={{
+                  backgroundColor: '#3B82F6',
+                  paddingHorizontal: theme.space.sm,
+                  paddingVertical: theme.space.xs,
+                  borderRadius: theme.radius.sm,
+                  flexDirection: 'row',
+                  alignItems: 'center',
+                  gap: theme.space.xs,
+                  elevation: 2,
+                  shadowColor: '#000',
+                  shadowOffset: { width: 0, height: 2 },
+                  shadowOpacity: 0.1,
+                  shadowRadius: 4,
+                }}
+              >
+                <Ionicons name="search" size={16} color="#FFFFFF" />
+                <Text style={{ 
+                  color: '#FFFFFF', 
+                  fontSize: 12, 
+                  fontWeight: '600' 
+                }}>
+                  {locale === 'en' ? 'Discover' : 'Gundua'}
+                </Text>
+              </TouchableOpacity>
+              
+              {/* Language Toggle */}
+              <TouchableOpacity
+                onPress={() => {
+                  const newLocale = locale === 'en' ? 'sw' : 'en';
+                  setLocale(newLocale);
+                  AsyncStorage.setItem('user_locale', newLocale);
+                }}
+                style={{
+                  backgroundColor: theme.colors.card,
+                  paddingHorizontal: theme.space.sm,
+                  paddingVertical: theme.space.xs,
+                  borderRadius: theme.radius.sm,
+                  borderWidth: 1,
+                  borderColor: '#4A9EFF',
+                  flexDirection: 'row',
+                  alignItems: 'center',
+                  gap: theme.space.xs
+                }}
+              >
+                <Text style={{ fontSize: 16 }}>🇰🇪</Text>
+                <Text style={{ 
+                  color: '#4A9EFF', 
+                  fontSize: 12, 
+                  fontWeight: '600' 
+                }}>
+                  {locale === 'en' ? 'EN' : 'SW'}
+                </Text>
+              </TouchableOpacity>
+            </View>
           </View>
           
           <Text style={{ color: theme.colors.textDim }}>
