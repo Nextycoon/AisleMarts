@@ -253,7 +253,7 @@ class AvatarValidationTester:
         responses = []
         
         for i in range(3):
-            success, data, status_code = self.make_request("PATCH", f"/users/{self.demo_user_id}/avatar", role_data)
+            success, data, status_code = self.make_request("PATCH", f"/users/{self.user_id}/avatar", role_data)
             responses.append((success, data, status_code))
             time.sleep(0.1)  # Small delay between requests
         
