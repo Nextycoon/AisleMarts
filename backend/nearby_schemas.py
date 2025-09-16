@@ -74,7 +74,7 @@ class Offer(BaseModel):
     attributes: ProductAttributes = ProductAttributes()
     location_id: str
     merchant_id: str
-    distance_m: Optional[int] = None
+    distance_m: Optional[float] = None
     source: Literal["pos", "erp", "manual", "rfid"] = "manual"
     updated_at: str
 
