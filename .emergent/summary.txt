@@ -1,50 +1,75 @@
 <analysis>
-The trajectory details the AI engineer's comprehensive work on the AisleMarts application, transitioning it from core functionalities to a sophisticated, culturally-integrated, and performance-optimized platform for its Kenya pilot. Initially, the engineer focused on building an Operational Intelligence Master Bundle for monitoring and alerts. Subsequently, the Sprint K-1 focused on Kenya Pilot readiness, mobile optimization, and critical UX refinements, including multi-language AI, M-Pesa integration, and device-specific performance. The AI engineer meticulously fixed backend routing/currency issues and frontend bugs, introduced new UI components and utility files, and documented progress through detailed reports. The final phase involved creating a complete Go-Live Gate validation framework, including test templates and execution checklists, culminating in a ready-to-deploy system, poised for the Kenya pilot launch and global expansion.
+The trajectory details the evolution of the AisleMarts application from a Kenya pilot launch to a Universal AI Commerce Engine. Initially, the focus was on a world-class UX transformation for Kenya, including mobile optimization, M-Pesa, and multi-language AI, which was successfully completed. The subsequent work, handled by the current AI engineer, expanded the application through two major phases: Enhanced AI Search/Discovery (Phase 1) and B2B/RFQ Workflows (Phase 2). Both phases involved significant backend development (FastAPI, MongoDB, Redis) and frontend implementation (Expo/React Native) with detailed blueprints and iterative testing. Currently, Phase 1 and 2 are functionally complete and await user acceptance testing. The AI engineer is now tasked with drafting a blueprint for Phase 3: Nearby/Onsite Commerce, to continue the strategic build momentum while UAT is pending.
 </analysis>
 
 <product_requirements>
-AisleMarts aims to be an AI-powered global B2C/B2B marketplace, utilizing AI-driven logistics and human-centric commerce to overcome global trade fragmentation. The application was to feature an AI Agent (Aisle Character), automatic localization (currency, language, location), and global marketplace integration, including seller onboarding, 1% commission, and M-Pesa. The Blue Era Dashboard with AI avatar, product reels, and empathy automation was a core component. The MVP roadmap covered authentication, AI, product browsing, and localization (Phase 1), followed by full backend integration, trust scoring, and AI personalization (Phase 2). The most recent work explicitly focused on enhancing multi-vendor capabilities, including a comprehensive seller dashboard and order management, specifically for the Kenya pilot launch, with an emphasis on mobile optimization, user experience, and cultural integration to achieve a world-class and beloved experience.
+AisleMarts aims to be an AI-powered global B2C/B2B marketplace, addressing global trade fragmentation with AI-driven logistics and human-centric commerce. Core features include an AI Agent, automatic localization (currency, language, location), and multi-marketplace integration with seller onboarding, 1% commission, and M-Pesa. The Blue Era Dashboard with AI avatar and product reels is a key component. The Kenya pilot launch focused on multi-vendor capabilities, mobile optimization, UX, and cultural integration, achieving world-class experience.
+
+Current implementation expands this to a Universal AI Commerce Engine with:
+- **Phase 1: Enhanced AI Search/Discovery**: Multilingual search, offer de-duplication, Best Pick algorithm (price, ETA, trust, cultural fit), image/barcode search, Redis caching.
+- **Phase 2: B2B/RFQ Workflows**: Create, manage, negotiate Request-for-Quotes (RFQs), supplier quotes, negotiation threads, and Purchase Order (PO) creation.
 </product_requirements>
 
 <key_technical_concepts>
-- **Backend:** FastAPI, MongoDB (Motor), Pydantic, REST APIs,  serialization.
-- **Frontend:** Expo, React Native, TypeScript, , , , .
-- **AI:** LLMs, Intent detection, Human-Centered AI, AI-powered discovery/recommendation.
-- **Concepts:** File-based routing, Modular architecture, Localization, Multi-Vendor Management, Performance Optimization, Offline Resilience, UX Refinement, Cultural Integration.
+- **Backend:** FastAPI, MongoDB, Redis, Pydantic, REST APIs.
+- **Frontend:** Expo, React Native, TypeScript, Expo Router, Axios, Zod.
+- **AI:** LLM-powered discovery, cultural AI ranking, intent detection.
+- **Concepts:** File-based routing, modular architecture, localization, performance optimization, offline resilience, B2B workflows, geospatial capabilities.
 </key_technical_concepts>
 
 <code_architecture>
-The application employs a monorepo-like structure within , distinguishing between  (FastAPI) and  (Expo/React Native).
+The application uses a monorepo-like structure within , separating  (FastAPI) and  (Expo/React Native).
 
 
-
-**Key Files and Changes:**
-- : **Modified** to correct endpoint paths for M-Pesa payment simulation and integration status.
-- : **Modified** to ensure currency reporting correctly displays 'KES'.
-- : **Modified** to add the 'currency: KES' field to the seller health endpoint and initialize geographic data.
-- : **Modified** to add  dependency for network resilience.
-- : **Modified** to integrate  globally, wrap components in  and .
-- : **Modified** to include AI input enhancements like contextual examples, smart suggestion chips, and a language toggle.
-- : **Newly created**. Provides bilingual, empathetic error messages with smart retry logic and WhatsApp support.
-- : **Newly created**. Implements M-Pesa trust indicators, success celebrations, and enhanced button feedback.
-- : **Newly created**. Manages intelligent shimmer loading, AI loading, and network status indicators.
-- : **Newly created**. Enables performance optimization through lazy loading for heavy UI components.
-- : **Newly created** and **modified** for a bug fix. Manages offline state, queues API requests/analytics, and provides network awareness.
-- : **Newly created**. Optimizes for common Kenyan mobile devices and network conditions.
-- : **Frequently updated** to reflect backend testing protocols, results, and corrections for false negatives in AI-related tests.
-- Numerous new Markdown files: Created for detailed sprint reports, UX specifications, and comprehensive launch validation templates and checklists.
+**File Descriptions & Changes:**
+-   : Defines the data structures for products, offers, and merchants used in the enhanced search.
+-   : Contains the logic for processing search queries, including MongoDB aggregation pipelines for de-duplication, ranking, and multilingual support.
+-   : Manages caching search results using Redis to improve performance.
+-   : Exposes the enhanced search functionality via FastAPI endpoints.
+-   : Defines the data models for the Request-for-Quote (RFQ) system, including RFQs, quotes, negotiation messages, and purchase orders.
+-   : Implements the business logic for managing the RFQ lifecycle.
+-   : Provides the API endpoints for creating, managing, and interacting with RFQs, quotes, and purchase orders.
+-   : The main FastAPI application file, updated to include the new search and RFQ API routes and initialize the Redis client.
+-   : Frontend client to interact with the enhanced search backend.
+-   : New React Native component to display the Best Pick badge on product cards.
+-   : Component for comparing different offers for a product.
+-   , , : Reusable UI components for the B2B section.
+-   : Modified to add a navigation button to the new  screen.
+-   : Updated to register the new  route and integrate global navigation elements.
+-   : The primary screen for the enhanced AI-powered search and discovery.
+-   : Dashboard for buyers to view and manage their RFQs.
+-   : Screen for creating new RFQs with multiple items and specifications.
+-   : Screen for managing quotes received for a specific RFQ, including comparison and acceptance.
+-   : Interface for real-time negotiation with suppliers.
+-   : Tracker for purchase orders created from accepted quotes.
+-   : Centralized Axios instance for frontend API calls, configured with the base URL.
+-   : API client functions specifically for B2B RFQ-related endpoints.
+-   : TypeScript interfaces and Zod schemas defining the data models for the B2B frontend, mirroring the backend.
 </code_architecture>
 
 <pending_tasks>
-- Execute the Kenya Pilot Go-Live Gate validation using the provided templates and checklists.
-- Make the official GO/NO-GO decision for the Kenya pilot launch.
-- Post-launch, begin development of the AI Global Goods Discovery Module, starting with Phase 1 backend.
+- User Acceptance Testing (UAT) for Phase 1 (Enhanced Search/Discovery) and Phase 2 (B2B/RFQ Workflows).
+- Develop a blueprint for Phase 3: Nearby/Onsite Commerce (location-based discovery, reserve & pickup, QR/barcode scanning, live inventory).
 </pending_tasks>
 
 <current_work>
-Immediately before this summary request, the AI engineer completed the Day 1 Operational Brief (). This document is the final piece of the Kenya Go-Live Gate Execution Checklist, outlining an hour-by-hour plan for the launch team to mobilize, set up devices, perform initial checks, and conduct team briefings. This brief officially initiates the 7-day countdown to the Kenya pilot launch. This concludes a development phase focused on achieving world-class UX transformation, including mobile performance optimization (lazy loading, bundle size reduction), network resilience (offline manager), UX refinements (AI input enhancements, humanized error messages), and trust-building micro-interactions (M-Pesa trust signals, loading states). The entire framework for validating and launching the Kenya pilot is now complete and delivered, ready for execution by the user's team.
+Immediately before this summary request, the AI engineer completed the implementation of Phase 1 (Enhanced AI Search/Discovery) and Phase 2 (B2B/RFQ Workflows) for the Universal AI Commerce Engine.
+
+**Phase 1:**
+- **Backend:** New FastAPI models, services, and routes (, ) were created for multilingual search, offer de-duplication, and Best Pick scoring. Redis caching was integrated to improve search performance. Backend tests showed a 93.3% success rate.
+- **Frontend:** A new  screen was implemented in Expo React Native, featuring a global search bar, Retail/Wholesale/All filters, Best Pick badges, and an Offers Sheet for product comparison. A Discover button was added to  for navigation. Frontend automated tests reported 100% mobile UX success, and UI screenshots confirmed the design and functionality.
+
+**Phase 2:**
+- **Backend:** New FastAPI models, services, and routes were created for RFQ (Request-for-Quote), Quote, Negotiation, and Purchase Order management. This included , , , and . Backend tests showed a 91.7% success rate, confirming all critical B2B workflows.
+- **Frontend:** A complete B2B frontend package was delivered, including:
+    - TypeScript interfaces and an API client (, , ).
+    - Shared UI components (, , ).
+    - Core screens: RFQ Dashboard (), RFQ Creation (), Quote Management (), Negotiation Interface (), and PO Tracker ().
+    - A navigation hook was provided to link to the B2B section from the main app.
+
+The current state is that both Phase 1 and Phase 2 are fully implemented and integrated. The AI engineer has delivered a comprehensive B2B frontend package, ready for the user's team to perform User Acceptance Testing (UAT).
 </current_work>
 
 <optional_next_step>
-Execute the Kenya pilot Go-Live Gate validation using the deployed framework to make the official launch decision.
+Create a comprehensive blueprint for Phase 3: Nearby/Onsite Commerce.
 </optional_next_step>
