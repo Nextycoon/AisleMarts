@@ -266,7 +266,7 @@ class InventorySyncTester:
             return
         
         # Test with sample merchant
-        merchant_id = "MRC-0001"
+        merchant_id = "merchant_001"
         
         success, data = self.make_request("GET", f"/v1/inventory/dashboard/{merchant_id}")
         
