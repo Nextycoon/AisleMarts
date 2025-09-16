@@ -1,75 +1,87 @@
 <analysis>
-The trajectory details the evolution of the AisleMarts application from a Kenya pilot launch to a Universal AI Commerce Engine. Initially, the focus was on a world-class UX transformation for Kenya, including mobile optimization, M-Pesa, and multi-language AI, which was successfully completed. The subsequent work, handled by the current AI engineer, expanded the application through two major phases: Enhanced AI Search/Discovery (Phase 1) and B2B/RFQ Workflows (Phase 2). Both phases involved significant backend development (FastAPI, MongoDB, Redis) and frontend implementation (Expo/React Native) with detailed blueprints and iterative testing. Currently, Phase 1 and 2 are functionally complete and await user acceptance testing. The AI engineer is now tasked with drafting a blueprint for Phase 3: Nearby/Onsite Commerce, to continue the strategic build momentum while UAT is pending.
+The trajectory details the development of the AisleMarts application, transitioning from an initial Kenya pilot to a Universal AI Commerce Engine. The previous AI engineer completed Phase 1 (Enhanced AI Search/Discovery) and Phase 2 (B2B/RFQ Workflows). The current AI engineer was tasked with creating and implementing a blueprint for Phase 3: Nearby/Onsite Commerce.
+
+The AI engineer developed a comprehensive blueprint, which the user approved. Implementation began with Week 1 (Nearby/Onsite Commerce backend and initial frontend). During this, a significant frontend challenge arose due to Mapbox compatibility with Expo web preview, leading to a Server Error. The user then approved a Parallel Hybrid execution strategy: fixing the frontend while simultaneously advancing Week 3 backend development.
+
+The frontend stabilization involved platform-gated rendering for Mapbox and rewriting the Nearby screen. Concurrently, the Week 2 (Inventory Sync Service) and Week 3 (Pickup Windows & Advanced Reservations) backend features were fully implemented and passed extensive backend testing. The engineer is now wiring the Week 3 UI components after confirming backend readiness and frontend stability.
 </analysis>
 
 <product_requirements>
-AisleMarts aims to be an AI-powered global B2C/B2B marketplace, addressing global trade fragmentation with AI-driven logistics and human-centric commerce. Core features include an AI Agent, automatic localization (currency, language, location), and multi-marketplace integration with seller onboarding, 1% commission, and M-Pesa. The Blue Era Dashboard with AI avatar and product reels is a key component. The Kenya pilot launch focused on multi-vendor capabilities, mobile optimization, UX, and cultural integration, achieving world-class experience.
+AisleMarts aims to be an AI-powered global B2C/B2B marketplace, tackling global trade fragmentation with AI-driven logistics. Key features include an AI Agent, automatic localization (currency, language, location), multi-marketplace integration, and a Blue Era Dashboard. The initial Kenya pilot successfully delivered mobile optimization, M-Pesa, and a world-class UX.
 
-Current implementation expands this to a Universal AI Commerce Engine with:
-- **Phase 1: Enhanced AI Search/Discovery**: Multilingual search, offer de-duplication, Best Pick algorithm (price, ETA, trust, cultural fit), image/barcode search, Redis caching.
-- **Phase 2: B2B/RFQ Workflows**: Create, manage, negotiate Request-for-Quotes (RFQs), supplier quotes, negotiation threads, and Purchase Order (PO) creation.
+The current development expanded this into a Universal AI Commerce Engine through:
+- **Phase 1: Enhanced AI Search/Discovery**: Implemented multilingual search, offer de-duplication, Best Pick algorithm (price, ETA, trust, cultural fit), and Redis caching.
+- **Phase 2: B2B/RFQ Workflows**: Enabled creation, management, negotiation of Request-for-Quotes (RFQs), supplier quotes, and Purchase Order (PO) creation.
+- **Phase 3: Nearby/Onsite Commerce**: Currently being implemented. This phase aims to let users discover nearby merchants and inventory, enable Reserve & Pickup with inventory holds, provide QR/Barcode scanning for instant in-store product lookup, and maintain live inventory parity across online/offline. The implementation is following a Week 1 (Discovery, Reservations, Scanning), Week 2 (Inventory Sync), and Week 3 (Pickup Windows, Advanced Reservations) cadence.
 </product_requirements>
 
 <key_technical_concepts>
-- **Backend:** FastAPI, MongoDB, Redis, Pydantic, REST APIs.
-- **Frontend:** Expo, React Native, TypeScript, Expo Router, Axios, Zod.
-- **AI:** LLM-powered discovery, cultural AI ranking, intent detection.
-- **Concepts:** File-based routing, modular architecture, localization, performance optimization, offline resilience, B2B workflows, geospatial capabilities.
+- **Backend**: FastAPI, MongoDB (2dsphere indexes for geospatial), Redis (caching, streams for queues), Pydantic.
+- **Frontend**: Expo, React Native, TypeScript, Expo Router (file-based routing), Axios, , .
+- **AI**: LLM-powered discovery, cultural AI ranking, intent detection (implicitly for previous phases).
+- **Concepts**: Modular architecture, localization, performance optimization, B2B workflows, geospatial capabilities, platform-gated components.
 </key_technical_concepts>
 
 <code_architecture>
-The application uses a monorepo-like structure within , separating  (FastAPI) and  (Expo/React Native).
+The application utilizes a monorepo-like structure within , distinguishing  (FastAPI) and  (Expo/React Native).
 
 
-**File Descriptions & Changes:**
--   : Defines the data structures for products, offers, and merchants used in the enhanced search.
--   : Contains the logic for processing search queries, including MongoDB aggregation pipelines for de-duplication, ranking, and multilingual support.
--   : Manages caching search results using Redis to improve performance.
--   : Exposes the enhanced search functionality via FastAPI endpoints.
--   : Defines the data models for the Request-for-Quote (RFQ) system, including RFQs, quotes, negotiation messages, and purchase orders.
--   : Implements the business logic for managing the RFQ lifecycle.
--   : Provides the API endpoints for creating, managing, and interacting with RFQs, quotes, and purchase orders.
--   : The main FastAPI application file, updated to include the new search and RFQ API routes and initialize the Redis client.
--   : Frontend client to interact with the enhanced search backend.
--   : New React Native component to display the Best Pick badge on product cards.
--   : Component for comparing different offers for a product.
--   , , : Reusable UI components for the B2B section.
--   : Modified to add a navigation button to the new  screen.
--   : Updated to register the new  route and integrate global navigation elements.
--   : The primary screen for the enhanced AI-powered search and discovery.
--   : Dashboard for buyers to view and manage their RFQs.
--   : Screen for creating new RFQs with multiple items and specifications.
--   : Screen for managing quotes received for a specific RFQ, including comparison and acceptance.
--   : Interface for real-time negotiation with suppliers.
--   : Tracker for purchase orders created from accepted quotes.
--   : Centralized Axios instance for frontend API calls, configured with the base URL.
--   : API client functions specifically for B2B RFQ-related endpoints.
--   : TypeScript interfaces and Zod schemas defining the data models for the B2B frontend, mirroring the backend.
+**File Descriptions & Changes (relevant to the trajectory):**
+-   : Defines data models for Phase 3 (locations, inventory, reservations, scans).
+-   : Implements Redis JSON helper for caching nearby search results.
+-   : FastAPI endpoints for , , , . Includes basic geospatial queries and Best Pick scoring.
+-   : Pydantic models for inventory sync payloads.
+-   : Business logic for inventory updates, conflict resolution, and audit.
+-   : FastAPI endpoints for  and health checks.
+-   : Pydantic models for pickup windows, reservation scheduling, and analytics.
+-   : Business logic for managing pickup slots, reservation actions (extend, modify, partial, cancel), and cleanup.
+-   : FastAPI endpoints for  covering all Week 3 features.
+-   : Main FastAPI app, updated to include , , and  routers and to initialize Redis. Fixed  compatibility by switching to  library.
+-   : Script to create 2dsphere indexes for  and other indexes for , , .
+-   : Script to seed initial location and inventory data for Nairobi.
+-   : Modified to add a Nearby navigation button.
+-   : New component intended for platform-gated Mapbox rendering on native development clients.
+-   : Refactored to be platform-gated, displaying a list view on web/Expo Go and conditionally rendering a map on native dev clients, resolving a server error.
+-   : Implements the barcode scanner modal using .
+-   : Placeholder screen for reservation status.
+-   : New screen to select available pickup windows for a reservation.
+-   : New screen displaying reservation details with actions like extend hold, partial pickup, and cancel.
+-   : New screen for merchant staff to view pickup windows and check-in reservations by code (currently being implemented).
+-   : Frontend API client for interacting with the  endpoints.
+-   : TypeScript interfaces for  and  models.
 </code_architecture>
 
 <pending_tasks>
-- User Acceptance Testing (UAT) for Phase 1 (Enhanced Search/Discovery) and Phase 2 (B2B/RFQ Workflows).
-- Develop a blueprint for Phase 3: Nearby/Onsite Commerce (location-based discovery, reserve & pickup, QR/barcode scanning, live inventory).
+- Complete the UI wiring for Week 3: Specifically, finish the  screen.
+- Run comprehensive frontend UAT (User Acceptance Testing) for Phase 1, Phase 2, and the completed Week 1, 2, and 3 features of Phase 3.
+- Implement the notifications hooks for pickup reminders (stubbed to toasts if push/SMS not configured).
+- Implement merchant dashboard UI for CSV inventory uploads.
 </pending_tasks>
 
 <current_work>
-Immediately before this summary request, the AI engineer completed the implementation of Phase 1 (Enhanced AI Search/Discovery) and Phase 2 (B2B/RFQ Workflows) for the Universal AI Commerce Engine.
+Immediately before this summary request, the AI engineer was engaged in a Parallel Hybrid execution strategy. This involved simultaneously stabilizing the frontend and continuing Week 3 backend development.
 
-**Phase 1:**
-- **Backend:** New FastAPI models, services, and routes (, ) were created for multilingual search, offer de-duplication, and Best Pick scoring. Redis caching was integrated to improve search performance. Backend tests showed a 93.3% success rate.
-- **Frontend:** A new  screen was implemented in Expo React Native, featuring a global search bar, Retail/Wholesale/All filters, Best Pick badges, and an Offers Sheet for product comparison. A Discover button was added to  for navigation. Frontend automated tests reported 100% mobile UX success, and UI screenshots confirmed the design and functionality.
+**Frontend Stabilization (Track A):**
+The primary focus was resolving a Server Error in the Expo web preview caused by the  library's incompatibility with web environments. This involved:
+1.  Completely refactoring  to be platform-gated. It now renders a list-only view on web and Expo Go, and conditionally attempts to render a Mapbox map only on native development clients with  enabled.
+2.  Removing all direct Mapbox imports from the main  to prevent bundle-time crashes.
+This track has been declared **complete**, with the frontend now stable and loading without server errors, enabling mobile preview (list-first view) for UAT.
 
-**Phase 2:**
-- **Backend:** New FastAPI models, services, and routes were created for RFQ (Request-for-Quote), Quote, Negotiation, and Purchase Order management. This included , , , and . Backend tests showed a 91.7% success rate, confirming all critical B2B workflows.
-- **Frontend:** A complete B2B frontend package was delivered, including:
-    - TypeScript interfaces and an API client (, , ).
-    - Shared UI components (, , ).
-    - Core screens: RFQ Dashboard (), RFQ Creation (), Quote Management (), Negotiation Interface (), and PO Tracker ().
-    - A navigation hook was provided to link to the B2B section from the main app.
+**Week 3 Backend Development (Track B):**
+Concurrently, the backend for Phase 3 Week 3 features (Pickup Windows & Advanced Reservations) was fully implemented and rigorously tested. This included:
+1.  **Data Models**: Creating  with Pydantic schemas for , , , , etc.
+2.  **Service Logic**: Developing  to handle all business logic, including atomic capacity management for slots, reservation extensions, modifications, partial pickups, cancellations, and background cleanup for expired holds.
+3.  **API Routes**: Implementing  with 15+ FastAPI endpoints covering all Week 3 functionalities (e.g.,  for creation/listing, , , , , , , ).
+This backend track has been declared **complete and production-ready** after passing a Backend Test Blitz with 100% success across 12 critical test cases.
 
-The current state is that both Phase 1 and Phase 2 are fully implemented and integrated. The AI engineer has delivered a comprehensive B2B frontend package, ready for the user's team to perform User Acceptance Testing (UAT).
+The AI engineer is currently in the process of **UI wiring for Week 3 Pickup UX (Option B)**. This involves:
+-   Creating shared TypeScript types (, ) in .
+-   Developing a dedicated API client for pickup operations in .
+-   Implementing the  screen () for users to select pickup windows.
+-   Implementing the  screen () to view reservation status and perform actions like extending, partial pickup, or canceling.
+-   The current immediate action is working on the **Merchant Staff View for pickup check-ins** ().
 </current_work>
 
 <optional_next_step>
-Create a comprehensive blueprint for Phase 3: Nearby/Onsite Commerce.
+Complete the implementation of the  screen as outlined in the Week 3 UI wiring plan.
 </optional_next_step>
