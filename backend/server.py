@@ -344,13 +344,17 @@ app.include_router(nearby_router)
 # Include the main API router
 app.include_router(api_router)
 
-# Initialize search cache on startup
+# Initialize all services on startup
 @app.on_event("startup")
 async def startup_event():
     """Initialize services on startup"""
     try:
         from search_cache import init_search_cache
         await init_search_cache()
+        
+        from nearby_cache import init_nearby_cache
+        await init_nearby_cache()
+        
         print("✅ AisleMarts API startup complete")
     except Exception as e:
         print(f"⚠️ Startup warning: {e}")
@@ -361,6 +365,10 @@ async def shutdown_event():
     try:
         from search_cache import close_search_cache
         await close_search_cache()
+        
+        from nearby_cache import close_nearby_cache
+        await close_nearby_cache()
+        
         print("✅ AisleMarts API shutdown complete")
     except Exception as e:
         print(f"⚠️ Shutdown warning: {e}")
