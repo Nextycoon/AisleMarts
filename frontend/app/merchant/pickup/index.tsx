@@ -30,8 +30,8 @@ import {
   formatTimeSlot,
   formatPickupDate,
   getAvailableCapacity
-} from '../../lib/api/pickup';
-import { PickupWindow } from '../../lib/types/pickup';
+} from '../../../src/lib/api/pickup';
+import { PickupWindow } from '../../../src/lib/types/pickup';
 
 export default function MerchantPickupScreen() {
   const [locationId, setLocationId] = useState('LOC-WESTLANDS-001'); // Default for demo

@@ -28,8 +28,8 @@ import {
   getAvailableCapacity,
   isWindowAvailable,
   getTimeUntilExpiry 
-} from '../../../lib/api/pickup';
-import { PickupWindow, Reservation } from '../../../lib/types/pickup';
+} from '../../../../src/lib/api/pickup';
+import { PickupWindow, Reservation } from '../../../../src/lib/types/pickup';
 import useNotifications from '../../../src/hooks/useNotifications';
 
 export default function SchedulePickupScreen() {
