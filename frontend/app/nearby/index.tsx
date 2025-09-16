@@ -1,9 +1,9 @@
 /**
  * Phase 3: Nearby/Onsite Commerce - Main Nearby Screen
- * Map + List hybrid view for location-based product discovery
+ * List-first with optional native map view for location-based product discovery
  */
 
-import React, { useEffect, useState, useRef } from 'react';
+import React, { useEffect, useState, useRef, useMemo } from 'react';
 import {
   View,
   Text,
@@ -21,9 +21,7 @@ import { Ionicons } from '@expo/vector-icons';
 import { router } from 'expo-router';
 import { StatusBar } from 'expo-status-bar';
 import Constants from 'expo-constants';
-
-// Note: Using simplified location utilities for web compatibility  
-import { requestLocationPermission, NAIROBI_CENTER, formatDistance } from './_lib/map';
+import * as Location from 'expo-location';
 
 const { width, height } = Dimensions.get('window');
 
