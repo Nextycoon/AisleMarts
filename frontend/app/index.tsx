@@ -1,15 +1,8 @@
-import React, { useEffect, useRef } from 'react';
-import { View, Text, ImageBackground, Pressable, Animated, ScrollView, StyleSheet } from "react-native";
-import { LinearGradient } from "expo-linear-gradient";
-import { useRouter } from "expo-router";
-import { SafeAreaView, useSafeAreaInsets } from 'react-native-safe-area-context';
-import { Ionicons } from '@expo/vector-icons';
-
-// Import our micro-upgrades
-import { getPersonalizedGreeting, getSpotlightFeature, SPOTLIGHT_CONFIG } from '../src/utils/greeting';
-import { preloadCriticalScreens, pushFromHome, trackNavigationPerformance } from '../src/utils/navigation';
-import { useAnalytics } from '../src/utils/analytics';
-import { colors } from '../src/theme/tokens';
+import React, { useEffect } from 'react';
+import { View, ActivityIndicator, StyleSheet } from 'react-native';
+import { router } from 'expo-router';
+import { useAuth } from '@/src/context/AuthContext';
+import { LinearGradient } from 'expo-linear-gradient';
 
 const BEST_PICKS = [
   { id: 1, title: "Tecno Spark 10", price: "KES 14,999", badge: "Best Pick" },
