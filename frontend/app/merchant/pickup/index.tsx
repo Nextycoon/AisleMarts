@@ -47,6 +47,9 @@ export default function MerchantPickupScreen() {
   const [processingCode, setProcessingCode] = useState(false);
   const [analytics, setAnalytics] = useState<any>(null);
 
+  // Polish enhancements
+  const { onPickupCompleted, onScanSuccess, onScanError, onButtonPress } = useHaptics();
+
   useEffect(() => {
     if (locationId && date) {
       loadPickupWindows();
