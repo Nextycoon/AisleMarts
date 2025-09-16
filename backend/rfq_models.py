@@ -3,7 +3,7 @@ B2B RFQ (Request for Quote) Models
 MongoDB collections and data models for RFQ workflows in Universal AI Commerce Engine Phase 2
 """
 from datetime import datetime, timedelta
-from typing import TypedDict, Literal, List, Dict, Optional, Union
+from typing import TypedDict, List, Dict, Optional, Union
 from pydantic import BaseModel, Field
 from enum import Enum
 
