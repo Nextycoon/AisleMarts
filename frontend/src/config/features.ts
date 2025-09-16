@@ -30,7 +30,9 @@ export const FEATURES_REGISTRY: FeatureItem[] = [
     description: "AI-powered search",
     status: "working", 
     enabled: true,
-    priority: 1
+    priority: 1,
+    tags: ["phase1", "core", "ai", "search"],
+    experimentKey: "discover_ui_v3"
   },
   
   // Phase 3: Nearby/Onsite Commerce
