@@ -41,18 +41,32 @@ export const AuthProvider: React.FC<{ children: React.ReactNode }> = ({ children
       // First, check avatar setup completion (this doesn't require auth)
       const hasSetup = await checkAvatarSetup();
       
+      // For new users without avatar setup, skip token verification to avoid delay
+      if (!hasSetup) {
+        console.log('New user detected, skipping token verification for fast avatar setup');
+        setLoading(false);
+        return;
+      }
+      
       // Only try to load token if we have completed avatar setup
       const storedToken = await AsyncStorage.getItem('auth_token');
-      if (storedToken && hasSetup) {
+      if (storedToken) {
         setAuth(storedToken);
         setToken(storedToken);
         
         try {
-          // Verify token by fetching user data (non-blocking)
-          const { data } = await API.get('/auth/me');
+          // Verify token by fetching user data (with timeout)
+          const controller = new AbortController();
+          const timeoutId = setTimeout(() => controller.abort(), 3000); // 3s timeout
+          
+          const { data } = await API.get('/auth/me', {
+            signal: controller.signal
+          });
+          clearTimeout(timeoutId);
+          
           setUser(data);
         } catch (authError) {
-          console.log('Token verification failed:', authError);
+          console.log('Token verification failed or timed out:', authError);
           // Remove invalid token but don't block avatar setup
           await AsyncStorage.removeItem('auth_token');
           setAuth(undefined);
