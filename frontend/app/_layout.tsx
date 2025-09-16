@@ -32,7 +32,7 @@ export default function RootLayout() {
           <Stack.Screen name="merchant" options={{ title: 'Merchant Tools', headerShown: false }} />
         </Stack>
         <StatusBar style="dark" />
-      </ErrorBoundary>
+      {/* </ErrorBoundary> */}
     </SafeAreaProvider>
   );
 }
