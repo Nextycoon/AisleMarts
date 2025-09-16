@@ -328,7 +328,7 @@ class AvatarValidationTester:
         
         # Measure response time
         start_time = time.time()
-        success, data, status_code = self.make_request("PATCH", f"/users/{self.demo_user_id}/avatar", role_data)
+        success, data, status_code = self.make_request("PATCH", f"/users/{self.user_id}/avatar", role_data)
         end_time = time.time()
         
         response_time_ms = (end_time - start_time) * 1000
