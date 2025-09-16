@@ -189,7 +189,22 @@ export const FEATURES_REGISTRY: FeatureItem[] = [
     description: "Preferences",
     status: "working", 
     enabled: true,
-    priority: 15
+    priority: 15,
+    tags: ["account", "system", "preferences"]
+  },
+
+  // Future AI Features
+  { 
+    key: "ai_assistant", 
+    label: "AI Assistant", 
+    icon: "🤖", 
+    route: "/ai-chat", 
+    description: "Smart shopping help",
+    status: "new", 
+    enabled: true,
+    priority: 16,
+    tags: ["phaseX", "ai", "assistant", "chat"],
+    experimentKey: "ai_assistant_entrypoint_v1"
   }
 ];
 
