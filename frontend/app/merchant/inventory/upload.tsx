@@ -457,15 +457,46 @@ const styles = StyleSheet.create({
   progressContainer: {
     marginBottom: 20,
   },
+  progressBar: {
+    height: 8,
+    backgroundColor: '#f0f0f0',
+    borderRadius: 4,
+    overflow: 'hidden',
+  },
+  progressFill: {
+    height: '100%',
+    backgroundColor: '#007AFF',
+    borderRadius: 4,
+  },
   successContainer: {
     alignItems: 'center',
     paddingVertical: 20,
+  },
+  successText: {
+    fontSize: 18,
+    fontWeight: 'bold',
+    color: '#34C759',
   },
   progressText: {
     fontSize: 12,
     color: '#666',
     textAlign: 'center',
     marginTop: 8,
+  },
+  emptyStateContainer: {
+    alignItems: 'center',
+    paddingVertical: 20,
+  },
+  emptyActionButton: {
+    backgroundColor: '#007AFF',
+    paddingHorizontal: 20,
+    paddingVertical: 10,
+    borderRadius: 8,
+    marginTop: 15,
+  },
+  emptyActionText: {
+    color: 'white',
+    fontWeight: '600',
   },
   uploadButton: {
     flexDirection: 'row',
