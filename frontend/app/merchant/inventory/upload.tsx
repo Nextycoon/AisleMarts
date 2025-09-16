@@ -74,9 +74,13 @@ export default function MerchantInventoryUploadScreen() {
       formData.append('location_id', 'LOC-WESTLANDS-001'); // Demo location
       formData.append('sync_mode', 'merge'); // merge, replace, append
 
-      // Simulated upload progress
+      // Simulated upload progress with enhanced UX
       const progressInterval = setInterval(() => {
-        setUploadProgress(prev => Math.min(prev + 10, 90));
+        setUploadProgress(prev => {
+          const newProgress = Math.min(prev + 10, 90);
+          onUploadProgress(newProgress); // Haptic feedback at milestones
+          return newProgress;
+        });
       }, 200);
 
       // TODO: Replace with actual API call
