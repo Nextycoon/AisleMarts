@@ -1,0 +1,83 @@
+# AisleMarts Blue Wave Manifesto - Fact Sheet
+
+## Company Overview
+**Name:** AisleMarts
+**Founded:** 2024
+**Headquarters:** Global (Kenya, USA)
+**Vision:** The world's first conversational shopping marketplace
+**Mission:** Transform commerce from transactional to conversational
+
+## Key Statistics
+- **Market Size:** $6.3T global e-commerce market
+- **AI Commerce Tools:** $1.2B market growing 40% YoY
+- **Target Market:** Emerging and developed markets
+- **Platform Type:** Universal AI Commerce Engine
+
+## Technology Platform
+- **Backend:** FastAPI, MongoDB, WebSockets
+- **Frontend:** React Native, Expo, TypeScript
+- **AI Integration:** Multi-modal conversational AI
+- **Design:** Cinematic glass-morphism UI/UX
+
+## Core Features
+1. **Conversational Commerce:** Natural language shopping interactions
+2. **AI Personality:** Adaptive shopping companions that learn preferences
+3. **Global Accessibility:** Multi-language, multi-currency support
+4. **Trust-First:** Transparent AI recommendations and data usage
+
+## Development Phases
+- **Phase 1:** ✅ AI Search/Discovery - Multilingual product discovery
+- **Phase 2:** ✅ B2B/RFQ Workflows - Supplier negotiation and quotes
+- **Phase 3:** ✅ Nearby/Onsite Commerce - Online/offline integration
+- **Phase 4:** 🚧 Unified Payments & Wallets (In Development)
+
+## Business Model
+- **Transaction Fees:** 2.5% - 4% commission on sales
+- **Merchant Subscriptions:** $50 - $500 monthly platform access
+- **AI Services:** $0.10 - $2 per AI query
+- **Payment Processing:** 1% - 3% gateway fees
+- **Logistics Services:** Premium fulfillment and pickup
+- **Enterprise Solutions:** White-label implementations
+
+## Competitive Advantages
+- **vs Amazon:** Cultural AI that adapts to local preferences
+- **vs Alibaba:** Unified B2B/B2C single platform
+- **vs Jumia/Konga:** Complete online + offline integration
+- **vs Shopify:** End-to-end solution with built-in AI
+
+## Market Opportunity
+- **TAM:** $6.3T Global E-commerce
+- **SAM:** $890B Emerging + Developed Markets
+- **SOM:** $45B Target Markets (5 years)
+
+## Revenue Projections
+- **Year 2:** $2.1M revenue target
+- **Year 3:** $18M revenue target
+- **Gross Margin:** 65%
+
+## Geographic Expansion
+- **2025:** Kenya + East Africa ($2.1B market)
+- **2026:** MENA Expansion ($12.4B market)
+- **2027:** Global Markets ($45B+ market)
+
+## Team & Investment
+- **Current Status:** Series A ready ($5M raise)
+- **Use of Funds:** 60% Engineering, 25% Market Expansion, 15% Operations
+- **Target Runway:** 18 months to Series B
+- **Exit Strategy:** Strategic acquisition or IPO by 2028-2030
+
+## Contact Information
+- **Press Inquiries:** press@aislemarts.com
+- **Investor Relations:** investors@aislemarts.com
+- **Partnership Inquiries:** partnerships@aislemarts.com
+- **General Contact:** hello@aislemarts.com
+
+## Social Media & Web
+- **Website:** aislemarts.com
+- **Blue Wave Manifesto:** aislemarts.com/bluewave
+- **LinkedIn:** linkedin.com/company/aislemarts
+- **Twitter:** @aislemarts
+
+---
+*Last Updated: December 2024*
+*© 2024 AisleMarts. All rights reserved.*
