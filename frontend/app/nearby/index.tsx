@@ -3,7 +3,7 @@
  * List-first with optional native map view for location-based product discovery
  */
 
-import React, { useEffect, useState, useRef, useMemo } from 'react';
+import React, { useEffect, useState } from 'react';
 import {
   View,
   Text,
@@ -24,6 +24,51 @@ import Constants from 'expo-constants';
 import * as Location from 'expo-location';
 
 const { width, height } = Dimensions.get('window');
+
+// Default Nairobi coordinates
+const NAIROBI_CENTER: [number, number] = [36.8065, -1.2685];
+
+// Location permission helper
+const requestLocationPermission = async (): Promise<{
+  granted: boolean;
+  location?: Location.LocationObject;
+  error?: string;
+}> => {
+  try {
+    const { status } = await Location.requestForegroundPermissionsAsync();
+    
+    if (status !== 'granted') {
+      return {
+        granted: false,
+        error: 'Location permission denied. Please enable location access in settings.'
+      };
+    }
+
+    const location = await Location.getCurrentPositionAsync({
+      accuracy: Location.Accuracy.Balanced
+    });
+
+    return {
+      granted: true,
+      location
+    };
+  } catch (error) {
+    console.error('Location permission error:', error);
+    return {
+      granted: false,
+      error: 'Failed to get location. Please try again.'
+    };
+  }
+};
+
+// Format distance for display
+const formatDistance = (meters: number): string => {
+  if (meters < 1000) {
+    return `${Math.round(meters)}m`;
+  } else {
+    return `${(meters / 1000).toFixed(1)}km`;
+  }
+};
 
 interface Location {
   id: string;
@@ -79,10 +124,8 @@ export default function NearbyScreen() {
   const [loading, setLoading] = useState(true);
   const [searchQuery, setSearchQuery] = useState('');
   const [selectedMode, setSelectedMode] = useState<'retail' | 'wholesale' | 'all'>('retail');
-  const [viewMode, setViewMode] = useState<'map' | 'list'>('map');
+  const [viewMode, setViewMode] = useState<'map' | 'list'>('list'); // Default to list
   const [selectedItem, setSelectedItem] = useState<NearbyItem | null>(null);
-
-  const mapRef = useRef<any>(null);
 
   useEffect(() => {
     initializeLocation();
@@ -180,7 +223,7 @@ export default function NearbyScreen() {
 
   const renderMapView = () => (
     <View style={styles.mapContainer}>
-      {/* Placeholder map view for web compatibility */}
+      {/* Map placeholder for web/Expo Go compatibility */}
       <View style={styles.mapPlaceholder}>
         <Ionicons name="map" size={64} color="#ccc" />
         <Text style={styles.mapPlaceholderText}>Map View</Text>
@@ -272,6 +315,17 @@ export default function NearbyScreen() {
       style={styles.listContainer}
       contentContainerStyle={styles.listContent}
       showsVerticalScrollIndicator={false}
+      ListEmptyComponent={
+        <View style={styles.emptyContainer}>
+          <Ionicons name="location-outline" size={64} color="#ccc" />
+          <Text style={styles.emptyText}>
+            {loading ? 'Searching nearby products...' : 'No products found nearby'}
+          </Text>
+          <Text style={styles.emptySubtext}>
+            Try adjusting your search or filters
+          </Text>
+        </View>
+      }
     />
   );
 
@@ -346,22 +400,22 @@ export default function NearbyScreen() {
       {/* View Toggle */}
       <View style={styles.viewToggle}>
         <TouchableOpacity
-          style={[styles.toggleButton, viewMode === 'map' && styles.toggleButtonActive]}
-          onPress={() => setViewMode('map')}
-        >
-          <Ionicons name="map" size={16} color={viewMode === 'map' ? 'white' : '#666'} />
-          <Text style={[styles.toggleText, viewMode === 'map' && styles.toggleTextActive]}>
-            Map
-          </Text>
-        </TouchableOpacity>
-        
-        <TouchableOpacity
           style={[styles.toggleButton, viewMode === 'list' && styles.toggleButtonActive]}
           onPress={() => setViewMode('list')}
         >
           <Ionicons name="list" size={16} color={viewMode === 'list' ? 'white' : '#666'} />
           <Text style={[styles.toggleText, viewMode === 'list' && styles.toggleTextActive]}>
             List
+          </Text>
+        </TouchableOpacity>
+        
+        <TouchableOpacity
+          style={[styles.toggleButton, viewMode === 'map' && styles.toggleButtonActive]}
+          onPress={() => setViewMode('map')}
+        >
+          <Ionicons name="map" size={16} color={viewMode === 'map' ? 'white' : '#666'} />
+          <Text style={[styles.toggleText, viewMode === 'map' && styles.toggleTextActive]}>
+            Map
           </Text>
         </TouchableOpacity>
       </View>
@@ -576,6 +630,24 @@ const styles = StyleSheet.create({
   },
   listContent: {
     padding: 16,
+  },
+  emptyContainer: {
+    flex: 1,
+    justifyContent: 'center',
+    alignItems: 'center',
+    paddingVertical: 64,
+  },
+  emptyText: {
+    fontSize: 18,
+    color: '#666',
+    marginTop: 16,
+    textAlign: 'center',
+  },
+  emptySubtext: {
+    fontSize: 14,
+    color: '#999',
+    marginTop: 8,
+    textAlign: 'center',
   },
   listItem: {
     backgroundColor: 'white',
