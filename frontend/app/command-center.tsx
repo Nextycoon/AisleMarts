@@ -1,4 +1,4 @@
-import React from 'react';
+import React, { useEffect } from 'react';
 import { View, Text, Image, ScrollView, Pressable, StyleSheet } from "react-native";
 import { useSafeAreaInsets } from "react-native-safe-area-context";
 import { LinearGradient } from "expo-linear-gradient";
@@ -8,14 +8,30 @@ import { Ionicons } from '@expo/vector-icons';
 // Import our new centralized configs
 import { QUICK_ACTIONS, getVisibleFeatures, getStatusColor, getStatusText } from '../src/config/features';
 import { colors, spacing, radii, shadows, presets } from '../src/theme/tokens';
+import { useAnalytics } from '../src/utils/analytics';
 
 export default function CommandCenter() {
   const top = useSafeAreaInsets().top;
   const router = useRouter();
+  const { trackScreenView, trackProfileTileClick } = useAnalytics();
   
   // Get features for current user (demo: assume user role for now)
   const userRoles = ["user", "merchant"]; // In real app, get from auth context
   const visibleFeatures = getVisibleFeatures(userRoles);
+
+  useEffect(() => {
+    trackScreenView('command_center', 'home_grid_icon');
+  }, []);
+
+  const handleFeatureTilePress = (feature: any) => {
+    trackProfileTileClick(feature.key, feature.route, userRoles.join(','));
+    router.push(feature.route as any);
+  };
+
+  const handleQuickActionPress = (action: any) => {
+    trackProfileTileClick(action.key, action.route, 'quick_action');
+    router.push(action.route as any);
+  };
 
   return (
     <ScrollView 
