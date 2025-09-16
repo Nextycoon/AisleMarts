@@ -5976,6 +5976,36 @@ class APITester:
         self.test_best_pick_scoring()
         self.test_search_performance()
         
+        # ========== PHASE 2 B2B/RFQ BACKEND COMPREHENSIVE TESTING ==========
+        print("\n" + "🏭" * 15 + " PHASE 2 B2B/RFQ BACKEND COMPREHENSIVE TESTING " + "🏭" * 15)
+        
+        # RFQ System Tests
+        print("\n🏭 RFQ System Testing...")
+        self.test_rfq_system_health_check()
+        self.test_rfq_system_initialization()
+        self.test_rfq_creation_management()
+        self.test_rfq_listing()
+        
+        # Quote Management Tests
+        print("\n💼 Quote Management Testing...")
+        self.test_quote_management()
+        
+        # Negotiation Tests
+        print("\n💬 Negotiation Testing...")
+        self.test_negotiation_messages()
+        
+        # Purchase Order Tests
+        print("\n📋 Purchase Order Testing...")
+        self.test_purchase_orders()
+        
+        # Analytics Tests
+        print("\n📊 B2B Analytics Testing...")
+        self.test_b2b_analytics()
+        
+        # Workflow Integration Tests
+        print("\n🔄 B2B Workflow Integration Testing...")
+        self.test_b2b_workflow_integration()
+        
         # Print summary
         print("\n" + "=" * 80)
         print("📊 TEST SUMMARY")
