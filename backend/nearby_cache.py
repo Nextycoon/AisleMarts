@@ -39,7 +39,7 @@ class NearbyCache:
         """Initialize Redis connection"""
         try:
             if not self.client:
-                self.client = await aioredis.from_url(
+                self.client = await redis.from_url(
                     self.redis_url,
                     decode_responses=True,
                     retry_on_timeout=True,
