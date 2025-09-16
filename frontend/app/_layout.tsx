@@ -16,6 +16,7 @@ export default function RootLayout() {
           <Stack screenOptions={{ headerShown: false }}>
             <Stack.Screen name="index" options={{ title: 'AisleMarts' }} />
             <Stack.Screen name="aisle-avatar" options={{ title: 'Choose Avatar', headerShown: false }} />
+            <Stack.Screen name="avatar-test" options={{ title: 'Avatar Test', headerShown: false }} />
             <Stack.Screen name="home" options={{ title: 'Home', headerShown: false }} />
             <Stack.Screen name="blue-era-home" options={{ title: 'Blue Era', headerShown: false }} />
             <Stack.Screen name="blue-era-dashboard" options={{ title: 'Blue Era Dashboard', headerShown: false }} />
