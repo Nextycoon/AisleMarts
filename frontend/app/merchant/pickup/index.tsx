@@ -396,8 +396,9 @@ export default function MerchantPickupScreen() {
 
           {loading ? (
             <View style={styles.loadingContainer}>
-              <ActivityIndicator size="large" color="#007AFF" />
-              <Text style={styles.loadingText}>Loading pickup windows...</Text>
+              <PickupWindowSkeleton />
+              <PickupWindowSkeleton />
+              <PickupWindowSkeleton />
             </View>
           ) : windows.length > 0 ? (
             <FlatList
@@ -408,7 +409,10 @@ export default function MerchantPickupScreen() {
               contentContainerStyle={styles.windowsList}
             />
           ) : (
-            renderEmptyState()
+            <NoPickupWindows 
+              onCreateWindows={createTodaysWindows}
+              language="en"
+            />
           )}
         </View>
       </SafeAreaView>
