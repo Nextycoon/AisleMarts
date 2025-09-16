@@ -160,8 +160,8 @@ class APITester:
         success, data = self.make_request("GET", "/auth/me")
         
         if success and isinstance(data, dict) and "email" in data:
-            self.user_id = data.get("id")
-            self.log_test("Protected Route Access", True, f"User: {data.get('email')}")
+            self.user_id = data.get("id") or data.get("_id")
+            self.log_test("Protected Route Access", True, f"User: {data.get('email')}, ID: {self.user_id}")
         else:
             self.log_test("Protected Route Access", False, str(data))
     
