@@ -91,9 +91,9 @@ export default function NearbyCommerceScreen() {
   const [reservationModal, setReservationModal] = useState(false);
   const [selectedItems, setSelectedItems] = useState<ReservationItem[]>([]);
   
-  // Hooks
-  const haptics = useHaptics();
-  const toast = useToast();
+  // Hooks (temporarily commented out for debugging)
+  // const haptics = useHaptics();
+  // const toast = useToast();
 
   // Initialize data on component mount
   useEffect(() => {
