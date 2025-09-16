@@ -5,6 +5,11 @@ import { useRouter } from "expo-router";
 import { SafeAreaView, useSafeAreaInsets } from 'react-native-safe-area-context';
 import { Ionicons } from '@expo/vector-icons';
 
+// Import our micro-upgrades
+import { getPersonalizedGreeting } from '../src/utils/greeting';
+import { preloadCriticalScreens, pushFromHome, trackNavigationPerformance } from '../src/utils/navigation';
+import { useAnalytics } from '../src/utils/analytics';
+
 const BEST_PICKS = [
   { id: 1, title: "Tecno Spark 10", price: "KES 14,999", badge: "Best Pick" },
   { id: 2, title: "Samsung Galaxy A54", price: "KES 32,999", badge: "Popular" },
