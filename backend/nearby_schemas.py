@@ -108,7 +108,7 @@ class NearbySearchItem(BaseModel):
 class NearbySearchResponse(BaseModel):
     items: List[NearbySearchItem]
     total_count: int
-    search_time_ms: int
+    search_time_ms: float
     cached: bool = False
     location_context: Optional[Dict[str, Any]] = None
 
