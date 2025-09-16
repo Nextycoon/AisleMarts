@@ -462,22 +462,15 @@ const styles = StyleSheet.create({
   progressContainer: {
     marginBottom: 20,
   },
-  progressBar: {
-    height: 8,
-    backgroundColor: '#f0f0f0',
-    borderRadius: 4,
-    overflow: 'hidden',
-  },
-  progressFill: {
-    height: '100%',
-    backgroundColor: '#007AFF',
-    borderRadius: 4,
+  successContainer: {
+    alignItems: 'center',
+    paddingVertical: 20,
   },
   progressText: {
     fontSize: 12,
     color: '#666',
     textAlign: 'center',
-    marginTop: 4,
+    marginTop: 8,
   },
   uploadButton: {
     flexDirection: 'row',
