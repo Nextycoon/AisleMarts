@@ -24,7 +24,9 @@ export default function CommandCenter() {
     trackScreenView('command_center', 'home_grid_icon');
     
     // Track feature inventory for PMs (analytics snapshot)
-    analytics.trackFeatureInventory(FEATURES_REGISTRY);
+    if (analytics && analytics.trackFeatureInventory) {
+      analytics.trackFeatureInventory(FEATURES_REGISTRY);
+    }
   }, []);
 
   const handleFeatureTilePress = (feature: any) => {
