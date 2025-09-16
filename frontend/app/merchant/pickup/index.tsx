@@ -52,17 +52,43 @@ export default function MerchantPickupScreen() {
   const loadPickupWindows = async () => {
     try {
       setLoading(true);
-      const windowsData = await getPickupWindows(locationId, date);
-      setWindows(windowsData.windows);
-
-      // Load analytics for the same period
-      try {
-        const analyticsData = await getWindowAnalytics(locationId, date, date);
-        setAnalytics(analyticsData);
-      } catch (analyticsError) {
-        // Analytics might fail due to auth, but windows should still work
-        console.log('Analytics unavailable:', analyticsError);
-      }
+      
+      // Demo data for now - replace with API call later
+      const demoWindows: PickupWindow[] = [
+        {
+          id: '1',
+          time_slot: { start_time: '09:00', end_time: '10:00' },
+          capacity: 8,
+          reserved: 5,
+          status: 'active',
+          notes: 'Morning pickup window'
+        },
+        {
+          id: '2', 
+          time_slot: { start_time: '14:00', end_time: '15:00' },
+          capacity: 8,
+          reserved: 8,
+          status: 'full'
+        },
+        {
+          id: '3',
+          time_slot: { start_time: '17:00', end_time: '18:00' },
+          capacity: 8,
+          reserved: 2,
+          status: 'active',
+          notes: 'Evening pickup window'
+        }
+      ];
+      
+      setWindows(demoWindows);
+      
+      // Demo analytics
+      setAnalytics({
+        total_windows_created: 3,
+        total_capacity_offered: 24,
+        total_reservations_made: 15,
+        utilization_rate: 62.5
+      });
 
     } catch (error: any) {
       console.error('Failed to load pickup windows:', error);
