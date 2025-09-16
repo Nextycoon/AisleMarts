@@ -814,11 +814,11 @@ backend:
 
   - task: "Enhanced Search Models and Collections"
     implemented: true
-    working: "NA"
+    working: true
     file: "/app/backend/search_models.py"
     stuck_count: 0
     priority: "high"
-    needs_retesting: true
+    needs_retesting: false
     status_history:
         - working: "NA"
           agent: "main"
@@ -826,6 +826,9 @@ backend:
         - working: "NA"
           agent: "main"
           comment: "✅ IMPLEMENTED: Created comprehensive search models with MerchantDoc, OfferDoc, LocationDoc, ProductEnhancedDoc, BestPick, SearchResult, SearchResponse, and OffersResponse. Added Pydantic models for API responses, search configuration classes, and MongoDB index specifications for multilingual search optimization."
+        - working: true
+          agent: "testing"
+          comment: "✅ WORKING: Enhanced Search Models and Collections fully operational. MongoDB collections (merchants, offers, locations) created successfully with proper indexes. Search models working correctly with 2 merchants, 10 offers seeded. Data models support multilingual search tokens, GTIN lookup, and deduplication by brand/title/image_hash."
 
   - task: "Enhanced Search API Endpoints"
     implemented: true
