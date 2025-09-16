@@ -292,6 +292,7 @@ from ai_intents_routes import router as ai_intents_router
 from seller_products_routes import router as seller_products_router
 from order_management_routes import router as order_management_router, mpesa_router as mpesa_webhook_router
 from search_routes import router as search_router
+from rfq_routes import router as rfq_router
 
 # Include AI routes
 app.include_router(ai_router)
