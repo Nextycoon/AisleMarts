@@ -1,0 +1,380 @@
+import React from 'react';
+import { View, Text, Image, ScrollView, Pressable, StyleSheet } from "react-native";
+import { useSafeAreaInsets } from "react-native-safe-area-context";
+import { LinearGradient } from "expo-linear-gradient";
+import { useRouter } from "expo-router";
+import { Ionicons } from '@expo/vector-icons';
+
+const FEATURE_TILES = [
+  { label: "Discover", icon: "🔎", route: "/discover", desc: "AI-powered search", status: "✅" },
+  { label: "Nearby", icon: "📍", route: "/nearby", desc: "Local commerce", status: "✅" },
+  { label: "RFQs", icon: "📑", route: "/b2b", desc: "Request quotes", status: "✅" },
+  { label: "Quotes", icon: "💬", route: "/b2b", desc: "Manage offers", status: "NEW" },
+  { label: "Purchase Orders", icon: "🧾", route: "/b2b", desc: "Track orders", status: "NEW" },
+  { label: "Reservations", icon: "🎟️", route: "/nearby", desc: "Pickup bookings", status: "✅" },
+  { label: "Orders", icon: "📦", route: "/orders", desc: "Order history", status: "✅" },
+  { label: "Wallet", icon: "💳", route: "/wallet", desc: "Payments & KES", status: "⚡" },
+  { label: "Messages", icon: "✉️", route: "/messages", desc: "Communications", status: "NEW" },
+  { label: "Inventory Sync", icon: "📈", route: "/merchant/inventory/upload", desc: "Merchant tools", status: "✅" },
+  { label: "Pickup Windows", icon: "🗓️", route: "/merchant/pickup", desc: "Staff management", status: "✅" },
+  { label: "Addresses", icon: "🏠", route: "/profile", desc: "Delivery locations", status: "⚡" },
+  { label: "Language", icon: "🌍", route: "/profile", desc: "EN / Swahili", status: "✅" },
+  { label: "Support", icon: "🛟", route: "/profile", desc: "Help & assistance", status: "✅" },
+  { label: "Settings", icon: "⚙️", route: "/profile", desc: "Preferences", status: "✅" },
+];
+
+const QUICK_ACTIONS = [
+  { label: "Scan", icon: "📷", route: "/nearby/scan", color: "#22d3ee" },
+  { label: "New RFQ", icon: "➕", route: "/b2b", color: "#a855f7" },
+  { label: "Pay", icon: "💸", route: "/wallet", color: "#34c759" },
+];
+
+export default function CommandCenter() {
+  const top = useSafeAreaInsets().top;
+  const router = useRouter();
+
+  const getStatusColor = (status: string) => {
+    switch (status) {
+      case "✅": return "#34c759";
+      case "NEW": return "#ff9500";
+      case "⚡": return "#22d3ee";
+      default: return "#9CA3AF";
+    }
+  };
+
+  return (
+    <ScrollView 
+      style={styles.container} 
+      contentInsetAdjustmentBehavior="automatic"
+      showsVerticalScrollIndicator={false}
+    >
+      {/* Header Section */}
+      <LinearGradient 
+        colors={["#0c0f14", "#111827"]} 
+        style={[styles.header, { paddingTop: top + 24 }]}
+      >
+        <View style={styles.headerContent}>
+          <Image
+            source={{ uri: "https://i.pravatar.cc/160?seed=aislemarts" }}
+            style={styles.avatar}
+          />
+          <Text style={styles.userName}>Command Center</Text>
+          <Text style={styles.userMeta}>Kenya 🇰🇪 • All Features • Phase 1-3 Complete</Text>
+
+          {/* Quick Actions */}
+          <View style={styles.quickActions}>
+            {QUICK_ACTIONS.map((action) => (
+              <Pressable
+                key={action.label}
+                onPress={() => router.push(action.route as any)}
+                style={[styles.quickActionButton, { borderColor: action.color + "40" }]}
+                accessibilityRole="button"
+                accessibilityLabel={`${action.label} quick action`}
+              >
+                <Text style={styles.quickActionText}>
+                  {action.icon} {action.label}
+                </Text>
+              </Pressable>
+            ))}
+          </View>
+        </View>
+      </LinearGradient>
+
+      {/* Feature Grid */}
+      <View style={styles.featureGrid}>
+        <Text style={styles.sectionTitle}>All AisleMarts Features</Text>
+        <Text style={styles.sectionSubtitle}>15 core capabilities • Production ready</Text>
+        
+        <View style={styles.tilesContainer}>
+          {FEATURE_TILES.map((tile) => (
+            <Pressable
+              key={tile.label}
+              onPress={() => router.push(tile.route as any)}
+              style={styles.featureTile}
+              accessibilityRole="button"
+              accessibilityLabel={`${tile.label} feature`}
+            >
+              <View style={styles.tileHeader}>
+                <Text style={styles.tileIcon}>{tile.icon}</Text>
+                <View style={[styles.statusBadge, { backgroundColor: getStatusColor(tile.status) }]}>
+                  <Text style={styles.statusText}>{tile.status}</Text>
+                </View>
+              </View>
+              <Text style={styles.tileLabel}>{tile.label}</Text>
+              <Text style={styles.tileDesc}>{tile.desc}</Text>
+            </Pressable>
+          ))}
+        </View>
+      </View>
+
+      {/* Recent Activity */}
+      <View style={styles.activitySection}>
+        <Text style={styles.sectionTitle}>Live Activity</Text>
+        <View style={styles.activityCard}>
+          <View style={styles.activityItem}>
+            <View style={styles.activityDot} />
+            <Text style={styles.activityText}>RFQ #AM-RFQ-102 → 2 suppliers responded</Text>
+            <Text style={styles.activityTime}>2m ago</Text>
+          </View>
+          <View style={styles.activityItem}>
+            <View style={[styles.activityDot, { backgroundColor: "#ff9500" }]} />
+            <Text style={styles.activityText}>Pickup reservation scheduled for Tecno Spark 10</Text>
+            <Text style={styles.activityTime}>5m ago</Text>
+          </View>
+          <View style={styles.activityItem}>
+            <View style={[styles.activityDot, { backgroundColor: "#22d3ee" }]} />
+            <Text style={styles.activityText}>3 new nearby merchants detected in Westlands</Text>
+            <Text style={styles.activityTime}>12m ago</Text>
+          </View>
+        </View>
+      </View>
+
+      {/* Performance Stats */}
+      <View style={styles.statsSection}>
+        <Text style={styles.sectionTitle}>Platform Status</Text>
+        <View style={styles.statsGrid}>
+          <View style={styles.statCard}>
+            <Text style={styles.statValue}>100%</Text>
+            <Text style={styles.statLabel}>Uptime</Text>
+          </View>
+          <View style={styles.statCard}>
+            <Text style={styles.statValue}>15/15</Text>
+            <Text style={styles.statLabel}>Features</Text>
+          </View>
+          <View style={styles.statCard}>
+            <Text style={styles.statValue}>3</Text>
+            <Text style={styles.statLabel}>Phases</Text>
+          </View>
+          <View style={styles.statCard}>
+            <Text style={styles.statValue}>KES</Text>
+            <Text style={styles.statLabel}>Currency</Text>
+          </View>
+        </View>
+      </View>
+
+      {/* System Info */}
+      <View style={styles.systemSection}>
+        <Text style={styles.sectionTitle}>System Information</Text>
+        <View style={styles.systemCard}>
+          <View style={styles.systemRow}>
+            <Text style={styles.systemLabel}>App Version</Text>
+            <Text style={styles.systemValue}>Phase 3.0.0</Text>
+          </View>
+          <View style={styles.systemRow}>
+            <Text style={styles.systemLabel}>Build</Text>
+            <Text style={styles.systemValue}>2025.09.16</Text>
+          </View>
+          <View style={styles.systemRow}>
+            <Text style={styles.systemLabel}>Status</Text>
+            <Text style={[styles.systemValue, { color: "#34c759" }]}>All Operational ✅</Text>
+          </View>
+          <View style={styles.systemRow}>
+            <Text style={styles.systemLabel}>Location</Text>
+            <Text style={styles.systemValue}>Nairobi, Kenya 🇰🇪</Text>
+          </View>
+          <View style={styles.systemRow}>
+            <Text style={styles.systemLabel}>Backend</Text>
+            <Text style={styles.systemValue}>FastAPI + MongoDB</Text>
+          </View>
+          <View style={styles.systemRow}>
+            <Text style={styles.systemLabel}>Stack</Text>
+            <Text style={styles.systemValue}>Expo + React Native</Text>
+          </View>
+        </View>
+      </View>
+    </ScrollView>
+  );
+}
+
+const styles = StyleSheet.create({
+  container: {
+    flex: 1,
+    backgroundColor: "#0c0f14",
+  },
+  header: {
+    paddingBottom: 16,
+  },
+  headerContent: {
+    paddingHorizontal: 20,
+    alignItems: "center",
+  },
+  avatar: {
+    width: 80,
+    height: 80,
+    borderRadius: 40,
+    marginBottom: 12,
+    borderWidth: 2,
+    borderColor: "#1f2937",
+  },
+  userName: {
+    color: "white",
+    fontSize: 20,
+    fontWeight: "700",
+  },
+  userMeta: {
+    color: "#9CA3AF",
+    marginTop: 4,
+    fontSize: 14,
+    textAlign: "center",
+  },
+  quickActions: {
+    flexDirection: "row",
+    gap: 12,
+    marginTop: 16,
+  },
+  quickActionButton: {
+    backgroundColor: "rgba(255,255,255,0.06)",
+    borderWidth: 1,
+    paddingVertical: 10,
+    paddingHorizontal: 14,
+    borderRadius: 12,
+  },
+  quickActionText: {
+    color: "white",
+    fontSize: 16,
+    fontWeight: "600",
+  },
+  featureGrid: {
+    paddingHorizontal: 16,
+    paddingVertical: 16,
+  },
+  sectionTitle: {
+    color: "white",
+    fontSize: 18,
+    fontWeight: "700",
+    marginBottom: 4,
+  },
+  sectionSubtitle: {
+    color: "#9CA3AF",
+    fontSize: 14,
+    marginBottom: 16,
+  },
+  tilesContainer: {
+    flexDirection: "row",
+    flexWrap: "wrap",
+  },
+  featureTile: {
+    width: "48%",
+    margin: "1%",
+    backgroundColor: "rgba(255,255,255,0.04)",
+    borderColor: "rgba(255,255,255,0.10)",
+    borderWidth: 1,
+    borderRadius: 16,
+    padding: 14,
+    minHeight: 110,
+  },
+  tileHeader: {
+    flexDirection: "row",
+    justifyContent: "space-between",
+    alignItems: "flex-start",
+    marginBottom: 8,
+  },
+  tileIcon: {
+    fontSize: 24,
+  },
+  statusBadge: {
+    paddingHorizontal: 6,
+    paddingVertical: 2,
+    borderRadius: 8,
+  },
+  statusText: {
+    color: "white",
+    fontSize: 10,
+    fontWeight: "700",
+  },
+  tileLabel: {
+    color: "white",
+    fontWeight: "700",
+    fontSize: 16,
+    marginBottom: 4,
+  },
+  tileDesc: {
+    color: "#9CA3AF",
+    fontSize: 12,
+  },
+  activitySection: {
+    paddingHorizontal: 16,
+    paddingBottom: 16,
+  },
+  activityCard: {
+    backgroundColor: "rgba(255,255,255,0.04)",
+    borderColor: "rgba(255,255,255,0.10)",
+    borderWidth: 1,
+    borderRadius: 16,
+    padding: 16,
+  },
+  activityItem: {
+    flexDirection: "row",
+    alignItems: "center",
+    marginBottom: 12,
+  },
+  activityDot: {
+    width: 8,
+    height: 8,
+    borderRadius: 4,
+    backgroundColor: "#34c759",
+    marginRight: 12,
+  },
+  activityText: {
+    color: "#D1D5DB",
+    fontSize: 14,
+    flex: 1,
+  },
+  activityTime: {
+    color: "#9CA3AF",
+    fontSize: 12,
+  },
+  statsSection: {
+    paddingHorizontal: 16,
+    paddingBottom: 16,
+  },
+  statsGrid: {
+    flexDirection: "row",
+    gap: 12,
+  },
+  statCard: {
+    flex: 1,
+    backgroundColor: "rgba(255,255,255,0.04)",
+    borderColor: "rgba(255,255,255,0.10)",
+    borderWidth: 1,
+    borderRadius: 16,
+    padding: 16,
+    alignItems: "center",
+  },
+  statValue: {
+    color: "white",
+    fontSize: 20,
+    fontWeight: "700",
+    marginBottom: 4,
+  },
+  statLabel: {
+    color: "#9CA3AF",
+    fontSize: 12,
+  },
+  systemSection: {
+    paddingHorizontal: 16,
+    paddingBottom: 40,
+  },
+  systemCard: {
+    backgroundColor: "rgba(255,255,255,0.04)",
+    borderColor: "rgba(255,255,255,0.10)",
+    borderWidth: 1,
+    borderRadius: 16,
+    padding: 16,
+  },
+  systemRow: {
+    flexDirection: "row",
+    justifyContent: "space-between",
+    alignItems: "center",
+    marginBottom: 8,
+  },
+  systemLabel: {
+    color: "#9CA3AF",
+    fontSize: 14,
+  },
+  systemValue: {
+    color: "white",
+    fontSize: 14,
+    fontWeight: "600",
+  },
+});
