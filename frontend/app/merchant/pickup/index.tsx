@@ -30,8 +30,8 @@ import {
   formatTimeSlot,
   formatPickupDate,
   getAvailableCapacity
-} from '../../../lib/api/pickup';
-import { PickupWindow } from '../../../lib/types/pickup';
+} from '../../../src/lib/api/pickup';
+import { PickupWindow } from '../../../src/lib/types/pickup';
 // Temporarily commented out for stability
 // import StatusChip from '../../src/components/StatusChip';
 // import { NoPickupWindows } from '../../src/components/EmptyStates';
