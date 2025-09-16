@@ -9,7 +9,7 @@ import {
   Alert,
 } from 'react-native';
 import { Ionicons } from '@expo/vector-icons';
-import { voiceService } from '../services/VoiceService';
+// import { voiceService } from '../services/VoiceService'; // Commented out due to web compatibility issue
 
 interface AisleAvatarProps {
   pose?: 'wave' | 'idle' | 'speak' | 'protective' | 'caring';
