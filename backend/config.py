@@ -19,8 +19,6 @@ class Settings(BaseSettings):
     MAPBOX_PUBLIC_TOKEN: str = os.getenv("MAPBOX_PUBLIC_TOKEN", "pk.demo_token")
     REDIS_URL: str = os.getenv("REDIS_URL", "redis://localhost:6379")
 
-    class Config:
-        env_file = ".env"
-        extra = "ignore"  # Allow extra fields from .env
+    model_config = {"env_file": ".env", "extra": "ignore"}
 
 settings = Settings()
