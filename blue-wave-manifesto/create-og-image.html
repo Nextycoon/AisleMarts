@@ -1,0 +1,312 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+    <meta charset="UTF-8">
+    <meta name="viewport" content="width=device-width, initial-scale=1.0">
+    <title>Blue Wave Manifesto OG Image Generator</title>
+    <style>
+        body {
+            margin: 0;
+            padding: 20px;
+            background: #000;
+            font-family: -apple-system, BlinkMacSystemFont, 'Segoe UI', Roboto, sans-serif;
+        }
+        
+        .og-image {
+            width: 1200px;
+            height: 630px;
+            position: relative;
+            background: linear-gradient(135deg, #0a0a23 0%, #1a1a3e 50%, #2a2a5e 100%);
+            border-radius: 0;
+            overflow: hidden;
+            margin: 0 auto;
+            display: flex;
+            align-items: center;
+        }
+        
+        .orb-container {
+            position: absolute;
+            left: 100px;
+            top: 50%;
+            transform: translateY(-50%);
+            width: 280px;
+            height: 280px;
+        }
+        
+        .avatar-orb {
+            width: 100%;
+            height: 100%;
+            background: radial-gradient(circle at 30% 30%, 
+                rgba(0, 191, 255, 0.8) 0%, 
+                rgba(30, 144, 255, 0.6) 30%, 
+                rgba(0, 255, 255, 0.4) 60%, 
+                rgba(138, 43, 226, 0.2) 100%);
+            border-radius: 50%;
+            position: relative;
+            border: 2px solid rgba(255, 255, 255, 0.3);
+            box-shadow: 
+                0 0 50px rgba(0, 191, 255, 0.3),
+                inset 0 0 50px rgba(255, 255, 255, 0.1);
+        }
+        
+        .orb-inner {
+            position: absolute;
+            top: 50%;
+            left: 50%;
+            transform: translate(-50%, -50%);
+            width: 60%;
+            height: 60%;
+            background: radial-gradient(circle, 
+                rgba(255, 255, 255, 0.3) 0%, 
+                rgba(0, 191, 255, 0.2) 50%, 
+                transparent 100%);
+            border-radius: 50%;
+            animation: pulse 3s ease-in-out infinite;
+        }
+        
+        @keyframes pulse {
+            0%, 100% { transform: translate(-50%, -50%) scale(1); opacity: 0.7; }
+            50% { transform: translate(-50%, -50%) scale(1.1); opacity: 1; }
+        }
+        
+        .text-container {
+            position: absolute;
+            right: 80px;
+            top: 50%;
+            transform: translateY(-50%);
+            max-width: 680px;
+            background: rgba(255, 255, 255, 0.05);
+            backdrop-filter: blur(10px);
+            border: 1px solid rgba(255, 255, 255, 0.1);
+            border-radius: 20px;
+            padding: 40px;
+        }
+        
+        .main-title {
+            font-size: 64px;
+            font-weight: 800;
+            line-height: 1.1;
+            margin-bottom: 16px;
+            color: #ffffff;
+        }
+        
+        .blue-wave {
+            background: linear-gradient(45deg, #00bfff, #1e90ff, #00ffff);
+            -webkit-background-clip: text;
+            -webkit-text-fill-color: transparent;
+            background-clip: text;
+        }
+        
+        .manifesto {
+            color: rgba(255, 255, 255, 0.9);
+            font-weight: 300;
+        }
+        
+        .subtitle {
+            font-size: 32px;
+            font-weight: 300;
+            color: rgba(255, 255, 255, 0.9);
+            margin-bottom: 20px;
+            line-height: 1.2;
+        }
+        
+        .description {
+            font-size: 24px;
+            font-weight: 400;
+            color: rgba(255, 255, 255, 0.8);
+            line-height: 1.4;
+        }
+        
+        .logo-container {
+            position: absolute;
+            bottom: 40px;
+            right: 40px;
+            display: flex;
+            align-items: center;
+            gap: 12px;
+        }
+        
+        .logo {
+            width: 48px;
+            height: 48px;
+            background: rgba(255, 255, 255, 0.9);
+            border-radius: 8px;
+            display: flex;
+            align-items: center;
+            justify-content: center;
+            font-size: 24px;
+            font-weight: bold;
+            color: #0a0a23;
+            filter: drop-shadow(0 4px 12px rgba(0, 191, 255, 0.3));
+        }
+        
+        .logo-text {
+            font-size: 18px;
+            font-weight: 700;
+            color: rgba(255, 255, 255, 0.9);
+        }
+        
+        .download-btn {
+            margin-top: 20px;
+            padding: 12px 24px;
+            background: linear-gradient(45deg, #00bfff, #1e90ff);
+            color: white;
+            border: none;
+            border-radius: 8px;
+            font-size: 16px;
+            font-weight: 600;
+            cursor: pointer;
+            box-shadow: 0 4px 12px rgba(0, 191, 255, 0.3);
+        }
+        
+        .download-btn:hover {
+            transform: translateY(-2px);
+            box-shadow: 0 6px 16px rgba(0, 191, 255, 0.4);
+        }
+    </style>
+</head>
+<body>
+    <div class="og-image" id="ogImage">
+        <div class="orb-container">
+            <div class="avatar-orb">
+                <div class="orb-inner"></div>
+            </div>
+        </div>
+        
+        <div class="text-container">
+            <div class="main-title">
+                <span class="blue-wave">Blue Wave</span><br>
+                <span class="manifesto">Manifesto</span>
+            </div>
+            <div class="subtitle">The Constitution of Conversational Commerce</div>
+            <div class="description">The World's First Conversational Shopping Marketplace</div>
+        </div>
+        
+        <div class="logo-container">
+            <div class="logo">A</div>
+            <div class="logo-text">AisleMarts</div>
+        </div>
+    </div>
+    
+    <button class="download-btn" onclick="downloadImage()">Download OG Image (1200x630)</button>
+    
+    <script>
+function downloadImage() {
+    const ogImage = document.getElementById('ogImage');
+    
+    // Create canvas
+    const canvas = document.createElement('canvas');
+    const ctx = canvas.getContext('2d');
+    canvas.width = 1200;
+    canvas.height = 630;
+    
+    // Create gradient background
+    const gradient = ctx.createLinearGradient(0, 0, canvas.width, canvas.height);
+    gradient.addColorStop(0, '#0a0a23');
+    gradient.addColorStop(0.5, '#1a1a3e');
+    gradient.addColorStop(1, '#2a2a5e');
+    ctx.fillStyle = gradient;
+    ctx.fillRect(0, 0, canvas.width, canvas.height);
+    
+    // Draw orb
+    const orbX = 240;
+    const orbY = 315;
+    const orbRadius = 140;
+    
+    // Orb gradient
+    const orbGradient = ctx.createRadialGradient(
+        orbX - 40, orbY - 40, 0,
+        orbX, orbY, orbRadius
+    );
+    orbGradient.addColorStop(0, 'rgba(0, 191, 255, 0.8)');
+    orbGradient.addColorStop(0.3, 'rgba(30, 144, 255, 0.6)');
+    orbGradient.addColorStop(0.6, 'rgba(0, 255, 255, 0.4)');
+    orbGradient.addColorStop(1, 'rgba(138, 43, 226, 0.2)');
+    
+    ctx.fillStyle = orbGradient;
+    ctx.beginPath();
+    ctx.arc(orbX, orbY, orbRadius, 0, Math.PI * 2);
+    ctx.fill();
+    
+    // Orb border
+    ctx.strokeStyle = 'rgba(255, 255, 255, 0.3)';
+    ctx.lineWidth = 2;
+    ctx.stroke();
+    
+    // Glass panel background
+    const panelX = 500;
+    const panelY = 150;
+    const panelWidth = 620;
+    const panelHeight = 330;
+    
+    ctx.fillStyle = 'rgba(255, 255, 255, 0.05)';
+    ctx.roundRect(panelX, panelY, panelWidth, panelHeight, 20);
+    ctx.fill();
+    
+    ctx.strokeStyle = 'rgba(255, 255, 255, 0.1)';
+    ctx.lineWidth = 1;
+    ctx.stroke();
+    
+    // Text
+    ctx.fillStyle = '#ffffff';
+    ctx.font = '800 64px system-ui, -apple-system, sans-serif';
+    ctx.fillText('Blue Wave', panelX + 40, panelY + 80);
+    
+    ctx.fillStyle = 'rgba(255, 255, 255, 0.9)';
+    ctx.font = '300 64px system-ui, -apple-system, sans-serif';
+    ctx.fillText('Manifesto', panelX + 40, panelY + 150);
+    
+    ctx.fillStyle = 'rgba(255, 255, 255, 0.9)';
+    ctx.font = '300 32px system-ui, -apple-system, sans-serif';
+    ctx.fillText('The Constitution of', panelX + 40, panelY + 200);
+    ctx.fillText('Conversational Commerce', panelX + 40, panelY + 240);
+    
+    ctx.fillStyle = 'rgba(255, 255, 255, 0.8)';
+    ctx.font = '400 24px system-ui, -apple-system, sans-serif';
+    ctx.fillText('The World\'s First Conversational', panelX + 40, panelY + 280);
+    ctx.fillText('Shopping Marketplace', panelX + 40, panelY + 310);
+    
+    // Logo
+    const logoX = 1120;
+    const logoY = 570;
+    
+    ctx.fillStyle = 'rgba(255, 255, 255, 0.9)';
+    ctx.roundRect(logoX, logoY, 48, 48, 8);
+    ctx.fill();
+    
+    ctx.fillStyle = '#0a0a23';
+    ctx.font = '700 24px system-ui, -apple-system, sans-serif';
+    ctx.textAlign = 'center';
+    ctx.fillText('A', logoX + 24, logoY + 32);
+    
+    ctx.fillStyle = 'rgba(255, 255, 255, 0.9)';
+    ctx.font = '700 18px system-ui, -apple-system, sans-serif';
+    ctx.textAlign = 'left';
+    ctx.fillText('AisleMarts', logoX - 120, logoY + 32);
+    
+    // Download
+    const link = document.createElement('a');
+    link.download = 'blue-wave-manifesto-og-image.png';
+    link.href = canvas.toDataURL();
+    link.click();
+}
+
+// Polyfill for roundRect if not supported
+if (!CanvasRenderingContext2D.prototype.roundRect) {
+    CanvasRenderingContext2D.prototype.roundRect = function(x, y, width, height, radius) {
+        this.beginPath();
+        this.moveTo(x + radius, y);
+        this.lineTo(x + width - radius, y);
+        this.quadraticCurveTo(x + width, y, x + width, y + radius);
+        this.lineTo(x + width, y + height - radius);
+        this.quadraticCurveTo(x + width, y + height, x + width - radius, y + height);
+        this.lineTo(x + radius, y + height);
+        this.quadraticCurveTo(x, y + height, x, y + height - radius);
+        this.lineTo(x, y + radius);
+        this.quadraticCurveTo(x, y, x + radius, y);
+        this.closePath();
+    };
+}
+    </script>
+</body>
+</html>
