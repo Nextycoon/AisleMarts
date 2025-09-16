@@ -119,13 +119,25 @@ export const AuthProvider: React.FC<{ children: React.ReactNode }> = ({ children
 
   const logout = async () => {
     await AsyncStorage.removeItem('auth_token');
+    await AsyncStorage.removeItem('userRole');
     setAuth(undefined);
     setToken(undefined);
     setUser(undefined);
+    setHasCompletedAvatarSetup(false);
   };
 
   return (
-    <AuthContext.Provider value={{ user, token, loading, login, register, logout }}>
+    <AuthContext.Provider value={{ 
+      user, 
+      token, 
+      loading, 
+      hasCompletedAvatarSetup,
+      login, 
+      register, 
+      logout,
+      updateUser,
+      checkAvatarSetup
+    }}>
       {children}
     </AuthContext.Provider>
   );
