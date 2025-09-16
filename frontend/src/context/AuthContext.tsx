@@ -48,46 +48,23 @@ export const AuthProvider: React.FC<{ children: React.ReactNode }> = ({ children
 
   const loadStoredAuth = async () => {
     try {
-      // First, check avatar setup completion (this doesn't require auth)
-      const hasSetup = await checkAvatarSetup();
+      // Quick check for avatar setup without blocking
+      const storedRole = await AsyncStorage.getItem('userRole');
+      const storedSetup = await AsyncStorage.getItem('isAvatarSetup');
+      const hasSetup = !!(storedRole || storedSetup === 'true');
       
-      // For new users without avatar setup, skip token verification to avoid delay
-      if (!hasSetup) {
-        console.log('New user detected, skipping token verification for fast avatar setup');
-        setLoading(false);
-        return;
-      }
+      console.log('AuthContext: Loaded avatar setup status:', hasSetup);
+      setHasCompletedAvatarSetup(hasSetup);
       
-      // Only try to load token if we have completed avatar setup
-      const storedToken = await AsyncStorage.getItem('auth_token');
-      if (storedToken) {
-        setAuth(storedToken);
-        setToken(storedToken);
-        
-        try {
-          // Verify token by fetching user data (with timeout)
-          const controller = new AbortController();
-          const timeoutId = setTimeout(() => controller.abort(), 3000); // 3s timeout
-          
-          const { data } = await API.get('/auth/me', {
-            signal: controller.signal
-          });
-          clearTimeout(timeoutId);
-          
-          setUser(data);
-        } catch (authError) {
-          console.log('Token verification failed or timed out:', authError);
-          // Remove invalid token but don't block avatar setup
-          await AsyncStorage.removeItem('auth_token');
-          setAuth(undefined);
-          setToken(undefined);
-        }
-      }
+      // Skip token verification for now to avoid blocking
+      console.log('AuthContext: Skipping token verification to avoid blocking');
       
     } catch (error) {
       console.log('Failed to load stored auth:', error);
-      await AsyncStorage.removeItem('auth_token');
+      // Default to no avatar setup (show avatar screen)
+      setHasCompletedAvatarSetup(false);
     } finally {
+      console.log('AuthContext: Loading complete');
       setLoading(false);
     }
   };
