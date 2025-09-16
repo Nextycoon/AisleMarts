@@ -95,6 +95,10 @@ class AnalyticsService {
     return [...this.events];
   }
 
+  public clearEvents() {
+    this.events = [];
+  }
+
   // Feature inventory tracking for PMs
   public trackFeatureInventory(registry: any[]) {
     const tagCounts = registry
