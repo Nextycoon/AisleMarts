@@ -19,7 +19,7 @@ export default function IndexScreen() {
         router.replace('/home');
       } else {
         console.log('No avatar setup, redirecting to avatar screen');
-        router.replace('/avatar-test');
+        router.replace('/aisle-avatar');
       }
     }, loading ? 2000 : 500); // 2s if still loading, 500ms if ready
 
