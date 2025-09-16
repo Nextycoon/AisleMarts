@@ -487,7 +487,7 @@ export default function NearbyCommerceScreen() {
           <FadeInView>
             {merchants && merchants.length > 0 ? (
               <View style={styles.windowsList}>
-                {merchants.flatMap(merchant => 
+                {(merchants || []).flatMap(merchant => 
                   (merchant.pickupWindows || []).map((window, index) => (
                     <SlideInView key={window.id} delay={index * 100} style={styles.windowItem}>
                       <View style={styles.windowHeader}>
