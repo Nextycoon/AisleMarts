@@ -106,7 +106,105 @@
 # Testing Data - Main Agent and testing sub agent both should log testing data below this section
 #====================================================================================================
 
-user_problem_statement: "Implement Blue Era Dashboard for AisleMarts - the human-centered AI experience featuring Aisle Avatar System with animated character, Welcome & Role Selection Flow, personalized AI greetings, video-first product reels, and Quick Access Dock - transforming commerce from transactional to relational following the Blue Era philosophy"
+user_problem_statement: "Week 3 UI Wiring & Notification Integration for AisleMarts Phase 3 Nearby/Onsite Commerce - Completing merchant pickup screen implementation, integrating lightweight notification hooks for pickup confirmations, and validating end-to-end Week 3 functionality including pickup windows management, reservation scheduling/extension/cancellation workflows, and merchant staff pickup processing"
+
+backend:
+  - task: "Week 3 Pickup Windows & Advanced Reservations System"
+    implemented: true
+    working: true
+    file: "/app/backend/pickup_windows_routes.py, /app/backend/pickup_windows_service.py, /app/backend/pickup_windows_models.py"
+    stuck_count: 0
+    priority: "high"
+    needs_retesting: false
+    status_history:
+        - working: "NA"
+          agent: "main"
+          comment: "Week 3 Backend Test Blitz implementation: Pickup Windows & Advanced Reservations system with window management, reservation scheduling, extensions, modifications, partial pickups, cleanup automation, and analytics"
+        - working: true
+          agent: "testing"
+          comment: "✅ PRODUCTION READY: Week 3 Backend Test Blitz PASSED with 100% success rate (12/12 tests). CRITICAL FEATURES VALIDATED: ✅ Pickup System Health (healthy status, 6 features enabled), ✅ Window Creation API (correctly enforces merchant access control), ✅ Window Availability API (proper capacity/availability tracking), ✅ Reservation Scheduling (validates reservation existence), ✅ Reservation Extension (validates ownership and extension policies), ✅ Reservation Modification (audit history and validation), ✅ Partial Pickup Processing (inventory reconciliation), ✅ Expired Reservations Cleanup (admin access control), ✅ Analytics Validation (location-specific and global analytics). SECURITY & ACCESS CONTROL: All APIs properly enforce authentication, merchant privileges for location access, admin privileges for cleanup operations, and reservation ownership validation. PASS GATES MET: No 5xx errors, all state transitions valid, proper access control enforcement, comprehensive audit trails. System demonstrates production-ready reliability with robust error handling and security controls."
+
+  - task: "Week 3 UI Wiring - Merchant Pickup Screen Implementation"
+    implemented: true
+    working: "NA"
+    file: "/app/frontend/app/merchant/pickup/index.tsx"
+    stuck_count: 0
+    priority: "high"
+    needs_retesting: true
+    status_history:
+        - working: "NA"
+          agent: "main"
+          comment: "Week 3 UI Wiring: Completed merchant pickup screen implementation with pickup window listing, reservation check-in by code/QR, capacity tracking, window creation, analytics dashboard, robust loading/error states, and full integration with Week 3 pickup APIs"
+
+  - task: "Week 3 UI Wiring - Notification Hooks Integration"
+    implemented: true
+    working: "NA"
+    file: "/app/frontend/src/hooks/useNotifications.ts, /app/frontend/app/nearby/reserve/[reservationId]/details.tsx, /app/frontend/app/nearby/reserve/[reservationId]/schedule.tsx"
+    stuck_count: 0
+    priority: "high"
+    needs_retesting: true
+    status_history:
+        - working: "NA"
+          agent: "main"
+          comment: "Week 3 UI Wiring: Implemented lightweight notification hooks with toast confirmations for pickup scheduling, extensions, partial pickups, cancellations, and completion. Integrated notifications into reservation details and scheduling screens to replace basic alerts with contextual pickup notifications. Includes stubs for future push/SMS notifications and local reminders."
+
+frontend:
+  - task: "Week 3 UI Components - Merchant Pickup Screen"
+    implemented: true
+    working: "NA"
+    file: "/app/frontend/app/merchant/pickup/index.tsx"
+    stuck_count: 0
+    priority: "high"
+    needs_retesting: true
+    status_history:
+        - working: "NA"
+          agent: "main"
+          comment: "Week 3 implementation: Merchant pickup screen with window list (capacity/reserved), reservation check-in by code/QR, robust loading/error states, analytics dashboard, window creation functionality, and full mobile optimization with 44px+ touch targets"
+
+  - task: "Week 3 UI Components - Reservation Management with Notifications"
+    implemented: true
+    working: "NA"
+    file: "/app/frontend/app/nearby/reserve/[reservationId]/details.tsx, /app/frontend/app/nearby/reserve/[reservationId]/schedule.tsx"
+    stuck_count: 0
+    priority: "high"
+    needs_retesting: true
+    status_history:
+        - working: "NA"
+          agent: "main"
+          comment: "Week 3 implementation: Enhanced reservation details and scheduling screens with integrated notification hooks for pickup confirmations (scheduled/extended/partial/cancelled), improved UX flow with contextual feedback, and seamless navigation between screens"
+
+  - task: "Week 3 UI Components - Notification Hooks System"
+    implemented: true
+    working: "NA"
+    file: "/app/frontend/src/hooks/useNotifications.ts"
+    stuck_count: 0
+    priority: "high"
+    needs_retesting: true
+    status_history:
+        - working: "NA"
+          agent: "main"
+          comment: "Week 3 implementation: Lightweight notification system with pickup-specific notification templates, toast confirmations, optional push/SMS placeholders (cleanly abstracted), and notification templates for common pickup scenarios (reminders, arrival, inventory issues)"
+
+metadata:
+  created_by: "main_agent"
+  version: "1.0"
+  test_sequence: 0
+  run_ui: false
+
+test_plan:
+  current_focus:
+    - "Week 3 UI Wiring - Merchant Pickup Screen Implementation"
+    - "Week 3 UI Wiring - Notification Hooks Integration"
+    - "Week 3 UI Components - Merchant Pickup Screen"
+    - "Week 3 UI Components - Reservation Management with Notifications"
+    - "Week 3 UI Components - Notification Hooks System"
+  stuck_tasks: []
+  test_all: false
+  test_priority: "high_first"
+
+agent_communication:
+    - agent: "main"
+      message: "💙⚡ WEEK 3 UI WIRING COMPLETION - MERCHANT PICKUP & NOTIFICATION INTEGRATION: Completing Phase 3 Week 3 UI implementation with focus on merchant pickup screen functionality and lightweight notification hooks. DELIVERABLES: (1) Merchant pickup screen with window management, reservation check-in by code/QR, capacity tracking, analytics dashboard; (2) Notification hooks system with pickup-specific templates for scheduling, extensions, partial pickups, cancellations; (3) Integration of notifications into reservation details and scheduling screens; (4) Backend integration validation for Week 3 pickup APIs. TARGET: Complete end-to-end pickup workflow from nearby search → reservation → scheduling → merchant processing with production-ready UX and robust error handling."
 
 backend:
   - task: "Payments & Tax Data Initialization"
