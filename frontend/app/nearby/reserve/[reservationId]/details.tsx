@@ -84,11 +84,11 @@ export default function ReservationDetailsScreen() {
             try {
               const result = await extendReservation(reservationId!, 30, 'Customer requested extension');
               
-              Alert.alert(
-                'Hold Extended ✅',
-                `New expiry: ${new Date(result.new_expiry).toLocaleString()}\n\nExtensions remaining: ${result.extensions_remaining}`,
-                [{ text: 'OK' }]
-              );
+              // Show notification instead of alert for better UX
+              showPickupNotification('extended', {
+                minutes: 30,
+                extensionsRemaining: result.extensions_remaining
+              });
               
               await loadReservation(false);
             } catch (error: any) {
