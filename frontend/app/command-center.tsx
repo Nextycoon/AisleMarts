@@ -6,7 +6,7 @@ import { useRouter } from "expo-router";
 import { Ionicons } from '@expo/vector-icons';
 
 // Import our new centralized configs
-import { FEATURES_REGISTRY, getVisibleFeatures, getStatusColor, getStatusText } from '../src/config/features';
+import { FEATURES_REGISTRY, QUICK_ACTIONS, getVisibleFeatures, getStatusColor, getStatusText } from '../src/config/features';
 import { colors, spacing, radii, shadows, presets } from '../src/theme/tokens';
 import { useAnalytics } from '../src/utils/analytics';
 import { getDuration } from '../src/theme/motion';
