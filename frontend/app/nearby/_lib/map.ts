@@ -110,3 +110,14 @@ export const DEFAULT_MAP_CONFIG = {
   heading: 0,
   style: MAP_STYLES.street
 };
+
+// Default export to satisfy Expo router requirements
+export default {
+  initializeMapbox,
+  NAIROBI_CENTER,
+  requestLocationPermission,
+  calculateDistance,
+  formatDistance,
+  MAP_STYLES,
+  DEFAULT_MAP_CONFIG
+};
