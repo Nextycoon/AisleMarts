@@ -237,6 +237,8 @@ export default function AisleAvatarScreen() {
         <Animated.View 
           entering={SlideInUp.delay(600)}
           style={styles.roleSection}
+          accessibilityRole="radiogroup"
+          accessibilityLabel="Choose your marketplace role"
         >
           <Text style={styles.rolePrompt}>Select your role in the marketplace</Text>
           
@@ -252,6 +254,10 @@ export default function AisleAvatarScreen() {
                     selectedRole === role.id && styles.selectedRoleCard
                   ]}
                   onPress={() => handleRoleSelect(role.id)}
+                  accessibilityRole="radio"
+                  accessibilityState={{ checked: selectedRole === role.id }}
+                  accessibilityLabel={`${role.title}: ${role.subtitle}`}
+                  accessibilityHint="Double tap to select this role"
                 >
                   <BlurView intensity={selectedRole === role.id ? 24 : 18} style={styles.roleCardBlur}>
                     <LinearGradient
@@ -272,6 +278,7 @@ export default function AisleAvatarScreen() {
                       <Animated.View 
                         entering={FadeIn.duration(140)}
                         style={styles.selectedIndicator}
+                        accessibilityLabel="Selected"
                       >
                         <View style={styles.selectedRing}>
                           <Ionicons name="checkmark-circle" size={24} color="#4facfe" />
@@ -298,6 +305,16 @@ export default function AisleAvatarScreen() {
             ]}
             onPress={handleEnterMarketplace}
             disabled={!selectedRole || isLoading}
+            accessibilityRole="button"
+            accessibilityLabel={
+              selectedRole 
+                ? isOnline 
+                  ? "Enter the marketplace" 
+                  : "Continue offline"
+                : "Select a role first"
+            }
+            accessibilityHint="Complete avatar setup and continue to main app"
+            accessibilityState={{ disabled: !selectedRole || isLoading }}
           >
             <BlurView intensity={selectedRole ? 30 : 15} style={styles.ctaButtonBlur}>
               <LinearGradient
@@ -310,7 +327,9 @@ export default function AisleAvatarScreen() {
                   <Text style={styles.ctaButtonText}>Welcome to your Aisle...</Text>
                 ) : (
                   <>
-                    <Text style={styles.ctaButtonText}>Enter the Marketplace</Text>
+                    <Text style={styles.ctaButtonText}>
+                      {isOnline ? 'Enter the Marketplace' : 'Continue (Offline)'}
+                    </Text>
                     {!isLoading && (
                       <Ionicons name="arrow-forward" size={20} color="white" />
                     )}
@@ -323,9 +342,21 @@ export default function AisleAvatarScreen() {
           {/* Terms & Privacy */}
           <View style={styles.legalSection}>
             <Text style={styles.legalText}>By continuing you agree to our </Text>
-            <Text style={styles.legalLink}>Terms</Text>
+            <Pressable 
+              onPress={() => console.log('Terms pressed')}
+              accessibilityRole="link"
+              accessibilityLabel="Terms of service"
+            >
+              <Text style={styles.legalLink}>Terms</Text>
+            </Pressable>
             <Text style={styles.legalText}> & </Text>
-            <Text style={styles.legalLink}>Privacy</Text>
+            <Pressable 
+              onPress={() => console.log('Privacy pressed')}
+              accessibilityRole="link"
+              accessibilityLabel="Privacy policy"
+            >
+              <Text style={styles.legalLink}>Privacy</Text>
+            </Pressable>
             <Text style={styles.legalText}>.</Text>
           </View>
         </Animated.View>
