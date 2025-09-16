@@ -152,10 +152,10 @@ export default function CinematicHome() {
             showsHorizontalScrollIndicator={false}
             contentContainerStyle={styles.carousel}
           >
-            {BEST_PICKS.map((item) => (
+            {BEST_PICKS.map((item, index) => (
               <Pressable 
                 key={item.id}
-                onPress={() => router.push(`/product/${item.id}` as any)}
+                onPress={() => handleProductCardPress(item.id, index)}
                 style={styles.bestPickCard}
               >
                 <ImageBackground
