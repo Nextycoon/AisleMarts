@@ -1,6 +1,7 @@
 /**
  * Merchant CSV Inventory Upload Screen
  * Simple interface for merchants to upload inventory via CSV
+ * POLISH PASS: Enhanced with glass-morphism, haptics, animations, and premium UX
  */
 
 import React, { useState } from 'react';
@@ -15,13 +16,15 @@ import {
   ScrollView,
   Platform
 } from 'react-native';
+import { LinearGradient } from 'expo-linear-gradient';
+import { BlurView } from 'expo-blur';
 import { Ionicons } from '@expo/vector-icons';
 import { useRouter } from 'expo-router';
 import { StatusBar } from 'expo-status-bar';
+import Animated, { FadeInUp, SlideInRight, ZoomIn } from 'react-native-reanimated';
 import * as DocumentPicker from 'expo-document-picker';
-// import { NoUploadHistory } from '../../src/components/EmptyStates';
-// import { ProgressBar, SuccessCheckmark } from '../../src/components/Animations';
-// import useHaptics from '../../src/hooks/useHaptics';
+import { EmptyStates } from '@/src/components/EmptyStates';
+import { useHaptics } from '@/src/hooks/useHaptics';
 
 export default function MerchantInventoryUploadScreen() {
   const router = useRouter();
@@ -29,12 +32,11 @@ export default function MerchantInventoryUploadScreen() {
   const [uploading, setUploading] = useState(false);
   const [uploadProgress, setUploadProgress] = useState(0);
   const [showSuccess, setShowSuccess] = useState(false);
-  
-  // Polish enhancements temporarily disabled
-  // const { onButtonPress, onUploadProgress } = useHaptics();
+  const { triggerHaptic, onButtonPress, onFormSubmit, onUploadProgress } = useHaptics();
 
   const selectCSVFile = async () => {
     try {
+      onButtonPress();
       const result = await DocumentPicker.getDocumentAsync({
         type: ['text/csv', 'text/comma-separated-values', 'application/csv'],
         copyToCacheDirectory: true,
@@ -42,6 +44,7 @@ export default function MerchantInventoryUploadScreen() {
 
       if (result.type === 'success') {
         setSelectedFile(result);
+        triggerHaptic('success');
         Alert.alert(
           'File Selected',
           `Selected: ${result.name}\nSize: ${(result.size! / 1024).toFixed(1)} KB`,
@@ -50,6 +53,7 @@ export default function MerchantInventoryUploadScreen() {
       }
     } catch (error) {
       console.error('Error selecting file:', error);
+      triggerHaptic('error');
       Alert.alert('Selection Error', 'Failed to select file. Please try again.');
     }
   };
