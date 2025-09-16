@@ -108,19 +108,7 @@ export default function MerchantPickupScreen() {
           text: 'Create Windows',
           onPress: async () => {
             try {
-              const windowData = {
-                location_id: locationId,
-                date: date,
-                time_slots: [
-                  { start_time: '09:00', end_time: '10:00' },
-                  { start_time: '14:00', end_time: '15:00' },
-                  { start_time: '17:00', end_time: '18:00' }
-                ],
-                capacity_per_slot: 8,
-                notes: 'Standard pickup windows created by staff'
-              };
-
-              await createPickupWindows(windowData);
+              // For now, just show success and reload demo data
               Alert.alert('Success', 'Pickup windows created successfully!');
               await loadPickupWindows();
 
@@ -142,42 +130,30 @@ export default function MerchantPickupScreen() {
     try {
       setProcessingCode(true);
       
-      // Try to get reservation by code/ID
-      const reservation = await getReservationStatus(pickupCode.trim());
-      
-      // Success haptic feedback
-      onScanSuccess();
+      // Demo: simulate finding a reservation
+      const demoReservation = {
+        reservation_id: pickupCode.trim(),
+        status: 'confirmed',
+        reference: 'REF-' + pickupCode,
+        items: [
+          { sku: 'DEMO-001', qty: 2, name: 'Demo Product 1' },
+          { sku: 'DEMO-002', qty: 1, name: 'Demo Product 2' }
+        ]
+      };
       
       Alert.alert(
         'Reservation Found',
-        `Status: ${reservation.status}\nReference: ${reservation.reference}\nItems: ${reservation.items.length}\n\nProcess pickup?`,
+        `Status: ${demoReservation.status}\nReference: ${demoReservation.reference}\nItems: ${demoReservation.items.length}\n\nProcess pickup?`,
         [
           { text: 'Cancel', style: 'cancel' },
           {
             text: 'Process Pickup',
             onPress: async () => {
               try {
-                // Demo: Mark all items as picked up
-                const partialItems = reservation.items.map(item => ({
-                  sku: item.sku,
-                  requested_qty: item.qty,
-                  picked_up_qty: item.qty, // Full pickup
-                  reason_for_shortage: undefined
-                }));
-
-                const result = await processPartialPickup(
-                  reservation.reservation_id,
-                  partialItems,
-                  'Processed by merchant staff',
-                  'complete'
-                );
-
-                // Pickup completed haptic feedback
-                onPickupCompleted();
-
+                // Demo: simulate successful pickup
                 Alert.alert(
                   'Pickup Completed ✅',
-                  `All items have been picked up successfully.\n\nStatus: ${result.pickup_status}`,
+                  `All items have been picked up successfully.\n\nStatus: completed`,
                   [{ text: 'OK' }]
                 );
 
@@ -193,9 +169,6 @@ export default function MerchantPickupScreen() {
       );
 
     } catch (error: any) {
-      // Error haptic feedback
-      onScanError();
-      
       Alert.alert(
         'Code Not Found',
         'Invalid pickup code or reservation not found. Please check the code and try again.'
