@@ -7,27 +7,30 @@ import * as Location from 'expo-location';
 import Constants from 'expo-constants';
 import { Platform } from 'react-native';
 
-// Conditional import for Mapbox - only on native platforms
-let Mapbox: any = null;
-if (Platform.OS !== 'web') {
+// Safe Mapbox detection - prevents server-side import errors
+export const canUseNativeMap = Platform.OS !== 'web' && !!Constants.appOwnership;
+
+// Map initialization (only runs on native platforms)
+export const initializeMapbox = async () => {
+  if (!canUseNativeMap) return null;
+  
   try {
-    Mapbox = require('@rnmapbox/maps').default;
+    const Mapbox = require('@rnmapbox/maps').default;
+    const mapboxToken = Constants.expoConfig?.extra?.MAPBOX_PUBLIC_TOKEN || 
+      process.env.EXPO_PUBLIC_MAPBOX_PUBLIC_TOKEN || 
+      'pk.eyJ1IjoiYWlzbGVtYXJ0cyIsImEiOiJjbTU4dGJucjIwZTN6MmpxdGtjeXQ4dW56In0.demo_token_for_development';
+    
+    if (mapboxToken) {
+      Mapbox.setAccessToken(mapboxToken);
+      Mapbox.setConnected(true);
+    }
+    
+    return Mapbox;
   } catch (error) {
     console.warn('Mapbox not available:', error);
+    return null;
   }
-}
-
-// Initialize Mapbox with token from environment
-const mapboxToken = Constants.expoConfig?.extra?.MAPBOX_PUBLIC_TOKEN || 
-  process.env.EXPO_PUBLIC_MAPBOX_PUBLIC_TOKEN || 
-  'pk.eyJ1IjoiYWlzbGVtYXJ0cyIsImEiOiJjbTU4dGJucjIwZTN6MmpxdGtjeXQ4dW56In0.demo_token_for_development';
-
-if (mapboxToken) {
-  Mapbox.setAccessToken(mapboxToken);
-  Mapbox.setConnected(true);
-}
-
-export { Mapbox };
+};
 
 // Default Nairobi coordinates
 export const NAIROBI_CENTER: [number, number] = [36.8065, -1.2685];
