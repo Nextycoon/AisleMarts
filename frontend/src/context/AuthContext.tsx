@@ -71,11 +71,14 @@ export const AuthProvider: React.FC<{ children: React.ReactNode }> = ({ children
   const checkAvatarSetup = async (): Promise<boolean> => {
     try {
       const storedRole = await AsyncStorage.getItem('userRole');
-      const hasSetup = !!storedRole;
+      const storedSetup = await AsyncStorage.getItem('isAvatarSetup');
+      const hasSetup = !!(storedRole || storedSetup === 'true');
       setHasCompletedAvatarSetup(hasSetup);
       return hasSetup;
     } catch (error) {
       console.log('Failed to check avatar setup:', error);
+      // Default to false (show avatar screen) on error
+      setHasCompletedAvatarSetup(false);
       return false;
     }
   };
