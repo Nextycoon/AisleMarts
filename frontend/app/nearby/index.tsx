@@ -485,7 +485,7 @@ export default function NearbyCommerceScreen() {
 
         {activeTab === 'pickup' && (
           <FadeInView>
-            {merchants.length > 0 ? (
+            {merchants && merchants.length > 0 ? (
               <View style={styles.windowsList}>
                 {merchants.flatMap(merchant => 
                   merchant.pickupWindows.map((window, index) => (
