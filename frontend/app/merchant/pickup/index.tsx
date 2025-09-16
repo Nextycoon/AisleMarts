@@ -194,7 +194,7 @@ export default function MerchantPickupScreen() {
     }
   };
 
-  const renderPickupWindow = ({ item: window }: { item: PickupWindow }) => {
+  const renderPickupWindow = ({ item: window, index }: { item: PickupWindow; index: number }) => {
     const availableCapacity = window.capacity - window.reserved;
     const utilizationPercent = ((window.reserved / window.capacity) * 100) || 0;
 
@@ -202,60 +202,61 @@ export default function MerchantPickupScreen() {
       return `${timeSlot.start_time} - ${timeSlot.end_time}`;
     };
 
-    const getStatusColor = (status: string) => {
-      switch (status) {
-        case 'active': return '#34C759';
-        case 'full': return '#FF9500';  
-        case 'closed': return '#FF3B30';
-        default: return '#007AFF';
-      }
-    };
-
     return (
-      <View style={styles.windowItem}>
-        <View style={styles.windowHeader}>
-          <Text style={styles.windowTime}>
-            {formatTimeSlot(window.time_slot)}
-          </Text>
-          <View style={[styles.statusIndicator, { backgroundColor: getStatusColor(window.status) }]}>
-            <Text style={styles.statusText}>{window.status.toUpperCase()}</Text>
-          </View>
-        </View>
+      <Animated.View entering={SlideInRight.delay(index * 100)}>
+        <BlurView intensity={20} style={styles.windowItem}>
+          <LinearGradient
+            colors={['rgba(255,255,255,0.1)', 'rgba(255,255,255,0.05)']}
+            style={styles.windowGradient}
+          >
+            <View style={styles.windowHeader}>
+              <Text style={styles.windowTime}>
+                {formatTimeSlot(window.time_slot)}
+              </Text>
+              <StatusChip
+                status={window.status}
+                variant={window.status === 'active' ? 'success' : 
+                        window.status === 'full' ? 'warning' : 'error'}
+              />
+            </View>
 
-        <View style={styles.windowStats}>
-          <View style={styles.statItem}>
-            <Text style={styles.statValue}>{window.reserved}</Text>
-            <Text style={styles.statLabel}>Reserved</Text>
-          </View>
-          <View style={styles.statItem}>
-            <Text style={styles.statValue}>{availableCapacity}</Text>
-            <Text style={styles.statLabel}>Available</Text>
-          </View>
-          <View style={styles.statItem}>
-            <Text style={styles.statValue}>{window.capacity}</Text>
-            <Text style={styles.statLabel}>Total Capacity</Text>
-          </View>
-        </View>
+            <View style={styles.windowStats}>
+              <Animated.View entering={ZoomIn.delay(index * 100 + 200)} style={styles.statItem}>
+                <Text style={styles.statValue}>{window.reserved}</Text>
+                <Text style={styles.statLabel}>Reserved</Text>
+              </Animated.View>
+              <Animated.View entering={ZoomIn.delay(index * 100 + 300)} style={styles.statItem}>
+                <Text style={styles.statValue}>{availableCapacity}</Text>
+                <Text style={styles.statLabel}>Available</Text>
+              </Animated.View>
+              <Animated.View entering={ZoomIn.delay(index * 100 + 400)} style={styles.statItem}>
+                <Text style={styles.statValue}>{window.capacity}</Text>
+                <Text style={styles.statLabel}>Total Capacity</Text>
+              </Animated.View>
+            </View>
 
-        <View style={styles.utilizationBar}>
-          <View 
-            style={[
-              styles.utilizationFill,
-              { 
-                width: `${utilizationPercent}%`,
-                backgroundColor: utilizationPercent > 80 ? '#FF3B30' : utilizationPercent > 60 ? '#FF9500' : '#34C759'
-              }
-            ]} 
-          />
-        </View>
-        <Text style={styles.utilizationText}>
-          {utilizationPercent.toFixed(0)}% utilized
-        </Text>
+            <View style={styles.utilizationBar}>
+              <Animated.View 
+                entering={SlideInRight.delay(index * 100 + 500)}
+                style={[
+                  styles.utilizationFill,
+                  { 
+                    width: `${utilizationPercent}%`,
+                    backgroundColor: utilizationPercent > 80 ? '#FF3B30' : utilizationPercent > 60 ? '#FF9500' : '#34C759'
+                  }
+                ]} 
+              />
+            </View>
+            <Text style={styles.utilizationText}>
+              {utilizationPercent.toFixed(0)}% utilized
+            </Text>
 
-        {window.notes && (
-          <Text style={styles.windowNotes}>📝 {window.notes}</Text>
-        )}
-      </View>
+            {window.notes && (
+              <Text style={styles.windowNotes}>📝 {window.notes}</Text>
+            )}
+          </LinearGradient>
+        </BlurView>
+      </Animated.View>
     );
   };
 
@@ -263,42 +264,44 @@ export default function MerchantPickupScreen() {
     if (!analytics) return null;
 
     return (
-      <View style={styles.analyticsCard}>
-        <Text style={styles.analyticsTitle}>Today's Analytics</Text>
-        <View style={styles.analyticsGrid}>
-          <View style={styles.analyticsItem}>
-            <Text style={styles.analyticsValue}>{analytics.total_windows_created}</Text>
-            <Text style={styles.analyticsLabel}>Windows</Text>
-          </View>
-          <View style={styles.analyticsItem}>
-            <Text style={styles.analyticsValue}>{analytics.total_capacity_offered}</Text>
-            <Text style={styles.analyticsLabel}>Total Slots</Text>
-          </View>
-          <View style={styles.analyticsItem}>
-            <Text style={styles.analyticsValue}>{analytics.total_reservations_made}</Text>
-            <Text style={styles.analyticsLabel}>Reserved</Text>
-          </View>
-          <View style={styles.analyticsItem}>
-            <Text style={styles.analyticsValue}>{analytics.utilization_rate.toFixed(0)}%</Text>
-            <Text style={styles.analyticsLabel}>Utilization</Text>
-          </View>
-        </View>
-      </View>
+      <Animated.View entering={FadeInUp.delay(300)}>
+        <BlurView intensity={25} style={styles.analyticsCard}>
+          <LinearGradient
+            colors={['rgba(102,126,234,0.1)', 'rgba(79,172,254,0.05)']}
+            style={styles.analyticsGradient}
+          >
+            <Text style={styles.analyticsTitle}>Today's Analytics</Text>
+            <View style={styles.analyticsGrid}>
+              <Animated.View entering={ZoomIn.delay(400)} style={styles.analyticsItem}>
+                <Text style={styles.analyticsValue}>{analytics.total_windows_created}</Text>
+                <Text style={styles.analyticsLabel}>Windows</Text>
+              </Animated.View>
+              <Animated.View entering={ZoomIn.delay(500)} style={styles.analyticsItem}>
+                <Text style={styles.analyticsValue}>{analytics.total_capacity_offered}</Text>
+                <Text style={styles.analyticsLabel}>Total Slots</Text>
+              </Animated.View>
+              <Animated.View entering={ZoomIn.delay(600)} style={styles.analyticsItem}>
+                <Text style={styles.analyticsValue}>{analytics.total_reservations_made}</Text>
+                <Text style={styles.analyticsLabel}>Reserved</Text>
+              </Animated.View>
+              <Animated.View entering={ZoomIn.delay(700)} style={styles.analyticsItem}>
+                <Text style={styles.analyticsValue}>{analytics.utilization_rate.toFixed(0)}%</Text>
+                <Text style={styles.analyticsLabel}>Utilization</Text>
+              </Animated.View>
+            </View>
+          </LinearGradient>
+        </BlurView>
+      </Animated.View>
     );
   };
 
   const renderEmptyState = () => (
-    <View style={styles.emptyContainer}>
-      <Ionicons name="calendar-outline" size={64} color="#ccc" />
-      <Text style={styles.emptyTitle}>No Pickup Windows</Text>
-      <Text style={styles.emptyMessage}>
-        No pickup windows found for this date and location.
-      </Text>
-      <TouchableOpacity style={styles.createButton} onPress={createTodaysWindows}>
-        <Ionicons name="add-circle" size={20} color="white" />
-        <Text style={styles.createButtonText}>Create Standard Windows</Text>
-      </TouchableOpacity>
-    </View>
+    <EmptyStates.NoWindows 
+      onCreateWindows={createTodaysWindows}
+      title="No Pickup Windows"
+      message="No pickup windows found for this date and location."
+      actionText="Create Standard Windows"
+    />
   );
 
   return (
