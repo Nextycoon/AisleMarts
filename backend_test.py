@@ -6912,6 +6912,23 @@ class APITester:
         self.test_nearby_error_handling()
         self.test_nearby_system_initialization()
         
+        # ========== PHASE 3 WEEK 2: INVENTORY SYNC SERVICE TESTS ==========
+        print("\n" + "📦" * 15 + " PHASE 3 WEEK 2 INVENTORY SYNC SERVICE TESTING " + "📦" * 15)
+        
+        # Inventory Sync Service Tests
+        print("\n📦 Inventory Sync Service Testing...")
+        self.test_inventory_sync_health_check()
+        self.test_inventory_csv_template()
+        self.test_inventory_bulk_sync()
+        self.test_inventory_sync_status()
+        self.test_inventory_sync_history()
+        self.test_inventory_csv_upload()
+        self.test_inventory_csv_status()
+        self.test_inventory_statistics()
+        self.test_inventory_merchant_dashboard()
+        self.test_inventory_sync_authentication()
+        self.test_inventory_sync_error_handling()
+        
         # Print summary
         print("\n" + "=" * 80)
         print("📊 TEST SUMMARY")
