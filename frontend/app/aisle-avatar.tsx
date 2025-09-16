@@ -209,7 +209,7 @@ export default function AisleAvatarScreen() {
           <Text style={styles.heroTitle}>Choose your Aisle.</Text>
           <Text style={styles.heroTitle}>Define your journey.</Text>
           <Text style={styles.heroSubtitle}>
-            Your avatar is your key.{'\n'}It unlocks your path in AisleMarts.
+            Your avatar is your key.{'\n'}It unlocks your path.
           </Text>
         </Animated.View>
 
@@ -217,8 +217,10 @@ export default function AisleAvatarScreen() {
         <Animated.View 
           entering={SlideInUp.delay(600)}
           style={styles.roleSection}
+          accessibilityRole="radiogroup"
+          accessibilityLabel="Choose your marketplace role"
         >
-          <Text style={styles.rolePrompt}>Who are you in the marketplace?</Text>
+          <Text style={styles.rolePrompt}>Select your role in the marketplace</Text>
           
           <View style={styles.roleGrid}>
             {roleOptions.map((role, index) => (
@@ -226,15 +228,17 @@ export default function AisleAvatarScreen() {
                 key={role.id}
                 entering={SlideInUp.delay(800 + index * 150)}
               >
-                <TouchableOpacity
+                <Pressable
                   style={[
                     styles.roleCard,
                     selectedRole === role.id && styles.selectedRoleCard
                   ]}
                   onPress={() => handleRoleSelect(role.id)}
-                  activeOpacity={0.8}
+                  accessibilityRole="radio"
+                  accessibilityState={{ checked: selectedRole === role.id }}
+                  accessibilityLabel={`${role.title}: ${role.subtitle}`}
                 >
-                  <BlurView intensity={20} style={styles.roleCardBlur}>
+                  <BlurView intensity={selectedRole === role.id ? 24 : 18} style={styles.roleCardBlur}>
                     <LinearGradient
                       colors={role.gradient}
                       style={styles.roleIconContainer}
@@ -244,22 +248,36 @@ export default function AisleAvatarScreen() {
                       <Ionicons name={role.icon} size={32} color="white" />
                     </LinearGradient>
                     
-                    <Text style={styles.roleTitle}>{role.title}</Text>
-                    <Text style={styles.roleSubtitle}>{role.subtitle}</Text>
+                    <View style={styles.roleTextContainer}>
+                      <Text style={styles.roleTitle}>{role.title}</Text>
+                      <Text style={styles.roleSubtitle}>{role.subtitle}</Text>
+                    </View>
                     
                     {selectedRole === role.id && (
                       <Animated.View 
-                        entering={FadeIn.duration(300)}
+                        entering={FadeIn.duration(140)}
                         style={styles.selectedIndicator}
                       >
-                        <Ionicons name="checkmark-circle" size={24} color="#4facfe" />
+                        <View style={styles.selectedRing}>
+                          <Ionicons name="checkmark-circle" size={24} color="#4facfe" />
+                        </View>
                       </Animated.View>
                     )}
                   </BlurView>
-                </TouchableOpacity>
+                </Pressable>
               </Animated.View>
             ))}
           </View>
+
+          {/* Learn More Link */}
+          <Animated.View 
+            entering={SlideInUp.delay(1000)}
+            style={styles.learnMoreSection}
+          >
+            <Pressable onPress={handleLearnMore} style={styles.learnMoreButton}>
+              <Text style={styles.learnMoreText}>Learn what each role can do</Text>
+            </Pressable>
+          </Animated.View>
         </Animated.View>
 
         {/* CTA Button */}
@@ -267,7 +285,7 @@ export default function AisleAvatarScreen() {
           entering={SlideInUp.delay(1200)}
           style={styles.ctaSection}
         >
-          <TouchableOpacity
+          <Pressable
             style={[
               styles.ctaButton,
               selectedRole && styles.ctaButtonActive,
@@ -275,9 +293,10 @@ export default function AisleAvatarScreen() {
             ]}
             onPress={handleEnterMarketplace}
             disabled={!selectedRole || isLoading}
-            activeOpacity={0.8}
+            accessibilityLabel={selectedRole ? "Enter the marketplace" : "Select a role first"}
+            accessibilityHint="Complete avatar setup and continue to main app"
           >
-            <BlurView intensity={30} style={styles.ctaButtonBlur}>
+            <BlurView intensity={selectedRole ? 30 : 15} style={styles.ctaButtonBlur}>
               <LinearGradient
                 colors={selectedRole ? ['#667eea', '#764ba2'] : ['#333', '#444']}
                 style={styles.ctaButtonGradient}
@@ -287,15 +306,31 @@ export default function AisleAvatarScreen() {
                 {isLoading ? (
                   <Text style={styles.ctaButtonText}>Welcome to your Aisle...</Text>
                 ) : (
-                  <Text style={styles.ctaButtonText}>Enter the Marketplace</Text>
-                )}
-                
-                {!isLoading && (
-                  <Ionicons name="arrow-forward" size={20} color="white" />
+                  <>
+                    <Text style={styles.ctaButtonText}>
+                      {isOnline ? 'Enter the Marketplace' : 'Continue (Offline)'}
+                    </Text>
+                    {!isLoading && (
+                      <Ionicons name="arrow-forward" size={20} color="white" />
+                    )}
+                  </>
                 )}
               </LinearGradient>
             </BlurView>
-          </TouchableOpacity>
+          </Pressable>
+
+          {/* Terms & Privacy */}
+          <View style={styles.legalSection}>
+            <Text style={styles.legalText}>By continuing you agree to our </Text>
+            <Pressable onPress={handleTermsPress}>
+              <Text style={styles.legalLink}>Terms</Text>
+            </Pressable>
+            <Text style={styles.legalText}> & </Text>
+            <Pressable onPress={handlePrivacyPress}>
+              <Text style={styles.legalLink}>Privacy</Text>
+            </Pressable>
+            <Text style={styles.legalText}>.</Text>
+          </View>
         </Animated.View>
       </Animated.View>
     </SafeAreaView>
