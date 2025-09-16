@@ -248,29 +248,17 @@ COFFEE-001,Premium Coffee Beans,1500,50,LOC-WESTLANDS-001`,
           {/* Upload Progress */}
           {uploading && (
             <View style={styles.progressContainer}>
-              <ProgressBar 
-                progress={uploadProgress}
-                height={8}
-                progressColor="#007AFF"
-                backgroundColor="#f0f0f0"
-                animated={true}
-              />
+              <View style={styles.progressBar}>
+                <View style={[styles.progressFill, { width: `${uploadProgress}%` }]} />
+              </View>
               <Text style={styles.progressText}>{uploadProgress}%</Text>
             </View>
           )}
 
-          {/* Success Animation */}
+          {/* Success Message */}
           {showSuccess && (
             <View style={styles.successContainer}>
-              <SuccessCheckmark 
-                size={60}
-                color="#34C759"
-                visible={showSuccess}
-                onAnimationComplete={() => {
-                  setShowSuccess(false);
-                  setSelectedFile(null);
-                }}
-              />
+              <Text style={styles.successText}>✅ Upload Successful!</Text>
             </View>
           )}
 
