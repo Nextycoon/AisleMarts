@@ -433,7 +433,7 @@ export default function NearbyCommerceScreen() {
                 <ActivityIndicator size="large" color="#667eea" />
                 <Text style={styles.loadingText}>Finding nearby merchants...</Text>
               </View>
-            ) : merchants.length > 0 ? (
+            ) : merchants && merchants.length > 0 ? (
               <View style={styles.merchantList}>
                 {merchants.map((merchant, index) => (
                   <SlideInView key={merchant.id} delay={index * 100} style={styles.merchantItem}>
