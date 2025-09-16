@@ -2,7 +2,7 @@ import React from 'react';
 import { Stack } from 'expo-router';
 import { StatusBar } from 'expo-status-bar';
 import { SafeAreaProvider } from 'react-native-safe-area-context';
-// import { AuthProvider } from '@/src/context/AuthContext'; 
+import { AuthProvider } from '@/src/context/AuthContext'; 
 // import { OfflineProvider } from '@/src/utils/OfflineManager';
 // import { ThemeProvider } from '@/src/theme/ThemeProvider';
 // import { ToastProvider, ToastHost } from '@/src/components/ToastHost';
@@ -12,7 +12,7 @@ export default function RootLayout() {
   return (
     <SafeAreaProvider>
       <ErrorBoundary>
-        {/* <AuthProvider> */}
+        <AuthProvider>
           <Stack screenOptions={{ headerShown: false }}>
             <Stack.Screen name="index" options={{ title: 'AisleMarts' }} />
             <Stack.Screen name="aisle-avatar" options={{ title: 'Choose Avatar', headerShown: false }} />
@@ -34,7 +34,7 @@ export default function RootLayout() {
             <Stack.Screen name="nearby" options={{ title: 'Nearby', headerShown: false }} />
             <Stack.Screen name="merchant" options={{ title: 'Merchant Tools', headerShown: false }} />
           </Stack>
-        {/* </AuthProvider> */}
+        </AuthProvider>
         <StatusBar style="light" />
       </ErrorBoundary>
     </SafeAreaProvider>
