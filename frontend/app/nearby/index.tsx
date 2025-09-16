@@ -3,412 +3,214 @@ import { View, Text, StyleSheet, TouchableOpacity, ScrollView, SafeAreaView } fr
 import { Ionicons } from '@expo/vector-icons';
 import { router } from 'expo-router';
 
-const { width, height } = Dimensions.get('window');
-
-// Default Nairobi coordinates
-const NAIROBI_CENTER: [number, number] = [36.8065, -1.2685];
-
-// Location permission helper
-const requestLocationPermission = async (): Promise<{
-  granted: boolean;
-  location?: Location.LocationObject;
-  error?: string;
-}> => {
-  try {
-    const { status } = await Location.requestForegroundPermissionsAsync();
-    
-    if (status !== 'granted') {
-      return {
-        granted: false,
-        error: 'Location permission denied. Please enable location access in settings.'
-      };
-    }
-
-    const location = await Location.getCurrentPositionAsync({
-      accuracy: Location.Accuracy.Balanced
-    });
-
-    return {
-      granted: true,
-      location
-    };
-  } catch (error) {
-    console.error('Location permission error:', error);
-    return {
-      granted: false,
-      error: 'Failed to get location. Please try again.'
-    };
-  }
-};
-
-// Format distance for display
-const formatDistance = (meters: number): string => {
-  if (meters < 1000) {
-    return `${Math.round(meters)}m`;
-  } else {
-    return `${(meters / 1000).toFixed(1)}km`;
-  }
-};
-
-interface Location {
-  id: string;
-  name: string;
-  type: string;
-  geo: {
-    coordinates: [number, number];
-  };
-  address: {
-    line1: string;
-    city: string;
-  };
-  distance_m: number;
-  services: string[];
-  capabilities: {
-    rfq_counter: boolean;
-    mpesa_payment: boolean;
-  };
-}
-
-interface Offer {
-  sku: string;
-  gtin?: string;
-  qty: number;
-  price: {
-    amount: number;
-    currency: string;
-  };
-  attributes: {
-    color?: string;
-    storage?: string;
-    condition: string;
-  };
-  location_id: string;
-  distance_m: number;
-}
-
-interface NearbyItem {
-  product_id?: string;
-  title: string;
-  description: string;
-  best_pick_score: number;
-  best_pick_reasons: string[];
-  best_offer: Offer;
-  location: Location;
-}
-
-const API_BASE = Constants.expoConfig?.extra?.BACKEND_URL || process.env.EXPO_PUBLIC_BACKEND_URL;
-
-export default function NearbyScreen() {
-  const [location, setLocation] = useState<{lat: number; lng: number} | null>(null);
-  const [items, setItems] = useState<NearbyItem[]>([]);
-  const [loading, setLoading] = useState(true);
-  const [searchQuery, setSearchQuery] = useState('');
-  const [selectedMode, setSelectedMode] = useState<'retail' | 'wholesale' | 'all'>('retail');
-  const [viewMode, setViewMode] = useState<'map' | 'list'>('list'); // Default to list
-  const [selectedItem, setSelectedItem] = useState<NearbyItem | null>(null);
-
-  useEffect(() => {
-    initializeLocation();
-  }, []);
-
-  const initializeLocation = async () => {
-    try {
-      const result = await requestLocationPermission();
-      
-      if (result.granted && result.location) {
-        const { latitude, longitude } = result.location.coords;
-        setLocation({ lat: latitude, lng: longitude });
-        await searchNearby(latitude, longitude);
-      } else {
-        // Use Nairobi as fallback
-        setLocation({ lat: NAIROBI_CENTER[1], lng: NAIROBI_CENTER[0] });
-        await searchNearby(NAIROBI_CENTER[1], NAIROBI_CENTER[0]);
-        
-        if (result.error) {
-          Alert.alert(
-            'Location Access',
-            result.error + '\n\nShowing results for Nairobi instead.',
-            [{ text: 'OK' }]
-          );
-        }
-      }
-    } catch (error) {
-      console.error('Location initialization error:', error);
-      // Fallback to Nairobi
-      setLocation({ lat: NAIROBI_CENTER[1], lng: NAIROBI_CENTER[0] });
-      await searchNearby(NAIROBI_CENTER[1], NAIROBI_CENTER[0]);
-    } finally {
-      setLoading(false);
-    }
-  };
-
-  const searchNearby = async (lat: number, lng: number) => {
-    try {
-      const params = new URLSearchParams({
-        lat: lat.toString(),
-        lng: lng.toString(),
-        radius_m: '5000',
-        mode: selectedMode,
-        limit: '20'
-      });
-
-      if (searchQuery.trim()) {
-        params.append('q', searchQuery.trim());
-      }
-
-      const response = await fetch(`${API_BASE}/api/v1/nearby/search?${params}`);
-      
-      if (!response.ok) {
-        throw new Error(`Search failed: ${response.statusText}`);
-      }
-
-      const data = await response.json();
-      setItems(data.items || []);
-    } catch (error) {
-      console.error('Nearby search error:', error);
-      Alert.alert('Search Error', 'Failed to load nearby items. Please try again.');
-      setItems([]);
-    }
-  };
-
-  const handleSearch = () => {
-    if (location) {
-      setLoading(true);
-      searchNearby(location.lat, location.lng).finally(() => setLoading(false));
-    }
-  };
-
-  const handleModeChange = (mode: 'retail' | 'wholesale' | 'all') => {
-    setSelectedMode(mode);
-    if (location) {
-      setLoading(true);
-      searchNearby(location.lat, location.lng).finally(() => setLoading(false));
-    }
-  };
-
-  const formatPrice = (amount: number, currency: string = 'KES') => {
-    if (currency === 'KES') {
-      return `KSh ${(amount / 100).toLocaleString()}`;
-    }
-    return `${currency} ${(amount / 100).toFixed(2)}`;
-  };
-
-  const renderBestPickBadge = (score: number, reasons: string[]) => (
-    <View style={styles.bestPickBadge}>
-      <Ionicons name="trophy" size={14} color="#FFD700" />
-      <Text style={styles.bestPickScore}>{(score * 100).toFixed(0)}%</Text>
-      <Text style={styles.bestPickReason}>{reasons[0]}</Text>
-    </View>
-  );
-
-  const renderMapView = () => (
-    <View style={styles.mapContainer}>
-      {/* Map placeholder for web/Expo Go compatibility */}
-      <View style={styles.mapPlaceholder}>
-        <Ionicons name="map" size={64} color="#ccc" />
-        <Text style={styles.mapPlaceholderText}>Map View</Text>
-        <Text style={styles.mapPlaceholderSubtext}>
-          Location: {location ? `${location.lat.toFixed(4)}, ${location.lng.toFixed(4)}` : 'Unknown'}
-        </Text>
-        <Text style={styles.mapPlaceholderSubtext}>
-          Found {items.length} nearby items
-        </Text>
-        
-        {/* Show selected item overlay if any */}
-        {selectedItem && (
-          <View style={styles.selectedItemOverlay}>
-            <TouchableOpacity
-              style={styles.closeButton}
-              onPress={() => setSelectedItem(null)}
-            >
-              <Ionicons name="close" size={20} color="#666" />
-            </TouchableOpacity>
-            
-            <Text style={styles.selectedItemTitle}>{selectedItem.title}</Text>
-            <Text style={styles.selectedItemLocation}>{selectedItem.location.name}</Text>
-            <Text style={styles.selectedItemPrice}>
-              {formatPrice(selectedItem.best_offer.price.amount)}
-            </Text>
-            
-            {renderBestPickBadge(selectedItem.best_pick_score, selectedItem.best_pick_reasons)}
-            
-            <TouchableOpacity
-              style={styles.reserveButton}
-              onPress={() => router.push(`/nearby/reserve/${selectedItem.best_offer.sku}`)}
-            >
-              <Text style={styles.reserveButtonText}>Reserve & Pickup</Text>
-            </TouchableOpacity>
-          </View>
-        )}
-      </View>
-    </View>
-  );
-
-  const renderListItem = ({ item }: { item: NearbyItem }) => (
-    <TouchableOpacity
-      style={styles.listItem}
-      onPress={() => setSelectedItem(item)}
-    >
-      <View style={styles.itemHeader}>
-        <Text style={styles.itemTitle}>{item.title}</Text>
-        {renderBestPickBadge(item.best_pick_score, item.best_pick_reasons)}
-      </View>
-      
-      <Text style={styles.itemLocation}>{item.location.name}</Text>
-      <Text style={styles.itemDescription}>{item.description}</Text>
-      
-      <View style={styles.itemFooter}>
-        <Text style={styles.itemPrice}>
-          {formatPrice(item.best_offer.price.amount)}
-        </Text>
-        <Text style={styles.itemDistance}>
-          {formatDistance(item.best_offer.distance_m)}
-        </Text>
-        <Text style={styles.itemStock}>Qty: {item.best_offer.qty}</Text>
-      </View>
-
-      <View style={styles.itemCapabilities}>
-        {item.location.capabilities.mpesa_payment && (
-          <View style={styles.capabilityTag}>
-            <Text style={styles.capabilityText}>M-Pesa</Text>
-          </View>
-        )}
-        {item.location.services.includes('pickup') && (
-          <View style={styles.capabilityTag}>
-            <Text style={styles.capabilityText}>Pickup</Text>
-          </View>
-        )}
-        {item.location.capabilities.rfq_counter && (
-          <View style={styles.capabilityTag}>
-            <Text style={styles.capabilityText}>B2B</Text>
-          </View>
-        )}
-      </View>
-    </TouchableOpacity>
-  );
-
-  const renderListView = () => (
-    <FlatList
-      data={items}
-      renderItem={renderListItem}
-      keyExtractor={(item, index) => `${item.best_offer.sku}-${index}`}
-      style={styles.listContainer}
-      contentContainerStyle={styles.listContent}
-      showsVerticalScrollIndicator={false}
-      ListEmptyComponent={
-        <View style={styles.emptyContainer}>
-          <Ionicons name="location-outline" size={64} color="#ccc" />
-          <Text style={styles.emptyText}>
-            {loading ? 'Searching nearby products...' : 'No products found nearby'}
-          </Text>
-          <Text style={styles.emptySubtext}>
-            Try adjusting your search or filters
-          </Text>
-        </View>
-      }
-    />
-  );
-
-  if (loading) {
-    return (
-      <SafeAreaView style={styles.container}>
-        <StatusBar style="dark" />
-        <View style={styles.loadingContainer}>
-          <ActivityIndicator size="large" color="#007AFF" />
-          <Text style={styles.loadingText}>Finding nearby products...</Text>
-        </View>
-      </SafeAreaView>
-    );
-  }
+export default function NearbyCommerceScreen() {
+  const [activeTab, setActiveTab] = useState('discover');
 
   return (
     <SafeAreaView style={styles.container}>
-      <StatusBar style="dark" />
-      
       {/* Header */}
       <View style={styles.header}>
-        <TouchableOpacity onPress={() => router.back()}>
-          <Ionicons name="arrow-back" size={24} color="#333" />
+        <TouchableOpacity onPress={() => router.back()} style={styles.backButton}>
+          <Ionicons name="arrow-back" size={24} color="white" />
         </TouchableOpacity>
-        
-        <Text style={styles.headerTitle}>Nearby Products</Text>
-        
-        <TouchableOpacity onPress={() => router.push('/nearby/scan')}>
-          <Ionicons name="qr-code-outline" size={24} color="#333" />
+        <Text style={styles.headerTitle}>Nearby Commerce</Text>
+        <TouchableOpacity style={styles.scanButton}>
+          <Ionicons name="scan" size={24} color="white" />
         </TouchableOpacity>
       </View>
 
-      {/* Search Bar */}
-      <View style={styles.searchContainer}>
-        <View style={styles.searchInputContainer}>
-          <Ionicons name="search" size={16} color="#666" />
-          <TextInput
-            style={styles.searchInput}
-            placeholder="Search products..."
-            value={searchQuery}
-            onChangeText={setSearchQuery}
-            onSubmitEditing={handleSearch}
-            returnKeyType="search"
-          />
-        </View>
-        <TouchableOpacity style={styles.searchButton} onPress={handleSearch}>
-          <Ionicons name="search" size={18} color="white" />
+      {/* Tab Navigation */}
+      <View style={styles.tabContainer}>
+        <TouchableOpacity
+          style={[styles.tab, activeTab === 'discover' && styles.activeTab]}
+          onPress={() => setActiveTab('discover')}
+        >
+          <Text style={[styles.tabText, activeTab === 'discover' && styles.activeTabText]}>
+            Discover
+          </Text>
+        </TouchableOpacity>
+        <TouchableOpacity
+          style={[styles.tab, activeTab === 'pickup' && styles.activeTab]}
+          onPress={() => setActiveTab('pickup')}
+        >
+          <Text style={[styles.tabText, activeTab === 'pickup' && styles.activeTabText]}>
+            Pickup Windows
+          </Text>
+        </TouchableOpacity>
+        <TouchableOpacity
+          style={[styles.tab, activeTab === 'reservations' && styles.activeTab]}
+          onPress={() => setActiveTab('reservations')}
+        >
+          <Text style={[styles.tabText, activeTab === 'reservations' && styles.activeTabText]}>
+            My Reservations
+          </Text>
         </TouchableOpacity>
       </View>
 
-      {/* Mode Filter */}
-      <View style={styles.modeContainer}>
-        {(['retail', 'wholesale', 'all'] as const).map((mode) => (
-          <TouchableOpacity
-            key={mode}
-            style={[
-              styles.modeButton,
-              selectedMode === mode && styles.modeButtonActive
-            ]}
-            onPress={() => handleModeChange(mode)}
-          >
-            <Text style={[
-              styles.modeButtonText,
-              selectedMode === mode && styles.modeButtonTextActive
-            ]}>
-              {mode.charAt(0).toUpperCase() + mode.slice(1)}
+      <ScrollView style={styles.content}>
+        {activeTab === 'discover' && (
+          <View>
+            <Text style={styles.sectionTitle}>Phase 3: Nearby/Onsite Commerce ✅</Text>
+            <Text style={styles.description}>
+              Discover nearby merchants, reserve items for pickup, and enjoy seamless online-to-offline commerce.
             </Text>
-          </TouchableOpacity>
-        ))}
-      </View>
 
-      {/* View Toggle */}
-      <View style={styles.viewToggle}>
-        <TouchableOpacity
-          style={[styles.toggleButton, viewMode === 'list' && styles.toggleButtonActive]}
-          onPress={() => setViewMode('list')}
-        >
-          <Ionicons name="list" size={16} color={viewMode === 'list' ? 'white' : '#666'} />
-          <Text style={[styles.toggleText, viewMode === 'list' && styles.toggleTextActive]}>
-            List
-          </Text>
-        </TouchableOpacity>
-        
-        <TouchableOpacity
-          style={[styles.toggleButton, viewMode === 'map' && styles.toggleButtonActive]}
-          onPress={() => setViewMode('map')}
-        >
-          <Ionicons name="map" size={16} color={viewMode === 'map' ? 'white' : '#666'} />
-          <Text style={[styles.toggleText, viewMode === 'map' && styles.toggleTextActive]}>
-            Map
-          </Text>
-        </TouchableOpacity>
-      </View>
+            {/* Location Card */}
+            <View style={styles.locationCard}>
+              <View style={styles.locationHeader}>
+                <Ionicons name="location" size={24} color="#667eea" />
+                <Text style={styles.locationTitle}>Current Location</Text>
+              </View>
+              <Text style={styles.locationText}>📍 Westlands, Nairobi, Kenya</Text>
+              <Text style={styles.locationSubtext}>5 nearby merchants • 150+ products available</Text>
+            </View>
 
-      {/* Content */}
-      {viewMode === 'map' ? renderMapView() : renderListView()}
+            {/* Nearby Merchants */}
+            <Text style={styles.subsectionTitle}>Nearby Merchants</Text>
+            
+            <View style={styles.merchantList}>
+              <View style={styles.merchantItem}>
+                <View style={styles.merchantHeader}>
+                  <Text style={styles.merchantName}>TechHub Westlands</Text>
+                  <View style={styles.distanceBadge}>
+                    <Text style={styles.distanceText}>0.5 km</Text>
+                  </View>
+                </View>
+                <Text style={styles.merchantCategory}>Electronics & Technology</Text>
+                <Text style={styles.merchantDescription}>
+                  Smartphones, laptops, accessories • Available for immediate pickup
+                </Text>
+                <View style={styles.merchantActions}>
+                  <TouchableOpacity style={styles.reserveButton}>
+                    <Ionicons name="bookmark" size={16} color="white" />
+                    <Text style={styles.reserveButtonText}>Reserve Items</Text>
+                  </TouchableOpacity>
+                  <TouchableOpacity style={styles.viewButton}>
+                    <Text style={styles.viewButtonText}>View Products</Text>
+                  </TouchableOpacity>
+                </View>
+              </View>
 
-      {/* Results Count */}
-      <View style={styles.resultsCount}>
-        <Text style={styles.resultsText}>
-          {items.length} product{items.length !== 1 ? 's' : ''} found
-        </Text>
-      </View>
+              <View style={styles.merchantItem}>
+                <View style={styles.merchantHeader}>
+                  <Text style={styles.merchantName}>SuperMart Westlands</Text>
+                  <View style={styles.distanceBadge}>
+                    <Text style={styles.distanceText}>1.2 km</Text>
+                  </View>
+                </View>
+                <Text style={styles.merchantCategory}>Grocery & Household</Text>
+                <Text style={styles.merchantDescription}>
+                  Fresh produce, household items • Same-day pickup available
+                </Text>
+                <View style={styles.merchantActions}>
+                  <TouchableOpacity style={styles.reserveButton}>
+                    <Ionicons name="bookmark" size={16} color="white" />
+                    <Text style={styles.reserveButtonText}>Reserve Items</Text>
+                  </TouchableOpacity>
+                  <TouchableOpacity style={styles.viewButton}>
+                    <Text style={styles.viewButtonText}>View Products</Text>
+                  </TouchableOpacity>
+                </View>
+              </View>
+            </View>
+          </View>
+        )}
+
+        {activeTab === 'pickup' && (
+          <View>
+            <Text style={styles.sectionTitle}>Available Pickup Windows</Text>
+            
+            <View style={styles.windowsList}>
+              <View style={styles.windowItem}>
+                <View style={styles.windowHeader}>
+                  <Text style={styles.windowTime}>Today, 2:00 PM - 3:00 PM</Text>
+                  <View style={styles.availabilityBadge}>
+                    <Text style={styles.availabilityText}>5 spots left</Text>
+                  </View>
+                </View>
+                <Text style={styles.windowLocation}>TechHub Westlands</Text>
+                <TouchableOpacity style={styles.bookButton}>
+                  <Text style={styles.bookButtonText}>Book Window</Text>
+                </TouchableOpacity>
+              </View>
+
+              <View style={styles.windowItem}>
+                <View style={styles.windowHeader}>
+                  <Text style={styles.windowTime}>Today, 5:00 PM - 6:00 PM</Text>
+                  <View style={styles.availabilityBadge}>
+                    <Text style={styles.availabilityText}>3 spots left</Text>
+                  </View>
+                </View>
+                <Text style={styles.windowLocation}>SuperMart Westlands</Text>
+                <TouchableOpacity style={styles.bookButton}>
+                  <Text style={styles.bookButtonText}>Book Window</Text>
+                </TouchableOpacity>
+              </View>
+
+              <View style={styles.windowItem}>
+                <View style={styles.windowHeader}>
+                  <Text style={styles.windowTime}>Tomorrow, 10:00 AM - 11:00 AM</Text>
+                  <View style={[styles.availabilityBadge, styles.availabilityBadgeFull]}>
+                    <Text style={styles.availabilityText}>Fully Booked</Text>
+                  </View>
+                </View>
+                <Text style={styles.windowLocation}>TechHub Westlands</Text>
+                <TouchableOpacity style={[styles.bookButton, styles.bookButtonDisabled]} disabled>
+                  <Text style={styles.bookButtonTextDisabled}>Unavailable</Text>
+                </TouchableOpacity>
+              </View>
+            </View>
+          </View>
+        )}
+
+        {activeTab === 'reservations' && (
+          <View>
+            <Text style={styles.sectionTitle}>My Reservations</Text>
+            
+            <View style={styles.reservationsList}>
+              <View style={styles.reservationItem}>
+                <View style={styles.reservationHeader}>
+                  <Text style={styles.reservationId}>Reservation #RES001</Text>
+                  <View style={styles.statusBadge}>
+                    <Text style={styles.statusText}>Confirmed</Text>
+                  </View>
+                </View>
+                <Text style={styles.reservationMerchant}>TechHub Westlands</Text>
+                <Text style={styles.reservationTime}>📅 Today, 2:00 PM - 3:00 PM</Text>
+                <Text style={styles.reservationItems}>2 items reserved • Total: KES 25,000</Text>
+                <View style={styles.reservationActions}>
+                  <TouchableOpacity style={styles.detailsButton}>
+                    <Text style={styles.detailsButtonText}>View Details</Text>
+                  </TouchableOpacity>
+                  <TouchableOpacity style={styles.modifyButton}>
+                    <Text style={styles.modifyButtonText}>Modify</Text>
+                  </TouchableOpacity>
+                </View>
+              </View>
+
+              <View style={styles.reservationItem}>
+                <View style={styles.reservationHeader}>
+                  <Text style={styles.reservationId}>Reservation #RES002</Text>
+                  <View style={[styles.statusBadge, styles.statusBadgePartial]}>
+                    <Text style={styles.statusText}>Partial Pickup</Text>
+                  </View>
+                </View>
+                <Text style={styles.reservationMerchant}>SuperMart Westlands</Text>
+                <Text style={styles.reservationTime}>📅 Yesterday, 5:00 PM - 6:00 PM</Text>
+                <Text style={styles.reservationItems}>1 of 3 items picked up • Remaining: KES 12,500</Text>
+                <View style={styles.reservationActions}>
+                  <TouchableOpacity style={styles.detailsButton}>
+                    <Text style={styles.detailsButtonText}>Complete Pickup</Text>
+                  </TouchableOpacity>
+                  <TouchableOpacity style={styles.modifyButton}>
+                    <Text style={styles.modifyButtonText}>Extend Hold</Text>
+                  </TouchableOpacity>
+                </View>
+              </View>
+            </View>
+          </View>
+        )}
+      </ScrollView>
     </SafeAreaView>
   );
 }
