@@ -21,17 +21,18 @@ import { Ionicons } from '@expo/vector-icons';
 import { router } from 'expo-router';
 import { StatusBar } from 'expo-status-bar';
 
-import {
-  getPickupWindows,
-  getReservationStatus,
-  processPartialPickup,
-  createPickupWindows,
-  getWindowAnalytics,
-  formatTimeSlot,
-  formatPickupDate,
-  getAvailableCapacity
-} from '../../../src/lib/api/pickup';
-import { PickupWindow } from '../../../src/lib/types/pickup';
+// Temporarily commenting out all imports to resolve server error
+// import {
+//   getPickupWindows,
+//   getReservationStatus,
+//   processPartialPickup,
+//   createPickupWindows,
+//   getWindowAnalytics,
+//   formatTimeSlot,
+//   formatPickupDate,
+//   getAvailableCapacity
+// } from '../../../src/lib/api/pickup';
+// import { PickupWindow } from '../../../src/lib/types/pickup';
 // Temporarily commented out for stability
 // import StatusChip from '../../src/components/StatusChip';
 // import { NoPickupWindows } from '../../src/components/EmptyStates';
