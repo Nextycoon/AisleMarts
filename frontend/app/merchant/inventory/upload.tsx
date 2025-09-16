@@ -19,9 +19,9 @@ import { Ionicons } from '@expo/vector-icons';
 import { useRouter } from 'expo-router';
 import { StatusBar } from 'expo-status-bar';
 import * as DocumentPicker from 'expo-document-picker';
-import { NoUploadHistory } from '../../src/components/EmptyStates';
-import { ProgressBar, SuccessCheckmark } from '../../src/components/Animations';
-import useHaptics from '../../src/hooks/useHaptics';
+// import { NoUploadHistory } from '../../src/components/EmptyStates';
+// import { ProgressBar, SuccessCheckmark } from '../../src/components/Animations';
+// import useHaptics from '../../src/hooks/useHaptics';
 
 export default function MerchantInventoryUploadScreen() {
   const router = useRouter();
