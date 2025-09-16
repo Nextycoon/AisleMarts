@@ -8,7 +8,9 @@ import {
   Dimensions,
   StatusBar,
   Platform,
-  Alert
+  Alert,
+  Pressable,
+  Linking
 } from 'react-native';
 import { LinearGradient } from 'expo-linear-gradient';
 import { BlurView } from 'expo-blur';
@@ -25,7 +27,9 @@ import Animated, {
   runOnJS
 } from 'react-native-reanimated';
 import { useAuth } from '@/src/context/AuthContext';
+import { useHaptics } from '@/src/hooks/useHaptics';
 import AsyncStorage from '@react-native-async-storage/async-storage';
+import NetInfo from '@react-native-community/netinfo';
 
 const { width, height } = Dimensions.get('window');
 
