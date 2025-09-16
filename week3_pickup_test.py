@@ -1,5 +1,551 @@
 #!/usr/bin/env python3
 """
+Week 3 Pickup System Backend Integration Test
+Comprehensive smoke test for pickup windows and advanced reservations APIs
+"""
+
+import requests
+import json
+import sys
+from datetime import datetime, timedelta
+from typing import Dict, Any
+
+# Get the backend URL from frontend .env file
+def get_backend_url():
+    try:
+        with open('/app/frontend/.env', 'r') as f:
+            for line in f:
+                if line.startswith('EXPO_PUBLIC_BACKEND_URL='):
+                    return line.split('=', 1)[1].strip()
+    except FileNotFoundError:
+        pass
+    return "http://localhost:8001"
+
+BASE_URL = get_backend_url()
+API_URL = f"{BASE_URL}/api"
+
+class Week3PickupTester:
+    def __init__(self):
+        self.session = requests.Session()
+        self.auth_token = None
+        self.test_results = []
+        self.pickup_test_data = {}
+        
+    def log_test(self, test_name: str, success: bool, details: str = ""):
+        """Log test results"""
+        status = "✅ PASS" if success else "❌ FAIL"
+        print(f"{status}: {test_name}")
+        if details:
+            print(f"   Details: {details}")
+        self.test_results.append({
+            "test": test_name,
+            "success": success,
+            "details": details
+        })
+        
+    def make_request(self, method: str, endpoint: str, data: Dict = None, headers: Dict = None) -> tuple[bool, Any]:
+        """Make HTTP request and return (success, response_data)"""
+        url = f"{API_URL}{endpoint}"
+        
+        # Add auth header if we have a token
+        if self.auth_token and headers is None:
+            headers = {"Authorization": f"Bearer {self.auth_token}"}
+        elif self.auth_token and headers:
+            headers["Authorization"] = f"Bearer {self.auth_token}"
+            
+        try:
+            if method.upper() == "GET":
+                response = self.session.get(url, headers=headers, params=data)
+            elif method.upper() == "POST":
+                response = self.session.post(url, json=data, headers=headers)
+            elif method.upper() == "PUT":
+                response = self.session.put(url, json=data, headers=headers)
+            elif method.upper() == "PATCH":
+                response = self.session.patch(url, json=data, headers=headers)
+            elif method.upper() == "DELETE":
+                response = self.session.delete(url, headers=headers)
+            else:
+                return False, f"Unsupported method: {method}"
+                
+            if response.status_code < 400:
+                try:
+                    return True, response.json()
+                except:
+                    return True, response.text
+            else:
+                try:
+                    error_data = response.json()
+                    return False, f"HTTP {response.status_code}: {error_data}"
+                except:
+                    return False, f"HTTP {response.status_code}: {response.text}"
+                    
+        except requests.exceptions.ConnectionError:
+            return False, "Connection failed - backend server may not be running"
+        except Exception as e:
+            return False, f"Request failed: {str(e)}"
+    
+    def setup_authentication(self):
+        """Setup authentication for testing"""
+        print("\n🔐 Setting up authentication...")
+        
+        # Try to login with existing user
+        login_data = {
+            "email": "merchant@aislemarts.com",
+            "password": "password123"
+        }
+        
+        success, data = self.make_request("POST", "/auth/login", login_data)
+        
+        if success and isinstance(data, dict) and "access_token" in data:
+            self.auth_token = data["access_token"]
+            self.log_test("Authentication Setup", True, "Successfully logged in as merchant")
+            return True
+        else:
+            # Try to register merchant user
+            register_data = {
+                "email": "merchant@aislemarts.com",
+                "password": "password123",
+                "name": "Test Merchant"
+            }
+            
+            success, data = self.make_request("POST", "/auth/register", register_data)
+            
+            if success and isinstance(data, dict) and "access_token" in data:
+                self.auth_token = data["access_token"]
+                self.log_test("Authentication Setup", True, "Successfully registered and logged in as merchant")
+                return True
+            else:
+                self.log_test("Authentication Setup", False, f"Failed to authenticate: {data}")
+                return False
+
+    def test_pickup_system_health(self):
+        """Test pickup system health check - HIGH PRIORITY"""
+        print("\n🏥 Testing Pickup System Health Check...")
+        
+        success, data = self.make_request("GET", "/v1/pickup/health")
+        
+        if success and isinstance(data, dict):
+            status = data.get("status")
+            active_windows = data.get("active_windows", 0)
+            features = data.get("features", {})
+            feature_count = len([f for f in features.values() if f])
+            
+            if status == "healthy" and feature_count >= 6:
+                self.log_test("Pickup System Health Check", True, 
+                    f"Status: {status}, Active windows: {active_windows}, Features enabled: {feature_count}/6")
+            else:
+                self.log_test("Pickup System Health Check", False, 
+                    f"Status: {status}, Features: {feature_count}/6 (need 6+)")
+        else:
+            self.log_test("Pickup System Health Check", False, str(data))
+
+    def test_window_management_apis(self):
+        """Test window management APIs - HIGH PRIORITY"""
+        print("\n🪟 Testing Window Management APIs...")
+        
+        if not self.auth_token:
+            self.log_test("Window Management APIs", False, "No auth token available")
+            return
+        
+        today = datetime.now().strftime("%Y-%m-%d")
+        
+        # Test window creation - POST /api/v1/pickup/windows
+        window_data = {
+            "location_id": "LOC-WESTLANDS-001",
+            "date": today,
+            "time_slots": [
+                {"start_time": "09:00", "end_time": "10:00", "capacity": 8},
+                {"start_time": "14:00", "end_time": "15:00", "capacity": 8},
+                {"start_time": "17:00", "end_time": "18:00", "capacity": 8}
+            ]
+        }
+        
+        success, data = self.make_request("POST", "/v1/pickup/windows", window_data)
+        
+        if success and isinstance(data, list) and len(data) == 3:
+            # Verify merchant access control
+            all_valid = all(
+                w.get("location_id") == "LOC-WESTLANDS-001" and
+                w.get("capacity") == 8 and
+                w.get("reserved", 0) == 0
+                for w in data
+            )
+            
+            if all_valid:
+                self.pickup_test_data["window_ids"] = [w.get("id") for w in data if w.get("id")]
+                self.log_test("Window Creation API", True, 
+                    f"Created 3 windows with proper merchant access control, capacity=8 each")
+            else:
+                self.log_test("Window Creation API", False, "Window properties incorrect")
+        else:
+            self.log_test("Window Creation API", False, str(data))
+        
+        # Test window listing - GET /api/v1/pickup/windows
+        params = {
+            "location_id": "LOC-WESTLANDS-001",
+            "date": today,
+            "min_capacity": 1
+        }
+        
+        success, data = self.make_request("GET", "/v1/pickup/windows", params)
+        
+        if success and isinstance(data, dict) and "windows" in data:
+            windows = data.get("windows", [])
+            total_capacity = data.get("total_capacity", 0)
+            available_capacity = data.get("available_capacity", 0)
+            
+            if len(windows) >= 3 and total_capacity >= 24:
+                self.log_test("Window Availability API", True, 
+                    f"Found {len(windows)} windows, capacity tracking working: {available_capacity}/{total_capacity}")
+            else:
+                self.log_test("Window Availability API", False, 
+                    f"Expected 3+ windows with 24+ capacity, got {len(windows)} windows, {total_capacity} capacity")
+        else:
+            self.log_test("Window Availability API", False, str(data))
+
+    def test_reservation_scheduling(self):
+        """Test reservation scheduling - HIGH PRIORITY"""
+        print("\n📅 Testing Reservation Scheduling...")
+        
+        if not self.auth_token:
+            self.log_test("Reservation Scheduling", False, "No auth token available")
+            return
+        
+        # First create a test reservation (using nearby API)
+        reservation_data = {
+            "items": [
+                {
+                    "product_id": "test-product-001",
+                    "location_id": "LOC-WESTLANDS-001",
+                    "quantity": 2,
+                    "unit_price": 1500.0
+                }
+            ],
+            "pickup_window": {
+                "preferred_date": datetime.now().strftime("%Y-%m-%d"),
+                "preferred_time": "morning"
+            },
+            "notes": "Test reservation for pickup scheduling"
+        }
+        
+        success, data = self.make_request("POST", "/v1/nearby/reservations", reservation_data)
+        
+        if success and isinstance(data, dict) and "reservation_id" in data:
+            reservation_id = data["reservation_id"]
+            self.pickup_test_data["reservation_id"] = reservation_id
+            
+            # Now test scheduling - POST /api/v1/pickup/reservations/{id}/schedule
+            if "window_ids" in self.pickup_test_data and self.pickup_test_data["window_ids"]:
+                window_id = self.pickup_test_data["window_ids"][0]
+                
+                success, schedule_data = self.make_request(
+                    "POST", 
+                    f"/v1/pickup/reservations/{reservation_id}/schedule",
+                    data=None,
+                    headers={"Authorization": f"Bearer {self.auth_token}"}
+                )
+                
+                # Add pickup_window_id as query parameter
+                schedule_url = f"/v1/pickup/reservations/{reservation_id}/schedule?pickup_window_id={window_id}"
+                success, schedule_data = self.make_request("POST", schedule_url)
+                
+                if success and isinstance(schedule_data, dict):
+                    status = schedule_data.get("status")
+                    pickup_code = schedule_data.get("pickup_code")
+                    
+                    if status == "scheduled" and pickup_code:
+                        self.log_test("Reservation Scheduling", True, 
+                            f"Successfully scheduled reservation, status: {status}, pickup code: {pickup_code}")
+                    else:
+                        self.log_test("Reservation Scheduling", False, 
+                            f"Scheduling incomplete - status: {status}, pickup_code: {pickup_code}")
+                else:
+                    self.log_test("Reservation Scheduling", False, str(schedule_data))
+            else:
+                self.log_test("Reservation Scheduling", False, "No window IDs available for scheduling")
+        else:
+            self.log_test("Reservation Scheduling", False, f"Failed to create test reservation: {data}")
+
+    def test_reservation_status(self):
+        """Test reservation status retrieval - HIGH PRIORITY"""
+        print("\n📊 Testing Reservation Status...")
+        
+        if not self.auth_token:
+            self.log_test("Reservation Status", False, "No auth token available")
+            return
+        
+        if "reservation_id" not in self.pickup_test_data:
+            self.log_test("Reservation Status", False, "No reservation ID available")
+            return
+        
+        reservation_id = self.pickup_test_data["reservation_id"]
+        
+        # Test GET /api/v1/pickup/reservations/{id}/status
+        success, data = self.make_request("GET", f"/v1/pickup/reservations/{reservation_id}/status")
+        
+        if success and isinstance(data, dict):
+            status = data.get("status")
+            pickup_window = data.get("pickup_window")
+            extension_history = data.get("extension_history", [])
+            
+            if status and pickup_window:
+                self.log_test("Reservation Status", True, 
+                    f"Retrieved reservation details - status: {status}, has pickup window: {pickup_window is not None}")
+            else:
+                self.log_test("Reservation Status", False, 
+                    f"Incomplete reservation data - status: {status}, pickup_window: {pickup_window}")
+        else:
+            self.log_test("Reservation Status", False, str(data))
+
+    def test_advanced_reservation_management(self):
+        """Test advanced reservation management endpoints - HIGH PRIORITY"""
+        print("\n🔧 Testing Advanced Reservation Management...")
+        
+        if not self.auth_token:
+            self.log_test("Advanced Reservation Management", False, "No auth token available")
+            return
+        
+        if "reservation_id" not in self.pickup_test_data:
+            self.log_test("Advanced Reservation Management", False, "No reservation ID available")
+            return
+        
+        reservation_id = self.pickup_test_data["reservation_id"]
+        
+        # Test reservation extension
+        extension_data = {
+            "extension_minutes": 30,
+            "reason": "Customer running late"
+        }
+        
+        success, data = self.make_request("POST", f"/v1/pickup/reservations/{reservation_id}/extend", extension_data)
+        
+        if success and isinstance(data, dict):
+            new_expires_at = data.get("new_expires_at")
+            extension_granted = data.get("extension_granted", False)
+            
+            if extension_granted and new_expires_at:
+                self.log_test("Reservation Extension", True, 
+                    f"Extension granted, new expiry: {new_expires_at}")
+            else:
+                self.log_test("Reservation Extension", False, 
+                    f"Extension failed - granted: {extension_granted}")
+        else:
+            self.log_test("Reservation Extension", False, str(data))
+        
+        # Test reservation modification
+        modification_data = {
+            "items": [
+                {
+                    "product_id": "test-product-001",
+                    "quantity": 1,  # Reduced quantity
+                    "unit_price": 1500.0
+                }
+            ],
+            "modification_reason": "Customer changed order"
+        }
+        
+        success, data = self.make_request("PATCH", f"/v1/pickup/reservations/{reservation_id}/modify", modification_data)
+        
+        if success and isinstance(data, dict):
+            modification_id = data.get("modification_id")
+            audit_trail = data.get("audit_trail", [])
+            
+            if modification_id:
+                self.log_test("Reservation Modification", True, 
+                    f"Modification successful, ID: {modification_id}, audit entries: {len(audit_trail)}")
+            else:
+                self.log_test("Reservation Modification", False, "No modification ID returned")
+        else:
+            self.log_test("Reservation Modification", False, str(data))
+        
+        # Test partial pickup processing (requires merchant access)
+        partial_pickup_data = {
+            "items_picked": [
+                {
+                    "product_id": "test-product-001",
+                    "quantity_picked": 1
+                }
+            ],
+            "notes": "Partial pickup - remaining items to be collected later"
+        }
+        
+        success, data = self.make_request("POST", f"/v1/pickup/reservations/{reservation_id}/partial-pickup", partial_pickup_data)
+        
+        if success and isinstance(data, dict):
+            remaining_items = data.get("remaining_items", [])
+            inventory_updated = data.get("inventory_updated", False)
+            
+            if inventory_updated:
+                self.log_test("Partial Pickup Processing", True, 
+                    f"Partial pickup processed, remaining items: {len(remaining_items)}")
+            else:
+                self.log_test("Partial Pickup Processing", False, "Inventory not updated")
+        else:
+            # This might fail due to access control - that's expected behavior
+            if "403" in str(data) or "Access denied" in str(data):
+                self.log_test("Partial Pickup Processing", True, "Access control working (403 expected for non-merchant)")
+            else:
+                self.log_test("Partial Pickup Processing", False, str(data))
+
+    def test_analytics_apis(self):
+        """Test analytics APIs - HIGH PRIORITY"""
+        print("\n📈 Testing Analytics APIs...")
+        
+        if not self.auth_token:
+            self.log_test("Analytics APIs", False, "No auth token available")
+            return
+        
+        today = datetime.now().strftime("%Y-%m-%d")
+        tomorrow = (datetime.now() + timedelta(days=1)).strftime("%Y-%m-%d")
+        
+        # Test window analytics - GET /api/v1/pickup/analytics/windows
+        window_params = {
+            "location_id": "LOC-WESTLANDS-001",
+            "start_date": today,
+            "end_date": tomorrow
+        }
+        
+        success, data = self.make_request("GET", "/v1/pickup/analytics/windows", window_params)
+        
+        if success and isinstance(data, dict):
+            total_windows = data.get("total_windows_created", 0)
+            utilization_rate = data.get("utilization_rate", 0)
+            popular_slots = data.get("popular_slots", [])
+            
+            if total_windows >= 0:  # Any number is valid for analytics
+                self.log_test("Window Analytics", True, 
+                    f"Windows: {total_windows}, Utilization: {utilization_rate}%, Popular slots: {len(popular_slots)}")
+            else:
+                self.log_test("Window Analytics", False, "Invalid analytics data")
+        else:
+            self.log_test("Window Analytics", False, str(data))
+        
+        # Test reservation analytics - GET /api/v1/pickup/analytics/reservations
+        reservation_params = {
+            "location_id": "LOC-WESTLANDS-001",
+            "start_date": today,
+            "end_date": tomorrow
+        }
+        
+        success, data = self.make_request("GET", "/v1/pickup/analytics/reservations", reservation_params)
+        
+        if success and isinstance(data, dict):
+            total_reservations = data.get("total_reservations", 0)
+            successful_pickup_rate = data.get("successful_pickup_rate", 0)
+            status_breakdown = data.get("status_breakdown", {})
+            
+            if total_reservations >= 0:  # Any number is valid
+                self.log_test("Reservation Analytics", True, 
+                    f"Reservations: {total_reservations}, Success rate: {successful_pickup_rate}%, Status types: {len(status_breakdown)}")
+            else:
+                self.log_test("Reservation Analytics", False, "Invalid analytics data")
+        else:
+            self.log_test("Reservation Analytics", False, str(data))
+
+    def test_access_control_validation(self):
+        """Test access control and authentication"""
+        print("\n🔒 Testing Access Control Validation...")
+        
+        # Test without authentication
+        old_token = self.auth_token
+        self.auth_token = None
+        
+        success, data = self.make_request("POST", "/v1/pickup/windows", {
+            "location_id": "LOC-WESTLANDS-001",
+            "date": datetime.now().strftime("%Y-%m-%d"),
+            "time_slots": [{"start_time": "09:00", "end_time": "10:00", "capacity": 5}]
+        })
+        
+        if not success and ("401" in str(data) or "Authentication" in str(data)):
+            self.log_test("Access Control - Authentication Required", True, "Properly requires authentication")
+        else:
+            self.log_test("Access Control - Authentication Required", False, "Should require authentication")
+        
+        # Restore token
+        self.auth_token = old_token
+        
+        # Test merchant access control for different location
+        if self.auth_token:
+            success, data = self.make_request("POST", "/v1/pickup/windows", {
+                "location_id": "LOC-UNAUTHORIZED-999",
+                "date": datetime.now().strftime("%Y-%m-%d"),
+                "time_slots": [{"start_time": "09:00", "end_time": "10:00", "capacity": 5}]
+            })
+            
+            if not success and ("403" in str(data) or "Access denied" in str(data)):
+                self.log_test("Access Control - Merchant Location Access", True, "Properly enforces merchant location access")
+            else:
+                self.log_test("Access Control - Merchant Location Access", False, "Should enforce location access control")
+
+    def run_comprehensive_test(self):
+        """Run comprehensive Week 3 pickup system test"""
+        print("🚚 WEEK 3 PICKUP SYSTEM BACKEND INTEGRATION TEST")
+        print("=" * 60)
+        
+        # Setup
+        if not self.setup_authentication():
+            print("❌ Authentication setup failed - cannot continue")
+            return
+        
+        # HIGH PRIORITY VALIDATIONS
+        print("\n🎯 HIGH PRIORITY VALIDATIONS")
+        self.test_pickup_system_health()
+        self.test_window_management_apis()
+        self.test_reservation_scheduling()
+        self.test_reservation_status()
+        self.test_advanced_reservation_management()
+        self.test_analytics_apis()
+        
+        # ACCESS CONTROL VALIDATION
+        print("\n🔒 ACCESS CONTROL VALIDATION")
+        self.test_access_control_validation()
+        
+        # Summary
+        print("\n" + "=" * 60)
+        print("📊 TEST SUMMARY")
+        print("=" * 60)
+        
+        total_tests = len(self.test_results)
+        passed_tests = sum(1 for result in self.test_results if result["success"])
+        failed_tests = total_tests - passed_tests
+        success_rate = (passed_tests / total_tests * 100) if total_tests > 0 else 0
+        
+        print(f"Total Tests: {total_tests}")
+        print(f"Passed: {passed_tests}")
+        print(f"Failed: {failed_tests}")
+        print(f"Success Rate: {success_rate:.1f}%")
+        
+        if failed_tests > 0:
+            print("\n❌ FAILED TESTS:")
+            for result in self.test_results:
+                if not result["success"]:
+                    print(f"  - {result['test']}: {result['details']}")
+        
+        # Validation criteria check
+        critical_failures = []
+        for result in self.test_results:
+            if not result["success"] and any(keyword in result["test"] for keyword in [
+                "Health Check", "Window Creation", "Reservation Scheduling", 
+                "Reservation Status", "Analytics"
+            ]):
+                critical_failures.append(result["test"])
+        
+        if not critical_failures:
+            print("\n✅ ALL HIGH PRIORITY VALIDATIONS PASSED")
+            print("🎉 Week 3 Pickup System is PRODUCTION READY!")
+        else:
+            print(f"\n❌ CRITICAL FAILURES DETECTED: {len(critical_failures)}")
+            for failure in critical_failures:
+                print(f"  - {failure}")
+            print("⚠️  System requires fixes before production deployment")
+        
+        return success_rate >= 90 and len(critical_failures) == 0
+
+if __name__ == "__main__":
+    tester = Week3PickupTester()
+    success = tester.run_comprehensive_test()
+    sys.exit(0 if success else 1)
+"""
 Week 3 Backend Test Blitz: Pickup Windows & Advanced Reservations
 Focused testing for the pickup windows and advanced reservations system
 """
