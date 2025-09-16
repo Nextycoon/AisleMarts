@@ -6418,6 +6418,23 @@ class APITester:
         print("\n🔄 B2B Workflow Integration Testing...")
         self.test_b2b_workflow_integration()
         
+        # ========== PHASE 3: NEARBY/ONSITE COMMERCE TESTS ==========
+        print("\n" + "🏪" * 15 + " PHASE 3 NEARBY/ONSITE COMMERCE TESTING " + "🏪" * 15)
+        
+        # Nearby Commerce Tests
+        print("\n🏪 Nearby Commerce Testing...")
+        self.test_nearby_health_check()
+        self.test_nearby_search_nairobi()
+        self.test_nearby_search_different_radii()
+        self.test_nearby_search_with_query()
+        self.test_nearby_locations_discovery()
+        self.test_nearby_reservations_workflow()
+        self.test_nearby_barcode_scanning()
+        self.test_nearby_analytics()
+        self.test_nearby_cache_performance()
+        self.test_nearby_error_handling()
+        self.test_nearby_system_initialization()
+        
         # Print summary
         print("\n" + "=" * 80)
         print("📊 TEST SUMMARY")
