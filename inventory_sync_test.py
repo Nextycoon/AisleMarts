@@ -290,8 +290,8 @@ class InventorySyncTester:
         
         # Test bulk sync without auth
         sync_data = {
-            "merchant_id": "MRC-0001",
-            "location_id": "LOC-WESTLANDS-001",
+            "merchant_id": "merchant_001",
+            "location_id": "location_001",
             "items": [{"sku": "TEST", "qty": 1, "price": {"amount": 1000, "currency": "KES"}, "updated_at": "2024-01-15T10:00:00Z"}]
         }
         
