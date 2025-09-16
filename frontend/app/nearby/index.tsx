@@ -23,8 +23,77 @@ import { FadeInView, SlideInView, SkeletonLoader, SuccessCheckmark, BounceButton
 import useHaptics from '@/src/hooks/useHaptics';
 import { useToast } from '@/src/components/ToastHost';
 
+// Types
+interface Merchant {
+  id: string;
+  name: string;
+  category: string;
+  description: string;
+  distance: number;
+  status: 'open' | 'closed' | 'busy';
+  averagePrice: number;
+  pickupWindows: PickupWindow[];
+  coordinates: {
+    lat: number;
+    lng: number;
+  };
+}
+
+interface PickupWindow {
+  id: string;
+  merchantId: string;
+  timeSlot: {
+    start: string;
+    end: string;
+  };
+  capacity: number;
+  reserved: number;
+  available: number;
+  status: 'active' | 'full' | 'closed';
+}
+
+interface Reservation {
+  id: string;
+  merchantId: string;
+  merchantName: string;
+  status: 'held' | 'scheduled' | 'confirmed' | 'partial_pickup' | 'completed' | 'cancelled' | 'expired';
+  items: ReservationItem[];
+  total: number;
+  pickupWindow?: PickupWindow;
+  pickupCode?: string;
+  scheduledFor?: string;
+  createdAt: string;
+}
+
+interface ReservationItem {
+  sku: string;
+  name: string;
+  qty: number;
+  price: number;
+}
+
 export default function NearbyCommerceScreen() {
   const [activeTab, setActiveTab] = useState('discover');
+  const [loading, setLoading] = useState(false);
+  const [refreshing, setRefreshing] = useState(false);
+  const [searchQuery, setSearchQuery] = useState('');
+  const [filterOpen, setFilterOpen] = useState(false);
+  const [selectedFilters, setSelectedFilters] = useState({
+    openNow: false,
+    within2km: false,
+    category: 'all'
+  });
+  
+  // Data states
+  const [merchants, setMerchants] = useState<Merchant[]>([]);
+  const [reservations, setReservations] = useState<Reservation[]>([]);
+  const [selectedMerchant, setSelectedMerchant] = useState<Merchant | null>(null);
+  const [reservationModal, setReservationModal] = useState(false);
+  const [selectedItems, setSelectedItems] = useState<ReservationItem[]>([]);
+  
+  // Hooks
+  const haptics = useHaptics();
+  const toast = useToast();
 
   return (
     <SafeAreaView style={styles.container}>
