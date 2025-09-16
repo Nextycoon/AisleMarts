@@ -164,7 +164,8 @@ export const AuthProvider: React.FC<{ children: React.ReactNode }> = ({ children
       register, 
       logout,
       updateUser,
-      checkAvatarSetup
+      checkAvatarSetup,
+      setupAvatar
     }}>
       {children}
     </AuthContext.Provider>
