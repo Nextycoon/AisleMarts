@@ -5,6 +5,7 @@
 
 import { Alert } from 'react-native';
 import { useState, useCallback } from 'react';
+import useHaptics from './useHaptics';
 
 export type NotificationType = 'success' | 'info' | 'warning' | 'error';
 
@@ -26,11 +27,16 @@ export interface NotificationHooks {
 
 export function useNotifications(): NotificationHooks {
   const [isNotificationEnabled, setIsNotificationEnabled] = useState(true);
+  const { onNotificationShow } = useHaptics();
 
   const showNotification = useCallback((config: NotificationConfig) => {
     if (!isNotificationEnabled && config.type !== 'error') {
       return; // Skip non-error notifications if disabled
     }
+
+    // Haptic feedback for notification
+    onNotificationShow(config.type === 'success' ? 'success' : 
+                      config.type === 'warning' ? 'warning' : 'error');
 
     // Current implementation: Native Alert
     // TODO: Replace with proper toast library (react-native-toast-notifications)
@@ -47,7 +53,7 @@ export function useNotifications(): NotificationHooks {
     if (config.persistent) {
       logForExternalNotification(config);
     }
-  }, [isNotificationEnabled]);
+  }, [isNotificationEnabled, onNotificationShow]);
 
   const showPickupNotification = useCallback((
     type: 'scheduled' | 'extended' | 'partial' | 'completed' | 'cancelled',
