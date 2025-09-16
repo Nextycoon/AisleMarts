@@ -339,6 +339,7 @@ app.include_router(order_management_router)
 app.include_router(mpesa_webhook_router)
 app.include_router(search_router)
 app.include_router(rfq_router)
+app.include_router(nearby_router)
 
 # Include the main API router
 app.include_router(api_router)
