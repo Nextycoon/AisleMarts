@@ -1,29 +1,21 @@
 import React, { useEffect } from 'react';
 import { View, ActivityIndicator, StyleSheet, Text } from 'react-native';
 import { router } from 'expo-router';
-import { useAuth } from '@/src/context/AuthContext';
 import { LinearGradient } from 'expo-linear-gradient';
 
 export default function IndexScreen() {
-  const { loading, hasCompletedAvatarSetup } = useAuth();
-
   useEffect(() => {
-    console.log('IndexScreen - loading:', loading, 'hasCompletedAvatarSetup:', hasCompletedAvatarSetup);
+    console.log('🚀 IndexScreen: Direct navigation for testing');
     
-    if (!loading) {
-      console.log('Auth loading complete, checking avatar setup...');
-      
-      if (!hasCompletedAvatarSetup) {
-        console.log('Redirecting to Avatar setup (first-run experience)');
-        router.replace('/aisle-avatar');
-      } else {
-        console.log('Avatar already set up, redirecting to home');
-        router.replace('/home');
-      }
-    }
-  }, [loading, hasCompletedAvatarSetup]);
+    // Direct navigation to Avatar screen for testing
+    const timer = setTimeout(() => {
+      console.log('➡️  Navigating to Avatar screen');
+      router.replace('/aisle-avatar');
+    }, 2000); // 2 second delay
 
-  // Show loading screen while checking avatar setup
+    return () => clearTimeout(timer);
+  }, []);
+
   return (
     <View style={styles.container}>
       <LinearGradient
@@ -33,9 +25,7 @@ export default function IndexScreen() {
         end={{ x: 1, y: 1 }}
       />
       <ActivityIndicator size="large" color="#667eea" />
-      <Text style={styles.loadingText}>
-        {loading ? 'Initializing AisleMarts...' : 'Ready!'}
-      </Text>
+      <Text style={styles.loadingText}>Loading AisleMarts...</Text>
     </View>
   );
 }
