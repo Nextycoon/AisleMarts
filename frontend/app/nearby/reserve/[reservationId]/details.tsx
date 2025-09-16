@@ -172,11 +172,14 @@ export default function ReservationDetailsScreen() {
                 false
               );
 
-              Alert.alert(
-                'Reservation Cancelled',
-                'Your reservation has been cancelled and inventory has been released.',
-                [{ text: 'OK', onPress: () => router.back() }]
-              );
+              // Show notification for cancellation
+              showPickupNotification('cancelled', {
+                reason: 'customer_request',
+                refundRequested: false
+              });
+
+              // Navigate back after brief delay to allow notification to show
+              setTimeout(() => router.back(), 1500);
 
             } catch (error: any) {
               Alert.alert(
