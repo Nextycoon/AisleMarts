@@ -210,15 +210,16 @@ metadata:
   run_ui: false
 
 test_plan:
-  current_focus:
-    - "Week 3 UI Wiring - Merchant Pickup Screen Implementation"
+  current_focus: []
+  stuck_tasks: []
+  test_all: false
+  test_priority: "high_first"
+  completed_focus:
+    - "Week 3 UI Wiring - Merchant Pickup Screen Implementation" 
     - "Week 3 UI Wiring - Notification Hooks Integration"
     - "Week 3 UI Components - Merchant Pickup Screen"
     - "Week 3 UI Components - Reservation Management with Notifications"
     - "Week 3 UI Components - Notification Hooks System"
-  stuck_tasks: []
-  test_all: false
-  test_priority: "high_first"
 
 agent_communication:
     - agent: "main"
