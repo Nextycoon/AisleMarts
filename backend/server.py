@@ -334,6 +334,7 @@ app.include_router(ai_intents_router)
 app.include_router(seller_products_router)
 app.include_router(order_management_router)
 app.include_router(mpesa_webhook_router)
+app.include_router(search_router)
 
 # Include the main API router
 app.include_router(api_router)
