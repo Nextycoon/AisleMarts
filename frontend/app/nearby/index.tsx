@@ -435,7 +435,7 @@ export default function NearbyCommerceScreen() {
               </View>
             ) : merchants && merchants.length > 0 ? (
               <View style={styles.merchantList}>
-                {merchants.map((merchant, index) => (
+                {(merchants || []).map((merchant, index) => (
                   <SlideInView key={merchant.id} delay={index * 100} style={styles.merchantItem}>
                     <View style={styles.merchantHeader}>
                       <Text style={styles.merchantName}>{merchant.name}</Text>
