@@ -19,12 +19,19 @@ import { Ionicons } from '@expo/vector-icons';
 import { useRouter } from 'expo-router';
 import { StatusBar } from 'expo-status-bar';
 import * as DocumentPicker from 'expo-document-picker';
+import { NoUploadHistory } from '../../src/components/EmptyStates';
+import { ProgressBar, SuccessCheckmark } from '../../src/components/Animations';
+import useHaptics from '../../src/hooks/useHaptics';
 
 export default function MerchantInventoryUploadScreen() {
   const router = useRouter();
   const [selectedFile, setSelectedFile] = useState<any>(null);
   const [uploading, setUploading] = useState(false);
   const [uploadProgress, setUploadProgress] = useState(0);
+  const [showSuccess, setShowSuccess] = useState(false);
+  
+  // Polish enhancements
+  const { onButtonPress, onUploadProgress } = useHaptics();
 
   const selectCSVFile = async () => {
     try {
