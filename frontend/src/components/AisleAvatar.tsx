@@ -61,31 +61,10 @@ export default function AisleAvatar({
 
   const handleVoiceMessage = async () => {
     try {
-      if (!voiceService.isVoiceEnabled()) {
-        // Request permission
-        const permission = await voiceService.requestVoicePermission();
-        Alert.alert(
-          'Voice Mode',
-          permission.message,
-          [
-            { 
-              text: 'Not Now', 
-              style: 'cancel',
-              onPress: () => setShowVoicePermission(false)
-            },
-            { 
-              text: 'Enable Voice', 
-              onPress: async () => {
-                await voiceService.enableVoice();
-                speakMessage();
-              }
-            }
-          ]
-        );
-        return;
-      }
-      
-      speakMessage();
+      // Temporarily disabled voice service due to web compatibility
+      console.log('Voice message would play:', voiceMessage || message || "Hello! I'm Aisle.");
+      setIsSpeaking(true);
+      setTimeout(() => setIsSpeaking(false), 2000); // Simulate speaking
     } catch (error) {
       console.error('Voice message failed:', error);
     }
@@ -95,7 +74,8 @@ export default function AisleAvatar({
     try {
       setIsSpeaking(true);
       const messageToSpeak = voiceMessage || message || "Hello! I'm Aisle.";
-      await voiceService.speakAisle(messageToSpeak);
+      console.log('Would speak:', messageToSpeak);
+      setTimeout(() => setIsSpeaking(false), 2000); // Simulate speaking
     } catch (error) {
       console.error('Failed to speak:', error);
     } finally {
