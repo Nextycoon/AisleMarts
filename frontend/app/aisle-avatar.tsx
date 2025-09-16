@@ -187,9 +187,9 @@ export default function AisleAvatarScreen() {
       // 4. Success haptic and navigation
       triggerHaptic('success');
       
-      // Cinematic transition delay
+      // Cinematic transition delay then navigate to Live Avatar
       setTimeout(() => {
-        router.replace('/home');
+        router.replace('/live-avatar');
       }, 800);
 
     } catch (error) {
