@@ -242,8 +242,8 @@ class InventorySyncTester:
             return
         
         # Test with sample merchant and location
-        merchant_id = "MRC-0001"
-        location_id = "LOC-WESTLANDS-001"
+        merchant_id = "merchant_001"
+        location_id = "location_001"
         
         success, data = self.make_request("GET", f"/v1/inventory/stats/{merchant_id}/{location_id}")
         
