@@ -144,7 +144,7 @@ async def get_rfq(
     - View count incremented for non-buyers
     """
     try:
-        rfq = await rfq_service.get_rfq(rfq_id, current_user["id"])
+        rfq = await rfq_service.get_rfq(rfq_id, current_user["_id"])
         if not rfq:
             raise HTTPException(404, "RFQ not found or access denied")
         
