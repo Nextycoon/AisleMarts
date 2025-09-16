@@ -1,4 +1,4 @@
-import React, { useState } from 'react';
+import React, { useState, useEffect } from 'react';
 import {
   View,
   Text,
@@ -13,6 +13,10 @@ import { Ionicons } from '@expo/vector-icons';
 import { router } from 'expo-router';
 import Animated, { FadeIn, SlideInUp } from 'react-native-reanimated';
 import AsyncStorage from '@react-native-async-storage/async-storage';
+import NetInfo from '@react-native-community/netinfo';
+import { useAuth } from '@/src/context/AuthContext';
+import { useHaptics } from '@/src/hooks/useHaptics';
+import { API } from '@/src/api/client';
 
 type UserRole = 'buyer' | 'seller' | 'hybrid';
 
@@ -40,12 +44,105 @@ const roleOptions = [
   }
 ];
 
+// Analytics helper
+const trackAnalyticsEvent = (event: string, data: any) => {
+  console.log(`📊 Analytics: ${event}`, data);
+  // TODO: Implement proper analytics integration
+};
+
+// Offline queue for failed API calls
+const enqueueOfflineAction = async (action: any) => {
+  try {
+    const existingQueue = await AsyncStorage.getItem('offlineQueue');
+    const queue = existingQueue ? JSON.parse(existingQueue) : [];
+    queue.push({
+      ...action,
+      timestamp: Date.now(),
+      retryCount: 0
+    });
+    await AsyncStorage.setItem('offlineQueue', JSON.stringify(queue));
+    console.log('📦 Queued offline action:', action.type);
+  } catch (error) {
+    console.error('Failed to enqueue offline action:', error);
+  }
+};
+
 export default function AisleAvatarScreen() {
   const [selectedRole, setSelectedRole] = useState<UserRole | null>(null);
   const [isLoading, setIsLoading] = useState(false);
+  const [isOnline, setIsOnline] = useState(true);
+  const { setupAvatar, hasCompletedAvatarSetup } = useAuth();
+  const { triggerHaptic } = useHaptics();
+
+  useEffect(() => {
+    // Idempotency check: if user already completed avatar setup, redirect
+    if (hasCompletedAvatarSetup) {
+      console.log('🔄 Avatar already set up, redirecting to home');
+      router.replace('/home');
+      return;
+    }
+
+    // Track impression
+    trackAnalyticsEvent('avatar_impression', {
+      timestamp: Date.now(),
+      userAgent: 'mobile'
+    });
+
+    // Monitor network status
+    const unsubscribe = NetInfo.addEventListener(state => {
+      setIsOnline(state.isConnected ?? true);
+      console.log('🌐 Network status:', state.isConnected ? 'online' : 'offline');
+    });
+
+    return unsubscribe;
+  }, [hasCompletedAvatarSetup]);
 
   const handleRoleSelect = (role: UserRole) => {
+    triggerHaptic('selection');
     setSelectedRole(role);
+    
+    // Track role selection
+    trackAnalyticsEvent('avatar_role_selected', {
+      role,
+      timestamp: Date.now()
+    });
+
+    console.log('✨ Role selected:', role);
+  };
+
+  const syncAvatarToServer = async (role: UserRole): Promise<boolean> => {
+    try {
+      // For now, using a demo user ID - in production this would come from auth
+      const mockUserId = 'demo_user_' + Date.now();
+      
+      const response = await API.patch(`/users/${mockUserId}/avatar`, { 
+        role 
+      });
+      
+      console.log('✅ Avatar synced to server:', response.data);
+      return true;
+    } catch (error: any) {
+      console.warn('⚠️ Server sync failed:', error.message);
+      
+      // Log failure with network state and retry count
+      trackAnalyticsEvent('avatar_save_error', {
+        role,
+        error: error.message,
+        networkState: isOnline ? 'online' : 'offline',
+        retryCount: 0
+      });
+      
+      // Enqueue for offline retry if it was a network error
+      if (!isOnline || error.code >= 500) {
+        await enqueueOfflineAction({
+          type: 'AVATAR_SETUP',
+          payload: { role },
+          endpoint: `/users/${mockUserId}/avatar`
+        });
+      }
+      
+      return false;
+    }
   };
 
   const handleEnterMarketplace = async () => {
@@ -55,22 +152,61 @@ export default function AisleAvatarScreen() {
     }
 
     setIsLoading(true);
+    triggerHaptic('impact');
+
+    // Track continue tap
+    trackAnalyticsEvent('avatar_continue_tap', {
+      role: selectedRole,
+      timestamp: Date.now()
+    });
 
     try {
-      // Save to AsyncStorage for offline support
+      // 1. Optimistic local update (instant UX)
       await AsyncStorage.setItem('userRole', selectedRole);
       await AsyncStorage.setItem('isAvatarSetup', 'true');
       
-      console.log('Avatar setup complete with role:', selectedRole);
+      // 2. Update AuthContext (triggers routing logic)
+      await setupAvatar(selectedRole);
+      
+      console.log('💾 Avatar setup persisted locally');
 
-      // Show success and navigate
+      // 3. Sync to server (non-blocking)
+      const serverSyncSuccess = await syncAvatarToServer(selectedRole);
+      
+      if (serverSyncSuccess) {
+        trackAnalyticsEvent('avatar_save_success', {
+          role: selectedRole,
+          syncMethod: 'immediate',
+          timestamp: Date.now()
+        });
+      } else if (isOnline) {
+        // Show warning for online failures, but don't block UX
+        console.warn('🔄 Server sync failed, but local setup completed');
+      }
+
+      // 4. Success haptic and navigation
+      triggerHaptic('success');
+      
+      // Cinematic transition delay
       setTimeout(() => {
         router.replace('/home');
       }, 800);
 
     } catch (error) {
-      console.error('Failed to save user role:', error);
-      Alert.alert('Error', 'Failed to save your selection. Please try again.');
+      console.error('❌ Avatar setup failed:', error);
+      
+      // Revert optimistic updates
+      await AsyncStorage.removeItem('userRole');
+      await AsyncStorage.removeItem('isAvatarSetup');
+      
+      triggerHaptic('error');
+      
+      Alert.alert(
+        'Setup Failed', 
+        'Couldn\'t save your selection. Please try again.',
+        [{ text: 'Retry', onPress: handleEnterMarketplace }]
+      );
+      
       setIsLoading(false);
     }
   };
