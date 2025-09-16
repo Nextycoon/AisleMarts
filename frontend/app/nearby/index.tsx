@@ -414,7 +414,7 @@ export default function NearbyCommerceScreen() {
         }
       >
         {activeTab === 'discover' && (
-          <FadeInView>
+          <View>
             {/* Location Card */}
             <View style={styles.locationCard}>
               <View style={styles.locationHeader}>
