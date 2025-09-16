@@ -30,6 +30,7 @@ export const AuthProvider: React.FC<{ children: React.ReactNode }> = ({ children
   const [user, setUser] = useState<User>();
   const [token, setToken] = useState<string>();
   const [loading, setLoading] = useState(true);
+  const [hasCompletedAvatarSetup, setHasCompletedAvatarSetup] = useState(false);
 
   useEffect(() => {
     loadStoredAuth();
