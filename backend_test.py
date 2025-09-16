@@ -5654,6 +5654,22 @@ class APITester:
         self.test_seller_apis_kes_currency_handling()
         self.test_seller_commission_calculations()
         
+        # ========== PHASE 1: ENHANCED SEARCH/DISCOVERY BACKEND TESTS ==========
+        print("\n" + "⚡" * 15 + " PHASE 1 ENHANCED SEARCH/DISCOVERY BACKEND TESTING " + "⚡" * 15)
+        
+        # Enhanced Search System Tests
+        print("\n🔍 Enhanced Search System Testing...")
+        self.test_enhanced_search_system_health()
+        self.test_enhanced_search_initialization()
+        self.test_enhanced_search_api()
+        self.test_product_offers_comparison()
+        self.test_search_suggestions()
+        self.test_search_analytics()
+        self.test_cache_management()
+        self.test_multilingual_search()
+        self.test_best_pick_scoring()
+        self.test_search_performance()
+        
         # Print summary
         print("\n" + "=" * 80)
         print("📊 TEST SUMMARY")
