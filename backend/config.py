@@ -12,6 +12,12 @@ class Settings(BaseSettings):
     FRONTEND_ORIGIN: str = os.getenv("FRONTEND_ORIGIN", "exp+aislemarts://localhost")
     OPENAI_API_KEY: str | None = os.getenv("OPENAI_API_KEY")
     EMERGENT_LLM_KEY: str | None = os.getenv("EMERGENT_LLM_KEY")
+    
+    # Phase 3: Nearby/Onsite Commerce Configuration
+    NEARBY_ENABLED: bool = os.getenv("NEARBY_ENABLED", "true").lower() == "true"
+    MAP_PROVIDER: str = os.getenv("MAP_PROVIDER", "mapbox")
+    MAPBOX_PUBLIC_TOKEN: str = os.getenv("MAPBOX_PUBLIC_TOKEN", "pk.demo_token")
+    REDIS_URL: str = os.getenv("REDIS_URL", "redis://localhost:6379")
 
     class Config:
         env_file = ".env"
