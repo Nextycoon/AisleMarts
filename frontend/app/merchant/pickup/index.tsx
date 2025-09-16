@@ -21,24 +21,18 @@ import { Ionicons } from '@expo/vector-icons';
 import { router } from 'expo-router';
 import { StatusBar } from 'expo-status-bar';
 
-// Temporarily commenting out all imports to resolve server error
-// import {
-//   getPickupWindows,
-//   getReservationStatus,
-//   processPartialPickup,
-//   createPickupWindows,
-//   getWindowAnalytics,
-//   formatTimeSlot,
-//   formatPickupDate,
-//   getAvailableCapacity
-// } from '../../../src/lib/api/pickup';
-// import { PickupWindow } from '../../../src/lib/types/pickup';
-// Temporarily commented out for stability
-// import StatusChip from '../../src/components/StatusChip';
-// import { NoPickupWindows } from '../../src/components/EmptyStates';
-// import { PickupWindowSkeleton, FadeInView } from '../../src/components/Animations';
-// import useHaptics from '../../src/hooks/useHaptics';
-// import { getAccessibleButtonProps, getAccessibleInputProps, SCREEN_READER_LABELS } from '../../src/utils/accessibility';
+// Define basic types for now
+interface PickupWindow {
+  id: string;
+  time_slot: {
+    start_time: string;
+    end_time: string;
+  };
+  capacity: number;
+  reserved: number;
+  status: 'active' | 'full' | 'closed';
+  notes?: string;
+}
 
 export default function MerchantPickupScreen() {
   const [locationId, setLocationId] = useState('LOC-WESTLANDS-001'); // Default for demo
@@ -48,9 +42,6 @@ export default function MerchantPickupScreen() {
   const [pickupCode, setPickupCode] = useState('');
   const [processingCode, setProcessingCode] = useState(false);
   const [analytics, setAnalytics] = useState<any>(null);
-
-  // Polish enhancements
-  const { onPickupCompleted, onScanSuccess, onScanError, onButtonPress } = useHaptics();
 
   useEffect(() => {
     if (locationId && date) {
