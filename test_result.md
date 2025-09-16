@@ -214,14 +214,16 @@ metadata:
 
 test_plan:
   current_focus:
-    - "Critical Integration - AuthContext + OfflineManager Re-enabled"
-    - "Backend API Health Validation"
-    - "Pickup Windows API Validation"
+    - "Pickup Windows Reservation Integration"
+    - "Nearby Commerce Reservation Creation"
+    - "End-to-End Pickup Workflow Testing"
   stuck_tasks:
     - "Week 3 Pickup Windows & Advanced Reservations System"
   test_all: false
   test_priority: "high_first"
   completed_focus:
+    - "Critical Integration - AuthContext + OfflineManager Re-enabled"
+    - "Backend API Health Validation"
     - "Week 3 UI Wiring - Merchant Pickup Screen Implementation" 
     - "Week 3 UI Wiring - Notification Hooks Integration"
     - "Week 3 UI Components - Merchant Pickup Screen"
