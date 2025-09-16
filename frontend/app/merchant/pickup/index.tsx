@@ -1,6 +1,7 @@
 /**
  * Phase 3 Week 3: Merchant Staff Pickup View
  * Staff interface for managing pickup windows and processing customer pickups
+ * POLISH PASS: Enhanced with glass-morphism, haptics, animations, and status chips
  */
 
 import React, { useEffect, useState } from 'react';
@@ -17,9 +18,15 @@ import {
   Platform,
   KeyboardAvoidingView
 } from 'react-native';
+import { LinearGradient } from 'expo-linear-gradient';
+import { BlurView } from 'expo-blur';
 import { Ionicons } from '@expo/vector-icons';
 import { router } from 'expo-router';
 import { StatusBar } from 'expo-status-bar';
+import Animated, { FadeInUp, SlideInRight, ZoomIn } from 'react-native-reanimated';
+import { StatusChip } from '@/src/components/StatusChip';
+import { EmptyStates } from '@/src/components/EmptyStates';
+import { useHaptics } from '@/src/hooks/useHaptics';
 
 // Define basic types for now
 interface PickupWindow {
