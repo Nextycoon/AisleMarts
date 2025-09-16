@@ -1369,17 +1369,14 @@ metadata:
 
 test_plan:
   current_focus:
-    - "Kenya Pilot Go-Live Gate Validation"
-    - "M-Pesa Integration Critical Path Testing"
-    - "Seller Dashboard End-to-End Flow"
-    - "Multi-Language AI (Swahili) Validation"
-    - "Mobile Performance & Network Resilience"
-    - "Cultural Authenticity & Trust Signals"
-    - "Commission Engine Accuracy"
-    - "Overall System Health Check"
+    - "Enhanced Search Models and Collections"
+    - "Enhanced Search API Endpoints"
+    - "Search Aggregation and Scoring Engine"
+    - "Enhanced Discover Screen"
+    - "Best Pick Components"
   stuck_tasks: []
-  test_all: true
-  test_priority: "kenya_pilot_launch"
+  test_all: false
+  test_priority: "high_first"  # Phase 1 Enhanced Search/Discovery implementation
 
   - task: "AI Domain Specialization - Trade Intelligence"
     implemented: true
