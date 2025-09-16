@@ -62,6 +62,8 @@ class APITester:
                 response = self.session.put(url, json=data, headers=headers)
             elif method.upper() == "DELETE":
                 response = self.session.delete(url, headers=headers)
+            elif method.upper() == "PATCH":
+                response = self.session.patch(url, json=data, headers=headers)
             else:
                 return False, f"Unsupported method: {method}"
                 
