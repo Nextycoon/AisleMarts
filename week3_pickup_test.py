@@ -91,7 +91,47 @@ class Week3PickupTester:
         """Setup authentication for testing"""
         print("🔐 Setting up authentication...")
         
-        # Try to login with existing user
+        # Try to create/login as admin user first
+        admin_data = {
+            "email": "admin@aislemarts.com",
+            "password": "admin123",
+            "name": "Admin User"
+        }
+        
+        # Try to register admin
+        success, data = self.make_request("POST", "/auth/register", admin_data)
+        if not success:
+            # Admin might already exist, try login
+            success, data = self.make_request("POST", "/auth/login", {
+                "email": "admin@aislemarts.com",
+                "password": "admin123"
+            })
+        
+        if success and isinstance(data, dict) and "access_token" in data:
+            self.auth_token = data["access_token"]
+            self.log_test("Authentication Setup (Admin)", True, "Successfully authenticated as admin")
+            return True
+        
+        # If admin doesn't work, try merchant user for MRC-0001 (Westlands)
+        merchant_data = {
+            "email": "merchant@westlands.com",
+            "password": "merchant123",
+            "name": "Westlands Merchant"
+        }
+        
+        success, data = self.make_request("POST", "/auth/register", merchant_data)
+        if not success:
+            success, data = self.make_request("POST", "/auth/login", {
+                "email": "merchant@westlands.com",
+                "password": "merchant123"
+            })
+        
+        if success and isinstance(data, dict) and "access_token" in data:
+            self.auth_token = data["access_token"]
+            self.log_test("Authentication Setup (Merchant)", True, "Successfully authenticated as merchant")
+            return True
+        
+        # Fallback to regular user
         login_data = {
             "email": "buyer@aislemarts.com",
             "password": "password123"
@@ -101,7 +141,7 @@ class Week3PickupTester:
         
         if success and isinstance(data, dict) and "access_token" in data:
             self.auth_token = data["access_token"]
-            self.log_test("Authentication Setup", True, "Successfully authenticated")
+            self.log_test("Authentication Setup (User)", True, "Successfully authenticated as regular user")
             return True
         else:
             # Try to register if login fails
@@ -115,7 +155,7 @@ class Week3PickupTester:
             
             if success and isinstance(data, dict) and "access_token" in data:
                 self.auth_token = data["access_token"]
-                self.log_test("Authentication Setup", True, "Successfully registered and authenticated")
+                self.log_test("Authentication Setup (User)", True, "Successfully registered and authenticated")
                 return True
             else:
                 self.log_test("Authentication Setup", False, str(data))
