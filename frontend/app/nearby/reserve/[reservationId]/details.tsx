@@ -132,11 +132,11 @@ export default function ReservationDetailsScreen() {
                 firstItem.qty === 1 ? 'complete' : 'partial'
               );
 
-              Alert.alert(
-                'Pickup Processed ✅',
-                `Status: ${result.pickup_status}\n${result.has_remaining_items ? 'Remaining items still reserved' : 'All items picked up'}`,
-                [{ text: 'OK' }]
-              );
+              // Show notification for partial pickup
+              showPickupNotification('partial', {
+                remainingItems: result.has_remaining_items ? 
+                  result.pickup_summary.remaining_items.length : 0
+              });
 
               await loadReservation(false);
             } catch (error: any) {
