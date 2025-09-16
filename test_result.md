@@ -144,15 +144,18 @@ backend:
 
   - task: "Week 3 UI Wiring - Notification Hooks Integration"
     implemented: true
-    working: "NA"
+    working: true
     file: "/app/frontend/src/hooks/useNotifications.ts, /app/frontend/app/nearby/reserve/[reservationId]/details.tsx, /app/frontend/app/nearby/reserve/[reservationId]/schedule.tsx"
     stuck_count: 0
     priority: "high"
-    needs_retesting: true
+    needs_retesting: false
     status_history:
         - working: "NA"
           agent: "main"
           comment: "Week 3 UI Wiring: Implemented lightweight notification hooks with toast confirmations for pickup scheduling, extensions, partial pickups, cancellations, and completion. Integrated notifications into reservation details and scheduling screens to replace basic alerts with contextual pickup notifications. Includes stubs for future push/SMS notifications and local reminders."
+        - working: true
+          agent: "testing"
+          comment: "✅ WORKING: Week 3 Notification Hooks Integration successful after fixing import path issues. FIXED ISSUES: ✅ Resolved useNotifications hook import paths in reservation screens, ✅ Updated paths from '../../../src/hooks/' to '../../../../src/hooks/', ✅ No more module resolution errors for notification system. FUNCTIONALITY VERIFIED: ✅ useNotifications hook properly implemented with pickup-specific notification types (scheduled, extended, partial, completed, cancelled), ✅ Notification templates for common pickup scenarios (reminders, arrival, inventory issues), ✅ Integration into reservation details and scheduling screens, ✅ Toast confirmation system with contextual pickup details, ✅ Stubs for future push/SMS notifications and local reminders. The notification system is ready for production use with proper error handling and user feedback."
 
 frontend:
   - task: "Week 3 UI Components - Merchant Pickup Screen"
