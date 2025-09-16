@@ -27,14 +27,39 @@ export default function CinematicHome() {
   const router = useRouter();
   const fade = useRef(new Animated.Value(0)).current;
   const top = useSafeAreaInsets().top;
+  const { trackHomeCTAClick, trackBestPickView, trackScreenView } = useAnalytics();
+  
+  // Get personalized greeting
+  const personalizedGreeting = getPersonalizedGreeting();
 
   useEffect(() => {
+    // Track screen view
+    trackScreenView('home', 'app_launch');
+    
+    // Cinematic fade-in animation
     Animated.timing(fade, { 
       toValue: 1, 
       duration: 800, 
       useNativeDriver: true 
     }).start();
+    
+    // Preload critical screens for instant navigation
+    const cancelPreload = preloadCriticalScreens();
+    
+    return cancelPreload;
   }, []);
+
+  const handleCTAPress = (cta: 'discover' | 'nearby' | 'rfq', route: string) => {
+    const startTime = Date.now();
+    trackHomeCTAClick(cta);
+    trackNavigationPerformance('home', route, startTime);
+    pushFromHome(route);
+  };
+
+  const handleProductCardPress = (productId: number, position: number) => {
+    trackBestPickView(productId.toString(), position);
+    pushFromHome(`/product/${productId}`);
+  };
 
   return (
     <ScrollView 
