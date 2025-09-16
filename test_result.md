@@ -1314,7 +1314,7 @@ frontend:
           comment: "✅ IMPLEMENTED: Created comprehensive Best Pick component library with BestPickBadge (multiple sizes, interactive), BestPickReason (emoji-based reasons), BestPickScore (circular score display), BestPickExplanation (detailed breakdown), and BestPickCompact (space-efficient display). Components support transparent scoring with reasons (price 💰, trust 🛡️, eta ⚡, cultural_fit 🌍, stock 📦), dynamic sizing, and comprehensive styling with React Native components."
 
   - task: "Offers Comparison Sheet"
-    implemented: false
+    implemented: true
     working: "NA"
     file: "/app/frontend/src/components/OffersSheet.tsx"
     stuck_count: 0
@@ -1324,6 +1324,9 @@ frontend:
         - working: "NA"
           agent: "main"
           comment: "Phase 1: Product offers comparison sheet with sorted offers by total landed cost, merchant trust indicators, delivery ETA, stock levels, and Buy Now/Request Quote CTAs"
+        - working: "NA"
+          agent: "main"
+          comment: "✅ IMPLEMENTED: Created comprehensive OffersSheet modal component with bottom sheet design, offer sorting (price/delivery/trust), merchant info display with trust scores and verification status, offer cards with best deal badges, total landed cost calculations, add to cart functionality, loading/error states, and mobile-optimized UI with blur overlay and safe area handling. Integrated with SearchService for product offers API."
 
   - task: "Enhanced Search Service Integration"
     implemented: true
