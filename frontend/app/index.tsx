@@ -153,6 +153,28 @@ export default function CinematicHome() {
 
       {/* CONTENT SECTIONS */}
       <View style={styles.sections}>
+        {/* Spotlight Feature */}
+        {spotlightFeature && (
+          <View style={styles.section}>
+            <Text style={styles.sectionTitle}>⭐ Featured Today</Text>
+            <Pressable
+              onPress={() => handleSpotlightPress(spotlightFeature)}
+              style={[styles.spotlightCard, { borderColor: colors.cyan + "40" }]}
+            >
+              <View style={styles.spotlightContent}>
+                <Text style={styles.spotlightIcon}>{spotlightFeature.icon}</Text>
+                <View style={styles.spotlightText}>
+                  <Text style={styles.spotlightTitle}>{spotlightFeature.label}</Text>
+                  <Text style={styles.spotlightDesc}>{spotlightFeature.description}</Text>
+                </View>
+                <View style={[styles.spotlightBadge, { backgroundColor: colors.cyan }]}>
+                  <Text style={styles.spotlightBadgeText}>TRY NOW</Text>
+                </View>
+              </View>
+            </Pressable>
+          </View>
+        )}
+
         {/* Search Pill */}
         <Pressable 
           onPress={() => router.push("/discover")}
