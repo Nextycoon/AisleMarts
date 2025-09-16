@@ -4,7 +4,7 @@ Handles caching for nearby search results, location data, and inventory snapshot
 """
 
 import json
-import aioredis
+import redis.asyncio as redis
 import os
 from typing import Optional, Dict, Any, List
 from datetime import datetime, timedelta
