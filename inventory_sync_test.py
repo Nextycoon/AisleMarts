@@ -303,7 +303,7 @@ class InventorySyncTester:
             self.log_test("Inventory Sync Authentication (Bulk Sync)", False, "Should require authentication")
         
         # Test dashboard without auth
-        success, data = self.make_request("GET", "/v1/inventory/dashboard/MRC-0001")
+        success, data = self.make_request("GET", "/v1/inventory/dashboard/merchant_001")
         
         if not success and "401" in str(data):
             self.log_test("Inventory Sync Authentication (Dashboard)", True, "Correctly requires authentication")
