@@ -541,6 +541,141 @@ class APITester:
         else:
             self.log_test("AI Recommendations Invalid Query", False, str(data))
 
+    # ========== AVATAR ENDPOINT TESTS ==========
+    
+    def test_avatar_endpoint_valid_roles(self):
+        """Test avatar endpoint with valid role values"""
+        print("\n👤 Testing Avatar Endpoint - Valid Roles...")
+        
+        if not self.auth_token or not self.user_id:
+            self.log_test("Avatar Endpoint Setup", False, "No auth token or user ID available")
+            return
+        
+        # Test with buyer role
+        buyer_data = {"role": "buyer"}
+        success, data = self.make_request("PATCH", f"/users/{self.user_id}/avatar", buyer_data)
+        
+        if success and isinstance(data, dict) and data.get("role") == "buyer":
+            is_avatar_setup = data.get("isAvatarSetup", False)
+            updated_at = data.get("updatedAt")
+            self.log_test("Avatar Update (Buyer Role)", True, f"Role: {data.get('role')}, Setup: {is_avatar_setup}, Updated: {updated_at is not None}")
+        else:
+            self.log_test("Avatar Update (Buyer Role)", False, str(data))
+        
+        # Test with seller role
+        seller_data = {"role": "seller"}
+        success, data = self.make_request("PATCH", f"/users/{self.user_id}/avatar", seller_data)
+        
+        if success and isinstance(data, dict) and data.get("role") == "seller":
+            is_avatar_setup = data.get("isAvatarSetup", False)
+            self.log_test("Avatar Update (Seller Role)", True, f"Role: {data.get('role')}, Setup: {is_avatar_setup}")
+        else:
+            self.log_test("Avatar Update (Seller Role)", False, str(data))
+        
+        # Test with hybrid role
+        hybrid_data = {"role": "hybrid"}
+        success, data = self.make_request("PATCH", f"/users/{self.user_id}/avatar", hybrid_data)
+        
+        if success and isinstance(data, dict) and data.get("role") == "hybrid":
+            is_avatar_setup = data.get("isAvatarSetup", False)
+            self.log_test("Avatar Update (Hybrid Role)", True, f"Role: {data.get('role')}, Setup: {is_avatar_setup}")
+        else:
+            self.log_test("Avatar Update (Hybrid Role)", False, str(data))
+    
+    def test_avatar_endpoint_invalid_role(self):
+        """Test avatar endpoint with invalid role values"""
+        print("\n👤 Testing Avatar Endpoint - Invalid Role...")
+        
+        if not self.auth_token or not self.user_id:
+            self.log_test("Avatar Endpoint Invalid Role", False, "No auth token or user ID available")
+            return
+        
+        # Test with invalid role
+        invalid_data = {"role": "invalid"}
+        success, data = self.make_request("PATCH", f"/users/{self.user_id}/avatar", invalid_data)
+        
+        if not success and "422" in str(data):
+            self.log_test("Avatar Update (Invalid Role)", True, "Correctly rejected invalid role with 422 validation error")
+        else:
+            self.log_test("Avatar Update (Invalid Role)", False, f"Expected 422 validation error, got: {data}")
+    
+    def test_avatar_endpoint_missing_user(self):
+        """Test avatar endpoint with missing user ID"""
+        print("\n👤 Testing Avatar Endpoint - Missing User...")
+        
+        if not self.auth_token:
+            self.log_test("Avatar Endpoint Missing User", False, "No auth token available")
+            return
+        
+        # Test with non-existent user ID
+        valid_data = {"role": "buyer"}
+        success, data = self.make_request("PATCH", "/users/non-existent-user-id/avatar", valid_data)
+        
+        if not success and "404" in str(data):
+            self.log_test("Avatar Update (Missing User)", True, "Correctly returned 404 for non-existent user")
+        else:
+            self.log_test("Avatar Update (Missing User)", False, f"Expected 404 error, got: {data}")
+    
+    def test_avatar_endpoint_unauthorized(self):
+        """Test avatar endpoint without authentication"""
+        print("\n👤 Testing Avatar Endpoint - Unauthorized...")
+        
+        # Test without auth token
+        old_token = self.auth_token
+        self.auth_token = None
+        
+        valid_data = {"role": "buyer"}
+        success, data = self.make_request("PATCH", "/users/demo_user_123/avatar", valid_data)
+        
+        if not success and "401" in str(data):
+            self.log_test("Avatar Update (Unauthorized)", True, "Correctly rejected request without authentication")
+        else:
+            self.log_test("Avatar Update (Unauthorized)", False, f"Expected 401 error, got: {data}")
+        
+        # Restore token
+        self.auth_token = old_token
+    
+    def test_avatar_endpoint_permission_denied(self):
+        """Test avatar endpoint with different user ID (permission check)"""
+        print("\n👤 Testing Avatar Endpoint - Permission Denied...")
+        
+        if not self.auth_token:
+            self.log_test("Avatar Endpoint Permission", False, "No auth token available")
+            return
+        
+        # Test updating another user's avatar (should fail unless admin)
+        valid_data = {"role": "buyer"}
+        success, data = self.make_request("PATCH", "/users/different-user-id/avatar", valid_data)
+        
+        if not success and "403" in str(data):
+            self.log_test("Avatar Update (Permission Denied)", True, "Correctly rejected request to update another user's avatar")
+        else:
+            self.log_test("Avatar Update (Permission Denied)", False, f"Expected 403 error, got: {data}")
+    
+    def test_avatar_response_format(self):
+        """Test avatar endpoint response format"""
+        print("\n👤 Testing Avatar Endpoint - Response Format...")
+        
+        if not self.auth_token or not self.user_id:
+            self.log_test("Avatar Response Format", False, "No auth token or user ID available")
+            return
+        
+        # Test response format
+        test_data = {"role": "buyer"}
+        success, data = self.make_request("PATCH", f"/users/{self.user_id}/avatar", test_data)
+        
+        if success and isinstance(data, dict):
+            required_fields = ["id", "role", "isAvatarSetup", "updatedAt"]
+            has_all_fields = all(field in data for field in required_fields)
+            
+            if has_all_fields:
+                self.log_test("Avatar Response Format", True, f"Response contains all required fields: {required_fields}")
+            else:
+                missing_fields = [field for field in required_fields if field not in data]
+                self.log_test("Avatar Response Format", False, f"Missing fields: {missing_fields}")
+        else:
+            self.log_test("Avatar Response Format", False, str(data))
+
     # ========== PHASE 2C: GLOBAL PAYMENTS & TAX ENGINE TESTS ==========
     
     def test_payments_tax_initialization(self):
