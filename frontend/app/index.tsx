@@ -10,17 +10,20 @@ export default function IndexScreen() {
   useEffect(() => {
     console.log('IndexScreen - loading:', loading, 'hasCompletedAvatarSetup:', hasCompletedAvatarSetup);
     
-    if (!loading) {
-      console.log('Auth loading complete, checking avatar setup...');
+    // Add a short delay then navigate regardless of loading state
+    const navigationTimer = setTimeout(() => {
+      console.log('Navigation timer triggered');
       
-      if (!hasCompletedAvatarSetup) {
-        console.log('Redirecting to Avatar setup');
-        router.replace('/aisle-avatar');
-      } else {
-        console.log('Redirecting to main home screen');
+      if (hasCompletedAvatarSetup) {
+        console.log('Avatar setup complete, redirecting to home');
         router.replace('/home');
+      } else {
+        console.log('No avatar setup, redirecting to avatar screen');
+        router.replace('/aisle-avatar');
       }
-    }
+    }, loading ? 2000 : 500); // 2s if still loading, 500ms if ready
+
+    return () => clearTimeout(navigationTimer);
   }, [loading, hasCompletedAvatarSetup]);
 
   // Show loading screen while checking avatar setup
@@ -34,7 +37,7 @@ export default function IndexScreen() {
       />
       <ActivityIndicator size="large" color="#667eea" />
       <Text style={styles.loadingText}>
-        {loading ? 'Setting up...' : 'Ready!'}
+        {loading ? 'Setting up your experience...' : 'Almost ready!'}
       </Text>
     </View>
   );
