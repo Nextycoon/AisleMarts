@@ -72,7 +72,7 @@ async def rfq_health():
 
 # ============= RFQ MANAGEMENT =============
 
-@router.post "/rfqs", response_model=RFQ)
+@router.post("/rfqs", response_model=RFQ)
 async def create_rfq(
     rfq_data: RFQCreate,
     current_user = Depends(get_current_user),
