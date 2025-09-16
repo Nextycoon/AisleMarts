@@ -295,6 +295,7 @@ from search_routes import router as search_router
 from rfq_routes import router as rfq_router
 from nearby_routes import router as nearby_router
 from inventory_sync_routes import router as inventory_sync_router
+from pickup_windows_routes import router as pickup_windows_router
 
 # Include AI routes
 app.include_router(ai_router)
