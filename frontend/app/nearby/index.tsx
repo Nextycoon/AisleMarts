@@ -770,24 +770,342 @@ const styles = StyleSheet.create({
     color: '#666',
     textAlign: 'center',
   },
-  sectionTitle: {
-    fontSize: 24,
-    fontWeight: 'bold',
-    color: '#333',
-    marginBottom: 16,
+  // Location Card
+  locationCard: {
+    backgroundColor: 'white',
+    padding: 16,
+    borderRadius: 12,
+    marginBottom: 24,
+    elevation: 2,
+    shadowColor: '#000',
+    shadowOffset: { width: 0, height: 2 },
+    shadowOpacity: 0.1,
+    shadowRadius: 4,
   },
-  subsectionTitle: {
+  locationHeader: {
+    flexDirection: 'row',
+    alignItems: 'center',
+    marginBottom: 8,
+  },
+  locationTitle: {
+    fontSize: 16,
+    fontWeight: '600',
+    color: '#333',
+    marginLeft: 8,
+  },
+  locationText: {
+    fontSize: 14,
+    color: '#666',
+    marginBottom: 4,
+  },
+  locationSubtext: {
+    fontSize: 12,
+    color: '#999',
+  },
+  
+  // Merchants
+  merchantList: {
+    gap: 16,
+  },
+  merchantItem: {
+    backgroundColor: 'white',
+    padding: 16,
+    borderRadius: 12,
+    elevation: 2,
+    shadowColor: '#000',
+    shadowOffset: { width: 0, height: 2 },
+    shadowOpacity: 0.1,
+    shadowRadius: 4,
+  },
+  merchantHeader: {
+    flexDirection: 'row',
+    justifyContent: 'space-between',
+    alignItems: 'center',
+    marginBottom: 8,
+  },
+  merchantName: {
     fontSize: 18,
     fontWeight: '600',
     color: '#333',
-    marginBottom: 12,
-    marginTop: 24,
+    flex: 1,
   },
-  description: {
+  distanceBadge: {
+    backgroundColor: '#e8f2ff',
+    paddingHorizontal: 8,
+    paddingVertical: 4,
+    borderRadius: 8,
+  },
+  distanceText: {
+    fontSize: 12,
+    color: '#667eea',
+    fontWeight: '600',
+  },
+  merchantCategory: {
+    fontSize: 14,
+    color: '#667eea',
+    marginBottom: 4,
+  },
+  merchantDescription: {
+    fontSize: 14,
+    color: '#666',
+    lineHeight: 20,
+    marginBottom: 12,
+  },
+  merchantStats: {
+    flexDirection: 'row',
+    alignItems: 'center',
+    justifyContent: 'space-between',
+    marginBottom: 12,
+  },
+  averagePrice: {
+    fontSize: 12,
+    color: '#666',
+    fontWeight: '500',
+  },
+  merchantActions: {
+    flexDirection: 'row',
+    gap: 12,
+  },
+  reserveButton: {
+    flexDirection: 'row',
+    alignItems: 'center',
+    backgroundColor: '#667eea',
+    paddingHorizontal: 16,
+    paddingVertical: 8,
+    borderRadius: 8,
+    flex: 1,
+    justifyContent: 'center',
+    gap: 4,
+  },
+  reserveButtonText: {
+    color: 'white',
+    fontSize: 14,
+    fontWeight: '600',
+  },
+  viewButton: {
+    backgroundColor: 'transparent',
+    borderWidth: 1,
+    borderColor: '#667eea',
+    paddingHorizontal: 16,
+    paddingVertical: 8,
+    borderRadius: 8,
+    flex: 1,
+    alignItems: 'center',
+  },
+  viewButtonText: {
+    color: '#667eea',
+    fontSize: 14,
+    fontWeight: '600',
+  },
+  
+  // Pickup Windows
+  windowsList: {
+    gap: 16,
+  },
+  windowItem: {
+    backgroundColor: 'white',
+    padding: 16,
+    borderRadius: 12,
+    elevation: 2,
+    shadowColor: '#000',
+    shadowOffset: { width: 0, height: 2 },
+    shadowOpacity: 0.1,
+    shadowRadius: 4,
+  },
+  windowHeader: {
+    flexDirection: 'row',
+    justifyContent: 'space-between',
+    alignItems: 'center',
+    marginBottom: 8,
+  },
+  windowTime: {
+    fontSize: 16,
+    fontWeight: '600',
+    color: '#333',
+    flex: 1,
+  },
+  windowLocation: {
+    fontSize: 14,
+    color: '#666',
+    marginBottom: 12,
+  },
+  bookButton: {
+    backgroundColor: '#667eea',
+    paddingVertical: 12,
+    borderRadius: 8,
+    alignItems: 'center',
+  },
+  bookButtonDisabled: {
+    backgroundColor: '#ccc',
+  },
+  bookButtonText: {
+    color: 'white',
+    fontSize: 14,
+    fontWeight: '600',
+  },
+  bookButtonTextDisabled: {
+    color: '#999',
+    fontSize: 14,
+    fontWeight: '600',
+  },
+  
+  // Reservations
+  reservationsList: {
+    gap: 16,
+  },
+  reservationItem: {
+    backgroundColor: 'white',
+    padding: 16,
+    borderRadius: 12,
+    elevation: 2,
+    shadowColor: '#000',
+    shadowOffset: { width: 0, height: 2 },
+    shadowOpacity: 0.1,
+    shadowRadius: 4,
+  },
+  reservationHeader: {
+    flexDirection: 'row',
+    justifyContent: 'space-between',
+    alignItems: 'center',
+    marginBottom: 8,
+  },
+  reservationId: {
+    fontSize: 16,
+    fontWeight: '600',
+    color: '#333',
+    flex: 1,
+  },
+  reservationMerchant: {
+    fontSize: 14,
+    color: '#667eea',
+    marginBottom: 8,
+  },
+  pickupCodeContainer: {
+    flexDirection: 'row',
+    alignItems: 'center',
+    backgroundColor: '#f5f5f5',
+    padding: 8,
+    borderRadius: 6,
+    marginBottom: 8,
+  },
+  pickupCodeLabel: {
+    fontSize: 12,
+    color: '#666',
+    marginRight: 8,
+  },
+  pickupCode: {
+    fontSize: 14,
+    fontWeight: 'bold',
+    color: '#333',
+    letterSpacing: 1,
+  },
+  reservationTime: {
+    fontSize: 14,
+    color: '#666',
+    marginBottom: 4,
+  },
+  reservationItems: {
+    fontSize: 14,
+    color: '#666',
+    marginBottom: 12,
+  },
+  reservationActions: {
+    flexDirection: 'row',
+    gap: 12,
+  },
+  detailsButton: {
+    backgroundColor: '#667eea',
+    paddingHorizontal: 16,
+    paddingVertical: 8,
+    borderRadius: 8,
+    flex: 1,
+    alignItems: 'center',
+  },
+  detailsButtonText: {
+    color: 'white',
+    fontSize: 14,
+    fontWeight: '600',
+  },
+  modifyButton: {
+    backgroundColor: 'transparent',
+    borderWidth: 1,
+    borderColor: '#667eea',
+    paddingHorizontal: 16,
+    paddingVertical: 8,
+    borderRadius: 8,
+    flex: 1,
+    alignItems: 'center',
+  },
+  modifyButtonText: {
+    color: '#667eea',
+    fontSize: 14,
+    fontWeight: '600',
+  },
+  
+  // Modal
+  modalContainer: {
+    flex: 1,
+    backgroundColor: '#f8f9fa',
+  },
+  modalHeader: {
+    flexDirection: 'row',
+    alignItems: 'center',
+    justifyContent: 'space-between',
+    paddingHorizontal: 16,
+    paddingVertical: 12,
+    backgroundColor: 'white',
+    borderBottomWidth: 1,
+    borderBottomColor: '#e0e0e0',
+  },
+  modalCloseButton: {
+    padding: 8,
+  },
+  modalTitle: {
+    fontSize: 18,
+    fontWeight: '600',
+    color: '#333',
+  },
+  modalPlaceholder: {
+    width: 32,
+  },
+  modalContent: {
+    flex: 1,
+    padding: 16,
+  },
+  modalDescription: {
     fontSize: 16,
     color: '#666',
-    lineHeight: 24,
     marginBottom: 24,
+    textAlign: 'center',
+  },
+  demoReservationForm: {
+    backgroundColor: 'white',
+    padding: 16,
+    borderRadius: 12,
+  },
+  formSectionTitle: {
+    fontSize: 16,
+    fontWeight: '600',
+    color: '#333',
+    marginBottom: 12,
+  },
+  windowOptionItem: {
+    flexDirection: 'row',
+    justifyContent: 'space-between',
+    alignItems: 'center',
+    padding: 12,
+    borderRadius: 8,
+    borderWidth: 1,
+    borderColor: '#e0e0e0',
+    marginBottom: 8,
+  },
+  windowOptionDisabled: {
+    opacity: 0.5,
+  },
+  windowOptionTime: {
+    fontSize: 14,
+    fontWeight: '500',
+    color: '#333',
   },
   locationCard: {
     backgroundColor: 'white',
