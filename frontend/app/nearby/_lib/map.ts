@@ -3,9 +3,19 @@
  * Map configuration and utilities for location-based features
  */
 
-import Mapbox from '@rnmapbox/maps';
 import * as Location from 'expo-location';
 import Constants from 'expo-constants';
+import { Platform } from 'react-native';
+
+// Conditional import for Mapbox - only on native platforms
+let Mapbox: any = null;
+if (Platform.OS !== 'web') {
+  try {
+    Mapbox = require('@rnmapbox/maps').default;
+  } catch (error) {
+    console.warn('Mapbox not available:', error);
+  }
+}
 
 // Initialize Mapbox with token from environment
 const mapboxToken = Constants.expoConfig?.extra?.MAPBOX_PUBLIC_TOKEN || 
