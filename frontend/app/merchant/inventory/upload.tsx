@@ -60,12 +60,14 @@ export default function MerchantInventoryUploadScreen() {
 
   const uploadInventory = async () => {
     if (!selectedFile) {
+      triggerHaptic('warning');
       Alert.alert('No File Selected', 'Please select a CSV file first.');
       return;
     }
 
     setUploading(true);
     setUploadProgress(0);
+    onFormSubmit();
 
     try {
       // Create FormData for file upload
@@ -78,11 +80,11 @@ export default function MerchantInventoryUploadScreen() {
       formData.append('location_id', 'LOC-WESTLANDS-001'); // Demo location
       formData.append('sync_mode', 'merge'); // merge, replace, append
 
-      // Simulated upload progress
+      // Simulated upload progress with haptic feedback
       const progressInterval = setInterval(() => {
         setUploadProgress(prev => {
           const newProgress = Math.min(prev + 10, 90);
-          // onUploadProgress(newProgress); // Haptic feedback at milestones - temporarily disabled
+          onUploadProgress(newProgress); // Haptic feedback at milestones
           return newProgress;
         });
       }, 200);
@@ -104,6 +106,7 @@ export default function MerchantInventoryUploadScreen() {
         
         // Show success animation first
         setShowSuccess(true);
+        triggerHaptic('success');
         
         // Delayed success alert
         setTimeout(() => {
@@ -123,6 +126,7 @@ export default function MerchantInventoryUploadScreen() {
 
     } catch (error: any) {
       console.error('Upload failed:', error);
+      triggerHaptic('error');
       Alert.alert(
         'Upload Failed',
         error.message || 'Failed to upload inventory. Please check your file format and try again.',
@@ -131,6 +135,7 @@ export default function MerchantInventoryUploadScreen() {
     } finally {
       setUploading(false);
       setUploadProgress(0);
+      setShowSuccess(false);
     }
   };
 
