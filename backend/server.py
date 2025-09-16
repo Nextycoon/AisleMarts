@@ -83,6 +83,46 @@ async def login(payload: UserLogin):
 async def get_me(user=Depends(get_current_user)):
     return UserOut(**user)
 
+# -------- Avatar/Profile Management --------
+from pydantic import BaseModel
+from typing import Literal
+
+class AvatarUpdate(BaseModel):
+    role: Literal["buyer", "seller", "hybrid"]
+
+@api_router.patch("/users/{user_id}/avatar")
+async def update_user_avatar(
+    user_id: str, 
+    avatar_data: AvatarUpdate, 
+    current_user=Depends(get_current_user)
+):
+    # Ensure user can only update their own avatar or admin
+    if current_user["_id"] != user_id and "admin" not in current_user["roles"]:
+        raise HTTPException(403, "Permission denied")
+    
+    update_doc = {
+        "role": avatar_data.role,
+        "isAvatarSetup": True,
+        "updatedAt": datetime.utcnow()
+    }
+    
+    result = await db().users.update_one(
+        {"_id": user_id},
+        {"$set": update_doc}
+    )
+    
+    if result.modified_count == 0:
+        raise HTTPException(404, "User not found")
+    
+    # Return updated user
+    updated_user = await db().users.find_one({"_id": user_id})
+    return {
+        "id": updated_user["_id"],
+        "role": updated_user.get("role"),
+        "isAvatarSetup": updated_user.get("isAvatarSetup", False),
+        "updatedAt": updated_user.get("updatedAt")
+    }
+
 # -------- Categories --------
 @api_router.post("/categories", response_model=CategoryOut)
 async def create_category(category: CategoryIn, user=Depends(get_current_user)):
