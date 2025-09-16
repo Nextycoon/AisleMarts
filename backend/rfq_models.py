@@ -168,7 +168,7 @@ class RFQItemCreate(BaseModel):
     quantity: int = Field(..., gt=0)
     unit: str = Field(..., min_length=1, max_length=20)
     target_price_minor: Optional[int] = Field(None, gt=0)
-    currency: str = Field(default="KES", regex="^[A-Z]{3}$")
+    currency: str = Field(default="KES", pattern="^[A-Z]{3}$")
     delivery_location: Optional[str] = None
     delivery_date_required: Optional[datetime] = None
     notes: Optional[str] = None
@@ -186,7 +186,7 @@ class RFQCreate(BaseModel):
     description: str = Field(..., min_length=20, max_length=2000)
     urgency: UrgencyLevel = UrgencyLevel.MEDIUM
     estimated_budget_minor: Optional[int] = Field(None, gt=0)
-    currency: str = Field(default="KES", regex="^[A-Z]{3}$")
+    currency: str = Field(default="KES", pattern="^[A-Z]{3}$")
     delivery_location: str = Field(..., min_length=5, max_length=200)
     delivery_date_required: datetime
     submission_deadline: datetime
