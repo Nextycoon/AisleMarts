@@ -182,72 +182,44 @@ export default function NearbyScreen() {
 
   const renderMapView = () => (
     <View style={styles.mapContainer}>
-      <Mapbox.MapView
-        ref={mapRef}
-        style={styles.map}
-        styleURL={Mapbox.StyleURL.Street}
-      >
-        {location && (
-          <Mapbox.Camera
-            centerCoordinate={[location.lng, location.lat]}
-            zoomLevel={13}
-            animationDuration={1000}
-          />
-        )}
+      {/* Placeholder map view for web compatibility */}
+      <View style={styles.mapPlaceholder}>
+        <Ionicons name="map" size={64} color="#ccc" />
+        <Text style={styles.mapPlaceholderText}>Map View</Text>
+        <Text style={styles.mapPlaceholderSubtext}>
+          Location: {location ? `${location.lat.toFixed(4)}, ${location.lng.toFixed(4)}` : 'Unknown'}
+        </Text>
+        <Text style={styles.mapPlaceholderSubtext}>
+          Found {items.length} nearby items
+        </Text>
         
-        {/* User location marker */}
-        {location && (
-          <Mapbox.PointAnnotation
-            id="user-location"
-            coordinate={[location.lng, location.lat]}
-          >
-            <View style={styles.userMarker}>
-              <Ionicons name="person" size={16} color="white" />
-            </View>
-          </Mapbox.PointAnnotation>
+        {/* Show selected item overlay if any */}
+        {selectedItem && (
+          <View style={styles.selectedItemOverlay}>
+            <TouchableOpacity
+              style={styles.closeButton}
+              onPress={() => setSelectedItem(null)}
+            >
+              <Ionicons name="close" size={20} color="#666" />
+            </TouchableOpacity>
+            
+            <Text style={styles.selectedItemTitle}>{selectedItem.title}</Text>
+            <Text style={styles.selectedItemLocation}>{selectedItem.location.name}</Text>
+            <Text style={styles.selectedItemPrice}>
+              {formatPrice(selectedItem.best_offer.price.amount)}
+            </Text>
+            
+            {renderBestPickBadge(selectedItem.best_pick_score, selectedItem.best_pick_reasons)}
+            
+            <TouchableOpacity
+              style={styles.reserveButton}
+              onPress={() => router.push(`/nearby/reserve/${selectedItem.best_offer.sku}`)}
+            >
+              <Text style={styles.reserveButtonText}>Reserve & Pickup</Text>
+            </TouchableOpacity>
+          </View>
         )}
-
-        {/* Item markers */}
-        {items.map((item, index) => (
-          <Mapbox.PointAnnotation
-            key={index}
-            id={`item-${index}`}
-            coordinate={item.location.geo.coordinates}
-            onSelected={() => setSelectedItem(item)}
-          >
-            <View style={styles.itemMarker}>
-              <Text style={styles.markerText}>{(item.best_pick_score * 100).toFixed(0)}%</Text>
-            </View>
-          </Mapbox.PointAnnotation>
-        ))}
-      </Mapbox.MapView>
-
-      {/* Selected item overlay */}
-      {selectedItem && (
-        <View style={styles.selectedItemOverlay}>
-          <TouchableOpacity
-            style={styles.closeButton}
-            onPress={() => setSelectedItem(null)}
-          >
-            <Ionicons name="close" size={20} color="#666" />
-          </TouchableOpacity>
-          
-          <Text style={styles.selectedItemTitle}>{selectedItem.title}</Text>
-          <Text style={styles.selectedItemLocation}>{selectedItem.location.name}</Text>
-          <Text style={styles.selectedItemPrice}>
-            {formatPrice(selectedItem.best_offer.price.amount)}
-          </Text>
-          
-          {renderBestPickBadge(selectedItem.best_pick_score, selectedItem.best_pick_reasons)}
-          
-          <TouchableOpacity
-            style={styles.reserveButton}
-            onPress={() => router.push(`/nearby/reserve/${selectedItem.best_offer.sku}`)}
-          >
-            <Text style={styles.reserveButtonText}>Reserve & Pickup</Text>
-          </TouchableOpacity>
-        </View>
-      )}
+      </View>
     </View>
   );
 
