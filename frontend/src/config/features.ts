@@ -44,7 +44,9 @@ export const FEATURES_REGISTRY: FeatureItem[] = [
     description: "Local commerce",
     status: "working", 
     enabled: true,
-    priority: 2
+    priority: 2,
+    tags: ["phase3", "core", "location", "pickup"],
+    experimentKey: "nearby_map_ui_v2"
   },
   
   // Phase 2: B2B/RFQ Workflows
@@ -56,7 +58,9 @@ export const FEATURES_REGISTRY: FeatureItem[] = [
     description: "Request quotes",
     status: "working", 
     enabled: true,
-    priority: 3
+    priority: 3,
+    tags: ["phase2", "b2b", "procurement", "core"],
+    experimentKey: "rfq_flow_v3"
   },
   { 
     key: "quotes", 
@@ -66,7 +70,8 @@ export const FEATURES_REGISTRY: FeatureItem[] = [
     description: "Manage offers",
     status: "new", 
     enabled: true,
-    priority: 4
+    priority: 4,
+    tags: ["phase2", "b2b", "procurement", "new_feature"]
   },
   { 
     key: "purchase_orders", 
