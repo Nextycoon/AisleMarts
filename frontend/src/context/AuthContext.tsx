@@ -47,11 +47,47 @@ export const AuthProvider: React.FC<{ children: React.ReactNode }> = ({ children
         const { data } = await API.get('/auth/me');
         setUser(data);
       }
+      
+      // Check avatar setup completion
+      await checkAvatarSetup();
     } catch (error) {
       console.log('Failed to load stored auth:', error);
       await AsyncStorage.removeItem('auth_token');
     } finally {
       setLoading(false);
+    }
+  };
+
+  const checkAvatarSetup = async (): Promise<boolean> => {
+    try {
+      const storedRole = await AsyncStorage.getItem('userRole');
+      const hasSetup = !!storedRole;
+      setHasCompletedAvatarSetup(hasSetup);
+      return hasSetup;
+    } catch (error) {
+      console.log('Failed to check avatar setup:', error);
+      return false;
+    }
+  };
+
+  const updateUser = async (updates: Partial<User>) => {
+    try {
+      if (updates.role) {
+        // Save role to AsyncStorage
+        await AsyncStorage.setItem('userRole', updates.role);
+        setHasCompletedAvatarSetup(true);
+      }
+
+      // Update user state
+      setUser(prev => prev ? { ...prev, ...updates } : undefined);
+
+      // TODO: Send to backend API
+      // if (token) {
+      //   await API.patch('/auth/me', updates);
+      // }
+    } catch (error) {
+      console.error('Failed to update user:', error);
+      throw error;
     }
   };
 
