@@ -39,23 +39,24 @@ export const AuthProvider: React.FC<{ children: React.ReactNode }> = ({ children
 
   const loadStoredAuth = async () => {
     try {
+      console.log('🔄 AuthContext: Starting quick initialization...');
+      
       // Quick check for avatar setup without blocking
       const storedRole = await AsyncStorage.getItem('userRole');
       const storedSetup = await AsyncStorage.getItem('isAvatarSetup');
       const hasSetup = !!(storedRole || storedSetup === 'true');
       
-      console.log('AuthContext: Loaded avatar setup status:', hasSetup);
+      console.log('✅ AuthContext: Avatar setup status:', hasSetup);
       setHasCompletedAvatarSetup(hasSetup);
       
-      // Skip token verification for now to avoid blocking
-      console.log('AuthContext: Skipping token verification to avoid blocking');
+      console.log('✅ AuthContext: Initialization complete');
       
     } catch (error) {
-      console.log('Failed to load stored auth:', error);
+      console.log('⚠️ AuthContext: Error during initialization:', error);
       // Default to no avatar setup (show avatar screen)
       setHasCompletedAvatarSetup(false);
     } finally {
-      console.log('AuthContext: Loading complete');
+      console.log('🎯 AuthContext: Setting loading to false');
       setLoading(false);
     }
   };
