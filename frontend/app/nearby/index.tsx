@@ -326,53 +326,95 @@ export default function NearbyCommerceScreen() {
 
   return (
     <SafeAreaView style={styles.container}>
-      {/* Header */}
+      <StatusBar style="light" />
+      
+      {/* Header with Search */}
       <View style={styles.header}>
         <TouchableOpacity onPress={() => router.back()} style={styles.backButton}>
           <Ionicons name="arrow-back" size={24} color="white" />
         </TouchableOpacity>
         <Text style={styles.headerTitle}>Nearby Commerce</Text>
-        <TouchableOpacity style={styles.scanButton}>
+        <TouchableOpacity 
+          style={styles.scanButton}
+          onPress={() => router.push('/nearby/scan')}
+        >
           <Ionicons name="scan" size={24} color="white" />
         </TouchableOpacity>
       </View>
 
-      {/* Tab Navigation */}
-      <View style={styles.tabContainer}>
-        <TouchableOpacity
-          style={[styles.tab, activeTab === 'discover' && styles.activeTab]}
-          onPress={() => setActiveTab('discover')}
+      {/* Search & Filter Bar */}
+      <View style={styles.searchContainer}>
+        <View style={styles.searchBar}>
+          <Ionicons name="search" size={20} color="#666" />
+          <TextInput
+            style={styles.searchInput}
+            placeholder="Search merchants, products..."
+            value={searchQuery}
+            onChangeText={setSearchQuery}
+            placeholderTextColor="#999"
+          />
+        </View>
+        <TouchableOpacity 
+          style={styles.filterButton}
+          onPress={() => setFilterOpen(!filterOpen)}
         >
-          <Text style={[styles.tabText, activeTab === 'discover' && styles.activeTabText]}>
-            Discover
-          </Text>
-        </TouchableOpacity>
-        <TouchableOpacity
-          style={[styles.tab, activeTab === 'pickup' && styles.activeTab]}
-          onPress={() => setActiveTab('pickup')}
-        >
-          <Text style={[styles.tabText, activeTab === 'pickup' && styles.activeTabText]}>
-            Pickup Windows
-          </Text>
-        </TouchableOpacity>
-        <TouchableOpacity
-          style={[styles.tab, activeTab === 'reservations' && styles.activeTab]}
-          onPress={() => setActiveTab('reservations')}
-        >
-          <Text style={[styles.tabText, activeTab === 'reservations' && styles.activeTabText]}>
-            My Reservations
-          </Text>
+          <Ionicons name="options" size={20} color="#667eea" />
         </TouchableOpacity>
       </View>
 
-      <ScrollView style={styles.content}>
-        {activeTab === 'discover' && (
-          <View>
-            <Text style={styles.sectionTitle}>Phase 3: Nearby/Onsite Commerce ✅</Text>
-            <Text style={styles.description}>
-              Discover nearby merchants, reserve items for pickup, and enjoy seamless online-to-offline commerce.
-            </Text>
+      {/* Filter Pills */}
+      {filterOpen && (
+        <SlideInView direction="down" style={styles.filterContainer}>
+          <ScrollView horizontal showsHorizontalScrollIndicator={false}>
+            <BounceButton
+              style={[styles.filterPill, selectedFilters.openNow && styles.filterPillActive]}
+              onPress={() => setSelectedFilters(prev => ({ ...prev, openNow: !prev.openNow }))}
+            >
+              <Ionicons name="time" size={16} color={selectedFilters.openNow ? 'white' : '#667eea'} />
+              <Text style={[styles.filterPillText, selectedFilters.openNow && styles.filterPillTextActive]}>
+                Open Now
+              </Text>
+            </BounceButton>
+            
+            <BounceButton
+              style={[styles.filterPill, selectedFilters.within2km && styles.filterPillActive]}
+              onPress={() => setSelectedFilters(prev => ({ ...prev, within2km: !prev.within2km }))}
+            >
+              <Ionicons name="location" size={16} color={selectedFilters.within2km ? 'white' : '#667eea'} />
+              <Text style={[styles.filterPillText, selectedFilters.within2km && styles.filterPillTextActive]}>
+                Within 2km
+              </Text>
+            </BounceButton>
+          </ScrollView>
+        </SlideInView>
+      )}
 
+      {/* Tab Navigation */}
+      <View style={styles.tabContainer}>
+        {['discover', 'pickup', 'reservations'].map((tab) => (
+          <TouchableOpacity
+            key={tab}
+            style={[styles.tab, activeTab === tab && styles.activeTab]}
+            onPress={() => {
+              setActiveTab(tab as any);
+              haptics.onButtonPress();
+            }}
+          >
+            <Text style={[styles.tabText, activeTab === tab && styles.activeTabText]}>
+              {tab === 'discover' ? 'Discover' : tab === 'pickup' ? 'Windows' : 'My Orders'}
+            </Text>
+          </TouchableOpacity>
+        ))}
+      </View>
+
+      <ScrollView 
+        style={styles.content}
+        refreshControl={
+          <RefreshControl refreshing={refreshing} onRefresh={handleRefresh} />
+        }
+      >
+        {activeTab === 'discover' && (
+          <FadeInView>
             {/* Location Card */}
             <View style={styles.locationCard}>
               <View style={styles.locationHeader}>
@@ -380,155 +422,224 @@ export default function NearbyCommerceScreen() {
                 <Text style={styles.locationTitle}>Current Location</Text>
               </View>
               <Text style={styles.locationText}>📍 Westlands, Nairobi, Kenya</Text>
-              <Text style={styles.locationSubtext}>5 nearby merchants • 150+ products available</Text>
+              <Text style={styles.locationSubtext}>
+                {merchants.length} nearby merchants • {merchants.reduce((sum, m) => sum + m.pickupWindows.length, 0)} pickup windows
+              </Text>
             </View>
 
-            {/* Nearby Merchants */}
-            <Text style={styles.subsectionTitle}>Nearby Merchants</Text>
-            
-            <View style={styles.merchantList}>
-              <View style={styles.merchantItem}>
-                <View style={styles.merchantHeader}>
-                  <Text style={styles.merchantName}>TechHub Westlands</Text>
-                  <View style={styles.distanceBadge}>
-                    <Text style={styles.distanceText}>0.5 km</Text>
-                  </View>
-                </View>
-                <Text style={styles.merchantCategory}>Electronics & Technology</Text>
-                <Text style={styles.merchantDescription}>
-                  Smartphones, laptops, accessories • Available for immediate pickup
-                </Text>
-                <View style={styles.merchantActions}>
-                  <TouchableOpacity style={styles.reserveButton}>
-                    <Ionicons name="bookmark" size={16} color="white" />
-                    <Text style={styles.reserveButtonText}>Reserve Items</Text>
-                  </TouchableOpacity>
-                  <TouchableOpacity style={styles.viewButton}>
-                    <Text style={styles.viewButtonText}>View Products</Text>
-                  </TouchableOpacity>
-                </View>
+            {/* Merchants List */}
+            {loading ? (
+              <View style={styles.loadingContainer}>
+                <ActivityIndicator size="large" color="#667eea" />
+                <Text style={styles.loadingText}>Finding nearby merchants...</Text>
               </View>
-
-              <View style={styles.merchantItem}>
-                <View style={styles.merchantHeader}>
-                  <Text style={styles.merchantName}>SuperMart Westlands</Text>
-                  <View style={styles.distanceBadge}>
-                    <Text style={styles.distanceText}>1.2 km</Text>
-                  </View>
-                </View>
-                <Text style={styles.merchantCategory}>Grocery & Household</Text>
-                <Text style={styles.merchantDescription}>
-                  Fresh produce, household items • Same-day pickup available
-                </Text>
-                <View style={styles.merchantActions}>
-                  <TouchableOpacity style={styles.reserveButton}>
-                    <Ionicons name="bookmark" size={16} color="white" />
-                    <Text style={styles.reserveButtonText}>Reserve Items</Text>
-                  </TouchableOpacity>
-                  <TouchableOpacity style={styles.viewButton}>
-                    <Text style={styles.viewButtonText}>View Products</Text>
-                  </TouchableOpacity>
-                </View>
+            ) : merchants.length > 0 ? (
+              <View style={styles.merchantList}>
+                {merchants.map((merchant, index) => (
+                  <SlideInView key={merchant.id} delay={index * 100} style={styles.merchantItem}>
+                    <View style={styles.merchantHeader}>
+                      <Text style={styles.merchantName}>{merchant.name}</Text>
+                      <View style={styles.distanceBadge}>
+                        <Text style={styles.distanceText}>{merchant.distance} km</Text>
+                      </View>
+                    </View>
+                    
+                    <Text style={styles.merchantCategory}>{merchant.category}</Text>
+                    <Text style={styles.merchantDescription}>{merchant.description}</Text>
+                    
+                    <View style={styles.merchantStats}>
+                      <StatusChip 
+                        status={merchant.status === 'open' ? 'active' : 'inactive'} 
+                        size="small" 
+                      />
+                      <Text style={styles.averagePrice}>Avg: KES {merchant.averagePrice.toLocaleString()}</Text>
+                    </View>
+                    
+                    <View style={styles.merchantActions}>
+                      <BounceButton
+                        style={styles.reserveButton}
+                        onPress={() => handleMerchantSelect(merchant)}
+                      >
+                        <Ionicons name="bookmark" size={16} color="white" />
+                        <Text style={styles.reserveButtonText}>Reserve Items</Text>
+                      </BounceButton>
+                      
+                      <TouchableOpacity style={styles.viewButton}>
+                        <Text style={styles.viewButtonText}>View Details</Text>
+                      </TouchableOpacity>
+                    </View>
+                  </SlideInView>
+                ))}
               </View>
-            </View>
-          </View>
+            ) : (
+              <EmptyState 
+                type="inventory"
+                customTitle="No Nearby Merchants"
+                customMessage="We couldn't find any merchants in your area. Try expanding your search radius or check back later."
+                onAction={loadNearbyMerchants}
+                actionText="Refresh"
+              />
+            )}
+          </FadeInView>
         )}
 
         {activeTab === 'pickup' && (
-          <View>
-            <Text style={styles.sectionTitle}>Available Pickup Windows</Text>
-            
-            <View style={styles.windowsList}>
-              <View style={styles.windowItem}>
-                <View style={styles.windowHeader}>
-                  <Text style={styles.windowTime}>Today, 2:00 PM - 3:00 PM</Text>
-                  <View style={styles.availabilityBadge}>
-                    <Text style={styles.availabilityText}>5 spots left</Text>
-                  </View>
-                </View>
-                <Text style={styles.windowLocation}>TechHub Westlands</Text>
-                <TouchableOpacity style={styles.bookButton}>
-                  <Text style={styles.bookButtonText}>Book Window</Text>
-                </TouchableOpacity>
+          <FadeInView>
+            {merchants.length > 0 ? (
+              <View style={styles.windowsList}>
+                {merchants.flatMap(merchant => 
+                  merchant.pickupWindows.map((window, index) => (
+                    <SlideInView key={window.id} delay={index * 100} style={styles.windowItem}>
+                      <View style={styles.windowHeader}>
+                        <Text style={styles.windowTime}>
+                          Today, {window.timeSlot.start} - {window.timeSlot.end}
+                        </Text>
+                        <StatusChip 
+                          status={window.status} 
+                          size="small"
+                          customText={window.available > 0 ? `${window.available} spots` : 'Full'}
+                        />
+                      </View>
+                      
+                      <Text style={styles.windowLocation}>{merchant.name}</Text>
+                      
+                      <BounceButton
+                        style={[styles.bookButton, window.status === 'full' && styles.bookButtonDisabled]}
+                        disabled={window.status === 'full'}
+                        onPress={() => handleMerchantSelect(merchant)}
+                      >
+                        <Text style={[styles.bookButtonText, window.status === 'full' && styles.bookButtonTextDisabled]}>
+                          {window.status === 'full' ? 'Fully Booked' : 'Book Window'}
+                        </Text>
+                      </BounceButton>
+                    </SlideInView>
+                  ))
+                )}
               </View>
-
-              <View style={styles.windowItem}>
-                <View style={styles.windowHeader}>
-                  <Text style={styles.windowTime}>Today, 5:00 PM - 6:00 PM</Text>
-                  <View style={styles.availabilityBadge}>
-                    <Text style={styles.availabilityText}>3 spots left</Text>
-                  </View>
-                </View>
-                <Text style={styles.windowLocation}>SuperMart Westlands</Text>
-                <TouchableOpacity style={styles.bookButton}>
-                  <Text style={styles.bookButtonText}>Book Window</Text>
-                </TouchableOpacity>
-              </View>
-
-              <View style={styles.windowItem}>
-                <View style={styles.windowHeader}>
-                  <Text style={styles.windowTime}>Tomorrow, 10:00 AM - 11:00 AM</Text>
-                  <View style={[styles.availabilityBadge, styles.availabilityBadgeFull]}>
-                    <Text style={styles.availabilityText}>Fully Booked</Text>
-                  </View>
-                </View>
-                <Text style={styles.windowLocation}>TechHub Westlands</Text>
-                <TouchableOpacity style={[styles.bookButton, styles.bookButtonDisabled]} disabled>
-                  <Text style={styles.bookButtonTextDisabled}>Unavailable</Text>
-                </TouchableOpacity>
-              </View>
-            </View>
-          </View>
+            ) : (
+              <EmptyState 
+                type="pickup_windows"
+                onAction={loadNearbyMerchants}
+              />
+            )}
+          </FadeInView>
         )}
 
         {activeTab === 'reservations' && (
-          <View>
-            <Text style={styles.sectionTitle}>My Reservations</Text>
-            
-            <View style={styles.reservationsList}>
-              <View style={styles.reservationItem}>
-                <View style={styles.reservationHeader}>
-                  <Text style={styles.reservationId}>Reservation #RES001</Text>
-                  <View style={styles.statusBadge}>
-                    <Text style={styles.statusText}>Confirmed</Text>
-                  </View>
-                </View>
-                <Text style={styles.reservationMerchant}>TechHub Westlands</Text>
-                <Text style={styles.reservationTime}>📅 Today, 2:00 PM - 3:00 PM</Text>
-                <Text style={styles.reservationItems}>2 items reserved • Total: KES 25,000</Text>
-                <View style={styles.reservationActions}>
-                  <TouchableOpacity style={styles.detailsButton}>
-                    <Text style={styles.detailsButtonText}>View Details</Text>
-                  </TouchableOpacity>
-                  <TouchableOpacity style={styles.modifyButton}>
-                    <Text style={styles.modifyButtonText}>Modify</Text>
-                  </TouchableOpacity>
-                </View>
+          <FadeInView>
+            {reservations.length > 0 ? (
+              <View style={styles.reservationsList}>
+                {reservations.map((reservation, index) => (
+                  <SlideInView key={reservation.id} delay={index * 100} style={styles.reservationItem}>
+                    <View style={styles.reservationHeader}>
+                      <Text style={styles.reservationId}>#{reservation.id}</Text>
+                      <StatusChip status={reservation.status} size="small" />
+                    </View>
+                    
+                    <Text style={styles.reservationMerchant}>{reservation.merchantName}</Text>
+                    
+                    {reservation.pickupCode && (
+                      <View style={styles.pickupCodeContainer}>
+                        <Text style={styles.pickupCodeLabel}>Pickup Code:</Text>
+                        <Text style={styles.pickupCode}>{reservation.pickupCode}</Text>
+                      </View>
+                    )}
+                    
+                    {reservation.scheduledFor && (
+                      <Text style={styles.reservationTime}>
+                        📅 {new Date(reservation.scheduledFor).toLocaleDateString()} at{' '}
+                        {new Date(reservation.scheduledFor).toLocaleTimeString([], {hour: '2-digit', minute:'2-digit'})}
+                      </Text>
+                    )}
+                    
+                    <Text style={styles.reservationItems}>
+                      {reservation.items.length} items • Total: KES {reservation.total.toLocaleString()}
+                    </Text>
+                    
+                    <View style={styles.reservationActions}>
+                      <BounceButton
+                        style={styles.detailsButton}
+                        onPress={() => router.push(`/nearby/reserve/${reservation.id}`)}
+                      >
+                        <Text style={styles.detailsButtonText}>View Details</Text>
+                      </BounceButton>
+                      
+                      {reservation.status !== 'completed' && reservation.status !== 'cancelled' && (
+                        <TouchableOpacity 
+                          style={styles.modifyButton}
+                          onPress={() => handleReservationAction(reservation.id, 'extend')}
+                        >
+                          <Text style={styles.modifyButtonText}>Extend Hold</Text>
+                        </TouchableOpacity>
+                      )}
+                    </View>
+                  </SlideInView>
+                ))}
               </View>
-
-              <View style={styles.reservationItem}>
-                <View style={styles.reservationHeader}>
-                  <Text style={styles.reservationId}>Reservation #RES002</Text>
-                  <View style={[styles.statusBadge, styles.statusBadgePartial]}>
-                    <Text style={styles.statusText}>Partial Pickup</Text>
-                  </View>
-                </View>
-                <Text style={styles.reservationMerchant}>SuperMart Westlands</Text>
-                <Text style={styles.reservationTime}>📅 Yesterday, 5:00 PM - 6:00 PM</Text>
-                <Text style={styles.reservationItems}>1 of 3 items picked up • Remaining: KES 12,500</Text>
-                <View style={styles.reservationActions}>
-                  <TouchableOpacity style={styles.detailsButton}>
-                    <Text style={styles.detailsButtonText}>Complete Pickup</Text>
-                  </TouchableOpacity>
-                  <TouchableOpacity style={styles.modifyButton}>
-                    <Text style={styles.modifyButtonText}>Extend Hold</Text>
-                  </TouchableOpacity>
-                </View>
-              </View>
-            </View>
-          </View>
+            ) : (
+              <NoReservations onRefresh={loadMyReservations} />
+            )}
+          </FadeInView>
         )}
       </ScrollView>
+
+      {/* Reservation Modal */}
+      <Modal
+        visible={reservationModal}
+        animationType="slide"
+        presentationStyle="pageSheet"
+        onRequestClose={() => setReservationModal(false)}
+      >
+        <SafeAreaView style={styles.modalContainer}>
+          <View style={styles.modalHeader}>
+            <TouchableOpacity 
+              onPress={() => setReservationModal(false)}
+              style={styles.modalCloseButton}
+            >
+              <Ionicons name="close" size={24} color="#333" />
+            </TouchableOpacity>
+            <Text style={styles.modalTitle}>
+              {selectedMerchant?.name}
+            </Text>
+            <View style={styles.modalPlaceholder} />
+          </View>
+          
+          {selectedMerchant && (
+            <ScrollView style={styles.modalContent}>
+              <Text style={styles.modalDescription}>
+                Select items and pickup window for your reservation
+              </Text>
+              
+              {/* Demo reservation form - replace with actual implementation */}
+              <View style={styles.demoReservationForm}>
+                <Text style={styles.formSectionTitle}>Available Pickup Windows</Text>
+                {selectedMerchant.pickupWindows.map(window => (
+                  <TouchableOpacity
+                    key={window.id}
+                    style={[styles.windowOptionItem, window.status === 'full' && styles.windowOptionDisabled]}
+                    disabled={window.status === 'full'}
+                    onPress={() => {
+                      const demoItems: ReservationItem[] = [
+                        { sku: 'DEMO-001', name: 'Demo Product', qty: 1, price: 1000 }
+                      ];
+                      handleReservationCreate(demoItems, window);
+                    }}
+                  >
+                    <Text style={styles.windowOptionTime}>
+                      {window.timeSlot.start} - {window.timeSlot.end}
+                    </Text>
+                    <StatusChip 
+                      status={window.status} 
+                      size="small"
+                      customText={window.available > 0 ? `${window.available} spots` : 'Full'}
+                    />
+                  </TouchableOpacity>
+                ))}
+              </View>
+            </ScrollView>
+          )}
+        </SafeAreaView>
+      </Modal>
     </SafeAreaView>
   );
 }
