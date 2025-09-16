@@ -1,7 +1,27 @@
-import React, { useState } from 'react';
-import { View, Text, StyleSheet, TouchableOpacity, ScrollView, SafeAreaView } from 'react-native';
+import React, { useState, useEffect } from 'react';
+import { 
+  View, 
+  Text, 
+  StyleSheet, 
+  TouchableOpacity, 
+  ScrollView, 
+  SafeAreaView, 
+  TextInput,
+  ActivityIndicator,
+  RefreshControl,
+  Alert,
+  Modal,
+  FlatList,
+  Platform
+} from 'react-native';
 import { Ionicons } from '@expo/vector-icons';
 import { router } from 'expo-router';
+import { StatusBar } from 'expo-status-bar';
+import StatusChip from '@/src/components/StatusChip';  
+import EmptyState, { NoReservations } from '@/src/components/EmptyStates';
+import { FadeInView, SlideInView, SkeletonLoader, SuccessCheckmark, BounceButton } from '@/src/components/Animations';
+import useHaptics from '@/src/hooks/useHaptics';
+import { useToast } from '@/src/components/ToastHost';
 
 export default function NearbyCommerceScreen() {
   const [activeTab, setActiveTab] = useState('discover');
