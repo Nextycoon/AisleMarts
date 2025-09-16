@@ -154,8 +154,8 @@ class InventorySyncTester:
         
         # Test bulk sync with sample inventory items
         sync_data = {
-            "merchant_id": "MRC-0001",
-            "location_id": "LOC-WESTLANDS-001",
+            "merchant_id": "merchant_001",
+            "location_id": "location_001",
             "sync_type": "delta",
             "items": [
                 {
