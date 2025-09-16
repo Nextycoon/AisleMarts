@@ -12,7 +12,7 @@ import { ErrorBoundary } from '@/src/components/ErrorBoundary';
 export default function RootLayout() {
   return (
     <SafeAreaProvider>
-      <ErrorBoundary>
+      {/* <ErrorBoundary> */}
         <Stack screenOptions={{ headerShown: false }}>
           <Stack.Screen name="index" options={{ title: 'AisleMarts' }} />
           <Stack.Screen name="blue-era-home" options={{ title: 'Blue Era', headerShown: false }} />
