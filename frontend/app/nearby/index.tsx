@@ -95,6 +95,235 @@ export default function NearbyCommerceScreen() {
   const haptics = useHaptics();
   const toast = useToast();
 
+  // Initialize data on component mount
+  useEffect(() => {
+    loadInitialData();
+  }, []);
+
+  // API Functions
+  const loadInitialData = async () => {
+    setLoading(true);
+    try {
+      await Promise.all([
+        loadNearbyMerchants(),
+        loadMyReservations()
+      ]);
+    } catch (error) {
+      console.error('Failed to load initial data:', error);
+      toast.error('Loading Error', 'Failed to load nearby commerce data. Please try again.');
+    } finally {
+      setLoading(false);
+    }
+  };
+
+  const loadNearbyMerchants = async () => {
+    try {
+      // Demo data for now - replace with actual API call
+      const demoMerchants: Merchant[] = [
+        {
+          id: 'merchant-1',
+          name: 'TechHub Westlands',
+          category: 'Electronics & Technology',
+          description: 'Smartphones, laptops, accessories • Available for immediate pickup',
+          distance: 0.5,
+          status: 'open',
+          averagePrice: 25000,
+          coordinates: { lat: -1.2685, lng: 36.8065 },
+          pickupWindows: [
+            {
+              id: 'window-1',
+              merchantId: 'merchant-1',
+              timeSlot: { start: '14:00', end: '15:00' },
+              capacity: 8,
+              reserved: 3,
+              available: 5,
+              status: 'active'
+            },
+            {
+              id: 'window-2',
+              merchantId: 'merchant-1',
+              timeSlot: { start: '17:00', end: '18:00' },
+              capacity: 8,
+              reserved: 8,
+              available: 0,
+              status: 'full'
+            }
+          ]
+        },
+        {
+          id: 'merchant-2',
+          name: 'SuperMart Westlands',
+          category: 'Grocery & Household',
+          description: 'Fresh produce, household items • Same-day pickup available',
+          distance: 1.2,
+          status: 'open',
+          averagePrice: 5000,
+          coordinates: { lat: -1.2705, lng: 36.8085 },
+          pickupWindows: [
+            {
+              id: 'window-3',
+              merchantId: 'merchant-2',
+              timeSlot: { start: '16:00', end: '17:00' },
+              capacity: 6,
+              reserved: 2,
+              available: 4,
+              status: 'active'
+            }
+          ]
+        }
+      ];
+      
+      setMerchants(demoMerchants);
+    } catch (error) {
+      console.error('Failed to load merchants:', error);
+      throw error;
+    }
+  };
+
+  const loadMyReservations = async () => {
+    try {
+      // Demo data for now - replace with actual API call
+      const demoReservations: Reservation[] = [
+        {
+          id: 'RES001',
+          merchantId: 'merchant-1',
+          merchantName: 'TechHub Westlands',
+          status: 'confirmed',
+          pickupCode: 'TECH123',
+          scheduledFor: '2024-12-20T14:30:00Z',
+          createdAt: '2024-12-19T10:00:00Z',
+          items: [
+            { sku: 'PHONE-001', name: 'Samsung Galaxy S24', qty: 1, price: 50000 },
+            { sku: 'CASE-001', name: 'Phone Case', qty: 1, price: 2000 }
+          ],
+          total: 52000,
+          pickupWindow: {
+            id: 'window-1',
+            merchantId: 'merchant-1',
+            timeSlot: { start: '14:00', end: '15:00' },
+            capacity: 8,
+            reserved: 3,
+            available: 5,
+            status: 'active'
+          }
+        },
+        {
+          id: 'RES002',
+          merchantId: 'merchant-2',
+          merchantName: 'SuperMart Westlands',
+          status: 'partial_pickup',
+          pickupCode: 'SUPER456',
+          scheduledFor: '2024-12-19T17:00:00Z',
+          createdAt: '2024-12-19T08:00:00Z',
+          items: [
+            { sku: 'MILK-001', name: 'Fresh Milk 1L', qty: 2, price: 800 },
+            { sku: 'BREAD-001', name: 'Whole Wheat Bread', qty: 1, price: 300 },
+            { sku: 'EGGS-001', name: 'Farm Eggs (12pcs)', qty: 1, price: 400 }
+          ],
+          total: 2300
+        }
+      ];
+      
+      setReservations(demoReservations);
+    } catch (error) {
+      console.error('Failed to load reservations:', error);
+      throw error;
+    }
+  };
+
+  const handleRefresh = async () => {
+    setRefreshing(true);
+    try {
+      await loadInitialData();
+      toast.success('Refreshed', 'Data updated successfully');
+      haptics.onButtonPress();
+    } catch (error) {
+      toast.error('Refresh Failed', 'Unable to refresh data. Please try again.');
+    } finally {
+      setRefreshing(false);
+    }
+  };
+
+  const handleMerchantSelect = (merchant: Merchant) => {
+    setSelectedMerchant(merchant);
+    setReservationModal(true);
+    haptics.onWindowSelected();
+  };
+
+  const handleReservationCreate = async (items: ReservationItem[], pickupWindow: PickupWindow) => {
+    try {
+      setLoading(true);
+      
+      // Demo reservation creation - replace with actual API call
+      const newReservation: Reservation = {
+        id: `RES${Date.now()}`,
+        merchantId: selectedMerchant!.id,
+        merchantName: selectedMerchant!.name,
+        status: 'scheduled',
+        pickupCode: `${selectedMerchant!.name.substring(0, 4).toUpperCase()}${Math.floor(Math.random() * 1000)}`,
+        scheduledFor: new Date().toISOString(),
+        createdAt: new Date().toISOString(),
+        items,
+        total: items.reduce((sum, item) => sum + (item.price * item.qty), 0),
+        pickupWindow
+      };
+
+      setReservations(prev => [newReservation, ...prev]);
+      setReservationModal(false);
+      setSelectedMerchant(null);
+      setActiveTab('reservations');
+      
+      toast.success('Reservation Created!', `Pickup code: ${newReservation.pickupCode}`);
+      haptics.onReservationScheduled();
+      
+    } catch (error) {
+      console.error('Failed to create reservation:', error);
+      toast.error('Reservation Failed', 'Unable to create reservation. Please try again.');
+    } finally {
+      setLoading(false);
+    }
+  };
+
+  const handleReservationAction = async (reservationId: string, action: 'extend' | 'modify' | 'cancel') => {
+    try {
+      const reservation = reservations.find(r => r.id === reservationId);
+      if (!reservation) return;
+
+      switch (action) {
+        case 'extend':
+          toast.warning('Hold Extended', 'Your reservation hold has been extended by 30 minutes.');
+          haptics.onHoldExtended();
+          break;
+        case 'modify':
+          router.push(`/nearby/reserve/${reservationId}/details`);
+          break;
+        case 'cancel':
+          Alert.alert(
+            'Cancel Reservation',
+            'Are you sure you want to cancel this reservation?',
+            [
+              { text: 'Keep', style: 'cancel' },
+              { 
+                text: 'Cancel', 
+                style: 'destructive',
+                onPress: () => {
+                  setReservations(prev => prev.map(r => 
+                    r.id === reservationId ? { ...r, status: 'cancelled' } : r
+                  ));
+                  toast.error('Reservation Cancelled', 'Your reservation has been cancelled.');
+                  haptics.onReservationCancelled();
+                }
+              }
+            ]
+          );
+          break;
+      }
+    } catch (error) {
+      console.error('Failed to handle reservation action:', error);
+      toast.error('Action Failed', 'Unable to complete the action. Please try again.');
+    }
+  };
+
   return (
     <SafeAreaView style={styles.container}>
       {/* Header */}
