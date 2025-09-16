@@ -126,6 +126,9 @@ export default function MerchantPickupScreen() {
       // Try to get reservation by code/ID
       const reservation = await getReservationStatus(pickupCode.trim());
       
+      // Success haptic feedback
+      onScanSuccess();
+      
       Alert.alert(
         'Reservation Found',
         `Status: ${reservation.status}\nReference: ${reservation.reference}\nItems: ${reservation.items.length}\n\nProcess pickup?`,
@@ -150,6 +153,9 @@ export default function MerchantPickupScreen() {
                   'complete'
                 );
 
+                // Pickup completed haptic feedback
+                onPickupCompleted();
+
                 Alert.alert(
                   'Pickup Completed ✅',
                   `All items have been picked up successfully.\n\nStatus: ${result.pickup_status}`,
@@ -168,6 +174,9 @@ export default function MerchantPickupScreen() {
       );
 
     } catch (error: any) {
+      // Error haptic feedback
+      onScanError();
+      
       Alert.alert(
         'Code Not Found',
         'Invalid pickup code or reservation not found. Please check the code and try again.'
