@@ -6,6 +6,7 @@ from passlib.hash import bcrypt
 from jose import jwt, JWTError
 import uuid
 from typing import List, Optional
+import asyncio
 
 from config import settings
 from db import db
