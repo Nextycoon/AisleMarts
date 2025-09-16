@@ -830,6 +830,30 @@ backend:
           agent: "testing"
           comment: "✅ WORKING: Enhanced Search Models and Collections fully operational. MongoDB collections (merchants, offers, locations) created successfully with proper indexes. Search models working correctly with 2 merchants, 10 offers seeded. Data models support multilingual search tokens, GTIN lookup, and deduplication by brand/title/image_hash."
 
+  - task: "Phase 3: Nearby/Onsite Commerce - Backend Implementation"
+    implemented: true
+    working: "NA"
+    file: "/app/backend/nearby_routes.py, /app/backend/nearby_schemas.py, /app/backend/nearby_cache.py"
+    stuck_count: 0
+    priority: "high"
+    needs_retesting: true
+    status_history:
+        - working: "NA"
+          agent: "main"
+          comment: "Week 1 implementation: MongoDB collections (locations, inventory_snapshots, reservations, scans) with 2dsphere indexes, FastAPI routes for /v1/nearby/search, /v1/nearby/locations, /v1/nearby/reservations, /v1/nearby/scan, Redis caching with nearby_cache, Best Pick scoring algorithm (price 35%, distance 25%, trust 25%, stock 10%, ETA 5%), seeded Nairobi sample data (3 locations, 7 inventory items)"
+
+  - task: "Phase 3: Nearby/Onsite Commerce - Frontend Implementation"
+    implemented: true
+    working: "NA"
+    file: "/app/frontend/app/nearby/index.tsx, /app/frontend/app/nearby/scan.tsx, /app/frontend/app/nearby/reserve/[reservationId].tsx"
+    stuck_count: 0
+    priority: "high"
+    needs_retesting: true
+    status_history:
+        - working: "NA"
+          agent: "main"
+          comment: "Week 1 implementation: Main nearby screen (/nearby/index.tsx) with map/list hybrid view using Mapbox, location permissions, nearby search API integration, Best Pick badges, barcode scanner modal (/nearby/scan.tsx) with expo-barcode-scanner, reservation status screen with pickup codes, added 'Nearby' button to AvatarHomeScreen for navigation"
+
   - task: "Enhanced Search API Endpoints"
     implemented: true
     working: true
