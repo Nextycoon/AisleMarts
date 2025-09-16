@@ -49,6 +49,7 @@ export default function MerchantPickupScreen() {
   const [pickupCode, setPickupCode] = useState('');
   const [processingCode, setProcessingCode] = useState(false);
   const [analytics, setAnalytics] = useState<any>(null);
+  const { triggerHaptic, onButtonPress, onFormSubmit } = useHaptics();
 
   useEffect(() => {
     if (locationId && date) {
@@ -59,6 +60,7 @@ export default function MerchantPickupScreen() {
   const loadPickupWindows = async () => {
     try {
       setLoading(true);
+      triggerHaptic('selection'); // Haptic feedback on load
       
       // Demo data for now - replace with API call later
       const demoWindows: PickupWindow[] = [
@@ -99,6 +101,7 @@ export default function MerchantPickupScreen() {
 
     } catch (error: any) {
       console.error('Failed to load pickup windows:', error);
+      triggerHaptic('error');
       Alert.alert('Loading Error', 'Failed to load pickup windows. Please check location ID and try again.');
     } finally {
       setLoading(false);
@@ -106,6 +109,7 @@ export default function MerchantPickupScreen() {
   };
 
   const createTodaysWindows = async () => {
+    onButtonPress();
     Alert.alert(
       'Create Pickup Windows',
       'Create standard pickup windows for today?\n\n• 09:00-10:00 (8 slots)\n• 14:00-15:00 (8 slots)\n• 17:00-18:00 (8 slots)',
@@ -115,11 +119,12 @@ export default function MerchantPickupScreen() {
           text: 'Create Windows',
           onPress: async () => {
             try {
-              // For now, just show success and reload demo data
+              triggerHaptic('success');
               Alert.alert('Success', 'Pickup windows created successfully!');
               await loadPickupWindows();
 
             } catch (error: any) {
+              triggerHaptic('error');
               Alert.alert('Creation Failed', error.message || 'Failed to create pickup windows.');
             }
           }
@@ -130,12 +135,14 @@ export default function MerchantPickupScreen() {
 
   const processPickupByCode = async () => {
     if (!pickupCode.trim()) {
+      triggerHaptic('warning');
       Alert.alert('Missing Code', 'Please enter a pickup code or reservation ID.');
       return;
     }
 
     try {
       setProcessingCode(true);
+      onFormSubmit();
       
       // Demo: simulate finding a reservation
       const demoReservation = {
@@ -157,7 +164,7 @@ export default function MerchantPickupScreen() {
             text: 'Process Pickup',
             onPress: async () => {
               try {
-                // Demo: simulate successful pickup
+                triggerHaptic('success');
                 Alert.alert(
                   'Pickup Completed ✅',
                   `All items have been picked up successfully.\n\nStatus: completed`,
@@ -168,6 +175,7 @@ export default function MerchantPickupScreen() {
                 await loadPickupWindows(); // Refresh to update window capacity
 
               } catch (pickupError: any) {
+                triggerHaptic('error');
                 Alert.alert('Pickup Processing Failed', pickupError.message || 'Failed to process pickup.');
               }
             }
@@ -176,6 +184,7 @@ export default function MerchantPickupScreen() {
       );
 
     } catch (error: any) {
+      triggerHaptic('error');
       Alert.alert(
         'Code Not Found',
         'Invalid pickup code or reservation not found. Please check the code and try again.'
