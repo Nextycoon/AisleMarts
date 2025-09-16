@@ -35,6 +35,7 @@ import useNotifications from '../../../src/hooks/useNotifications';
 export default function SchedulePickupScreen() {
   const { reservationId } = useLocalSearchParams<{ reservationId: string }>();
   const router = useRouter();
+  const { showPickupNotification } = useNotifications();
   
   const [loading, setLoading] = useState(true);
   const [scheduling, setScheduling] = useState(false);
