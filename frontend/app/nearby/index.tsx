@@ -498,31 +498,24 @@ const styles = StyleSheet.create({
     flex: 1,
     position: 'relative',
   },
-  map: {
+  mapPlaceholder: {
     flex: 1,
-  },
-  userMarker: {
-    width: 32,
-    height: 32,
-    borderRadius: 16,
-    backgroundColor: '#007AFF',
     justifyContent: 'center',
     alignItems: 'center',
-    borderWidth: 3,
-    borderColor: 'white',
+    backgroundColor: '#f5f5f5',
+    padding: 20,
   },
-  itemMarker: {
-    backgroundColor: '#FF6B35',
-    paddingHorizontal: 8,
-    paddingVertical: 4,
-    borderRadius: 12,
-    borderWidth: 2,
-    borderColor: 'white',
+  mapPlaceholderText: {
+    fontSize: 18,
+    fontWeight: '600',
+    color: '#666',
+    marginTop: 12,
   },
-  markerText: {
-    color: 'white',
-    fontSize: 12,
-    fontWeight: 'bold',
+  mapPlaceholderSubtext: {
+    fontSize: 14,
+    color: '#999',
+    textAlign: 'center',
+    marginTop: 4,
   },
   selectedItemOverlay: {
     position: 'absolute',
