@@ -156,6 +156,7 @@ ${result.errors && result.errors.length > 0 ?
   };
 
   const downloadSampleCSV = () => {
+    onButtonPress();
     Alert.alert(
       'Sample CSV Format',
       `Required columns:
@@ -175,7 +176,7 @@ COFFEE-001,Premium Coffee Beans,1500,50,LOC-WESTLANDS-001`,
         { 
           text: 'Copy Format', 
           onPress: () => {
-            // TODO: Copy to clipboard or create sample file
+            triggerHaptic('success');
             Alert.alert('Sample Format', 'Sample format copied to clipboard!');
           }
         }
@@ -185,131 +186,184 @@ COFFEE-001,Premium Coffee Beans,1500,50,LOC-WESTLANDS-001`,
 
   return (
     <SafeAreaView style={styles.container}>
-      <StatusBar style="dark" />
+      <LinearGradient
+        colors={['#0C0F14', '#1a1a2e', '#16213e']}
+        style={StyleSheet.absoluteFill}
+      />
+      <StatusBar style="light" />
       
       {/* Header */}
-      <View style={styles.header}>
-        <TouchableOpacity onPress={() => router.back()}>
-          <Ionicons name="arrow-back" size={24} color="#333" />
-        </TouchableOpacity>
-        <Text style={styles.headerTitle}>Inventory Upload</Text>
-        <TouchableOpacity onPress={downloadSampleCSV}>
-          <Ionicons name="help-circle" size={24} color="#007AFF" />
-        </TouchableOpacity>
-      </View>
+      <Animated.View entering={FadeInUp.delay(100)} style={styles.header}>
+        <BlurView intensity={30} style={styles.headerBlur}>
+          <TouchableOpacity onPress={() => {
+            onButtonPress();
+            router.back();
+          }}>
+            <Ionicons name="arrow-back" size={24} color="white" />
+          </TouchableOpacity>
+          <Text style={styles.headerTitle}>Inventory Upload</Text>
+          <TouchableOpacity onPress={downloadSampleCSV}>
+            <Ionicons name="help-circle" size={24} color="#4facfe" />
+          </TouchableOpacity>
+        </BlurView>
+      </Animated.View>
 
       <ScrollView style={styles.content} showsVerticalScrollIndicator={false}>
         {/* Instructions Card */}
-        <View style={styles.instructionsCard}>
-          <View style={styles.instructionHeader}>
-            <Ionicons name="information-circle" size={24} color="#007AFF" />
-            <Text style={styles.instructionTitle}>CSV Upload Instructions</Text>
-          </View>
-          
-          <Text style={styles.instructionText}>
-            1. Prepare your CSV file with required columns (SKU, name, price, quantity, location)
-          </Text>
-          <Text style={styles.instructionText}>
-            2. Ensure prices are in KES (Kenyan Shillings)
-          </Text>
-          <Text style={styles.instructionText}>
-            3. Use location ID: LOC-WESTLANDS-001 for Westlands store
-          </Text>
-          <Text style={styles.instructionText}>
-            4. File size limit: 10MB, up to 5,000 items per upload
-          </Text>
+        <Animated.View entering={FadeInUp.delay(200)}>
+          <BlurView intensity={20} style={styles.instructionsCard}>
+            <LinearGradient
+              colors={['rgba(79,172,254,0.1)', 'rgba(102,126,234,0.05)']}
+              style={styles.instructionsGradient}
+            >
+              <View style={styles.instructionHeader}>
+                <Ionicons name="information-circle" size={24} color="#4facfe" />
+                <Text style={styles.instructionTitle}>CSV Upload Instructions</Text>
+              </View>
+              
+              <Text style={styles.instructionText}>
+                1. Prepare your CSV file with required columns (SKU, name, price, quantity, location)
+              </Text>
+              <Text style={styles.instructionText}>
+                2. Ensure prices are in KES (Kenyan Shillings)
+              </Text>
+              <Text style={styles.instructionText}>
+                3. Use location ID: LOC-WESTLANDS-001 for Westlands store
+              </Text>
+              <Text style={styles.instructionText}>
+                4. File size limit: 10MB, up to 5,000 items per upload
+              </Text>
 
-          <TouchableOpacity style={styles.sampleButton} onPress={downloadSampleCSV}>
-            <Ionicons name="download" size={16} color="#007AFF" />
-            <Text style={styles.sampleButtonText}>View Sample Format</Text>
-          </TouchableOpacity>
-        </View>
+              <TouchableOpacity style={styles.sampleButton} onPress={downloadSampleCSV}>
+                <LinearGradient
+                  colors={['rgba(79,172,254,0.2)', 'rgba(79,172,254,0.1)']}
+                  style={styles.sampleButtonGradient}
+                >
+                  <Ionicons name="download" size={16} color="#4facfe" />
+                  <Text style={styles.sampleButtonText}>View Sample Format</Text>
+                </LinearGradient>
+              </TouchableOpacity>
+            </LinearGradient>
+          </BlurView>
+        </Animated.View>
 
         {/* File Selection */}
-        <View style={styles.uploadCard}>
-          <Text style={styles.uploadTitle}>Select CSV File</Text>
-          
-          {selectedFile ? (
-            <View style={styles.selectedFileCard}>
-              <View style={styles.fileInfo}>
-                <Ionicons name="document-text" size={32} color="#34C759" />
-                <View style={styles.fileDetails}>
-                  <Text style={styles.fileName}>{selectedFile.name}</Text>
-                  <Text style={styles.fileSize}>
-                    {(selectedFile.size! / 1024).toFixed(1)} KB
-                  </Text>
-                </View>
-              </View>
-              <TouchableOpacity onPress={() => setSelectedFile(null)}>
-                <Ionicons name="close-circle" size={24} color="#FF3B30" />
+        <Animated.View entering={FadeInUp.delay(300)}>
+          <BlurView intensity={20} style={styles.uploadCard}>
+            <LinearGradient
+              colors={['rgba(255,255,255,0.05)', 'rgba(255,255,255,0.02)']}
+              style={styles.uploadGradient}
+            >
+              <Text style={styles.uploadTitle}>Select CSV File</Text>
+              
+              {selectedFile ? (
+                <Animated.View entering={SlideInRight} style={styles.selectedFileCard}>
+                  <BlurView intensity={15} style={styles.selectedFileBlur}>
+                    <View style={styles.fileInfo}>
+                      <Ionicons name="document-text" size={32} color="#34C759" />
+                      <View style={styles.fileDetails}>
+                        <Text style={styles.fileName}>{selectedFile.name}</Text>
+                        <Text style={styles.fileSize}>
+                          {(selectedFile.size! / 1024).toFixed(1)} KB
+                        </Text>
+                      </View>
+                    </View>
+                    <TouchableOpacity onPress={() => {
+                      onButtonPress();
+                      setSelectedFile(null);
+                    }}>
+                      <Ionicons name="close-circle" size={24} color="#FF3B30" />
+                    </TouchableOpacity>
+                  </BlurView>
+                </Animated.View>
+              ) : (
+                <TouchableOpacity style={styles.selectButton} onPress={selectCSVFile}>
+                  <LinearGradient
+                    colors={['rgba(79,172,254,0.1)', 'rgba(79,172,254,0.05)']}
+                    style={styles.selectButtonGradient}
+                  >
+                    <Animated.View entering={ZoomIn.delay(500)}>
+                      <Ionicons name="cloud-upload" size={48} color="#4facfe" />
+                    </Animated.View>
+                    <Text style={styles.selectButtonTitle}>Select CSV File</Text>
+                    <Text style={styles.selectButtonSubtitle}>
+                      Tap to browse and select your inventory CSV file
+                    </Text>
+                  </LinearGradient>
+                </TouchableOpacity>
+              )}
+
+              {/* Upload Progress */}
+              {uploading && (
+                <Animated.View entering={FadeInUp} style={styles.progressContainer}>
+                  <View style={styles.progressBar}>
+                    <Animated.View 
+                      entering={SlideInRight.duration(300)}
+                      style={[styles.progressFill, { width: `${uploadProgress}%` }]} 
+                    />
+                  </View>
+                  <Text style={styles.progressText}>{uploadProgress}%</Text>
+                </Animated.View>
+              )}
+
+              {/* Success Message */}
+              {showSuccess && (
+                <Animated.View entering={ZoomIn} style={styles.successContainer}>
+                  <Text style={styles.successText}>✅ Upload Successful!</Text>
+                </Animated.View>
+              )}
+
+              {/* Upload Button */}
+              <TouchableOpacity 
+                style={[
+                  styles.uploadButton,
+                  (!selectedFile || uploading) && styles.uploadButtonDisabled
+                ]}
+                onPress={() => {
+                  onButtonPress();
+                  uploadInventory();
+                }}
+                disabled={!selectedFile || uploading}
+              >
+                <LinearGradient
+                  colors={selectedFile && !uploading ? ['#34C759', '#30D158'] : ['#333', '#444']}
+                  style={styles.uploadButtonGradient}
+                >
+                  {uploading ? (
+                    <>
+                      <ActivityIndicator size="small" color="white" />
+                      <Text style={styles.uploadButtonText}>Uploading...</Text>
+                    </>
+                  ) : (
+                    <>
+                      <Ionicons name="cloud-upload" size={20} color="white" />
+                      <Text style={styles.uploadButtonText}>Upload Inventory</Text>
+                    </>
+                  )}
+                </LinearGradient>
               </TouchableOpacity>
-            </View>
-          ) : (
-            <TouchableOpacity style={styles.selectButton} onPress={selectCSVFile}>
-              <Ionicons name="cloud-upload" size={48} color="#007AFF" />
-              <Text style={styles.selectButtonTitle}>Select CSV File</Text>
-              <Text style={styles.selectButtonSubtitle}>
-                Tap to browse and select your inventory CSV file
-              </Text>
-            </TouchableOpacity>
-          )}
-
-          {/* Upload Progress */}
-          {uploading && (
-            <View style={styles.progressContainer}>
-              <View style={styles.progressBar}>
-                <View style={[styles.progressFill, { width: `${uploadProgress}%` }]} />
-              </View>
-              <Text style={styles.progressText}>{uploadProgress}%</Text>
-            </View>
-          )}
-
-          {/* Success Message */}
-          {showSuccess && (
-            <View style={styles.successContainer}>
-              <Text style={styles.successText}>✅ Upload Successful!</Text>
-            </View>
-          )}
-
-          {/* Upload Button */}
-          <TouchableOpacity 
-            style={[
-              styles.uploadButton,
-              (!selectedFile || uploading) && styles.uploadButtonDisabled
-            ]}
-            onPress={uploadInventory}
-            disabled={!selectedFile || uploading}
-          >
-            {uploading ? (
-              <>
-                <ActivityIndicator size="small" color="white" />
-                <Text style={styles.uploadButtonText}>Uploading...</Text>
-              </>
-            ) : (
-              <>
-                <Ionicons name="cloud-upload" size={20} color="white" />
-                <Text style={styles.uploadButtonText}>Upload Inventory</Text>
-              </>
-            )}
-          </TouchableOpacity>
-        </View>
+            </LinearGradient>
+          </BlurView>
+        </Animated.View>
 
         {/* Recent Uploads */}
-        <View style={styles.historyCard}>
-          <Text style={styles.historyTitle}>Recent Uploads</Text>
-          
-          <View style={styles.emptyStateContainer}>
-            <Text style={styles.historyEmpty}>No recent uploads</Text>
-            <Text style={styles.historyNote}>
-              Upload history will appear here once you start uploading inventory files.
-            </Text>
-            {selectCSVFile && (
-              <TouchableOpacity style={styles.emptyActionButton} onPress={selectCSVFile}>
-                <Text style={styles.emptyActionText}>Upload CSV</Text>
-              </TouchableOpacity>
-            )}
-          </View>
-        </View>
+        <Animated.View entering={FadeInUp.delay(400)}>
+          <BlurView intensity={15} style={styles.historyCard}>
+            <LinearGradient
+              colors={['rgba(255,255,255,0.03)', 'rgba(255,255,255,0.01)']}
+              style={styles.historyGradient}
+            >
+              <Text style={styles.historyTitle}>Recent Uploads</Text>
+              
+              <EmptyStates.NoUploads 
+                onUpload={selectCSVFile}
+                title="No recent uploads"
+                message="Upload history will appear here once you start uploading inventory files."
+                actionText="Upload CSV"
+              />
+            </LinearGradient>
+          </BlurView>
+        </Animated.View>
       </ScrollView>
     </SafeAreaView>
   );
