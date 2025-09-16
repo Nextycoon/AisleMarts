@@ -22,6 +22,9 @@ export default function CommandCenter() {
 
   useEffect(() => {
     trackScreenView('command_center', 'home_grid_icon');
+    
+    // Track feature inventory for PMs (analytics snapshot)
+    analytics.trackFeatureInventory(FEATURES_REGISTRY);
   }, []);
 
   const handleFeatureTilePress = (feature: any) => {
