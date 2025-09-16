@@ -5,42 +5,163 @@ import { LinearGradient } from "expo-linear-gradient";
 import { useRouter } from "expo-router";
 import { Ionicons } from '@expo/vector-icons';
 
-const FEATURE_TILES = [
-  { label: "Discover", icon: "🔎", route: "/discover", desc: "AI-powered search", status: "✅" },
-  { label: "Nearby", icon: "📍", route: "/nearby", desc: "Local commerce", status: "✅" },
-  { label: "RFQs", icon: "📑", route: "/b2b", desc: "Request quotes", status: "✅" },
-  { label: "Quotes", icon: "💬", route: "/b2b", desc: "Manage offers", status: "NEW" },
-  { label: "Purchase Orders", icon: "🧾", route: "/b2b", desc: "Track orders", status: "NEW" },
-  { label: "Reservations", icon: "🎟️", route: "/nearby", desc: "Pickup bookings", status: "✅" },
-  { label: "Orders", icon: "📦", route: "/orders", desc: "Order history", status: "✅" },
-  { label: "Wallet", icon: "💳", route: "/wallet", desc: "Payments & KES", status: "⚡" },
-  { label: "Messages", icon: "✉️", route: "/messages", desc: "Communications", status: "NEW" },
-  { label: "Inventory Sync", icon: "📈", route: "/merchant/inventory/upload", desc: "Merchant tools", status: "✅" },
-  { label: "Pickup Windows", icon: "🗓️", route: "/merchant/pickup", desc: "Staff management", status: "✅" },
-  { label: "Addresses", icon: "🏠", route: "/profile", desc: "Delivery locations", status: "⚡" },
-  { label: "Language", icon: "🌍", route: "/profile", desc: "EN / Swahili", status: "✅" },
-  { label: "Support", icon: "🛟", route: "/profile", desc: "Help & assistance", status: "✅" },
-  { label: "Settings", icon: "⚙️", route: "/profile", desc: "Preferences", status: "✅" },
-];
-
-const QUICK_ACTIONS = [
-  { label: "Scan", icon: "📷", route: "/nearby/scan", color: "#22d3ee" },
-  { label: "New RFQ", icon: "➕", route: "/b2b", color: "#a855f7" },
-  { label: "Pay", icon: "💸", route: "/wallet", color: "#34c759" },
-];
+// Import our new centralized configs
+import { QUICK_ACTIONS, getVisibleFeatures, getStatusColor, getStatusText } from '../src/config/features';
+import { colors, spacing, radii, shadows, presets } from '../src/theme/tokens';
 
 export default function CommandCenter() {
   const top = useSafeAreaInsets().top;
   const router = useRouter();
+  
+  // Get features for current user (demo: assume user role for now)
+  const userRoles = ["user", "merchant"]; // In real app, get from auth context
+  const visibleFeatures = getVisibleFeatures(userRoles);
 
-  const getStatusColor = (status: string) => {
-    switch (status) {
-      case "✅": return "#34c759";
-      case "NEW": return "#ff9500";
-      case "⚡": return "#22d3ee";
-      default: return "#9CA3AF";
-    }
-  };
+  return (
+    <ScrollView 
+      style={styles.container} 
+      contentInsetAdjustmentBehavior="automatic"
+      showsVerticalScrollIndicator={false}
+    >
+      {/* Header Section */}
+      <LinearGradient 
+        colors={[colors.bg, colors.bgSecondary]} 
+        style={[styles.header, { paddingTop: top + 24 }]}
+      >
+        <View style={styles.headerContent}>
+          <Image
+            source={{ uri: "https://i.pravatar.cc/160?seed=aislemarts" }}
+            style={styles.avatar}
+          />
+          <Text style={styles.userName}>Command Center</Text>
+          <Text style={styles.userMeta}>Kenya 🇰🇪 • All Features • Phase 1-3 Complete</Text>
+
+          {/* Quick Actions */}
+          <View style={styles.quickActions}>
+            {QUICK_ACTIONS.map((action) => (
+              <Pressable
+                key={action.key}
+                onPress={() => router.push(action.route as any)}
+                style={[styles.quickActionButton, { borderColor: action.color + "40" }]}
+                accessibilityRole="button"
+                accessibilityLabel={`${action.label} quick action`}
+              >
+                <Text style={styles.quickActionText}>
+                  {action.icon} {action.label}
+                </Text>
+              </Pressable>
+            ))}
+          </View>
+        </View>
+      </LinearGradient>
+
+      {/* Feature Grid */}
+      <View style={styles.featureGrid}>
+        <Text style={styles.sectionTitle}>All AisleMarts Features</Text>
+        <Text style={styles.sectionSubtitle}>
+          {visibleFeatures.length} core capabilities • Production ready
+        </Text>
+        
+        <View style={styles.tilesContainer}>
+          {visibleFeatures.map((feature) => (
+            <Pressable
+              key={feature.key}
+              onPress={() => router.push(feature.route as any)}
+              style={styles.featureTile}
+              accessibilityRole="button"
+              accessibilityLabel={`${feature.label} feature`}
+            >
+              <View style={styles.tileHeader}>
+                <Text style={styles.tileIcon}>{feature.icon}</Text>
+                <View style={[styles.statusBadge, { backgroundColor: getStatusColor(feature.status) }]}>
+                  <Text style={styles.statusText}>{getStatusText(feature.status)}</Text>
+                </View>
+              </View>
+              <Text style={styles.tileLabel}>{feature.label}</Text>
+              <Text style={styles.tileDesc}>{feature.description}</Text>
+            </Pressable>
+          ))}
+        </View>
+      </View>
+
+      {/* Recent Activity */}
+      <View style={styles.activitySection}>
+        <Text style={styles.sectionTitle}>Live Activity</Text>
+        <View style={styles.activityCard}>
+          <View style={styles.activityItem}>
+            <View style={styles.activityDot} />
+            <Text style={styles.activityText}>RFQ #AM-RFQ-102 → 2 suppliers responded</Text>
+            <Text style={styles.activityTime}>2m ago</Text>
+          </View>
+          <View style={styles.activityItem}>
+            <View style={[styles.activityDot, { backgroundColor: colors.warning }]} />
+            <Text style={styles.activityText}>Pickup reservation scheduled for Tecno Spark 10</Text>
+            <Text style={styles.activityTime}>5m ago</Text>
+          </View>
+          <View style={styles.activityItem}>
+            <View style={[styles.activityDot, { backgroundColor: colors.cyan }]} />
+            <Text style={styles.activityText}>3 new nearby merchants detected in Westlands</Text>
+            <Text style={styles.activityTime}>12m ago</Text>
+          </View>
+        </View>
+      </View>
+
+      {/* Performance Stats */}
+      <View style={styles.statsSection}>
+        <Text style={styles.sectionTitle}>Platform Status</Text>
+        <View style={styles.statsGrid}>
+          <View style={styles.statCard}>
+            <Text style={styles.statValue}>100%</Text>
+            <Text style={styles.statLabel}>Uptime</Text>
+          </View>
+          <View style={styles.statCard}>
+            <Text style={styles.statValue}>{visibleFeatures.length}/15</Text>
+            <Text style={styles.statLabel}>Features</Text>
+          </View>
+          <View style={styles.statCard}>
+            <Text style={styles.statValue}>3</Text>
+            <Text style={styles.statLabel}>Phases</Text>
+          </View>
+          <View style={styles.statCard}>
+            <Text style={styles.statValue}>KES</Text>
+            <Text style={styles.statLabel}>Currency</Text>
+          </View>
+        </View>
+      </View>
+
+      {/* System Info */}
+      <View style={styles.systemSection}>
+        <Text style={styles.sectionTitle}>System Information</Text>
+        <View style={styles.systemCard}>
+          <View style={styles.systemRow}>
+            <Text style={styles.systemLabel}>App Version</Text>
+            <Text style={styles.systemValue}>Phase 3.0.0</Text>
+          </View>
+          <View style={styles.systemRow}>
+            <Text style={styles.systemLabel}>Build</Text>
+            <Text style={styles.systemValue}>2025.09.16</Text>
+          </View>
+          <View style={styles.systemRow}>
+            <Text style={styles.systemLabel}>Status</Text>
+            <Text style={[styles.systemValue, { color: colors.success }]}>All Operational ✅</Text>
+          </View>
+          <View style={styles.systemRow}>
+            <Text style={styles.systemLabel}>Location</Text>
+            <Text style={styles.systemValue}>Nairobi, Kenya 🇰🇪</Text>
+          </View>
+          <View style={styles.systemRow}>
+            <Text style={styles.systemLabel}>Backend</Text>
+            <Text style={styles.systemValue}>FastAPI + MongoDB</Text>
+          </View>
+          <View style={styles.systemRow}>
+            <Text style={styles.systemLabel}>Stack</Text>
+            <Text style={styles.systemValue}>Expo + React Native</Text>
+          </View>
+        </View>
+      </View>
+    </ScrollView>
+  );
+}
 
   return (
     <ScrollView 
