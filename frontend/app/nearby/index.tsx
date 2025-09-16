@@ -529,7 +529,7 @@ export default function NearbyCommerceScreen() {
           <FadeInView>
             {reservations && reservations.length > 0 ? (
               <View style={styles.reservationsList}>
-                {reservations.map((reservation, index) => (
+                {(reservations || []).map((reservation, index) => (
                   <SlideInView key={reservation.id} delay={index * 100} style={styles.reservationItem}>
                     <View style={styles.reservationHeader}>
                       <Text style={styles.reservationId}>#{reservation.id}</Text>
