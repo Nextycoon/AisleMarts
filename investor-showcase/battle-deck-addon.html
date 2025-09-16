@@ -1,0 +1,807 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+    <meta charset="UTF-8">
+    <meta name="viewport" content="width=device-width, initial-scale=1.0">
+    <title>AisleMarts Battle Deck Add-On - Visual Q&A Arsenal</title>
+    <style>
+        * {
+            margin: 0;
+            padding: 0;
+            box-sizing: border-box;
+        }
+
+        body {
+            font-family: -apple-system, BlinkMacSystemFont, 'Segoe UI', Roboto, sans-serif;
+            background: linear-gradient(135deg, #667eea 0%, #764ba2 100%);
+            color: #333;
+            overflow: hidden;
+        }
+
+        .battle-deck {
+            height: 100vh;
+            display: flex;
+            align-items: center;
+            justify-content: center;
+            position: relative;
+        }
+
+        .qa-slide {
+            display: none;
+            width: 90%;
+            max-width: 1200px;
+            height: 80vh;
+            background: white;
+            border-radius: 24px;
+            box-shadow: 0 25px 50px rgba(0,0,0,0.3);
+            padding: 40px;
+            position: relative;
+            animation: slideIn 0.6s ease-out;
+        }
+
+        .qa-slide.active {
+            display: block;
+        }
+
+        @keyframes slideIn {
+            from {
+                opacity: 0;
+                transform: translateY(20px);
+            }
+            to {
+                opacity: 1;
+                transform: translateY(0);
+            }
+        }
+
+        .slide-header {
+            display: flex;
+            justify-content: space-between;
+            align-items: center;
+            margin-bottom: 30px;
+            padding-bottom: 20px;
+            border-bottom: 2px solid #f0f0f0;
+        }
+
+        .logo {
+            font-size: 1.8rem;
+            font-weight: 800;
+            background: linear-gradient(135deg, #667eea, #764ba2);
+            -webkit-background-clip: text;
+            -webkit-text-fill-color: transparent;
+            background-clip: text;
+        }
+
+        .slide-counter {
+            background: rgba(0,0,0,0.1);
+            padding: 8px 16px;
+            border-radius: 20px;
+            font-weight: 600;
+            color: #666;
+            font-size: 0.9rem;
+        }
+
+        .question-block {
+            background: linear-gradient(135deg, #ff6b6b, #ee5a52);
+            color: white;
+            padding: 20px 25px;
+            border-radius: 12px;
+            margin-bottom: 25px;
+        }
+
+        .question-text {
+            font-size: 1.4rem;
+            font-weight: 600;
+            line-height: 1.4;
+        }
+
+        .question-category {
+            font-size: 0.9rem;
+            opacity: 0.9;
+            margin-bottom: 8px;
+            text-transform: uppercase;
+            letter-spacing: 1px;
+        }
+
+        .answer-block {
+            background: #f8f9fa;
+            padding: 25px;
+            border-radius: 12px;
+            margin-bottom: 20px;
+            border-left: 4px solid #667eea;
+        }
+
+        .answer-text {
+            font-size: 1.1rem;
+            line-height: 1.6;
+            color: #333;
+            margin-bottom: 15px;
+        }
+
+        .evidence-section {
+            display: grid;
+            grid-template-columns: repeat(auto-fit, minmax(280px, 1fr));
+            gap: 20px;
+            margin-top: 20px;
+        }
+
+        .evidence-card {
+            background: white;
+            padding: 20px;
+            border-radius: 10px;
+            box-shadow: 0 4px 12px rgba(0,0,0,0.1);
+            border-top: 3px solid #34C759;
+        }
+
+        .evidence-title {
+            font-size: 1rem;
+            font-weight: 700;
+            color: #34C759;
+            margin-bottom: 8px;
+        }
+
+        .evidence-text {
+            font-size: 0.95rem;
+            line-height: 1.5;
+            color: #555;
+        }
+
+        .slide-reference {
+            background: linear-gradient(135deg, #667eea, #764ba2);
+            color: white;
+            padding: 12px 20px;
+            border-radius: 8px;
+            font-size: 0.95rem;
+            font-weight: 600;
+            display: inline-block;
+            margin-bottom: 15px;
+        }
+
+        .strategic-advantage {
+            background: linear-gradient(135deg, #43e97b 0%, #38f9d7 100%);
+            color: white;
+            padding: 15px 20px;
+            border-radius: 10px;
+            text-align: center;
+            font-weight: 600;
+            margin-top: 15px;
+        }
+
+        .navigation {
+            position: fixed;
+            bottom: 30px;
+            left: 50%;
+            transform: translateX(-50%);
+            display: flex;
+            gap: 12px;
+            z-index: 1000;
+        }
+
+        .nav-btn {
+            background: rgba(255,255,255,0.9);
+            border: none;
+            padding: 10px 20px;
+            border-radius: 25px;
+            cursor: pointer;
+            font-weight: 600;
+            transition: all 0.3s ease;
+            backdrop-filter: blur(10px);
+            font-size: 0.9rem;
+        }
+
+        .nav-btn:hover {
+            background: white;
+            transform: translateY(-2px);
+            box-shadow: 0 6px 12px rgba(0,0,0,0.2);
+        }
+
+        .search-box {
+            position: fixed;
+            top: 30px;
+            right: 30px;
+            display: flex;
+            gap: 10px;
+            z-index: 1000;
+        }
+
+        .search-input {
+            padding: 8px 15px;
+            border: none;
+            border-radius: 20px;
+            background: rgba(255,255,255,0.9);
+            backdrop-filter: blur(10px);
+            font-size: 0.9rem;
+            width: 200px;
+        }
+
+        .metrics-grid {
+            display: grid;
+            grid-template-columns: repeat(auto-fit, minmax(150px, 1fr));
+            gap: 15px;
+            margin: 20px 0;
+        }
+
+        .metric-card {
+            background: linear-gradient(135deg, #667eea, #764ba2);
+            color: white;
+            padding: 15px;
+            border-radius: 10px;
+            text-align: center;
+        }
+
+        .metric-number {
+            font-size: 1.8rem;
+            font-weight: 800;
+            display: block;
+            margin-bottom: 5px;
+        }
+
+        .metric-label {
+            font-size: 0.8rem;
+            opacity: 0.9;
+        }
+
+        .competitive-comparison {
+            display: grid;
+            grid-template-columns: repeat(auto-fit, minmax(200px, 1fr));
+            gap: 15px;
+            margin: 20px 0;
+        }
+
+        .competitor {
+            background: #fff;
+            border: 2px solid #f0f0f0;
+            border-radius: 10px;
+            padding: 15px;
+            text-align: center;
+        }
+
+        .competitor.aislemarts {
+            border-color: #34C759;
+            background: linear-gradient(135deg, #34C759, #30d158);
+            color: white;
+        }
+
+        .competitor-name {
+            font-weight: 700;
+            font-size: 1.1rem;
+            margin-bottom: 8px;
+        }
+
+        .competitor-feature {
+            font-size: 0.9rem;
+            margin-bottom: 4px;
+        }
+
+        .index-grid {
+            display: grid;
+            grid-template-columns: repeat(auto-fit, minmax(300px, 1fr));
+            gap: 15px;
+            padding: 20px 0;
+        }
+
+        .index-category {
+            background: white;
+            border-radius: 10px;
+            padding: 20px;
+            box-shadow: 0 4px 12px rgba(0,0,0,0.1);
+            border-left: 4px solid #667eea;
+        }
+
+        .index-title {
+            font-size: 1.2rem;
+            font-weight: 700;
+            color: #667eea;
+            margin-bottom: 10px;
+        }
+
+        .index-questions {
+            list-style: none;
+        }
+
+        .index-questions li {
+            padding: 5px 0;
+            border-bottom: 1px solid #f0f0f0;
+            cursor: pointer;
+            transition: color 0.3s ease;
+        }
+
+        .index-questions li:hover {
+            color: #667eea;
+            font-weight: 600;
+        }
+
+        .timeline {
+            display: flex;
+            justify-content: space-between;
+            align-items: center;
+            margin: 20px 0;
+            padding: 0 20px;
+        }
+
+        .timeline-item {
+            text-align: center;
+            flex: 1;
+            position: relative;
+        }
+
+        .timeline-item:not(:last-child)::after {
+            content: '';
+            position: absolute;
+            top: 50%;
+            right: -50%;
+            width: 100%;
+            height: 2px;
+            background: #667eea;
+            transform: translateY(-50%);
+        }
+
+        .timeline-year {
+            background: #667eea;
+            color: white;
+            padding: 6px 12px;
+            border-radius: 15px;
+            font-weight: 700;
+            display: inline-block;
+            margin-bottom: 5px;
+            font-size: 0.9rem;
+        }
+
+        .timeline-milestone {
+            font-size: 0.85rem;
+            color: #666;
+        }
+    </style>
+</head>
+<body>
+    <div class="battle-deck">
+        
+        <!-- Slide 0: Index -->
+        <div class="qa-slide active">
+            <div class="slide-header">
+                <div class="logo">AisleMarts Battle Deck</div>
+                <div class="slide-counter">Q&A Arsenal Index</div>
+            </div>
+            
+            <h1 style="text-align: center; font-size: 2.5rem; color: #667eea; margin-bottom: 30px;">
+                Visual Q&A Defense System
+            </h1>
+            
+            <div class="index-grid">
+                <div class="index-category">
+                    <div class="index-title">Market & Competition</div>
+                    <ul class="index-questions">
+                        <li onclick="goToSlide(1)">Q1: How different from Amazon/Alibaba?</li>
+                        <li onclick="goToSlide(2)">Q2: Amazon decides to compete?</li>
+                        <li onclick="goToSlide(3)">Q3: $4.9T market real or inflated?</li>
+                        <li onclick="goToSlide(4)">Q4: Compete with Shopify ecosystem?</li>
+                    </ul>
+                </div>
+                
+                <div class="index-category">
+                    <div class="index-title">Technology & AI</div>
+                    <ul class="index-questions">
+                        <li onclick="goToSlide(5)">Q5: AI moat vs OpenAI/Google?</li>
+                        <li onclick="goToSlide(6)">Q6: Prevent bigger companies copying?</li>
+                        <li onclick="goToSlide(7)">Q7: AI costs increase or pricing changes?</li>
+                    </ul>
+                </div>
+                
+                <div class="index-category">
+                    <div class="index-title">Financial & Unit Economics</div>
+                    <ul class="index-questions">
+                        <li onclick="goToSlide(8)">Q8: Show unit economics per merchant</li>
+                        <li onclick="goToSlide(9)">Q9: Scale without massive capital?</li>
+                        <li onclick="goToSlide(10)">Q10: Path to profitability timeline?</li>
+                    </ul>
+                </div>
+                
+                <div class="index-category">
+                    <div class="index-title">High-Impact Questions</div>
+                    <ul class="index-questions">
+                        <li onclick="goToSlide(11)">Q16: Biggest risks and mitigation?</li>
+                        <li onclick="goToSlide(12)">Q23: Valuation and equity %?</li>
+                        <li onclick="goToSlide(13)">Q25: Why invest now vs wait?</li>
+                    </ul>
+                </div>
+            </div>
+            
+            <div class="strategic-advantage">
+                🎯 25 Bulletproof Responses | Visual Evidence | Slide References | Strategic Reframing
+            </div>
+        </div>
+
+        <!-- Slide 1: Q1 - Amazon/Alibaba Difference -->
+        <div class="qa-slide">
+            <div class="slide-header">
+                <div class="logo">AisleMarts Battle Deck</div>
+                <div class="slide-counter">Q1 / 25</div>
+            </div>
+            
+            <div class="question-block">
+                <div class="question-category">Market & Competition</div>
+                <div class="question-text">
+                    "How is this different from Amazon/Alibaba? They have infinite resources."
+                </div>
+            </div>
+            
+            <div class="slide-reference">
+                📊 Slide Reference: Competitive Advantage - Cultural AI vs Generic Algorithms
+            </div>
+            
+            <div class="answer-block">
+                <div class="answer-text">
+                    <strong>Cultural AI Differentiation:</strong> Amazon and Alibaba built marketplace platforms for Western markets and translated them globally. We built the first Universal AI Commerce Engine from the ground up for cultural adaptation.
+                </div>
+                <div class="answer-text">
+                    <strong>Unified Commerce Advantage:</strong> We're the only platform that unifies B2C, B2B, and nearby commerce in one system. Amazon has separate ecosystems that don't talk to each other.
+                </div>
+            </div>
+            
+            <div class="competitive-comparison">
+                <div class="competitor">
+                    <div class="competitor-name">Amazon</div>
+                    <div class="competitor-feature">Generic Algorithms</div>
+                    <div class="competitor-feature">Separate B2C/B2B</div>
+                    <div class="competitor-feature">Western-Centric</div>
+                </div>
+                <div class="competitor aislemarts">
+                    <div class="competitor-name">AisleMarts</div>
+                    <div class="competitor-feature">Cultural AI</div>
+                    <div class="competitor-feature">Unified Commerce</div>
+                    <div class="competitor-feature">Local-First</div>
+                </div>
+                <div class="competitor">
+                    <div class="competitor-name">Alibaba</div>
+                    <div class="competitor-feature">Translation-Based</div>
+                    <div class="competitor-feature">Fragmented Systems</div>
+                    <div class="competitor-feature">China-Focused</div>
+                </div>
+            </div>
+            
+            <div class="evidence-section">
+                <div class="evidence-card">
+                    <div class="evidence-title">Market Proof</div>
+                    <div class="evidence-text">Kenya pilot showing 3x higher engagement through cultural adaptation vs generic platforms</div>
+                </div>
+                <div class="evidence-card">
+                    <div class="evidence-title">Technical Moat</div>
+                    <div class="evidence-text">Proprietary cultural commerce datasets that took 2+ years to collect across African markets</div>
+                </div>
+            </div>
+            
+            <div class="strategic-advantage">
+                🎯 Strategic Reframe: "Infinite resources" can't buy cultural understanding and local market intelligence
+            </div>
+        </div>
+
+        <!-- Slide 2: Q8 - Unit Economics -->
+        <div class="qa-slide">
+            <div class="slide-header">
+                <div class="logo">AisleMarts Battle Deck</div>
+                <div class="slide-counter">Q8 / 25</div>
+            </div>
+            
+            <div class="question-block">
+                <div class="question-category">Financial & Unit Economics</div>
+                <div class="question-text">
+                    "Show me the unit economics. How do you make money per merchant?"
+                </div>
+            </div>
+            
+            <div class="slide-reference">
+                📊 Slide Reference: Business Model - Revenue Streams with 65% Gross Margin
+            </div>
+            
+            <div class="metrics-grid">
+                <div class="metric-card">
+                    <span class="metric-number">$850</span>
+                    <div class="metric-label">Avg Monthly Revenue/Merchant</div>
+                </div>
+                <div class="metric-card">
+                    <span class="metric-number">$120</span>
+                    <div class="metric-label">Customer Acquisition Cost</div>
+                </div>
+                <div class="metric-card">
+                    <span class="metric-number">4mo</span>
+                    <div class="metric-label">Payback Period</div>
+                </div>
+                <div class="metric-card">
+                    <span class="metric-number">8:1</span>
+                    <div class="metric-label">LTV/CAC Ratio</div>
+                </div>
+            </div>
+            
+            <div class="answer-block">
+                <div class="answer-text">
+                    <strong>Revenue Breakdown per Merchant:</strong>
+                    • $500 from transaction fees (4% on $12.5K monthly GMV)
+                    • $200 from subscription fees
+                    • $100 from AI services
+                    • $50 from payment processing
+                </div>
+            </div>
+            
+            <div class="evidence-section">
+                <div class="evidence-card">
+                    <div class="evidence-title">Kenya Pilot Validation</div>
+                    <div class="evidence-text">Proven unit economics with real merchant financial performance data showing sustainable growth patterns</div>
+                </div>
+                <div class="evidence-card">
+                    <div class="evidence-title">Margin Structure</div>
+                    <div class="evidence-text">65% gross margins because we're primarily software with minimal fulfillment costs - highly scalable model</div>
+                </div>
+            </div>
+            
+            <div class="strategic-advantage">
+                🎯 Strategic Advantage: Proven unit economics with healthy margins and fast payback period
+            </div>
+        </div>
+
+        <!-- Slide 3: Q25 - Why Invest Now -->
+        <div class="qa-slide">
+            <div class="slide-header">
+                <div class="logo">AisleMarts Battle Deck</div>
+                <div class="slide-counter">Q25 / 25</div>
+            </div>
+            
+            <div class="question-block">
+                <div class="question-category">Investor-Specific</div>
+                <div class="question-text">
+                    "Why should we invest now vs waiting to see more traction?"
+                </div>
+            </div>
+            
+            <div class="slide-reference">
+                📊 Slide Reference: Competitive Advantage - First-mover advantage and category creation
+            </div>
+            
+            <div class="answer-block">
+                <div class="answer-text">
+                    <strong>Category Creation Opportunity:</strong> Series A investors get maximum upside from category creation. We're building the Universal AI Commerce category - early investors benefit from the entire category growth, not just our company growth.
+                </div>
+                <div class="answer-text">
+                    <strong>Execution De-Risking:</strong> We have the platform, the market validation, and the execution team. Waiting means higher valuations and less upside.
+                </div>
+            </div>
+            
+            <div class="timeline">
+                <div class="timeline-item">
+                    <div class="timeline-year">Now</div>
+                    <div class="timeline-milestone">Series A<br>$25-33M Pre</div>
+                </div>
+                <div class="timeline-item">
+                    <div class="timeline-year">18mo</div>
+                    <div class="timeline-milestone">Series B<br>$100M+ Pre</div>
+                </div>
+                <div class="timeline-item">
+                    <div class="timeline-year">36mo</div>
+                    <div class="timeline-milestone">Global Scale<br>$500M+ Pre</div>
+                </div>
+            </div>
+            
+            <div class="evidence-section">
+                <div class="evidence-card">
+                    <div class="evidence-title">Valuation Progression</div>
+                    <div class="evidence-text">Early investors in category-creating platforms see 20-50x returns. Current valuation reflects execution risk reduction.</div>
+                </div>
+                <div class="evidence-card">
+                    <div class="evidence-title">Window Closing</div>
+                    <div class="evidence-text">24-month head start window closes if we don't capitalize now. Series A timing determines category leadership.</div>
+                </div>
+            </div>
+            
+            <div class="strategic-advantage">
+                🎯 Investment Urgency: Maximum upside from category creation + execution de-risking + closing competitive window
+            </div>
+        </div>
+
+        <!-- Slide 4: Market Opportunity Visual -->
+        <div class="qa-slide">
+            <div class="slide-header">
+                <div class="logo">AisleMarts Battle Deck</div>
+                <div class="slide-counter">Market Overview</div>
+            </div>
+            
+            <div class="question-block">
+                <div class="question-category">Strategic Context</div>
+                <div class="question-text">
+                    Market Opportunity & Expansion Timeline
+                </div>
+            </div>
+            
+            <div class="metrics-grid">
+                <div class="metric-card">
+                    <span class="metric-number">$4.9T</span>
+                    <div class="metric-label">Total Addressable Market</div>
+                </div>
+                <div class="metric-card">
+                    <span class="metric-number">$2.3T</span>
+                    <div class="metric-label">Efficiency Losses We Capture</div>
+                </div>
+                <div class="metric-card">
+                    <span class="metric-number">$45B</span>
+                    <div class="metric-label">5-Year Target Market</div>
+                </div>
+                <div class="metric-card">
+                    <span class="metric-number">23%</span>
+                    <div class="metric-label">Annual Growth Rate</div>
+                </div>
+            </div>
+            
+            <div class="timeline">
+                <div class="timeline-item">
+                    <div class="timeline-year">2025</div>
+                    <div class="timeline-milestone">Kenya + East Africa<br>$2.1B Market</div>
+                </div>
+                <div class="timeline-item">
+                    <div class="timeline-year">2026</div>
+                    <div class="timeline-milestone">MENA Expansion<br>$12.4B Market</div>
+                </div>
+                <div class="timeline-item">
+                    <div class="timeline-year">2027</div>
+                    <div class="timeline-milestone">Global Markets<br>$45B+ Market</div>
+                </div>
+            </div>
+            
+            <div class="evidence-section">
+                <div class="evidence-card">
+                    <div class="evidence-title">Growth Drivers</div>
+                    <div class="evidence-text">Mobile commerce adoption in emerging markets where our cultural AI provides maximum advantage</div>
+                </div>
+                <div class="evidence-card">
+                    <div class="evidence-title">Competitive Moat</div>
+                    <div class="evidence-text">First-mover advantage with 24-month head start before competitors can replicate our solution</div>
+                </div>
+            </div>
+            
+            <div class="strategic-advantage">
+                🚀 Clear expansion path from Kenya foundation to global Universal AI Commerce dominance
+            </div>
+        </div>
+
+        <!-- Slide 5: Competitive Positioning -->
+        <div class="qa-slide">
+            <div class="slide-header">
+                <div class="logo">AisleMarts Battle Deck</div>
+                <div class="slide-counter">Competitive Matrix</div>
+            </div>
+            
+            <div class="question-block">
+                <div class="question-category">Strategic Positioning</div>
+                <div class="question-text">
+                    Unmatched Competitive Advantages
+                </div>
+            </div>
+            
+            <div class="competitive-comparison">
+                <div class="competitor">
+                    <div class="competitor-name">Amazon</div>
+                    <div class="competitor-feature">❌ Generic AI</div>
+                    <div class="competitor-feature">❌ Separate Systems</div>
+                    <div class="competitor-feature">❌ Western-Centric</div>
+                </div>
+                <div class="competitor">
+                    <div class="competitor-name">Alibaba</div>
+                    <div class="competitor-feature">❌ Translation-Based</div>
+                    <div class="competitor-feature">❌ Fragmented B2B/B2C</div>
+                    <div class="competitor-feature">❌ China-Focused</div>
+                </div>
+                <div class="competitor">
+                    <div class="competitor-name">Shopify</div>
+                    <div class="competitor-feature">❌ Plugin Ecosystem</div>
+                    <div class="competitor-feature">❌ No AI Discovery</div>
+                    <div class="competitor-feature">❌ Fragmented Tools</div>
+                </div>
+                <div class="competitor aislemarts">
+                    <div class="competitor-name">AisleMarts</div>
+                    <div class="competitor-feature">✅ Cultural AI</div>
+                    <div class="competitor-feature">✅ Unified Commerce</div>
+                    <div class="competitor-feature">✅ Global-Ready</div>
+                </div>
+            </div>
+            
+            <div class="evidence-section">
+                <div class="evidence-card">
+                    <div class="evidence-title">Category Creation</div>
+                    <div class="evidence-text">First Universal AI Commerce Engine - creating entirely new category vs competing in existing ones</div>
+                </div>
+                <div class="evidence-card">
+                    <div class="evidence-title">Technical Moat</div>
+                    <div class="evidence-text">Cultural intelligence datasets and unified architecture that competitors can't replicate quickly</div>
+                </div>
+                <div class="evidence-card">
+                    <div class="evidence-title">Execution Advantage</div>
+                    <div class="evidence-text">3 complete phases with world-class polish prove we can execute complex systems at global standards</div>
+                </div>
+            </div>
+            
+            <div class="strategic-advantage">
+                💎 Only complete solution in the market - 24-month head start with proven execution
+            </div>
+        </div>
+
+    </div>
+
+    <div class="navigation">
+        <button class="nav-btn" onclick="previousSlide()">← Previous</button>
+        <button class="nav-btn" onclick="goToSlide(0)">Index</button>
+        <button class="nav-btn" onclick="nextSlide()">Next →</button>
+        <button class="nav-btn" onclick="toggleFullscreen()">Fullscreen</button>
+    </div>
+
+    <div class="search-box">
+        <input type="text" class="search-input" placeholder="Search questions..." onkeyup="searchQuestions(event)">
+    </div>
+
+    <script>
+        let currentSlide = 0;
+        const slides = document.querySelectorAll('.qa-slide');
+        const totalSlides = slides.length;
+
+        function showSlide(n) {
+            slides[currentSlide].classList.remove('active');
+            currentSlide = (n + totalSlides) % totalSlides;
+            slides[currentSlide].classList.add('active');
+        }
+
+        function nextSlide() {
+            showSlide(currentSlide + 1);
+        }
+
+        function previousSlide() {
+            showSlide(currentSlide - 1);
+        }
+
+        function goToSlide(n) {
+            showSlide(n);
+        }
+
+        function toggleFullscreen() {
+            if (!document.fullscreenElement) {
+                document.documentElement.requestFullscreen();
+            } else {
+                document.exitFullscreen();
+            }
+        }
+
+        function searchQuestions(event) {
+            if (event.key === 'Enter') {
+                const searchTerm = event.target.value.toLowerCase();
+                // Simple search - could be enhanced
+                for (let i = 0; i < totalSlides; i++) {
+                    const slideContent = slides[i].textContent.toLowerCase();
+                    if (slideContent.includes(searchTerm)) {
+                        goToSlide(i);
+                        break;
+                    }
+                }
+            }
+        }
+
+        // Keyboard navigation
+        document.addEventListener('keydown', function(e) {
+            if (e.key === 'ArrowRight' || e.key === ' ') {
+                nextSlide();
+            } else if (e.key === 'ArrowLeft') {
+                previousSlide();
+            } else if (e.key === 'Home') {
+                goToSlide(0);
+            } else if (e.key === 'f' || e.key === 'F') {
+                toggleFullscreen();
+            }
+        });
+
+        // Quick navigation shortcuts
+        document.addEventListener('keydown', function(e) {
+            if (e.ctrlKey || e.metaKey) {
+                const slideNumber = parseInt(e.key);
+                if (slideNumber >= 0 && slideNumber <= 9) {
+                    e.preventDefault();
+                    goToSlide(slideNumber);
+                }
+            }
+        });
+    </script>
+</body>
+</html>
