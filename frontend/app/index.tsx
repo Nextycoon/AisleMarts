@@ -105,21 +105,21 @@ export default function CinematicHome() {
               {/* Hero CTAs */}
               <View style={styles.heroCTAs}>
                 <Pressable 
-                  onPress={() => router.push("/discover")}
+                  onPress={() => handleCTAPress('discover', '/discover')}
                   style={[styles.primaryCTA, { backgroundColor: "#22d3ee" }]}
                 >
                   <Text style={[styles.ctaText, { color: "#0f172a" }]}>Discover</Text>
                 </Pressable>
                 
                 <Pressable 
-                  onPress={() => router.push("/nearby")}
+                  onPress={() => handleCTAPress('nearby', '/nearby')}
                   style={styles.secondaryCTA}
                 >
                   <Text style={styles.ctaText}>Nearby</Text>
                 </Pressable>
                 
                 <Pressable 
-                  onPress={() => router.push("/b2b")}
+                  onPress={() => handleCTAPress('rfq', '/b2b')}
                   style={[styles.secondaryCTA, { 
                     backgroundColor: "rgba(168,85,247,0.18)", 
                     borderColor: "rgba(168,85,247,0.35)" 
