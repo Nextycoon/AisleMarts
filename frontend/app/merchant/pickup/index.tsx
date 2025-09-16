@@ -191,19 +191,20 @@ export default function MerchantPickupScreen() {
     const utilizationPercent = ((window.reserved / window.capacity) * 100) || 0;
 
     return (
-      <View style={styles.windowItem}>
+      <FadeInView style={styles.windowItem}>
         <View style={styles.windowHeader}>
           <Text style={styles.windowTime}>
             {formatTimeSlot(window.time_slot)}
           </Text>
-          <View style={[
-            styles.statusIndicator,
-            { backgroundColor: window.status === 'active' ? '#34C759' : '#FF3B30' }
-          ]}>
-            <Text style={styles.statusText}>
-              {window.status === 'active' ? 'Active' : 'Inactive'}
-            </Text>
-          </View>
+          <StatusChip 
+            status={window.status} 
+            size="small"
+            {...getAccessibleButtonProps(
+              SCREEN_READER_LABELS.statusChip(window.status),
+              'view_status',
+              false
+            )}
+          />
         </View>
 
         <View style={styles.windowStats}>
@@ -239,7 +240,7 @@ export default function MerchantPickupScreen() {
         {window.notes && (
           <Text style={styles.windowNotes}>📝 {window.notes}</Text>
         )}
-      </View>
+      </FadeInView>
     );
   };
 
