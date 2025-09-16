@@ -613,7 +613,7 @@ export default function NearbyCommerceScreen() {
               {/* Demo reservation form - replace with actual implementation */}
               <View style={styles.demoReservationForm}>
                 <Text style={styles.formSectionTitle}>Available Pickup Windows</Text>
-                {selectedMerchant.pickupWindows.map(window => (
+                {(selectedMerchant?.pickupWindows || []).map(window => (
                   <TouchableOpacity
                     key={window.id}
                     style={[styles.windowOptionItem, window.status === 'full' && styles.windowOptionDisabled]}
