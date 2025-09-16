@@ -77,6 +77,27 @@ export const AuthProvider: React.FC<{ children: React.ReactNode }> = ({ children
     }
   };
 
+  const setupAvatar = async (role: 'buyer' | 'seller' | 'hybrid') => {
+    try {
+      // Save role to AsyncStorage
+      await AsyncStorage.setItem('userRole', role);
+      await AsyncStorage.setItem('isAvatarSetup', 'true');
+      
+      // Update context state
+      setHasCompletedAvatarSetup(true);
+      
+      // Update user state if user exists
+      if (user) {
+        setUser(prev => prev ? { ...prev, role } : undefined);
+      }
+      
+      console.log('✅ Avatar setup completed for role:', role);
+    } catch (error) {
+      console.error('Failed to setup avatar:', error);
+      throw error;
+    }
+  };
+
   const updateUser = async (updates: Partial<User>) => {
     try {
       if (updates.role) {
