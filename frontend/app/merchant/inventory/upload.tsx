@@ -98,16 +98,21 @@ export default function MerchantInventoryUploadScreen() {
       if (response.ok) {
         const result = await response.json();
         
-        Alert.alert(
-          'Upload Successful! ✅',
-          `Inventory updated successfully.\n\nProcessed: ${result.total_processed || 'N/A'} items\nUpdated: ${result.successful_updates || 'N/A'} items\nErrors: ${result.failed_updates || 0} items`,
-          [
-            { text: 'View Details', onPress: () => showUploadResults(result) },
-            { text: 'OK' }
-          ]
-        );
+        // Show success animation first
+        setShowSuccess(true);
+        
+        // Delayed success alert
+        setTimeout(() => {
+          Alert.alert(
+            'Upload Successful! ✅',
+            `Inventory updated successfully.\n\nProcessed: ${result.total_processed || 'N/A'} items\nUpdated: ${result.successful_updates || 'N/A'} items\nErrors: ${result.failed_updates || 0} items`,
+            [
+              { text: 'View Details', onPress: () => showUploadResults(result) },
+              { text: 'OK' }
+            ]
+          );
+        }, 1500);
 
-        setSelectedFile(null);
       } else {
         throw new Error(`HTTP ${response.status}: ${response.statusText}`);
       }
