@@ -81,11 +81,11 @@ export default function CinematicHome() {
             {/* Header with Profile Access */}
             <View style={styles.headerRow}>
               <View>
-                <Text style={styles.greeting}>Good evening</Text>
-                <Text style={styles.location}>📍 Nairobi, Kenya</Text>
+                <Text style={styles.greeting}>{personalizedGreeting.greeting}</Text>
+                <Text style={styles.location}>📍 {personalizedGreeting.location} {personalizedGreeting.flag}</Text>
               </View>
               <Pressable 
-                onPress={() => router.push('/command-center')}
+                onPress={() => pushFromHome('/command-center')}
                 style={styles.profileButton}
                 accessibilityLabel="Open Command Center"
               >
