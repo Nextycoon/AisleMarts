@@ -66,6 +66,19 @@ export default function CinematicHome() {
     pushFromHome(`/product/${productId}`);
   };
 
+  const handleSpotlightPress = (feature: any) => {
+    if (!feature) return;
+    
+    track('home_spotlight_click', {
+      feature_key: feature.key,
+      experiment_key: SPOTLIGHT_CONFIG.experimentKey,
+      feature_status: feature.status,
+      session_id: sessionId
+    });
+    
+    pushFromHome(feature.route);
+  };
+
   return (
     <ScrollView 
       style={styles.container} 
