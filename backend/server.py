@@ -84,11 +84,18 @@ async def get_me(user=Depends(get_current_user)):
     return UserOut(**user)
 
 # -------- Avatar/Profile Management --------
-from pydantic import BaseModel
+from pydantic import BaseModel, validator
 from typing import Literal
 
 class AvatarUpdate(BaseModel):
     role: Literal["buyer", "seller", "hybrid"]
+    
+    @validator('role')
+    def validate_role(cls, v):
+        allowed_roles = {"buyer", "seller", "hybrid"}
+        if v not in allowed_roles:
+            raise ValueError(f'Role must be one of: {", ".join(allowed_roles)}')
+        return v
 
 @api_router.patch("/users/{user_id}/avatar")
 async def update_user_avatar(
@@ -96,9 +103,22 @@ async def update_user_avatar(
     avatar_data: AvatarUpdate, 
     current_user=Depends(get_current_user)
 ):
-    # Ensure user can only update their own avatar or admin
-    if current_user["_id"] != user_id and "admin" not in current_user["roles"]:
+    """
+    Update user avatar/role with proper validation and security.
+    
+    Security validations:
+    - User can only update their own avatar (or admin override)
+    - Role validation via Pydantic model
+    - Idempotency support
+    """
+    
+    # Security: Ensure user can only update their own avatar or admin
+    if current_user["_id"] != user_id and "admin" not in current_user.get("roles", []):
         raise HTTPException(403, "Permission denied")
+    
+    # Validate role server-side (Pydantic handles this, but extra safety)
+    if avatar_data.role not in ["buyer", "seller", "hybrid"]:
+        raise HTTPException(422, f"Invalid role: {avatar_data.role}")
     
     update_doc = {
         "role": avatar_data.role,
@@ -106,22 +126,29 @@ async def update_user_avatar(
         "updatedAt": datetime.utcnow()
     }
     
-    result = await db().users.update_one(
-        {"_id": user_id},
-        {"$set": update_doc}
-    )
-    
-    if result.modified_count == 0:
-        raise HTTPException(404, "User not found")
-    
-    # Return updated user
-    updated_user = await db().users.find_one({"_id": user_id})
-    return {
-        "id": updated_user["_id"],
-        "role": updated_user.get("role"),
-        "isAvatarSetup": updated_user.get("isAvatarSetup", False),
-        "updatedAt": updated_user.get("updatedAt")
-    }
+    try:
+        result = await db().users.update_one(
+            {"_id": user_id},
+            {"$set": update_doc}
+        )
+        
+        if result.matched_count == 0:
+            raise HTTPException(404, "User not found")
+        
+        # Return updated user (idempotency - same response for same input)
+        updated_user = await db().users.find_one({"_id": user_id})
+        
+        return {
+            "id": updated_user["_id"],
+            "role": updated_user.get("role"),
+            "isAvatarSetup": updated_user.get("isAvatarSetup", False),
+            "updatedAt": updated_user.get("updatedAt")
+        }
+        
+    except Exception as e:
+        # Log server errors for monitoring
+        print(f"⚠️ Avatar update failed for user {user_id}: {str(e)}")
+        raise HTTPException(500, "Server error during avatar update")
 
 # -------- Categories --------
 @api_router.post("/categories", response_model=CategoryOut)
