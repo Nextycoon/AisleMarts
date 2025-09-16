@@ -1260,7 +1260,55 @@ frontend:
           comment: "✅ WORKING: AI-powered welcome message displays correctly ('Welcome to AisleMarts! 🌍 Your AI-powered global marketplace. What can I help you find today?'). Locale detection showing '📍 US • USD' properly. AI service integration for welcome messages and locale detection functioning."
         - working: true
           agent: "testing"
-          comment: "✅ CONFIRMED WORKING: Geographic targeting system comprehensive test completed. AI-powered welcome message displays perfectly: 'Welcome to AisleMarts! 🌍 Your AI-powered global marketplace. What can I help you find today?' with proper locale detection '📍 US • USD'. Geographic intelligence integration functioning excellently."
+          comment: "✅ WORKING: Geographic targeting system comprehensive test completed. AI-powered welcome message displays perfectly: 'Welcome to AisleMarts! 🌍 Your AI-powered global marketplace. What can I help you find today?' with proper locale detection '📍 US • USD'. Geographic intelligence integration functioning excellently."
+
+  - task: "Enhanced Discover Screen"
+    implemented: false
+    working: "NA"
+    file: "/app/frontend/app/discover.tsx"
+    stuck_count: 0
+    priority: "high"
+    needs_retesting: true
+    status_history:
+        - working: "NA"
+          agent: "main"
+          comment: "Phase 1: New Discover screen with global search bar, Retail/Wholesale/All filter toggle, Best Pick badge cards, multilingual search support (EN/SW/AR/TR), image/barcode input buttons"
+
+  - task: "Best Pick Components"
+    implemented: false
+    working: "NA"
+    file: "/app/frontend/src/components/BestPickComponents.tsx"
+    stuck_count: 0
+    priority: "high"
+    needs_retesting: true
+    status_history:
+        - working: "NA"
+          agent: "main"
+          comment: "Phase 1: Best Pick badge component with scoring reasons (price, trust, eta, cultural fit), transparent scoring display, and interactive badge with detailed breakdown"
+
+  - task: "Offers Comparison Sheet"
+    implemented: false
+    working: "NA"
+    file: "/app/frontend/src/components/OffersSheet.tsx"
+    stuck_count: 0
+    priority: "high"
+    needs_retesting: true
+    status_history:
+        - working: "NA"
+          agent: "main"
+          comment: "Phase 1: Product offers comparison sheet with sorted offers by total landed cost, merchant trust indicators, delivery ETA, stock levels, and Buy Now/Request Quote CTAs"
+
+  - task: "Enhanced Search Service Integration"
+    implemented: false
+    working: "NA"
+    file: "/app/frontend/src/services/SearchService.ts"
+    stuck_count: 0
+    priority: "high"
+    needs_retesting: true
+    status_history:
+        - working: "NA"
+          agent: "main"
+          comment: "Phase 1: Frontend service layer for /v1/search and /v1/products/{id}/offers APIs with TypeScript interfaces for SearchResult, BestPick, Offer, and Merchant models"
 
   - task: "AI-Enhanced Search Placeholder"
     implemented: true
