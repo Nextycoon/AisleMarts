@@ -77,8 +77,8 @@ export default function AisleAvatarScreen() {
   useEffect(() => {
     // Idempotency check: if user already completed avatar setup, redirect
     if (hasCompletedAvatarSetup) {
-      console.log('🔄 Avatar already set up, redirecting to home');
-      router.replace('/home');
+      console.log('🔄 Avatar already set up, redirecting to live avatar');
+      router.replace('/live-avatar');
       return;
     }
 
