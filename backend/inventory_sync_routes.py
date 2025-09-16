@@ -3,7 +3,7 @@ Phase 3 Week 2: Inventory Sync Service - FastAPI Routes
 API endpoints for inventory synchronization, CSV imports, and analytics
 """
 
-from fastapi import APIRouter, Depends, HTTPException, UploadFile, File, Form, Query, Path
+from fastapi import APIRouter, Depends, HTTPException, UploadFile, File, Form, Query, Path, Header
 from typing import List, Optional
 import logging
 import asyncio
