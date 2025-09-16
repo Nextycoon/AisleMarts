@@ -14,9 +14,9 @@ import { router } from 'expo-router';
 import Animated, { FadeIn, SlideInUp } from 'react-native-reanimated';
 import AsyncStorage from '@react-native-async-storage/async-storage';
 import NetInfo from '@react-native-community/netinfo';
-import { useAuth } from '@/src/context/AuthContext';
-import { useHaptics } from '@/src/hooks/useHaptics';
-import { API } from '@/src/api/client';
+import { useAuth } from '../src/context/AuthContext';
+import { useHaptics } from '../src/hooks/useHaptics';  
+import { API } from '../src/api/client';
 
 type UserRole = 'buyer' | 'seller' | 'hybrid';
 
