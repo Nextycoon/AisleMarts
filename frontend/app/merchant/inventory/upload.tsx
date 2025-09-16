@@ -300,12 +300,11 @@ COFFEE-001,Premium Coffee Beans,1500,50,LOC-WESTLANDS-001`,
         {/* Recent Uploads */}
         <View style={styles.historyCard}>
           <Text style={styles.historyTitle}>Recent Uploads</Text>
-          <Text style={styles.historyEmpty}>No recent uploads</Text>
           
-          {/* TODO: Add actual upload history */}
-          <Text style={styles.historyNote}>
-            Upload history will appear here once you start uploading inventory files.
-          </Text>
+          <NoUploadHistory 
+            onUpload={selectCSVFile}
+            language="en"
+          />
         </View>
       </ScrollView>
     </SafeAreaView>
