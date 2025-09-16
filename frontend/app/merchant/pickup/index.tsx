@@ -179,24 +179,31 @@ export default function MerchantPickupScreen() {
   };
 
   const renderPickupWindow = ({ item: window }: { item: PickupWindow }) => {
-    const availableCapacity = getAvailableCapacity(window);
+    const availableCapacity = window.capacity - window.reserved;
     const utilizationPercent = ((window.reserved / window.capacity) * 100) || 0;
 
+    const formatTimeSlot = (timeSlot: { start_time: string; end_time: string }) => {
+      return `${timeSlot.start_time} - ${timeSlot.end_time}`;
+    };
+
+    const getStatusColor = (status: string) => {
+      switch (status) {
+        case 'active': return '#34C759';
+        case 'full': return '#FF9500';  
+        case 'closed': return '#FF3B30';
+        default: return '#007AFF';
+      }
+    };
+
     return (
-      <FadeInView style={styles.windowItem}>
+      <View style={styles.windowItem}>
         <View style={styles.windowHeader}>
           <Text style={styles.windowTime}>
             {formatTimeSlot(window.time_slot)}
           </Text>
-          <StatusChip 
-            status={window.status} 
-            size="small"
-            {...getAccessibleButtonProps(
-              SCREEN_READER_LABELS.statusChip(window.status),
-              'view_status',
-              false
-            )}
-          />
+          <View style={[styles.statusIndicator, { backgroundColor: getStatusColor(window.status) }]}>
+            <Text style={styles.statusText}>{window.status.toUpperCase()}</Text>
+          </View>
         </View>
 
         <View style={styles.windowStats}>
@@ -232,7 +239,7 @@ export default function MerchantPickupScreen() {
         {window.notes && (
           <Text style={styles.windowNotes}>📝 {window.notes}</Text>
         )}
-      </FadeInView>
+      </View>
     );
   };
 
