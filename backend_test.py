@@ -7701,6 +7701,15 @@ SKU-CSV-002,8,15000,9876543210987,KES,red,large,new"""
             self.test_user_login()
         self.test_protected_route()
         
+        # AVATAR ENDPOINT TESTS (CRITICAL - NEW IMPLEMENTATION)
+        print("\n👤 AVATAR ENDPOINT TESTING (CRITICAL - NEW IMPLEMENTATION)")
+        self.test_avatar_endpoint_valid_roles()
+        self.test_avatar_endpoint_invalid_role()
+        self.test_avatar_endpoint_missing_user()
+        self.test_avatar_endpoint_unauthorized()
+        self.test_avatar_endpoint_permission_denied()
+        self.test_avatar_response_format()
+        
         # PHASE 2 PRIORITIES - Pickup Windows System (STUCK TASK - HIGH PRIORITY)
         print("\n🎯 PHASE 2 PRIORITY 3: Pickup Windows System (STUCK TASK - HIGH PRIORITY)")
         self.test_pickup_windows_system_comprehensive()
