@@ -423,7 +423,7 @@ export default function NearbyCommerceScreen() {
               </View>
               <Text style={styles.locationText}>📍 Westlands, Nairobi, Kenya</Text>
               <Text style={styles.locationSubtext}>
-                {merchants.length} nearby merchants • {merchants.reduce((sum, m) => sum + m.pickupWindows.length, 0)} pickup windows
+                {merchants?.length || 0} nearby merchants • {merchants?.reduce((sum, m) => sum + (m.pickupWindows?.length || 0), 0) || 0} pickup windows
               </Text>
             </View>
 
