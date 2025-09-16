@@ -275,6 +275,34 @@ export default function AvatarHomeScreen() {
                 </Text>
               </TouchableOpacity>
               
+              {/* Phase 3: Nearby Button */}
+              <TouchableOpacity
+                onPress={() => router.push('/nearby')}
+                style={{
+                  backgroundColor: '#FF6B35',
+                  paddingHorizontal: theme.space.sm,
+                  paddingVertical: theme.space.xs,
+                  borderRadius: theme.radius.sm,
+                  flexDirection: 'row',
+                  alignItems: 'center',
+                  gap: theme.space.xs,
+                  elevation: 2,
+                  shadowColor: '#000',
+                  shadowOffset: { width: 0, height: 2 },
+                  shadowOpacity: 0.1,
+                  shadowRadius: 4,
+                }}
+              >
+                <Ionicons name="location" size={16} color="#FFFFFF" />
+                <Text style={{ 
+                  color: '#FFFFFF', 
+                  fontSize: 12, 
+                  fontWeight: '600' 
+                }}>
+                  {locale === 'en' ? 'Nearby' : 'Karibu'}
+                </Text>
+              </TouchableOpacity>
+              
               {/* Language Toggle */}
               <TouchableOpacity
                 onPress={() => {
