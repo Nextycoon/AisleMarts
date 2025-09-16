@@ -491,4 +491,42 @@ const styles = StyleSheet.create({
     fontSize: 12,
     textAlign: "center",
   },
+  spotlightCard: {
+    backgroundColor: "rgba(255,255,255,0.04)",
+    borderWidth: 1,
+    borderRadius: 16,
+    padding: 16,
+    marginBottom: 8,
+  },
+  spotlightContent: {
+    flexDirection: "row",
+    alignItems: "center",
+    gap: 12,
+  },
+  spotlightIcon: {
+    fontSize: 24,
+  },
+  spotlightText: {
+    flex: 1,
+  },
+  spotlightTitle: {
+    color: "white",
+    fontSize: 16,
+    fontWeight: "700",
+    marginBottom: 4,
+  },
+  spotlightDesc: {
+    color: "#9CA3AF",
+    fontSize: 14,
+  },
+  spotlightBadge: {
+    paddingHorizontal: 8,
+    paddingVertical: 4,
+    borderRadius: 8,
+  },
+  spotlightBadgeText: {
+    color: "#0f172a",
+    fontSize: 10,
+    fontWeight: "700",
+  },
 });
