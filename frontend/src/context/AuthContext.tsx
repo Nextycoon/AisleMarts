@@ -7,15 +7,19 @@ interface User {
   email: string;
   name?: string;
   roles: string[];
+  role?: 'buyer' | 'seller' | 'hybrid'; // Avatar role
 }
 
 interface AuthContextType {
   user?: User;
   token?: string;
   loading: boolean;
+  hasCompletedAvatarSetup: boolean;
   login: (email: string, password: string) => Promise<void>;
   register: (email: string, password: string, name?: string) => Promise<void>;
   logout: () => Promise<void>;
+  updateUser: (updates: Partial<User>) => Promise<void>;
+  checkAvatarSetup: () => Promise<boolean>;
 }
 
 const AuthContext = createContext<AuthContextType>({} as AuthContextType);
