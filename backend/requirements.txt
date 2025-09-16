@@ -1,8 +1,10 @@
 aiohappyeyeballs==2.6.1
 aiohttp==3.12.15
+aioredis==2.0.1
 aiosignal==1.4.0
 annotated-types==0.7.0
 anyio==4.10.0
+async-timeout==5.0.1
 attrs==25.3.0
 bcrypt==4.3.0
 black==25.1.0
