@@ -131,7 +131,7 @@ export interface SuggestionsParams {
 // ============= SEARCH SERVICE CLASS =============
 
 export class SearchService {
-  private baseUrl = '/api/v1';
+  private baseUrl = '/v1';
 
   /**
    * Get search system health status
