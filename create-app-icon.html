@@ -1,0 +1,177 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+    <meta charset="UTF-8">
+    <meta name="viewport" content="width=device-width, initial-scale=1.0">
+    <title>AisleMarts App Icon Generator</title>
+    <style>
+        body {
+            margin: 0;
+            padding: 20px;
+            background: #000;
+            font-family: -apple-system, BlinkMacSystemFont, 'Segoe UI', Roboto, sans-serif;
+            display: flex;
+            flex-direction: column;
+            align-items: center;
+            gap: 20px;
+        }
+        
+        .icon-container {
+            width: 1024px;
+            height: 1024px;
+            position: relative;
+            border-radius: 180px;
+            overflow: hidden;
+            background: linear-gradient(135deg, #0a0a23 0%, #667eea 50%, #00bfff 100%);
+            display: flex;
+            align-items: center;
+            justify-content: center;
+            box-shadow: 0 20px 60px rgba(0, 191, 255, 0.3);
+        }
+        
+        .icon-text {
+            font-size: 480px;
+            font-weight: 800;
+            color: white;
+            text-shadow: 0 8px 32px rgba(0, 0, 0, 0.3);
+            font-family: system-ui, -apple-system, sans-serif;
+        }
+        
+        .download-section {
+            display: flex;
+            gap: 20px;
+            flex-wrap: wrap;
+            justify-content: center;
+        }
+        
+        .download-btn {
+            padding: 12px 24px;
+            background: linear-gradient(45deg, #00bfff, #1e90ff);
+            color: white;
+            border: none;
+            border-radius: 8px;
+            font-size: 16px;
+            font-weight: 600;
+            cursor: pointer;
+            box-shadow: 0 4px 12px rgba(0, 191, 255, 0.3);
+            transition: all 0.3s ease;
+        }
+        
+        .download-btn:hover {
+            transform: translateY(-2px);
+            box-shadow: 0 6px 16px rgba(0, 191, 255, 0.4);
+        }
+        
+        .instructions {
+            max-width: 600px;
+            text-align: center;
+            color: rgba(255, 255, 255, 0.8);
+            line-height: 1.6;
+        }
+        
+        .instructions h2 {
+            color: #00bfff;
+            margin-bottom: 16px;
+        }
+    </style>
+</head>
+<body>
+    <div class="instructions">
+        <h2>AisleMarts App Icon Generator</h2>
+        <p>Click the buttons below to download app icons in different sizes for iOS and Android app store submission.</p>
+    </div>
+    
+    <div class="icon-container" id="iconContainer">
+        <div class="icon-text">A</div>
+    </div>
+    
+    <div class="download-section">
+        <button class="download-btn" onclick="downloadIcon(1024, 'ios-app-store-1024x1024')">
+            iOS App Store (1024×1024)
+        </button>
+        <button class="download-btn" onclick="downloadIcon(512, 'android-play-store-512x512')">
+            Android Play Store (512×512)
+        </button>
+        <button class="download-btn" onclick="downloadIcon(192, 'android-app-icon-192x192')">
+            Android App Icon (192×192)
+        </button>
+        <button class="download-btn" onclick="downloadIcon(180, 'ios-app-icon-180x180')">
+            iOS App Icon (180×180)
+        </button>
+    </div>
+    
+    <div class="instructions">
+        <h3>Quick Setup Instructions:</h3>
+        <ul style="text-align: left;">
+            <li><strong>iOS:</strong> Use the 1024×1024 version for App Store Connect</li>
+            <li><strong>Android:</strong> Use the 512×512 version for Google Play Console</li>
+            <li><strong>App Bundle:</strong> The 180×180 (iOS) and 192×192 (Android) for your app builds</li>
+        </ul>
+    </div>
+    
+    <script>
+        function downloadIcon(size, filename) {
+            // Create canvas
+            const canvas = document.createElement('canvas');
+            const ctx = canvas.getContext('2d');
+            canvas.width = size;
+            canvas.height = size;
+            
+            // Calculate border radius (same proportion as original)
+            const borderRadius = size * (180 / 1024); // Original: 180px radius for 1024px icon
+            
+            // Create rounded rectangle path
+            ctx.beginPath();
+            ctx.roundRect(0, 0, size, size, borderRadius);
+            ctx.clip();
+            
+            // Create gradient background
+            const gradient = ctx.createLinearGradient(0, 0, size, size);
+            gradient.addColorStop(0, '#0a0a23');
+            gradient.addColorStop(0.5, '#667eea');
+            gradient.addColorStop(1, '#00bfff');
+            ctx.fillStyle = gradient;
+            ctx.fillRect(0, 0, size, size);
+            
+            // Draw text
+            const fontSize = size * 0.47; // 47% of canvas size
+            ctx.fillStyle = '#ffffff';
+            ctx.font = `800 ${fontSize}px system-ui, -apple-system, sans-serif`;
+            ctx.textAlign = 'center';
+            ctx.textBaseline = 'middle';
+            
+            // Add text shadow effect
+            ctx.shadowColor = 'rgba(0, 0, 0, 0.3)';
+            ctx.shadowBlur = size * 0.008; // 0.8% of size
+            ctx.shadowOffsetY = size * 0.008;
+            
+            ctx.fillText('A', size / 2, size / 2);
+            
+            // Download
+            const link = document.createElement('a');
+            link.download = `${filename}.png`;
+            link.href = canvas.toDataURL();
+            link.click();
+            
+            console.log(`✅ Downloaded ${filename}.png (${size}×${size})`);
+        }
+        
+        // Polyfill for roundRect if not supported
+        if (!CanvasRenderingContext2D.prototype.roundRect) {
+            CanvasRenderingContext2D.prototype.roundRect = function(x, y, width, height, radius) {
+                this.beginPath();
+                this.moveTo(x + radius, y);
+                this.lineTo(x + width - radius, y);
+                this.quadraticCurveTo(x + width, y, x + width, y + radius);
+                this.lineTo(x + width, y + height - radius);
+                this.quadraticCurveTo(x + width, y + height, x + width - radius, y + height);
+                this.lineTo(x + radius, y + height);
+                this.quadraticCurveTo(x, y + height, x, y + height - radius);
+                this.lineTo(x, y + radius);
+                this.quadraticCurveTo(x, y, x + radius, y);
+                this.closePath();
+            };
+        }
+    </script>
+</body>
+</html>
