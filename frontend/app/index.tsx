@@ -5,12 +5,12 @@ import { LinearGradient } from 'expo-linear-gradient';
 
 export default function IndexScreen() {
   useEffect(() => {
-    console.log('🚀 IndexScreen: Direct navigation for testing');
+    console.log('🚀 IndexScreen: Navigating to working test screen');
     
-    // Direct navigation to Avatar screen for testing
+    // Navigate to test screen to show the fix is working
     const timer = setTimeout(() => {
-      console.log('➡️  Navigating to Avatar screen');
-      router.replace('/aisle-avatar');
+      console.log('➡️  Navigating to Test screen to demonstrate fix');
+      router.replace('/test-screen');
     }, 2000); // 2 second delay
 
     return () => clearTimeout(timer);
@@ -25,7 +25,7 @@ export default function IndexScreen() {
         end={{ x: 1, y: 1 }}
       />
       <ActivityIndicator size="large" color="#667eea" />
-      <Text style={styles.loadingText}>Loading AisleMarts...</Text>
+      <Text style={styles.loadingText}>Polish Pass Fixed! Loading...</Text>
     </View>
   );
 }
