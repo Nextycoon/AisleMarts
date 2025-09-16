@@ -33,7 +33,17 @@ export const AuthProvider: React.FC<{ children: React.ReactNode }> = ({ children
   const [hasCompletedAvatarSetup, setHasCompletedAvatarSetup] = useState(false);
 
   useEffect(() => {
-    loadStoredAuth();
+    // Add a maximum timeout to prevent infinite loading
+    const loadingTimeout = setTimeout(() => {
+      console.log('AuthContext: Forcing loading to complete after timeout');
+      setLoading(false);
+    }, 5000); // 5 second max loading time
+
+    loadStoredAuth().finally(() => {
+      clearTimeout(loadingTimeout);
+    });
+
+    return () => clearTimeout(loadingTimeout);
   }, []);
 
   const loadStoredAuth = async () => {
