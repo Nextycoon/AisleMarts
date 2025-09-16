@@ -6,7 +6,7 @@ import { AuthProvider } from '@/src/context/AuthContext';
 // import { OfflineProvider } from '@/src/utils/OfflineManager';
 // import { ThemeProvider } from '@/src/theme/ThemeProvider';
 // import { ToastProvider, ToastHost } from '@/src/components/ToastHost';
-import { ErrorBoundary } from '@/src/components/ErrorBoundary';
+import { ErrorBoundary } from '../src/components/ErrorBoundary';
 
 export default function RootLayout() {
   return (
