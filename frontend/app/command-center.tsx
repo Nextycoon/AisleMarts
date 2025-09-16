@@ -182,11 +182,6 @@ export default function CommandCenter() {
     </ScrollView>
   );
 }
-    <ScrollView 
-      style={styles.container} 
-      contentInsetAdjustmentBehavior="automatic"
-      showsVerticalScrollIndicator={false}
-    >
       {/* Header Section */}
       <LinearGradient 
         colors={["#0c0f14", "#111827"]} 
