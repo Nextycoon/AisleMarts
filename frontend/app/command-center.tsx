@@ -182,8 +182,6 @@ export default function CommandCenter() {
     </ScrollView>
   );
 }
-
-  return (
     <ScrollView 
       style={styles.container} 
       contentInsetAdjustmentBehavior="automatic"
