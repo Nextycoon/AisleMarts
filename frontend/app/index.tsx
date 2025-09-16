@@ -6,9 +6,10 @@ import { SafeAreaView, useSafeAreaInsets } from 'react-native-safe-area-context'
 import { Ionicons } from '@expo/vector-icons';
 
 // Import our micro-upgrades
-import { getPersonalizedGreeting } from '../src/utils/greeting';
+import { getPersonalizedGreeting, getSpotlightFeature, SPOTLIGHT_CONFIG } from '../src/utils/greeting';
 import { preloadCriticalScreens, pushFromHome, trackNavigationPerformance } from '../src/utils/navigation';
 import { useAnalytics } from '../src/utils/analytics';
+import { colors } from '../src/theme/tokens';
 
 const BEST_PICKS = [
   { id: 1, title: "Tecno Spark 10", price: "KES 14,999", badge: "Best Pick" },
