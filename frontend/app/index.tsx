@@ -1,5 +1,5 @@
 import React, { useEffect } from 'react';
-import { View, ActivityIndicator, StyleSheet } from 'react-native';
+import { View, ActivityIndicator, StyleSheet, Text } from 'react-native';
 import { router } from 'expo-router';
 import { useAuth } from '@/src/context/AuthContext';
 import { LinearGradient } from 'expo-linear-gradient';
@@ -8,12 +8,16 @@ export default function IndexScreen() {
   const { loading, hasCompletedAvatarSetup } = useAuth();
 
   useEffect(() => {
+    console.log('IndexScreen - loading:', loading, 'hasCompletedAvatarSetup:', hasCompletedAvatarSetup);
+    
     if (!loading) {
+      console.log('Auth loading complete, checking avatar setup...');
+      
       if (!hasCompletedAvatarSetup) {
-        // Redirect to Avatar setup
+        console.log('Redirecting to Avatar setup');
         router.replace('/aisle-avatar');
       } else {
-        // Redirect to main home screen
+        console.log('Redirecting to main home screen');
         router.replace('/home');
       }
     }
@@ -29,6 +33,9 @@ export default function IndexScreen() {
         end={{ x: 1, y: 1 }}
       />
       <ActivityIndicator size="large" color="#667eea" />
+      <Text style={styles.loadingText}>
+        {loading ? 'Setting up...' : 'Ready!'}
+      </Text>
     </View>
   );
 }
@@ -39,5 +46,11 @@ const styles = StyleSheet.create({
     justifyContent: 'center',
     alignItems: 'center',
     backgroundColor: '#0C0F14',
+  },
+  loadingText: {
+    color: 'rgba(255, 255, 255, 0.7)',
+    fontSize: 16,
+    marginTop: 16,
+    fontWeight: '500',
   },
 });
