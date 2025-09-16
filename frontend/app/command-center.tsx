@@ -82,7 +82,7 @@ export default function CommandCenter() {
           {visibleFeatures.map((feature) => (
             <Pressable
               key={feature.key}
-              onPress={() => router.push(feature.route as any)}
+              onPress={() => handleFeatureTilePress(feature)}
               style={styles.featureTile}
               accessibilityRole="button"
               accessibilityLabel={`${feature.label} feature`}
