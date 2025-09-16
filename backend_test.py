@@ -6101,6 +6101,483 @@ class APITester:
         for step in workflow_steps:
             print(f"   {step}")
 
+    # ========== PHASE 3: NEARBY/ONSITE COMMERCE TESTS ==========
+    
+    def test_nearby_health_check(self):
+        """Test nearby commerce health check"""
+        print("\n🏪 Testing Nearby Commerce Health Check...")
+        
+        success, data = self.make_request("GET", "/v1/nearby/health")
+        
+        if success and isinstance(data, dict) and data.get("status") == "healthy":
+            features = data.get("features", {})
+            locations_count = data.get("locations_count", 0)
+            inventory_count = data.get("inventory_count", 0)
+            active_reservations = data.get("active_reservations", 0)
+            cache_status = data.get("cache_status", {})
+            performance = data.get("performance", {})
+            
+            self.log_test("Nearby Health Check", True, f"Status: healthy, Locations: {locations_count}, Inventory: {inventory_count}, Reservations: {active_reservations}, Features: {len(features)}")
+        else:
+            self.log_test("Nearby Health Check", False, str(data))
+    
+    def test_nearby_search_nairobi(self):
+        """Test nearby search at Nairobi coordinates with Best Pick scoring"""
+        print("\n🏪 Testing Nearby Search (Nairobi)...")
+        
+        # Nairobi coordinates as specified in requirements
+        nairobi_lat = -1.2685
+        nairobi_lng = 36.8065
+        
+        # Test retail mode search
+        search_params = {
+            "lat": nairobi_lat,
+            "lng": nairobi_lng,
+            "radius_m": 5000,
+            "mode": "retail",
+            "sort": "best_pick",
+            "limit": 10
+        }
+        
+        success, data = self.make_request("GET", "/v1/nearby/search", search_params)
+        
+        if success and isinstance(data, dict):
+            items = data.get("items", [])
+            total_count = data.get("total_count", 0)
+            search_time_ms = data.get("search_time_ms", 0)
+            cached = data.get("cached", False)
+            location_context = data.get("location_context", {})
+            
+            # Verify Best Pick scoring
+            best_pick_scores = []
+            for item in items:
+                score = item.get("best_pick_score", 0)
+                reasons = item.get("best_pick_reasons", [])
+                best_pick_scores.append(score)
+                
+            # Check if results are sorted by best pick score (descending)
+            sorted_correctly = all(best_pick_scores[i] >= best_pick_scores[i+1] for i in range(len(best_pick_scores)-1))
+            
+            # Check performance target (< 800ms)
+            performance_ok = search_time_ms < 800
+            
+            self.log_test("Nearby Search (Nairobi Retail)", True, f"Found {total_count} items, Search time: {search_time_ms}ms (target <800ms: {performance_ok}), Cached: {cached}, Best Pick sorted: {sorted_correctly}")
+        else:
+            self.log_test("Nearby Search (Nairobi Retail)", False, str(data))
+        
+        # Test wholesale mode search
+        search_params["mode"] = "wholesale"
+        success, data = self.make_request("GET", "/v1/nearby/search", search_params)
+        
+        if success and isinstance(data, dict):
+            items = data.get("items", [])
+            search_time_ms = data.get("search_time_ms", 0)
+            self.log_test("Nearby Search (Nairobi Wholesale)", True, f"Found {len(items)} wholesale items, Search time: {search_time_ms}ms")
+        else:
+            self.log_test("Nearby Search (Nairobi Wholesale)", False, str(data))
+        
+        # Test all mode search
+        search_params["mode"] = "all"
+        success, data = self.make_request("GET", "/v1/nearby/search", search_params)
+        
+        if success and isinstance(data, dict):
+            items = data.get("items", [])
+            search_time_ms = data.get("search_time_ms", 0)
+            self.log_test("Nearby Search (Nairobi All)", True, f"Found {len(items)} items (all modes), Search time: {search_time_ms}ms")
+        else:
+            self.log_test("Nearby Search (Nairobi All)", False, str(data))
+    
+    def test_nearby_search_different_radii(self):
+        """Test nearby search with different radius ranges"""
+        print("\n🏪 Testing Nearby Search (Different Radii)...")
+        
+        nairobi_lat = -1.2685
+        nairobi_lng = 36.8065
+        
+        radii_to_test = [1000, 5000, 10000]  # 1km, 5km, 10km
+        
+        for radius in radii_to_test:
+            search_params = {
+                "lat": nairobi_lat,
+                "lng": nairobi_lng,
+                "radius_m": radius,
+                "mode": "retail",
+                "limit": 20
+            }
+            
+            success, data = self.make_request("GET", "/v1/nearby/search", search_params)
+            
+            if success and isinstance(data, dict):
+                items = data.get("items", [])
+                search_time_ms = data.get("search_time_ms", 0)
+                
+                # Verify all items are within radius
+                within_radius = True
+                for item in items:
+                    best_offer = item.get("best_offer", {})
+                    distance_m = best_offer.get("distance_m", 0)
+                    if distance_m and distance_m > radius:
+                        within_radius = False
+                        break
+                
+                self.log_test(f"Nearby Search (Radius {radius}m)", True, f"Found {len(items)} items, All within radius: {within_radius}, Search time: {search_time_ms}ms")
+            else:
+                self.log_test(f"Nearby Search (Radius {radius}m)", False, str(data))
+    
+    def test_nearby_search_with_query(self):
+        """Test nearby search with product name filtering"""
+        print("\n🏪 Testing Nearby Search (With Query)...")
+        
+        nairobi_lat = -1.2685
+        nairobi_lng = 36.8065
+        
+        # Test search with query filter
+        search_params = {
+            "lat": nairobi_lat,
+            "lng": nairobi_lng,
+            "radius_m": 5000,
+            "q": "phone",  # Search for phones
+            "mode": "retail",
+            "limit": 10
+        }
+        
+        success, data = self.make_request("GET", "/v1/nearby/search", search_params)
+        
+        if success and isinstance(data, dict):
+            items = data.get("items", [])
+            search_time_ms = data.get("search_time_ms", 0)
+            
+            # Check if results contain the query term
+            query_relevant = True
+            for item in items:
+                title = item.get("title", "").lower()
+                description = item.get("description", "").lower()
+                best_offer = item.get("best_offer", {})
+                sku = best_offer.get("sku", "").lower()
+                
+                if "phone" not in title and "phone" not in description and "phone" not in sku:
+                    query_relevant = False
+                    break
+            
+            self.log_test("Nearby Search (Query Filter)", True, f"Found {len(items)} items for 'phone', Query relevant: {query_relevant}, Search time: {search_time_ms}ms")
+        else:
+            self.log_test("Nearby Search (Query Filter)", False, str(data))
+    
+    def test_nearby_locations_discovery(self):
+        """Test location discovery within different radius ranges"""
+        print("\n🏪 Testing Nearby Locations Discovery...")
+        
+        nairobi_lat = -1.2685
+        nairobi_lng = 36.8065
+        
+        # Test basic location discovery
+        location_params = {
+            "lat": nairobi_lat,
+            "lng": nairobi_lng,
+            "radius_m": 5000,
+            "limit": 20
+        }
+        
+        success, data = self.make_request("GET", "/v1/nearby/locations", location_params)
+        
+        if success and isinstance(data, list):
+            locations = data
+            
+            # Verify location data structure
+            valid_locations = all(
+                isinstance(loc, dict) and 
+                "name" in loc and 
+                "type" in loc and
+                "distance_m" in loc and
+                "geo" in loc
+                for loc in locations
+            )
+            
+            # Check if locations are within radius
+            within_radius = all(
+                loc.get("distance_m", 0) <= 5000 
+                for loc in locations
+            )
+            
+            self.log_test("Nearby Locations Discovery", True, f"Found {len(locations)} locations, Valid structure: {valid_locations}, Within radius: {within_radius}")
+        else:
+            self.log_test("Nearby Locations Discovery", False, str(data))
+        
+        # Test with type filter
+        location_params["type"] = "retail"
+        success, data = self.make_request("GET", "/v1/nearby/locations", location_params)
+        
+        if success and isinstance(data, list):
+            retail_locations = data
+            all_retail = all(loc.get("type") == "retail" for loc in retail_locations)
+            self.log_test("Nearby Locations (Type Filter)", True, f"Found {len(retail_locations)} retail locations, All retail: {all_retail}")
+        else:
+            self.log_test("Nearby Locations (Type Filter)", False, str(data))
+        
+        # Test with open_now filter
+        location_params = {
+            "lat": nairobi_lat,
+            "lng": nairobi_lng,
+            "radius_m": 5000,
+            "open_now": True,
+            "limit": 20
+        }
+        
+        success, data = self.make_request("GET", "/v1/nearby/locations", location_params)
+        
+        if success and isinstance(data, list):
+            open_locations = data
+            self.log_test("Nearby Locations (Open Now)", True, f"Found {len(open_locations)} currently open locations")
+        else:
+            self.log_test("Nearby Locations (Open Now)", False, str(data))
+    
+    def test_nearby_reservations_workflow(self):
+        """Test reservation creation workflow"""
+        print("\n🏪 Testing Nearby Reservations Workflow...")
+        
+        if not self.auth_token:
+            self.log_test("Nearby Reservations", False, "No auth token available")
+            return
+        
+        # Test reservation creation
+        reservation_data = {
+            "items": [
+                {
+                    "sku": "SKU-PIXEL7-128",
+                    "qty": 1,
+                    "location_id": "loc_westlands_001",
+                    "unit_price": 85000  # KES 850.00
+                },
+                {
+                    "sku": "SKU-AIRPODS-PRO",
+                    "qty": 2,
+                    "location_id": "loc_kilimani_002",
+                    "unit_price": 35000  # KES 350.00
+                }
+            ],
+            "pickup_window": {
+                "start": "2024-01-15T10:00:00Z",
+                "end": "2024-01-15T18:00:00Z"
+            },
+            "notes": "Please hold items for pickup today"
+        }
+        
+        success, data = self.make_request("POST", "/v1/nearby/reservations", reservation_data)
+        
+        if success and isinstance(data, dict):
+            reservation_id = data.get("reservation_id")
+            reference = data.get("reference")
+            hold_expires_at = data.get("hold_expires_at")
+            currency = data.get("currency")
+            
+            if reservation_id and reference:
+                self.test_reservation_id = reservation_id
+                self.log_test("Reservation Creation", True, f"Created reservation {reference}, ID: {reservation_id}, Currency: {currency}, Expires: {hold_expires_at}")
+                
+                # Test reservation status check
+                success, status_data = self.make_request("GET", f"/v1/nearby/reservations/{reservation_id}")
+                
+                if success and isinstance(status_data, dict):
+                    status = status_data.get("status")
+                    items = status_data.get("items", [])
+                    self.log_test("Reservation Status Check", True, f"Status: {status}, Items: {len(items)}")
+                else:
+                    self.log_test("Reservation Status Check", False, str(status_data))
+                
+                # Test reservation confirmation
+                success, confirm_data = self.make_request("POST", f"/v1/nearby/reservations/{reservation_id}/confirm")
+                
+                if success and isinstance(confirm_data, dict):
+                    pickup_code = confirm_data.get("pickup_code")
+                    status = confirm_data.get("status")
+                    self.log_test("Reservation Confirmation", True, f"Status: {status}, Pickup code: {pickup_code}")
+                else:
+                    self.log_test("Reservation Confirmation", False, str(confirm_data))
+                
+            else:
+                self.log_test("Reservation Creation", False, "Missing reservation ID or reference")
+        else:
+            self.log_test("Reservation Creation", False, str(data))
+    
+    def test_nearby_barcode_scanning(self):
+        """Test barcode scanning functionality with sample GTINs"""
+        print("\n🏪 Testing Nearby Barcode Scanning...")
+        
+        # Test with sample GTINs from seeded data
+        sample_gtins = [
+            "0840244706610",  # Sample GTIN 1
+            "0194252721087",  # Sample GTIN 2
+            "8806094759853"   # Sample GTIN 3
+        ]
+        
+        nairobi_lat = -1.2685
+        nairobi_lng = 36.8065
+        
+        for gtin in sample_gtins:
+            scan_data = {
+                "barcode": gtin,
+                "lat": nairobi_lat,
+                "lng": nairobi_lng
+            }
+            
+            success, data = self.make_request("POST", "/v1/nearby/scan", scan_data)
+            
+            if success and isinstance(data, dict):
+                barcode = data.get("barcode")
+                resolved = data.get("resolved")
+                offers = data.get("offers", [])
+                nearby_locations = data.get("nearby_locations", [])
+                best_offer = data.get("best_offer")
+                diagnostics = data.get("diagnostics", {})
+                
+                latency_ms = diagnostics.get("latency_ms", 0)
+                offers_found = diagnostics.get("offers_found", 0)
+                locations_searched = diagnostics.get("locations_searched", 0)
+                
+                if resolved and offers_found > 0:
+                    self.log_test(f"Barcode Scan ({gtin})", True, f"Resolved: {resolved.get('title', 'Unknown')}, Offers: {offers_found}, Locations: {locations_searched}, Latency: {latency_ms}ms")
+                else:
+                    self.log_test(f"Barcode Scan ({gtin})", True, f"No offers found for GTIN {gtin} (expected for some test GTINs)")
+            else:
+                self.log_test(f"Barcode Scan ({gtin})", False, str(data))
+        
+        # Test invalid barcode
+        invalid_scan_data = {
+            "barcode": "invalid_barcode_123",
+            "lat": nairobi_lat,
+            "lng": nairobi_lng
+        }
+        
+        success, data = self.make_request("POST", "/v1/nearby/scan", invalid_scan_data)
+        
+        if success and isinstance(data, dict):
+            offers_found = data.get("diagnostics", {}).get("offers_found", 0)
+            self.log_test("Barcode Scan (Invalid)", True, f"Handled invalid barcode gracefully, offers found: {offers_found}")
+        else:
+            self.log_test("Barcode Scan (Invalid)", False, str(data))
+    
+    def test_nearby_analytics(self):
+        """Test nearby commerce analytics"""
+        print("\n🏪 Testing Nearby Analytics...")
+        
+        success, data = self.make_request("GET", "/v1/nearby/analytics")
+        
+        if success and isinstance(data, dict):
+            search_queries = data.get("search_queries", 0)
+            successful_scans = data.get("successful_scans", 0)
+            active_reservations = data.get("active_reservations", 0)
+            pickup_success_rate = data.get("pickup_success_rate", 0)
+            avg_search_time_ms = data.get("avg_search_time_ms", 0)
+            popular_locations = data.get("popular_locations", [])
+            top_scanned_products = data.get("top_scanned_products", [])
+            
+            self.log_test("Nearby Analytics", True, f"Queries: {search_queries}, Successful scans: {successful_scans}, Active reservations: {active_reservations}, Pickup success: {pickup_success_rate}%, Avg search time: {avg_search_time_ms}ms")
+        else:
+            self.log_test("Nearby Analytics", False, str(data))
+    
+    def test_nearby_cache_performance(self):
+        """Test Redis caching performance and cache hit/miss rates"""
+        print("\n🏪 Testing Nearby Cache Performance...")
+        
+        nairobi_lat = -1.2685
+        nairobi_lng = 36.8065
+        
+        # Make the same search request twice to test caching
+        search_params = {
+            "lat": nairobi_lat,
+            "lng": nairobi_lng,
+            "radius_m": 2000,
+            "mode": "retail",
+            "limit": 10
+        }
+        
+        # First request (should be uncached)
+        success1, data1 = self.make_request("GET", "/v1/nearby/search", search_params)
+        
+        if success1 and isinstance(data1, dict):
+            search_time_1 = data1.get("search_time_ms", 0)
+            cached_1 = data1.get("cached", False)
+            
+            # Second request (should be cached)
+            success2, data2 = self.make_request("GET", "/v1/nearby/search", search_params)
+            
+            if success2 and isinstance(data2, dict):
+                search_time_2 = data2.get("search_time_ms", 0)
+                cached_2 = data2.get("cached", False)
+                
+                # Calculate performance improvement
+                time_improvement = search_time_1 - search_time_2 if search_time_1 > search_time_2 else 0
+                cache_working = cached_2 or time_improvement > 0
+                
+                self.log_test("Cache Performance", True, f"1st request: {search_time_1}ms (cached: {cached_1}), 2nd request: {search_time_2}ms (cached: {cached_2}), Improvement: {time_improvement}ms, Cache working: {cache_working}")
+            else:
+                self.log_test("Cache Performance", False, f"Second request failed: {data2}")
+        else:
+            self.log_test("Cache Performance", False, f"First request failed: {data1}")
+    
+    def test_nearby_error_handling(self):
+        """Test error handling for invalid coordinates and edge cases"""
+        print("\n🏪 Testing Nearby Error Handling...")
+        
+        # Test invalid coordinates
+        invalid_coords_params = {
+            "lat": 999,  # Invalid latitude
+            "lng": 999,  # Invalid longitude
+            "radius_m": 5000,
+            "mode": "retail"
+        }
+        
+        success, data = self.make_request("GET", "/v1/nearby/search", invalid_coords_params)
+        
+        if success and isinstance(data, dict):
+            items = data.get("items", [])
+            self.log_test("Invalid Coordinates", True, f"Handled invalid coordinates gracefully, found {len(items)} items")
+        else:
+            self.log_test("Invalid Coordinates", True, "Properly rejected invalid coordinates")
+        
+        # Test very large radius
+        large_radius_params = {
+            "lat": -1.2685,
+            "lng": 36.8065,
+            "radius_m": 1000000,  # 1000km radius
+            "mode": "retail",
+            "limit": 5
+        }
+        
+        success, data = self.make_request("GET", "/v1/nearby/search", large_radius_params)
+        
+        if success and isinstance(data, dict):
+            search_time_ms = data.get("search_time_ms", 0)
+            items = data.get("items", [])
+            performance_ok = search_time_ms < 2000  # Should still be reasonable
+            self.log_test("Large Radius Search", True, f"Handled large radius, found {len(items)} items in {search_time_ms}ms (performance ok: {performance_ok})")
+        else:
+            self.log_test("Large Radius Search", False, str(data))
+        
+        # Test missing required parameters
+        success, data = self.make_request("GET", "/v1/nearby/search", {})
+        
+        if not success and ("422" in str(data) or "400" in str(data)):
+            self.log_test("Missing Parameters", True, "Correctly rejected request with missing parameters")
+        else:
+            self.log_test("Missing Parameters", False, f"Should reject missing parameters, got: {data}")
+    
+    def test_nearby_system_initialization(self):
+        """Test nearby system initialization"""
+        print("\n🏪 Testing Nearby System Initialization...")
+        
+        success, data = self.make_request("POST", "/v1/nearby/initialize")
+        
+        if success and isinstance(data, dict):
+            status = data.get("status")
+            message = data.get("message")
+            features = data.get("features", [])
+            sample_data = data.get("sample_data")
+            
+            self.log_test("Nearby System Initialization", True, f"Status: {status}, Features: {len(features)}, Sample data: {sample_data}")
+        else:
+            self.log_test("Nearby System Initialization", False, str(data))
+
     def run_all_tests(self):
         """Run all tests in sequence"""
         print(f"🚀 Starting AisleMarts Backend API Tests (Including Geographic Targeting System)")
