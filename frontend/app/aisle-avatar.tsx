@@ -3,68 +3,39 @@ import {
   View,
   Text,
   StyleSheet,
-  TouchableOpacity,
   SafeAreaView,
-  Dimensions,
-  StatusBar,
-  Platform,
-  Alert,
   Pressable,
-  Linking,
-  Modal,
-  ScrollView
+  Alert,
 } from 'react-native';
 import { LinearGradient } from 'expo-linear-gradient';
 import { BlurView } from 'expo-blur';
 import { Ionicons } from '@expo/vector-icons';
 import { router } from 'expo-router';
-import Animated, {
-  useSharedValue,
-  useAnimatedStyle,
-  withSpring,
-  withDelay,
-  FadeIn,
-  SlideInUp,
-  interpolate,
-  runOnJS
-} from 'react-native-reanimated';
-import { useAuth } from '@/src/context/AuthContext';
-import { useHaptics } from '@/src/hooks/useHaptics';
+import Animated, { FadeIn, SlideInUp } from 'react-native-reanimated';
 import AsyncStorage from '@react-native-async-storage/async-storage';
-import NetInfo from '@react-native-community/netinfo';
-
-const { width, height } = Dimensions.get('window');
 
 type UserRole = 'buyer' | 'seller' | 'hybrid';
 
-interface RoleOption {
-  id: UserRole;
-  title: string;
-  subtitle: string;
-  icon: keyof typeof Ionicons.glyphMap;
-  gradient: string[];
-}
-
-const roleOptions: RoleOption[] = [
+const roleOptions = [
   {
-    id: 'buyer',
+    id: 'buyer' as UserRole,
     title: 'Buyer',
     subtitle: 'Discover nearby stock, reserve, pick up fast.',
-    icon: 'bag',
+    icon: 'bag' as const,
     gradient: ['#667eea', '#764ba2']
   },
   {
-    id: 'seller', 
+    id: 'seller' as UserRole, 
     title: 'Seller',
     subtitle: 'List inventory, set pickup windows, grow revenue.',
-    icon: 'storefront',
+    icon: 'storefront' as const,
     gradient: ['#f093fb', '#f5576c']
   },
   {
-    id: 'hybrid',
+    id: 'hybrid' as UserRole,
     title: 'Hybrid',
     subtitle: 'Shop and sell from one account.',
-    icon: 'infinite',
+    icon: 'infinite' as const,
     gradient: ['#4facfe', '#00f2fe']
   }
 ];
@@ -72,47 +43,9 @@ const roleOptions: RoleOption[] = [
 export default function AisleAvatarScreen() {
   const [selectedRole, setSelectedRole] = useState<UserRole | null>(null);
   const [isLoading, setIsLoading] = useState(false);
-  const [showLearnMore, setShowLearnMore] = useState(false);
-  const [isOnline, setIsOnline] = useState(true);
-  const { updateUser } = useAuth();
-  const { triggerHaptic, onButtonPress, onFormSubmit } = useHaptics();
-
-  const fadeAnim = useSharedValue(0);
-  const slideAnim = useSharedValue(50);
-  const scaleAnim = useSharedValue(0.9);
-
-  React.useEffect(() => {
-    // Check network status
-    const unsubscribe = NetInfo.addEventListener(state => {
-      setIsOnline(state.isConnected ?? true);
-    });
-
-    // Cinematic entrance animation
-    fadeAnim.value = withSpring(1, { duration: 800 });
-    slideAnim.value = withSpring(0, { duration: 800 });
-    scaleAnim.value = withSpring(1, { duration: 800 });
-
-    return unsubscribe;
-  }, []);
 
   const handleRoleSelect = (role: UserRole) => {
-    triggerHaptic('selection');
     setSelectedRole(role);
-  };
-
-  const handleLearnMore = () => {
-    onButtonPress();
-    setShowLearnMore(true);
-  };
-
-  const handleTermsPress = () => {
-    onButtonPress();
-    Linking.openURL('https://aislemarts.com/terms');
-  };
-
-  const handlePrivacyPress = () => {
-    onButtonPress();
-    Linking.openURL('https://aislemarts.com/privacy');
   };
 
   const handleEnterMarketplace = async () => {
@@ -122,62 +55,148 @@ export default function AisleAvatarScreen() {
     }
 
     setIsLoading(true);
-    onFormSubmit();
 
     try {
-      // Optimistic update
-      await updateUser({ role: selectedRole });
-      
-      // Persist to AsyncStorage (offline support)
+      // Save to AsyncStorage for offline support
       await AsyncStorage.setItem('userRole', selectedRole);
       await AsyncStorage.setItem('isAvatarSetup', 'true');
+      
+      console.log('Avatar setup complete with role:', selectedRole);
 
-      // Try to sync with backend if online and user is authenticated
-      if (isOnline) {
-        try {
-          // Get the current user from AuthContext if available
-          // For now, we'll create a mock user ID - in production this would come from auth
-          const mockUserId = 'demo_user_' + Date.now();
-          // await API.patch(`/users/${mockUserId}/avatar`, { role: selectedRole });
-          console.log('Avatar setup would sync to backend for user:', mockUserId);
-        } catch (syncError) {
-          console.log('Backend sync failed, but local storage succeeded:', syncError);
-          // Continue with local storage success
-        }
-      }
-
-      // Analytics event (stubbed)
-      console.log('Analytics: avatar_save_success', { role: selectedRole, isOnline });
-
-      // Success haptic
-      triggerHaptic('success');
-
-      // Cinematic transition delay
+      // Show success and navigate
       setTimeout(() => {
         router.replace('/home');
       }, 800);
 
     } catch (error) {
       console.error('Failed to save user role:', error);
-      
-      // Error haptic
-      triggerHaptic('error');
-      
-      // Show inline toast
-      Alert.alert(
-        'Connection Issue', 
-        isOnline 
-          ? 'Couldn\'t save your selection. Check connection and try again.' 
-          : 'Saved locally. Will sync when online.',
-        isOnline ? [
-          { text: 'Retry', onPress: handleEnterMarketplace },
-          { text: 'Cancel', style: 'cancel' }
-        ] : [{ text: 'Continue Offline', onPress: () => router.replace('/home') }]
-      );
-      
+      Alert.alert('Error', 'Failed to save your selection. Please try again.');
       setIsLoading(false);
     }
   };
+
+  return (
+    <SafeAreaView style={styles.container}>
+      <LinearGradient
+        colors={['#0C0F14', '#1a1a2e', '#16213e']}
+        style={StyleSheet.absoluteFill}
+        start={{ x: 0, y: 0 }}
+        end={{ x: 1, y: 1 }}
+      />
+
+      <View style={styles.content}>
+        {/* Hero Section */}
+        <Animated.View 
+          entering={SlideInUp.delay(300)}
+          style={styles.heroSection}
+        >
+          <Text style={styles.heroTitle}>Choose your Aisle.</Text>
+          <Text style={styles.heroTitle}>Define your journey.</Text>
+          <Text style={styles.heroSubtitle}>
+            Your avatar is your key.{'\n'}It unlocks your path.
+          </Text>
+        </Animated.View>
+
+        {/* Role Selection */}
+        <Animated.View 
+          entering={SlideInUp.delay(600)}
+          style={styles.roleSection}
+        >
+          <Text style={styles.rolePrompt}>Select your role in the marketplace</Text>
+          
+          <View style={styles.roleGrid}>
+            {roleOptions.map((role, index) => (
+              <Animated.View
+                key={role.id}
+                entering={SlideInUp.delay(800 + index * 150)}
+              >
+                <Pressable
+                  style={[
+                    styles.roleCard,
+                    selectedRole === role.id && styles.selectedRoleCard
+                  ]}
+                  onPress={() => handleRoleSelect(role.id)}
+                >
+                  <BlurView intensity={selectedRole === role.id ? 24 : 18} style={styles.roleCardBlur}>
+                    <LinearGradient
+                      colors={role.gradient}
+                      style={styles.roleIconContainer}
+                      start={{ x: 0, y: 0 }}
+                      end={{ x: 1, y: 1 }}
+                    >
+                      <Ionicons name={role.icon} size={32} color="white" />
+                    </LinearGradient>
+                    
+                    <View style={styles.roleTextContainer}>
+                      <Text style={styles.roleTitle}>{role.title}</Text>
+                      <Text style={styles.roleSubtitle}>{role.subtitle}</Text>
+                    </View>
+                    
+                    {selectedRole === role.id && (
+                      <Animated.View 
+                        entering={FadeIn.duration(140)}
+                        style={styles.selectedIndicator}
+                      >
+                        <View style={styles.selectedRing}>
+                          <Ionicons name="checkmark-circle" size={24} color="#4facfe" />
+                        </View>
+                      </Animated.View>
+                    )}
+                  </BlurView>
+                </Pressable>
+              </Animated.View>
+            ))}
+          </View>
+        </Animated.View>
+
+        {/* CTA Button */}
+        <Animated.View 
+          entering={SlideInUp.delay(1200)}
+          style={styles.ctaSection}
+        >
+          <Pressable
+            style={[
+              styles.ctaButton,
+              selectedRole && styles.ctaButtonActive,
+              isLoading && styles.ctaButtonLoading
+            ]}
+            onPress={handleEnterMarketplace}
+            disabled={!selectedRole || isLoading}
+          >
+            <BlurView intensity={selectedRole ? 30 : 15} style={styles.ctaButtonBlur}>
+              <LinearGradient
+                colors={selectedRole ? ['#667eea', '#764ba2'] : ['#333', '#444']}
+                style={styles.ctaButtonGradient}
+                start={{ x: 0, y: 0 }}
+                end={{ x: 1, y: 0 }}
+              >
+                {isLoading ? (
+                  <Text style={styles.ctaButtonText}>Welcome to your Aisle...</Text>
+                ) : (
+                  <>
+                    <Text style={styles.ctaButtonText}>Enter the Marketplace</Text>
+                    {!isLoading && (
+                      <Ionicons name="arrow-forward" size={20} color="white" />
+                    )}
+                  </>
+                )}
+              </LinearGradient>
+            </BlurView>
+          </Pressable>
+
+          {/* Terms & Privacy */}
+          <View style={styles.legalSection}>
+            <Text style={styles.legalText}>By continuing you agree to our </Text>
+            <Text style={styles.legalLink}>Terms</Text>
+            <Text style={styles.legalText}> & </Text>
+            <Text style={styles.legalLink}>Privacy</Text>
+            <Text style={styles.legalText}>.</Text>
+          </View>
+        </Animated.View>
+      </View>
+    </SafeAreaView>
+  );
+}
 
   const animatedContainerStyle = useAnimatedStyle(() => {
     return {
