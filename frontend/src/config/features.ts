@@ -16,6 +16,8 @@ export interface FeatureItem {
   status?: FeatureStatus;  // visual status indicator
   enabled?: boolean;       // kill switch
   priority?: number;       // sort order (lower = higher priority)
+  tags?: string[];         // e.g., ["phase3", "merchant", "b2b"] for segmentation
+  experimentKey?: string;  // e.g., "home_cta_layout_v2" for A/B testing
 }
 
 export const FEATURES_REGISTRY: FeatureItem[] = [
