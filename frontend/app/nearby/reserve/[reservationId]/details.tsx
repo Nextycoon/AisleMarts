@@ -32,7 +32,7 @@ import {
   getTimeUntilExpiry
 } from '../../../../src/lib/api/pickup';
 import { Reservation, PartialPickupItem } from '../../../../src/lib/types/pickup';
-import useNotifications from '../../../src/hooks/useNotifications';
+import useNotifications from '../../../../src/hooks/useNotifications';
 
 export default function ReservationDetailsScreen() {
   const { reservationId } = useLocalSearchParams<{ reservationId: string }>();
