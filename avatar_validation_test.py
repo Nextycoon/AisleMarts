@@ -150,7 +150,7 @@ class AvatarValidationTester:
         
         for role in valid_roles:
             role_data = {"role": role}
-            success, data, status_code = self.make_request("PATCH", f"/users/{self.demo_user_id}/avatar", role_data)
+            success, data, status_code = self.make_request("PATCH", f"/users/{self.user_id}/avatar", role_data)
             
             if success and status_code == 200 and isinstance(data, dict):
                 # Verify response format
