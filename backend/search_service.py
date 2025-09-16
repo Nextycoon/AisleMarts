@@ -647,3 +647,47 @@ async def seed_sample_data(db: AsyncIOMotorDatabase) -> None:
         )
     
     print(f"✅ Seeded {len(locations)} locations")
+    
+    # Update existing products with language tokens
+    existing_products = await db.products.find({"active": True}).to_list(length=None)
+    updated_count = 0
+    
+    for product in existing_products:
+        # Check if product already has lang_tokens
+        if not product.get("lang_tokens"):
+            title = product.get("title", "")
+            description = product.get("description", "")
+            brand = product.get("brand", "")
+            
+            # Create tokens for all supported languages
+            base_text = f"{title} {description} {brand}"
+            tokens = [token for token in base_text.lower().split() if len(token) > 2]
+            
+            lang_tokens = {
+                "en": tokens,
+                "sw": tokens,  # For now, use same tokens
+                "ar": tokens,
+                "tr": tokens,
+                "fr": tokens
+            }
+            
+            # Generate image hashes for deduplication
+            image_hashes = []
+            for image_url in product.get("images", []):
+                if image_url:
+                    hash_obj = hashlib.md5(image_url.encode())
+                    image_hashes.append(hash_obj.hexdigest()[:16])
+            
+            # Update product with enhanced fields
+            await db.products.update_one(
+                {"_id": product["_id"]},
+                {"$set": {
+                    "lang_tokens": lang_tokens,
+                    "image_hashes": image_hashes,
+                    "search_boost": 1.0,
+                    "updated_at": datetime.utcnow()
+                }}
+            )
+            updated_count += 1
+    
+    print(f"✅ Updated {updated_count} existing products with search tokens")
