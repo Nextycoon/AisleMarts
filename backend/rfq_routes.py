@@ -96,7 +96,7 @@ async def create_rfq(
     - Budget validation against target prices
     """
     try:
-        rfq = await rfq_service.create_rfq(rfq_data, current_user["id"])
+        rfq = await rfq_service.create_rfq(rfq_data, current_user["_id"])
         return rfq
     except ValueError as e:
         raise HTTPException(400, str(e))
