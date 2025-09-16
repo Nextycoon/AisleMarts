@@ -3,7 +3,7 @@
  * Frontend service layer for Universal AI Commerce Engine Phase 1
  * Integrates with /v1/search and /v1/products/{id}/offers APIs
  */
-import { client } from './client';
+import { API as client } from '../api/client';
 
 // ============= TYPESCRIPT INTERFACES =============
 
