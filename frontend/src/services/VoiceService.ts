@@ -283,6 +283,15 @@ class VoiceService {
   }
 }
 
-// Export singleton instance
-export const voiceService = VoiceService.getInstance();
+// Export singleton instance (commented out for web compatibility)
+// export const voiceService = VoiceService.getInstance();
+// export default voiceService;
+
+// Temporary stub for web compatibility
+export const voiceService = {
+  isVoiceEnabled: () => false,
+  requestVoicePermission: () => Promise.resolve({ granted: false, message: 'Voice disabled for web compatibility' }),
+  enableVoice: () => Promise.resolve(),
+  speakAisle: () => Promise.resolve()
+};
 export default voiceService;
