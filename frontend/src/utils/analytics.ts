@@ -95,8 +95,29 @@ class AnalyticsService {
     return [...this.events];
   }
 
-  public clearEvents() {
-    this.events = [];
+  // Feature inventory tracking for PMs
+  public trackFeatureInventory(registry: any[]) {
+    const tagCounts = registry
+      .flatMap(f => f.tags ?? [])
+      .reduce((counts, tag) => ({ ...counts, [tag]: (counts[tag] ?? 0) + 1 }), {});
+
+    this.track('feature_inventory_snapshot', {
+      total: registry.length,
+      enabled: registry.filter(f => f.enabled !== false).length,
+      disabled: registry.filter(f => f.enabled === false).length,
+      by_status: {
+        working: registry.filter(f => f.status === 'working').length,
+        new: registry.filter(f => f.status === 'new').length,
+        enhanced: registry.filter(f => f.status === 'enhanced').length,
+      },
+      by_role: {
+        user_only: registry.filter(f => !f.roles || f.roles.includes('user')).length,
+        merchant_only: registry.filter(f => f.roles?.includes('merchant')).length,
+        admin_only: registry.filter(f => f.roles?.includes('admin')).length,
+      },
+      by_tag: tagCounts,
+      timestamp: Date.now(),
+    });
   }
 
   // Convenience methods for common events
