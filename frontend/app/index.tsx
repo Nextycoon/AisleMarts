@@ -28,10 +28,14 @@ export default function CinematicHome() {
   const router = useRouter();
   const fade = useRef(new Animated.Value(0)).current;
   const top = useSafeAreaInsets().top;
-  const { trackHomeCTAClick, trackBestPickView, trackScreenView } = useAnalytics();
+  const { trackHomeCTAClick, trackBestPickView, trackScreenView, track } = useAnalytics();
   
   // Get personalized greeting
   const personalizedGreeting = getPersonalizedGreeting();
+  
+  // Get spotlight feature for this session
+  const sessionId = "demo_session_2025"; // In production, use actual session ID
+  const spotlightFeature = getSpotlightFeature(sessionId);
 
   useEffect(() => {
     // Track screen view
