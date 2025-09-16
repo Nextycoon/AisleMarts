@@ -3,6 +3,8 @@
  * Dynamic time-based greetings with locale awareness
  */
 
+import { FeatureItem, getFeatureByKey } from '../config/features';
+
 export const getGreeting = (now = new Date()) => {
   const hour = now.getHours();
   
