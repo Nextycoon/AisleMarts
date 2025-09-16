@@ -22,7 +22,7 @@ import { router } from 'expo-router';
 import { StatusBar } from 'expo-status-bar';
 import Constants from 'expo-constants';
 
-// Note: Mapbox temporarily disabled for web compatibility
+// Note: Using simplified location utilities for web compatibility  
 import { requestLocationPermission, NAIROBI_CENTER, formatDistance } from './_lib/map';
 
 const { width, height } = Dimensions.get('window');
