@@ -4,73 +4,20 @@ import { router } from 'expo-router';
 import { useAuth } from '@/src/context/AuthContext';
 import { LinearGradient } from 'expo-linear-gradient';
 
-const BEST_PICKS = [
-  { id: 1, title: "Tecno Spark 10", price: "KES 14,999", badge: "Best Pick" },
-  { id: 2, title: "Samsung Galaxy A54", price: "KES 32,999", badge: "Popular" },
-  { id: 3, title: "iPhone 13", price: "KES 89,999", badge: "Premium" },
-  { id: 4, title: "Infinix Note 30", price: "KES 19,999", badge: "Value" },
-];
-
-const BUSINESS_FEATURES = [
-  { title: "Create RFQ", route: "/b2b", desc: "Request quotes" },
-  { title: "View Quotes", route: "/b2b", desc: "Manage offers" },
-  { title: "Purchase Orders", route: "/b2b", desc: "Track orders" },
-];
-
-export default function CinematicHome() {
-  const router = useRouter();
-  const fade = useRef(new Animated.Value(0)).current;
-  const top = useSafeAreaInsets().top;
-  const { trackHomeCTAClick, trackBestPickView, trackScreenView, track } = useAnalytics();
-  
-  // Get personalized greeting
-  const personalizedGreeting = getPersonalizedGreeting();
-  
-  // Get spotlight feature for this session
-  const sessionId = "demo_session_2025"; // In production, use actual session ID
-  const spotlightFeature = getSpotlightFeature(sessionId);
+export default function IndexScreen() {
+  const { loading, hasCompletedAvatarSetup } = useAuth();
 
   useEffect(() => {
-    // Track screen view
-    trackScreenView('home', 'app_launch');
-    
-    // Cinematic fade-in animation
-    Animated.timing(fade, { 
-      toValue: 1, 
-      duration: 800, 
-      useNativeDriver: true 
-    }).start();
-    
-    // Preload critical screens for instant navigation
-    const cancelPreload = preloadCriticalScreens();
-    
-    return cancelPreload;
-  }, []);
-
-  const handleCTAPress = (cta: 'discover' | 'nearby' | 'rfq', route: string) => {
-    const startTime = Date.now();
-    trackHomeCTAClick(cta);
-    trackNavigationPerformance('home', route, startTime);
-    pushFromHome(route);
-  };
-
-  const handleProductCardPress = (productId: number, position: number) => {
-    trackBestPickView(productId.toString(), position);
-    pushFromHome(`/product/${productId}`);
-  };
-
-  const handleSpotlightPress = (feature: any) => {
-    if (!feature) return;
-    
-    track('home_spotlight_click', {
-      feature_key: feature.key,
-      experiment_key: SPOTLIGHT_CONFIG.experimentKey,
-      feature_status: feature.status,
-      session_id: sessionId
-    });
-    
-    pushFromHome(feature.route);
-  };
+    if (!loading) {
+      if (!hasCompletedAvatarSetup) {
+        // Redirect to Avatar setup
+        router.replace('/aisle-avatar');
+      } else {
+        // Redirect to main home screen
+        router.replace('/home');
+      }
+    }
+  }, [loading, hasCompletedAvatarSetup]);
 
   return (
     <ScrollView 
