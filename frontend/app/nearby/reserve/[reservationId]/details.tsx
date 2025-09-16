@@ -37,6 +37,7 @@ import useNotifications from '../../../src/hooks/useNotifications';
 export default function ReservationDetailsScreen() {
   const { reservationId } = useLocalSearchParams<{ reservationId: string }>();
   const router = useRouter();
+  const { showPickupNotification } = useNotifications();
   
   const [loading, setLoading] = useState(true);
   const [reservation, setReservation] = useState<Reservation | null>(null);
