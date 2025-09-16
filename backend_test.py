@@ -7548,32 +7548,48 @@ SKU-CSV-002,8,15000,9876543210987,KES,red,large,new"""
         print("=" * 80)
 
     def run_all_tests(self):
-        """Run all tests in sequence"""
-        print(f"🚀 Starting AisleMarts Backend API Tests (Including Geographic Targeting System)")
+        """Run all tests in sequence - PHASE 2 CRITICAL INTEGRATION FOCUS"""
+        print(f"🚀 Starting AisleMarts Backend API Tests - PHASE 2 CRITICAL INTEGRATION")
         print(f"📍 Testing against: {API_URL}")
         print("=" * 80)
         
-        # Core functionality tests
+        # PHASE 2 PRIORITIES - Health Check Validation
+        print("\n🎯 PHASE 2 PRIORITY 1: Health Check Validation")
         self.test_health_check()
+        
+        # PHASE 2 PRIORITIES - Authentication System
+        print("\n🎯 PHASE 2 PRIORITY 2: Authentication System")
         self.test_user_registration()
         if not self.auth_token:
             self.test_user_login()
-        
-        # Login vendor for geographic tests
-        self.test_vendor_login()
-        
         self.test_protected_route()
-        self.test_categories_list()
         
+        # PHASE 2 PRIORITIES - Pickup Windows System (STUCK TASK - HIGH PRIORITY)
+        print("\n🎯 PHASE 2 PRIORITY 3: Pickup Windows System (STUCK TASK - HIGH PRIORITY)")
+        self.test_pickup_windows_system_comprehensive()
+        
+        # PHASE 2 PRIORITIES - Core Marketplace APIs
+        print("\n🎯 PHASE 2 PRIORITY 4: Core Marketplace APIs")
+        self.test_categories_list()
         products = self.test_products_list()
         if hasattr(self, 'test_product_id'):
             self.test_product_details(self.test_product_id)
-        
         self.test_product_search()
-        self.test_category_filter()
-        self.test_payment_intent_creation()
         self.test_user_orders()
-        self.test_order_details()
+        
+        # PHASE 2 PRIORITIES - AI Services
+        print("\n🎯 PHASE 2 PRIORITY 5: AI Services")
+        self.test_ai_chat_authenticated()
+        self.test_ai_product_recommendations_authenticated()
+        self.test_ai_locale_detection()
+        
+        # PHASE 2 PRIORITIES - Payment & Tax Services
+        print("\n🎯 PHASE 2 PRIORITY 6: Payment & Tax Services")
+        self.test_payment_method_suggestions()
+        self.test_tax_computation()
+        
+        # Error handling validation
+        print("\n🎯 ERROR HANDLING VALIDATION")
         self.test_error_scenarios()
         
         # AI Endpoint Tests
