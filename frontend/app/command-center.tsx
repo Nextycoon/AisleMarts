@@ -57,7 +57,7 @@ export default function CommandCenter() {
             {QUICK_ACTIONS.map((action) => (
               <Pressable
                 key={action.key}
-                onPress={() => router.push(action.route as any)}
+                onPress={() => handleQuickActionPress(action)}
                 style={[styles.quickActionButton, { borderColor: action.color + "40" }]}
                 accessibilityRole="button"
                 accessibilityLabel={`${action.label} quick action`}
