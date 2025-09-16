@@ -182,7 +182,7 @@ async def list_rfqs(
         tag_list = tags.split(",") if tags else None
         
         rfq_list = await rfq_service.list_rfqs(
-            user_id=current_user["id"],
+            user_id=current_user["_id"],
             status=status,
             urgency=urgency,
             tags=tag_list,
