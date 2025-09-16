@@ -70,21 +70,47 @@ const roleOptions: RoleOption[] = [
 export default function AisleAvatarScreen() {
   const [selectedRole, setSelectedRole] = useState<UserRole | null>(null);
   const [isLoading, setIsLoading] = useState(false);
+  const [showLearnMore, setShowLearnMore] = useState(false);
+  const [isOnline, setIsOnline] = useState(true);
   const { updateUser } = useAuth();
+  const { triggerHaptic, onButtonPress, onFormSubmit } = useHaptics();
 
   const fadeAnim = useSharedValue(0);
   const slideAnim = useSharedValue(50);
   const scaleAnim = useSharedValue(0.9);
 
   React.useEffect(() => {
+    // Check network status
+    const unsubscribe = NetInfo.addEventListener(state => {
+      setIsOnline(state.isConnected ?? true);
+    });
+
     // Cinematic entrance animation
     fadeAnim.value = withSpring(1, { duration: 800 });
     slideAnim.value = withSpring(0, { duration: 800 });
     scaleAnim.value = withSpring(1, { duration: 800 });
+
+    return unsubscribe;
   }, []);
 
   const handleRoleSelect = (role: UserRole) => {
+    triggerHaptic('selection');
     setSelectedRole(role);
+  };
+
+  const handleLearnMore = () => {
+    onButtonPress();
+    setShowLearnMore(true);
+  };
+
+  const handleTermsPress = () => {
+    onButtonPress();
+    Linking.openURL('https://aislemarts.com/terms');
+  };
+
+  const handlePrivacyPress = () => {
+    onButtonPress();
+    Linking.openURL('https://aislemarts.com/privacy');
   };
 
   const handleEnterMarketplace = async () => {
@@ -94,26 +120,42 @@ export default function AisleAvatarScreen() {
     }
 
     setIsLoading(true);
+    onFormSubmit();
 
     try {
-      // Save to AsyncStorage for offline support
-      await AsyncStorage.setItem('userRole', selectedRole);
-      
-      // Update AuthContext
+      // Optimistic update
       await updateUser({ role: selectedRole });
+      
+      // Persist to AsyncStorage (offline support)
+      await AsyncStorage.setItem('userRole', selectedRole);
+      await AsyncStorage.setItem('isAvatarSetup', 'true');
 
-      // Save to backend
-      // TODO: Implement backend API call
-      // await api.updateUserProfile({ role: selectedRole });
+      // Analytics event
+      // trackEvent('avatar_save_success', { role: selectedRole });
 
-      // Show welcome animation before navigation
+      // Success haptic
+      triggerHaptic('success');
+
+      // Cinematic transition delay
       setTimeout(() => {
-        router.replace('/');
-      }, 1000);
+        router.replace('/home');
+      }, 800);
 
     } catch (error) {
       console.error('Failed to save user role:', error);
-      Alert.alert('Error', 'Failed to save your selection. Please try again.');
+      
+      // Error haptic
+      triggerHaptic('error');
+      
+      // Show inline toast
+      Alert.alert(
+        'Connection Issue', 
+        isOnline 
+          ? 'Couldn\'t save your selection. Check connection and try again.' 
+          : 'Saved locally. Will sync when online.',
+        isOnline ? [{ text: 'Retry', onPress: handleEnterMarketplace }] : [{ text: 'Continue Offline' }]
+      );
+      
       setIsLoading(false);
     }
   };
