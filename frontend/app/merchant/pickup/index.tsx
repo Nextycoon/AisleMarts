@@ -30,13 +30,13 @@ import {
   formatTimeSlot,
   formatPickupDate,
   getAvailableCapacity
-} from '../../../src/lib/api/pickup';
-import { PickupWindow } from '../../../src/lib/types/pickup';
-import StatusChip from '../../../src/components/StatusChip';
-import { NoPickupWindows } from '../../../src/components/EmptyStates';
-import { PickupWindowSkeleton, FadeInView } from '../../../src/components/Animations';
-import useHaptics from '../../../src/hooks/useHaptics';
-import { getAccessibleButtonProps, getAccessibleInputProps, SCREEN_READER_LABELS } from '../../../src/utils/accessibility';
+} from '../../lib/api/pickup';
+import { PickupWindow } from '../../lib/types/pickup';
+import StatusChip from '../../src/components/StatusChip';
+import { NoPickupWindows } from '../../src/components/EmptyStates';
+import { PickupWindowSkeleton, FadeInView } from '../../src/components/Animations';
+import useHaptics from '../../src/hooks/useHaptics';
+import { getAccessibleButtonProps, getAccessibleInputProps, SCREEN_READER_LABELS } from '../../src/utils/accessibility';
 
 export default function MerchantPickupScreen() {
   const [locationId, setLocationId] = useState('LOC-WESTLANDS-001'); // Default for demo
