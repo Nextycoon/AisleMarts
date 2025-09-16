@@ -1,32 +1,19 @@
 import React, { useEffect } from 'react';
 import { View, ActivityIndicator, StyleSheet, Text } from 'react-native';
 import { router } from 'expo-router';
-import { useAuth } from '@/src/context/AuthContext';
 import { LinearGradient } from 'expo-linear-gradient';
 
 export default function IndexScreen() {
-  const { loading, hasCompletedAvatarSetup } = useAuth();
-
   useEffect(() => {
-    console.log('IndexScreen - loading:', loading, 'hasCompletedAvatarSetup:', hasCompletedAvatarSetup);
-    
-    // Add a short delay then navigate regardless of loading state
-    const navigationTimer = setTimeout(() => {
-      console.log('Navigation timer triggered');
-      
-      if (hasCompletedAvatarSetup) {
-        console.log('Avatar setup complete, redirecting to home');
-        router.replace('/home');
-      } else {
-        console.log('No avatar setup, redirecting to avatar screen');
-        router.replace('/aisle-avatar');
-      }
-    }, loading ? 2000 : 500); // 2s if still loading, 500ms if ready
+    // Direct navigation without waiting for AuthContext
+    const timer = setTimeout(() => {
+      console.log('Navigating directly to avatar screen');
+      router.replace('/aisle-avatar');
+    }, 1000); // Short 1 second delay
 
-    return () => clearTimeout(navigationTimer);
-  }, [loading, hasCompletedAvatarSetup]);
+    return () => clearTimeout(timer);
+  }, []);
 
-  // Show loading screen while checking avatar setup
   return (
     <View style={styles.container}>
       <LinearGradient
@@ -36,9 +23,7 @@ export default function IndexScreen() {
         end={{ x: 1, y: 1 }}
       />
       <ActivityIndicator size="large" color="#667eea" />
-      <Text style={styles.loadingText}>
-        {loading ? 'Setting up your experience...' : 'Almost ready!'}
-      </Text>
+      <Text style={styles.loadingText}>Loading AisleMarts...</Text>
     </View>
   );
 }
