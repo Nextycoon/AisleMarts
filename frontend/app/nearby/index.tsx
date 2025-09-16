@@ -1,27 +1,7 @@
-/**
- * Phase 3: Nearby/Onsite Commerce - Main Nearby Screen
- * List-first with optional native map view for location-based product discovery
- */
-
-import React, { useEffect, useState } from 'react';
-import {
-  View,
-  Text,
-  StyleSheet,
-  TouchableOpacity,
-  FlatList,
-  Alert,
-  ActivityIndicator,
-  SafeAreaView,
-  Platform,
-  TextInput,
-  Dimensions
-} from 'react-native';
+import React, { useState } from 'react';
+import { View, Text, StyleSheet, TouchableOpacity, ScrollView, SafeAreaView } from 'react-native';
 import { Ionicons } from '@expo/vector-icons';
 import { router } from 'expo-router';
-import { StatusBar } from 'expo-status-bar';
-import Constants from 'expo-constants';
-import * as Location from 'expo-location';
 
 const { width, height } = Dimensions.get('window');
 
