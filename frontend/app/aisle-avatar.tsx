@@ -352,6 +352,74 @@ export default function AisleAvatarScreen() {
           </View>
         </Animated.View>
       </Animated.View>
+
+      {/* Learn More Bottom Sheet */}
+      <Modal
+        visible={showLearnMore}
+        animationType="slide"
+        transparent={true}
+        onRequestClose={() => setShowLearnMore(false)}
+      >
+        <View style={styles.modalOverlay}>
+          <Pressable 
+            style={styles.modalBackdrop} 
+            onPress={() => setShowLearnMore(false)}
+          />
+          <BlurView intensity={30} style={styles.bottomSheet}>
+            <View style={styles.sheetHandle} />
+            <Text style={styles.sheetTitle}>What each role can do</Text>
+            
+            <ScrollView style={styles.sheetContent} showsVerticalScrollIndicator={false}>
+              {roleOptions.map((role) => (
+                <View key={role.id} style={styles.roleExplanation}>
+                  <View style={styles.roleExplanationHeader}>
+                    <LinearGradient
+                      colors={role.gradient}
+                      style={styles.roleExplanationIcon}
+                      start={{ x: 0, y: 0 }}
+                      end={{ x: 1, y: 1 }}
+                    >
+                      <Ionicons name={role.icon} size={20} color="white" />
+                    </LinearGradient>
+                    <Text style={styles.roleExplanationTitle}>{role.title}</Text>
+                  </View>
+                  
+                  <View style={styles.roleFeatures}>
+                    {role.id === 'buyer' && (
+                      <>
+                        <Text style={styles.roleFeature}>• Browse global products and local inventory</Text>
+                        <Text style={styles.roleFeature}>• Reserve items for same-day pickup</Text>
+                        <Text style={styles.roleFeature}>• Track orders and pickup windows</Text>
+                      </>
+                    )}
+                    {role.id === 'seller' && (
+                      <>
+                        <Text style={styles.roleFeature}>• List products and manage inventory</Text>
+                        <Text style={styles.roleFeature}>• Set pickup windows and locations</Text>
+                        <Text style={styles.roleFeature}>• Track sales and earnings</Text>
+                      </>
+                    )}
+                    {role.id === 'hybrid' && (
+                      <>
+                        <Text style={styles.roleFeature}>• Full buyer and seller capabilities</Text>
+                        <Text style={styles.roleFeature}>• Switch between modes seamlessly</Text>
+                        <Text style={styles.roleFeature}>• Access to B2B marketplace features</Text>
+                      </>
+                    )}
+                  </View>
+                </View>
+              ))}
+            </ScrollView>
+            
+            <Pressable 
+              style={styles.sheetCloseButton}
+              onPress={() => setShowLearnMore(false)}
+            >
+              <Text style={styles.sheetCloseText}>Got it</Text>
+            </Pressable>
+          </BlurView>
+        </View>
+      </Modal>
     </SafeAreaView>
   );
 }
