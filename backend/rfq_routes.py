@@ -220,7 +220,7 @@ async def create_quote(
     - All RFQ items must be quoted
     """
     try:
-        quote = await rfq_service.create_quote(quote_data, current_user["id"])
+        quote = await rfq_service.create_quote(quote_data, current_user["_id"])
         return quote
     except ValueError as e:
         raise HTTPException(400, str(e))
@@ -244,7 +244,7 @@ async def get_rfq_quotes(
     - Shortlisting capabilities
     """
     try:
-        quotes = await rfq_service.get_rfq_quotes(rfq_id, current_user["id"])
+        quotes = await rfq_service.get_rfq_quotes(rfq_id, current_user["_id"])
         return quotes
     except ValueError as e:
         raise HTTPException(400, str(e))
@@ -261,7 +261,7 @@ async def shortlist_quote(
 ):
     """Shortlist a quote for further consideration (buyer action)"""
     try:
-        success = await rfq_service.shortlist_quote(quote_id, rfq_id, current_user["id"])
+        success = await rfq_service.shortlist_quote(quote_id, rfq_id, current_user["_id"])
         if not success:
             raise HTTPException(404, "Quote not found or access denied")
         
@@ -296,7 +296,7 @@ async def send_negotiation_message(
     - payment: Payment-related messages
     """
     try:
-        message = await rfq_service.send_message(message_data, current_user["id"])
+        message = await rfq_service.send_message(message_data, current_user["_id"])
         return message
     except Exception as e:
         raise HTTPException(500, f"Failed to send message: {str(e)}")
@@ -318,13 +318,13 @@ async def get_negotiation_thread(
     - Message type filtering
     """
     try:
-        messages = await rfq_service.get_negotiation_thread(rfq_id, current_user["id"])
+        messages = await rfq_service.get_negotiation_thread(rfq_id, current_user["_id"])
         
         return {
             "rfq_id": rfq_id,
             "messages": messages,
             "total": len(messages),
-            "unread_count": sum(1 for msg in messages if not msg.is_read and msg.recipient_id == current_user["id"])
+            "unread_count": sum(1 for msg in messages if not msg.is_read and msg.recipient_id == current_user["_id"])
         }
     except ValueError as e:
         raise HTTPException(400, str(e))
@@ -357,7 +357,7 @@ async def create_purchase_order(
     4. PO status → DRAFT (ready for payment)
     """
     try:
-        po = await rfq_service.create_purchase_order(po_data, current_user["id"])
+        po = await rfq_service.create_purchase_order(po_data, current_user["_id"])
         return po
     except ValueError as e:
         raise HTTPException(400, str(e))
@@ -380,9 +380,9 @@ async def list_purchase_orders(
         # Build query based on role
         query = {}
         if is_buyer:
-            query["buyer_id"] = current_user["id"]
+            query["buyer_id"] = current_user["_id"]
         else:
-            query["supplier_id"] = current_user["id"]
+            query["supplier_id"] = current_user["_id"]
         
         if status:
             query["status"] = status
@@ -443,8 +443,8 @@ async def get_purchase_order(
         po_doc = await db().purchase_orders.find_one({
             "_id": po_id,
             "$or": [
-                {"buyer_id": current_user["id"]},
-                {"supplier_id": current_user["id"]}
+                {"buyer_id": current_user["_id"]},
+                {"supplier_id": current_user["_id"]}
             ]
         })
         
@@ -505,7 +505,7 @@ async def get_rfq_analytics_endpoint(
     - Performance metrics
     """
     try:
-        analytics = await get_rfq_analytics(db(), current_user["id"], is_buyer)
+        analytics = await get_rfq_analytics(db(), current_user["_id"], is_buyer)
         
         return RFQAnalytics(
             total_rfqs=analytics["total_rfqs"],
