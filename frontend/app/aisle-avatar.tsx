@@ -395,20 +395,23 @@ const styles = StyleSheet.create({
     gap: 16,
   },
   roleCard: {
-    borderRadius: 16,
+    borderRadius: 12,
     overflow: 'hidden',
     borderWidth: 2,
     borderColor: 'rgba(255,255,255,0.1)',
+    minHeight: 88, // 44px minimum touch target * 2
   },
   selectedRoleCard: {
-    borderColor: '#4facfe',
+    borderColor: '#00f2fe',
     borderWidth: 2,
+    transform: [{ scale: 1.06 }],
   },
   roleCardBlur: {
     padding: 20,
     flexDirection: 'row',
     alignItems: 'center',
     backgroundColor: 'rgba(255,255,255,0.05)',
+    minHeight: 88,
   },
   roleIconContainer: {
     width: 60,
@@ -418,22 +421,42 @@ const styles = StyleSheet.create({
     alignItems: 'center',
     marginRight: 16,
   },
+  roleTextContainer: {
+    flex: 1,
+  },
   roleTitle: {
     fontSize: 18,
     fontWeight: 'bold',
     color: 'white',
-    flex: 1,
+    marginBottom: 4,
   },
   roleSubtitle: {
     fontSize: 14,
     color: 'rgba(255,255,255,0.7)',
-    flex: 2,
-    marginLeft: 8,
+    lineHeight: 20,
   },
   selectedIndicator: {
     position: 'absolute',
     top: 16,
     right: 16,
+  },
+  selectedRing: {
+    backgroundColor: 'rgba(0,242,254,0.2)',
+    borderRadius: 16,
+    padding: 2,
+  },
+  learnMoreSection: {
+    alignItems: 'center',
+    marginTop: 24,
+  },
+  learnMoreButton: {
+    paddingVertical: 8,
+    paddingHorizontal: 16,
+  },
+  learnMoreText: {
+    fontSize: 14,
+    color: 'rgba(255,255,255,0.6)',
+    textDecorationLine: 'underline',
   },
   ctaSection: {
     marginTop: 32,
@@ -442,6 +465,7 @@ const styles = StyleSheet.create({
     borderRadius: 16,
     overflow: 'hidden',
     opacity: 0.5,
+    minHeight: 56,
   },
   ctaButtonActive: {
     opacity: 1,
@@ -459,11 +483,28 @@ const styles = StyleSheet.create({
     paddingVertical: 18,
     paddingHorizontal: 32,
     gap: 8,
+    minHeight: 56,
   },
   ctaButtonText: {
     fontSize: 16,
     fontWeight: 'bold',
     color: 'white',
     letterSpacing: 0.5,
+  },
+  legalSection: {
+    flexDirection: 'row',
+    justifyContent: 'center',
+    alignItems: 'center',
+    marginTop: 16,
+    flexWrap: 'wrap',
+  },
+  legalText: {
+    fontSize: 12,
+    color: 'rgba(255,255,255,0.5)',
+  },
+  legalLink: {
+    fontSize: 12,
+    color: '#4facfe',
+    textDecorationLine: 'underline',
   },
 });
