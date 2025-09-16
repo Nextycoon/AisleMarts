@@ -130,8 +130,22 @@ export default function AisleAvatarScreen() {
       await AsyncStorage.setItem('userRole', selectedRole);
       await AsyncStorage.setItem('isAvatarSetup', 'true');
 
-      // Analytics event
-      // trackEvent('avatar_save_success', { role: selectedRole });
+      // Try to sync with backend if online and user is authenticated
+      if (isOnline) {
+        try {
+          // Get the current user from AuthContext if available
+          // For now, we'll create a mock user ID - in production this would come from auth
+          const mockUserId = 'demo_user_' + Date.now();
+          // await API.patch(`/users/${mockUserId}/avatar`, { role: selectedRole });
+          console.log('Avatar setup would sync to backend for user:', mockUserId);
+        } catch (syncError) {
+          console.log('Backend sync failed, but local storage succeeded:', syncError);
+          // Continue with local storage success
+        }
+      }
+
+      // Analytics event (stubbed)
+      console.log('Analytics: avatar_save_success', { role: selectedRole, isOnline });
 
       // Success haptic
       triggerHaptic('success');
@@ -153,7 +167,10 @@ export default function AisleAvatarScreen() {
         isOnline 
           ? 'Couldn\'t save your selection. Check connection and try again.' 
           : 'Saved locally. Will sync when online.',
-        isOnline ? [{ text: 'Retry', onPress: handleEnterMarketplace }] : [{ text: 'Continue Offline' }]
+        isOnline ? [
+          { text: 'Retry', onPress: handleEnterMarketplace },
+          { text: 'Cancel', style: 'cancel' }
+        ] : [{ text: 'Continue Offline', onPress: () => router.replace('/home') }]
       );
       
       setIsLoading(false);
