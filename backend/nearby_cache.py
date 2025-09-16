@@ -17,7 +17,7 @@ class NearbyCache:
     """Redis-based caching for nearby commerce operations"""
     
     def __init__(self):
-        self.client: Optional[aioredis.Redis] = None
+        self.client: Optional[redis.Redis] = None
         self.redis_url = os.getenv("REDIS_URL", "redis://localhost:6379")
         self.prefix = "nearby:"
         
