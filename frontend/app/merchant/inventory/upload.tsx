@@ -30,8 +30,8 @@ export default function MerchantInventoryUploadScreen() {
   const [uploadProgress, setUploadProgress] = useState(0);
   const [showSuccess, setShowSuccess] = useState(false);
   
-  // Polish enhancements
-  const { onButtonPress, onUploadProgress } = useHaptics();
+  // Polish enhancements temporarily disabled
+  // const { onButtonPress, onUploadProgress } = useHaptics();
 
   const selectCSVFile = async () => {
     try {
