@@ -24,7 +24,7 @@ logger = logging.getLogger(__name__)
 router = APIRouter(prefix="/api/v1/inventory", tags=["inventory-sync"])
 
 # Authentication dependencies
-async def get_merchant_user(authorization: str | None = None):
+async def get_merchant_user(authorization: str | None = Header(None)):
     """Get authenticated merchant user"""
     if not authorization:
         raise HTTPException(401, "Authentication required")
@@ -43,7 +43,7 @@ async def get_merchant_user(authorization: str | None = None):
     
     raise HTTPException(401, "Invalid authentication")
 
-async def get_admin_user(authorization: str | None = None):
+async def get_admin_user(authorization: str | None = Header(None)):
     """Get authenticated admin user"""
     user = await get_merchant_user(authorization)
     if not user.get("is_admin", False):
