@@ -180,7 +180,7 @@ class AvatarValidationTester:
         
         for role in invalid_roles:
             role_data = {"role": role}
-            success, data, status_code = self.make_request("PATCH", f"/users/{self.demo_user_id}/avatar", role_data)
+            success, data, status_code = self.make_request("PATCH", f"/users/{self.user_id}/avatar", role_data)
             
             if not success and status_code == 422:
                 self.log_test(f"Invalid Role Rejection ({role or 'empty'})", True, 
