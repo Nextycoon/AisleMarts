@@ -496,7 +496,6 @@ const styles = StyleSheet.create({
     borderWidth: 1,
     borderRadius: 16,
     padding: 16,
-    marginBottom: 8,
   },
   spotlightContent: {
     flexDirection: "row",
