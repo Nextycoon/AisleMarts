@@ -594,4 +594,88 @@ const styles = StyleSheet.create({
     color: '#4facfe',
     textDecorationLine: 'underline',
   },
+  // Learn More Bottom Sheet Styles
+  modalOverlay: {
+    flex: 1,
+    justifyContent: 'flex-end',
+  },
+  modalBackdrop: {
+    flex: 1,
+    backgroundColor: 'rgba(0,0,0,0.5)',
+  },
+  bottomSheet: {
+    backgroundColor: 'rgba(12,15,20,0.95)',
+    borderTopLeftRadius: 24,
+    borderTopRightRadius: 24,
+    paddingTop: 12,
+    paddingHorizontal: 24,
+    paddingBottom: 40,
+    maxHeight: height * 0.75,
+  },
+  sheetHandle: {
+    width: 40,
+    height: 4,
+    backgroundColor: 'rgba(255,255,255,0.3)',
+    borderRadius: 2,
+    alignSelf: 'center',
+    marginBottom: 20,
+  },
+  sheetTitle: {
+    fontSize: 20,
+    fontWeight: 'bold',
+    color: 'white',
+    textAlign: 'center',
+    marginBottom: 24,
+  },
+  sheetContent: {
+    flex: 1,
+  },
+  roleExplanation: {
+    marginBottom: 24,
+    backgroundColor: 'rgba(255,255,255,0.05)',
+    borderRadius: 16,
+    padding: 20,
+    borderWidth: 1,
+    borderColor: 'rgba(255,255,255,0.1)',
+  },
+  roleExplanationHeader: {
+    flexDirection: 'row',
+    alignItems: 'center',
+    marginBottom: 12,
+  },
+  roleExplanationIcon: {
+    width: 40,
+    height: 40,
+    borderRadius: 20,
+    justifyContent: 'center',
+    alignItems: 'center',
+    marginRight: 12,
+  },
+  roleExplanationTitle: {
+    fontSize: 18,
+    fontWeight: 'bold',
+    color: 'white',
+  },
+  roleFeatures: {
+    gap: 8,
+  },
+  roleFeature: {
+    fontSize: 14,
+    color: 'rgba(255,255,255,0.8)',
+    lineHeight: 20,
+  },
+  sheetCloseButton: {
+    backgroundColor: 'rgba(79,172,254,0.2)',
+    borderColor: 'rgba(79,172,254,0.4)',
+    borderWidth: 1,
+    borderRadius: 16,
+    paddingVertical: 16,
+    marginTop: 20,
+  },
+  sheetCloseText: {
+    fontSize: 16,
+    fontWeight: 'bold',
+    color: '#4facfe',
+    textAlign: 'center',
+  },
 });
