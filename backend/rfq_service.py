@@ -10,7 +10,7 @@ import uuid
 from rfq_models import (
     RFQStatus, QuoteStatus, PurchaseOrderStatus, UrgencyLevel, MessageType,
     RFQDoc, RFQItemDoc, QuoteDoc, NegotiationMessageDoc, PurchaseOrderDoc,
-    RFQ, RFQCreate, RFQItem, Quote, QuoteCreate, NegotiationMessage, 
+    RFQ, RFQCreate, RFQItem, Quote, QuoteCreate, NegotiationMessage, NegotiationMessageCreate,
     PurchaseOrder, PurchaseOrderCreate, RFQListResponse, QuoteListResponse,
     generate_po_number, calculate_rfq_expires_at, calculate_quote_expires_at,
     validate_delivery_date, validate_submission_deadline, validate_rfq_budget
