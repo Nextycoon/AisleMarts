@@ -210,8 +210,12 @@ metadata:
   run_ui: false
 
 test_plan:
-  current_focus: []
-  stuck_tasks: []
+  current_focus:
+    - "Critical Integration - AuthContext + OfflineManager Re-enabled"
+    - "Backend API Health Validation"
+    - "Pickup Windows API Validation"
+  stuck_tasks:
+    - "Week 3 Pickup Windows & Advanced Reservations System"
   test_all: false
   test_priority: "high_first"
   completed_focus:
