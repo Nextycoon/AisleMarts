@@ -47,21 +47,21 @@ const roleOptions: RoleOption[] = [
   {
     id: 'buyer',
     title: 'Buyer',
-    subtitle: 'Shop global. Buy local.',
-    icon: 'storefront',
+    subtitle: 'Discover nearby stock, reserve, pick up fast.',
+    icon: 'bag',
     gradient: ['#667eea', '#764ba2']
   },
   {
     id: 'seller', 
     title: 'Seller',
-    subtitle: 'Open your store. Reach the world.',
-    icon: 'business',
+    subtitle: 'List inventory, set pickup windows, grow revenue.',
+    icon: 'storefront',
     gradient: ['#f093fb', '#f5576c']
   },
   {
     id: 'hybrid',
     title: 'Hybrid',
-    subtitle: 'Do both. One identity. Total access.',
+    subtitle: 'Shop and sell from one account.',
     icon: 'infinite',
     gradient: ['#4facfe', '#00f2fe']
   }
