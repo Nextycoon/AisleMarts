@@ -60,4 +60,28 @@ export const getActivityGreeting = (now = new Date()) => {
   return "Night owl mode";
 };
 
-export default { getGreeting, getPersonalizedGreeting, getActivityGreeting };
+// Spotlight Features for Home rotation
+export const SPOTLIGHT_FEATURES = [
+  "nearby",        // Phase 3 hero feature
+  "ai_assistant",  // New AI capability  
+  "rfqs",          // B2B growth driver
+  "discover"       // Core search experience
+];
+
+// Spotlight experiment configuration
+export const SPOTLIGHT_CONFIG = {
+  experimentKey: "home_spotlight_v1",
+  rotationInterval: 30000, // 30 seconds per feature
+  enableAnalytics: true
+};
+
+// Get spotlight feature for current session
+export const getSpotlightFeature = (sessionId?: string): FeatureItem | null => {
+  if (!sessionId) return null;
+  
+  // Use session ID to determine which feature to spotlight
+  const index = Math.abs(sessionId.charCodeAt(0)) % SPOTLIGHT_FEATURES.length;
+  const featureKey = SPOTLIGHT_FEATURES[index];
+  
+  return getFeatureByKey(featureKey) || null;
+};
