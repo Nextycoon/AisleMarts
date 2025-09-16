@@ -258,10 +258,16 @@ class SearchService:
                         0
                     ]
                 },
-                # Language token boost
+                # Language token boost (with null check)
                 {
                     "$cond": [
-                        {"$in": [{"$split": [query.lower(), " "]}, f"$lang_tokens.{lang}"]},
+                        {
+                            "$and": [
+                                {"$ne": [f"$lang_tokens.{lang}", None]},
+                                {"$isArray": f"$lang_tokens.{lang}"},
+                                {"$gt": [{"$size": {"$ifNull": [f"$lang_tokens.{lang}", []]}}, 0]}
+                            ]
+                        },
                         0.4,
                         0
                     ]
