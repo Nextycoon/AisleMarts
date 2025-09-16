@@ -10,6 +10,7 @@ import { FEATURES_REGISTRY, QUICK_ACTIONS, getVisibleFeatures, getStatusColor, g
 import { colors, spacing, radii, shadows, presets } from '../src/theme/tokens';
 import { useAnalytics } from '../src/utils/analytics';
 import { getDuration } from '../src/theme/motion';
+import { analytics } from '../src/utils/analytics';
 
 export default function CommandCenter() {
   const top = useSafeAreaInsets().top;
