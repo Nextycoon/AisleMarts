@@ -44,7 +44,7 @@ class Location(BaseModel):
     services: List[str] = []
     capabilities: LocationCapabilities = LocationCapabilities()
     status: Literal["active", "inactive"] = "active"
-    distance_m: Optional[int] = None  # Added during search queries
+    distance_m: Optional[float] = None  # Added during search queries
     updated_at: str
 
     class Config:
