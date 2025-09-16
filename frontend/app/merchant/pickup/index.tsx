@@ -310,113 +310,161 @@ export default function MerchantPickupScreen() {
       behavior={Platform.OS === 'ios' ? 'padding' : 'height'}
     >
       <SafeAreaView style={styles.container}>
-        <StatusBar style="dark" />
+        <LinearGradient
+          colors={['#0C0F14', '#1a1a2e', '#16213e']}
+          style={StyleSheet.absoluteFill}
+        />
+        <StatusBar style="light" />
         
         {/* Header */}
-        <View style={styles.header}>
-          <TouchableOpacity onPress={() => router.back()}>
-            <Ionicons name="arrow-back" size={24} color="#333" />
-          </TouchableOpacity>
-          <Text style={styles.headerTitle}>Pickup Management</Text>
-          <TouchableOpacity onPress={loadPickupWindows}>
-            <Ionicons name="refresh" size={24} color="#333" />
-          </TouchableOpacity>
-        </View>
+        <Animated.View entering={FadeInUp.delay(100)} style={styles.header}>
+          <BlurView intensity={30} style={styles.headerBlur}>
+            <TouchableOpacity onPress={() => {
+              onButtonPress();
+              router.back();
+            }}>
+              <Ionicons name="arrow-back" size={24} color="white" />
+            </TouchableOpacity>
+            <Text style={styles.headerTitle}>Pickup Management</Text>
+            <TouchableOpacity onPress={() => {
+              onButtonPress();
+              loadPickupWindows();
+            }}>
+              <Ionicons name="refresh" size={24} color="white" />
+            </TouchableOpacity>
+          </BlurView>
+        </Animated.View>
 
         {/* Controls */}
-        <View style={styles.controlsCard}>
-          <Text style={styles.controlsTitle}>Location & Date</Text>
-          
-          <View style={styles.inputRow}>
-            <View style={styles.inputContainer}>
-              <Text style={styles.inputLabel}>Location ID</Text>
-              <TextInput
-                style={styles.textInput}
-                value={locationId}
-                onChangeText={setLocationId}
-                placeholder="LOC-WESTLANDS-001"
-                autoCapitalize="none"
-              />
-            </View>
-            
-            <View style={styles.inputContainer}>
-              <Text style={styles.inputLabel}>Date</Text>
-              <TextInput
-                style={styles.textInput}
-                value={date}
-                onChangeText={setDate}
-                placeholder="YYYY-MM-DD"
-              />
-            </View>
-          </View>
+        <Animated.View entering={FadeInUp.delay(200)}>
+          <BlurView intensity={20} style={styles.controlsCard}>
+            <LinearGradient
+              colors={['rgba(255,255,255,0.1)', 'rgba(255,255,255,0.05)']}
+              style={styles.controlsGradient}
+            >
+              <Text style={styles.controlsTitle}>Location & Date</Text>
+              
+              <View style={styles.inputRow}>
+                <View style={styles.inputContainer}>
+                  <Text style={styles.inputLabel}>Location ID</Text>
+                  <TextInput
+                    style={styles.textInput}
+                    value={locationId}
+                    onChangeText={setLocationId}
+                    placeholder="LOC-WESTLANDS-001"
+                    placeholderTextColor="rgba(255,255,255,0.5)"
+                    autoCapitalize="none"
+                  />
+                </View>
+                
+                <View style={styles.inputContainer}>
+                  <Text style={styles.inputLabel}>Date</Text>
+                  <TextInput
+                    style={styles.textInput}
+                    value={date}
+                    onChangeText={setDate}
+                    placeholder="YYYY-MM-DD"
+                    placeholderTextColor="rgba(255,255,255,0.5)"
+                  />
+                </View>
+              </View>
 
-          <TouchableOpacity 
-            style={styles.loadButton} 
-            onPress={loadPickupWindows}
-            disabled={loading}
-          >
-            {loading ? (
-              <ActivityIndicator size="small" color="white" />
-            ) : (
-              <>
-                <Ionicons name="download" size={16} color="white" />
-                <Text style={styles.loadButtonText}>Load Windows</Text>
-              </>
-            )}
-          </TouchableOpacity>
-        </View>
+              <TouchableOpacity 
+                style={styles.loadButton} 
+                onPress={() => {
+                  onButtonPress();
+                  loadPickupWindows();
+                }}
+                disabled={loading}
+              >
+                <LinearGradient
+                  colors={['#667eea', '#764ba2']}
+                  style={styles.loadButtonGradient}
+                >
+                  {loading ? (
+                    <ActivityIndicator size="small" color="white" />
+                  ) : (
+                    <>
+                      <Ionicons name="download" size={16} color="white" />
+                      <Text style={styles.loadButtonText}>Load Windows</Text>
+                    </>
+                  )}
+                </LinearGradient>
+              </TouchableOpacity>
+            </LinearGradient>
+          </BlurView>
+        </Animated.View>
 
         {/* Pickup Code Processing */}
-        <View style={styles.pickupCard}>
-          <Text style={styles.pickupTitle}>Process Pickup</Text>
-          
-          <View style={styles.codeInputRow}>
-            <TextInput
-              style={styles.codeInput}
-              value={pickupCode}
-              onChangeText={setPickupCode}
-              placeholder="Enter pickup code or reservation ID"
-              autoCapitalize="characters"
-              returnKeyType="done"
-              onSubmitEditing={processPickupByCode}
-            />
-            <TouchableOpacity 
-              style={styles.processButton}
-              onPress={processPickupByCode}
-              disabled={processingCode || !pickupCode.trim()}
+        <Animated.View entering={FadeInUp.delay(300)}>
+          <BlurView intensity={20} style={styles.pickupCard}>
+            <LinearGradient
+              colors={['rgba(52,199,89,0.1)', 'rgba(52,199,89,0.05)']}
+              style={styles.pickupGradient}
             >
-              {processingCode ? (
-                <ActivityIndicator size="small" color="white" />
-              ) : (
-                <>
-                  <Ionicons name="checkmark-circle" size={20} color="white" />
-                  <Text style={styles.processButtonText}>Process</Text>
-                </>
-              )}
-            </TouchableOpacity>
-          </View>
-        </View>
+              <Text style={styles.pickupTitle}>Process Pickup</Text>
+              
+              <View style={styles.codeInputRow}>
+                <TextInput
+                  style={styles.codeInput}
+                  value={pickupCode}
+                  onChangeText={setPickupCode}
+                  placeholder="Enter pickup code or reservation ID"
+                  placeholderTextColor="rgba(255,255,255,0.5)"
+                  autoCapitalize="characters"
+                  returnKeyType="done"
+                  onSubmitEditing={processPickupByCode}
+                />
+                <TouchableOpacity 
+                  style={styles.processButton}
+                  onPress={processPickupByCode}
+                  disabled={processingCode || !pickupCode.trim()}
+                >
+                  <LinearGradient
+                    colors={['#34C759', '#30D158']}
+                    style={styles.processButtonGradient}
+                  >
+                    {processingCode ? (
+                      <ActivityIndicator size="small" color="white" />
+                    ) : (
+                      <>
+                        <Ionicons name="checkmark-circle" size={20} color="white" />
+                        <Text style={styles.processButtonText}>Process</Text>
+                      </>
+                    )}
+                  </LinearGradient>
+                </TouchableOpacity>
+              </View>
+            </LinearGradient>
+          </BlurView>
+        </Animated.View>
 
         {/* Analytics */}
         {renderAnalytics()}
 
         {/* Pickup Windows List */}
         <View style={styles.windowsContainer}>
-          <View style={styles.windowsHeader}>
+          <Animated.View entering={FadeInUp.delay(400)} style={styles.windowsHeader}>
             <Text style={styles.windowsTitle}>Pickup Windows</Text>
             {windows.length > 0 && (
-              <TouchableOpacity style={styles.createSmallButton} onPress={createTodaysWindows}>
-                <Ionicons name="add" size={16} color="#007AFF" />
+              <TouchableOpacity 
+                style={styles.createSmallButton} 
+                onPress={() => {
+                  onButtonPress();
+                  createTodaysWindows();
+                }}
+              >
+                <Ionicons name="add" size={16} color="#4facfe" />
                 <Text style={styles.createSmallButtonText}>Add</Text>
               </TouchableOpacity>
             )}
-          </View>
+          </Animated.View>
 
           {loading ? (
-            <View style={styles.loadingContainer}>
-              <ActivityIndicator size="large" color="#007AFF" />
+            <Animated.View entering={FadeInUp.delay(500)} style={styles.loadingContainer}>
+              <ActivityIndicator size="large" color="#4facfe" />
               <Text style={styles.loadingText}>Loading pickup windows...</Text>
-            </View>
+            </Animated.View>
           ) : windows.length > 0 ? (
             <FlatList
               data={windows}
