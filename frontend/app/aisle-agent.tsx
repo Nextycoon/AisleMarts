@@ -23,12 +23,12 @@ export default function AisleAgentScreen() {
 
   const handleNavigateHome = () => {
     Haptics.impactAsync(Haptics.ImpactFeedbackStyle.Light);
-    router.push(`/cinematic-home?q=${encodeURIComponent(query || 'Show me recommendations')}`);
+    router.push(`/shopper-home?q=${encodeURIComponent(query || 'Show me recommendations')}`);
   };
 
   return (
     <KeyboardAvoidingView behavior={Platform.OS === 'ios' ? 'padding' : undefined} style={styles.wrap}>
-      <GradientBackdrop />
+      <StatusBar backgroundColor={theme.background} barStyle="light-content" />
       
       <View style={styles.head}>
         <Text style={styles.brand}>AisleMarts</Text>
