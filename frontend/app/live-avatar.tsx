@@ -120,18 +120,34 @@ export default function LiveAvatarScreen() {
     if (isListening || isSpeaking) return;
     
     try {
-      setIsListening(true);
-      setAvatarState('listening');
-      startListeningAnimation();
+      // Request microphone permission with beautiful pre-prompt
+      const permissionResult = await requestMicrophone('voice_commands');
       
-      // Simulate voice recognition (replace with actual implementation)
-      setTimeout(() => {
-        const mockUserInput = generateMockUserInput();
-        addMessage(mockUserInput, 'user');
-        processUserInput(mockUserInput);
-        setIsListening(false);
-        stopListeningAnimation();
-      }, 3000);
+      if (permissionResult === 'granted') {
+        setIsListening(true);
+        setAvatarState('listening');
+        startListeningAnimation();
+        
+        // Simulate voice recognition (replace with actual implementation)
+        setTimeout(() => {
+          const mockUserInput = generateMockUserInput();
+          addMessage(mockUserInput, 'user');
+          processUserInput(mockUserInput);
+          setIsListening(false);
+          stopListeningAnimation();
+        }, 3000);
+        
+      } else if (permissionResult === 'denied') {
+        // Fallback to text input
+        Alert.alert(
+          'Voice Not Available',
+          'You can still chat with me using text! Tap the message button to type your request.',
+          [{ text: 'OK' }]
+        );
+      } else if (permissionResult === 'blocked') {
+        // Permission permanently denied - handled in permission manager
+        console.log('Microphone permission blocked');
+      }
       
     } catch (error) {
       console.error('Voice recognition error:', error);
