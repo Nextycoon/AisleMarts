@@ -76,9 +76,9 @@ export default function AisleAgentScreen() {
         </View>
 
         <View style={styles.nameRow}>
-          <Text style={{ color: colors.gray }}>Not {name}? </Text>
+          <Text style={{ color: theme.onDim }}>Not {name}? </Text>
           <TouchableOpacity onPress={() => setName(name === 'Alex' ? 'Jordan' : 'Alex')}>
-            <Text style={{ color: colors.text, textDecorationLine: 'underline' }}>Switch</Text>
+            <Text style={{ color: theme.on, textDecorationLine: 'underline' }}>Switch</Text>
           </TouchableOpacity>
         </View>
       </View>
