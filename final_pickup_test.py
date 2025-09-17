@@ -9,7 +9,7 @@ import json
 import sys
 from datetime import datetime, timedelta
 
-BASE_URL = 'https://federated-search-1.preview.emergentagent.com'
+BASE_URL = 'https://global-aisle.preview.emergentagent.com'
 API_URL = f'{BASE_URL}/api'
 
 class FinalPickupTester:

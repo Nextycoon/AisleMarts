@@ -4,7 +4,7 @@
 
 ### Web Preview (Desktop/Mobile Browser)
 ```
-🌐 Live Preview: https://federated-search-1.preview.emergentagent.com
+🌐 Live Preview: https://global-aisle.preview.emergentagent.com
 ```
 
 ### Mobile App Testing (Expo Go)
