@@ -23,6 +23,7 @@ import { Audio } from 'expo-av';
 import * as Speech from 'expo-speech';
 import { router } from 'expo-router';
 import { useMicrophonePermission } from '../src/hooks/usePermissions';
+import { useUserRoles } from '../src/context/UserRolesContext';
 import { 
   PermissionScreen,
   MicrophonePermissionScreen 
