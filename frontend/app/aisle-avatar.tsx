@@ -169,6 +169,7 @@ export default function AisleAvatarScreen() {
       
       // 2. Update AuthContext (triggers routing logic)
       await setupAvatar(selectedRole);
+      await setUserRole(selectedRole);
       
       console.log('💾 Avatar setup persisted locally');
 
