@@ -12,7 +12,7 @@ export default function IndexScreen() {
       // Navigate based on auth state after loading is complete
       setTimeout(() => {
         if (hasCompletedAvatarSetup) {
-          router.replace('/live-avatar');
+          router.replace('/aisle-agent');
         } else {
           router.replace('/aisle-avatar');
         }
