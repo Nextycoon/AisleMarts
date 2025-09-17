@@ -35,6 +35,7 @@ export default function RootLayout() {
             <Stack.Screen name="b2b" options={{ title: 'B2B Portal', headerShown: false }} />
             <Stack.Screen name="nearby" options={{ title: 'Nearby', headerShown: false }} />
             <Stack.Screen name="merchant" options={{ title: 'Merchant Tools', headerShown: false }} />
+            <Stack.Screen name="test-permissions" options={{ title: 'Test Permissions', headerShown: false }} />
           </Stack>
         </AuthProvider>
         <StatusBar style="light" />
