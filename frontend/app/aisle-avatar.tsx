@@ -73,6 +73,7 @@ export default function AisleAvatarScreen() {
   const [isLoading, setIsLoading] = useState(false);
   const [isOnline, setIsOnline] = useState(true);
   const { setupAvatar, hasCompletedAvatarSetup } = useAuth();
+  const { setUserRole } = useUserRoles();
   const { triggerHaptic } = useHaptics();
 
   useEffect(() => {
