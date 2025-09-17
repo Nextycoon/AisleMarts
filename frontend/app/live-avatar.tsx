@@ -49,6 +49,9 @@ export default function LiveAvatarScreen() {
   // Permission hook
   const { requestMicrophone, isLoading: isPermissionLoading } = useMicrophonePermission();
   
+  // User Roles & Personalization
+  const { profile, getRoleColors, getPersonalizedGreeting, hasFeature } = useUserRoles();
+  
   // Animations
   const pulseAnim = useRef(new Animated.Value(1)).current;
   const glowAnim = useRef(new Animated.Value(0)).current;
