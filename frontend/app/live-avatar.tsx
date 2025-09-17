@@ -316,15 +316,17 @@ export default function LiveAvatarScreen() {
   );
 
   const getAvatarColors = () => {
+    const roleColors = getRoleColors();
+    
     switch (avatarState) {
       case 'listening':
-        return ['#4facfe', '#00f2fe'];
+        return [roleColors.primary, roleColors.secondary];
       case 'thinking':
-        return ['#667eea', '#764ba2'];
+        return [roleColors.accent, roleColors.primary];
       case 'speaking':
         return ['#34C759', '#30D158'];
       default:
-        return ['#667eea', '#764ba2'];
+        return [roleColors.primary, roleColors.secondary];
     }
   };
 
