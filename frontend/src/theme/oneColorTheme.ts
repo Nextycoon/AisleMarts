@@ -88,6 +88,17 @@ import { useUser } from '../state/user';
 
 export const useOneColorTheme = () => {
   const { role } = useUser();
-  const userType = role === 'seller' ? 'vendor' : role === 'hybrid' ? 'business' : 'shopper';
+  
+  // Map all role types to the correct theme
+  let userType: 'shopper' | 'vendor' | 'business';
+  
+  if (role === 'seller' || role === 'vendor') {
+    userType = 'vendor';
+  } else if (role === 'business' || role === 'hybrid') {
+    userType = 'business';
+  } else {
+    userType = 'shopper';
+  }
+  
   return getScreenTheme(userType);
 };
