@@ -13,7 +13,8 @@ import {
   TouchableOpacity,
   Animated,
   Dimensions,
-  Alert
+  Alert,
+  ScrollView,
 } from 'react-native';
 import { LinearGradient } from 'expo-linear-gradient';
 import { BlurView } from 'expo-blur';
@@ -21,6 +22,11 @@ import { Ionicons } from '@expo/vector-icons';
 import { Audio } from 'expo-av';
 import * as Speech from 'expo-speech';
 import { router } from 'expo-router';
+import { useMicrophonePermission } from '../src/hooks/usePermissions';
+import { 
+  PermissionScreen,
+  MicrophonePermissionScreen 
+} from '../src/components/PermissionScreens';
 
 const { width, height } = Dimensions.get('window');
 
