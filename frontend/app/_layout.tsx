@@ -40,6 +40,7 @@ export default function RootLayout() {
               <Stack.Screen name="test-permissions" options={{ title: 'Test Permissions', headerShown: false }} />
               <Stack.Screen name="aisle-agent" options={{ title: 'Aisle AI', headerShown: false }} />
               <Stack.Screen name="cinematic-home" options={{ title: 'Cinematic Home', headerShown: false }} />
+              <Stack.Screen name="shopper-home" options={{ title: 'Federated Search', headerShown: false }} />
             </Stack>
           </UserRolesProvider>
         </AuthProvider>
