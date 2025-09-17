@@ -81,15 +81,24 @@ async def search_system_health():
     except Exception as e:
         raise HTTPException(status_code=503, detail=f"Health check failed: {str(e)}")
 
+@commerce_router.get("/search/turkish-market")
+async def get_turkish_market_status():
+    """
+    🇹🇷 **Turkish Market Integration Status**
+    
+    Complete coverage of all major Turkish e-commerce platforms.
+    """
+    return await turkish_market_status()
+
 @commerce_router.get("/search/platforms")
 async def get_supported_platforms():
     """
-    🌐 **Supported E-Commerce Platforms**
+    🌍 **Supported E-Commerce Platforms - Global + Turkish Coverage**
     
-    Returns a list of all integrated e-commerce platforms and their capabilities.
+    Returns a list of all integrated e-commerce platforms including complete Turkish market.
     """
     return {
-        "platforms": [
+        "global_platforms": [
             {
                 "name": "Amazon",
                 "code": "amazon",
@@ -119,8 +128,63 @@ async def get_supported_platforms():
                 "features": ["independent_sellers", "custom_products", "direct_to_consumer"]
             }
         ],
-        "total_platforms": 4,
-        "expanding_to": ["AliExpress", "Flipkart", "Mercado Libre", "Noon", "Takealot"],
+        "turkish_platforms": [
+            {
+                "name": "Trendyol",
+                "code": "trendyol",
+                "regions": ["TR"],
+                "categories": ["electronics", "fashion", "home", "beauty", "sports"],
+                "features": ["fast_delivery", "free_shipping", "installments", "reviews"]
+            },
+            {
+                "name": "Hepsiburada",
+                "code": "hepsiburada", 
+                "regions": ["TR"],
+                "categories": ["electronics", "computers", "home", "fashion", "books"],
+                "features": ["same_day_delivery", "tech_support", "installments", "reviews"]
+            },
+            {
+                "name": "GittiGidiyor",
+                "code": "gittigidiyor",
+                "regions": ["TR"],
+                "categories": ["collectibles", "handmade", "vintage", "art", "crafts"],
+                "features": ["auctions", "artisan_products", "vintage_items", "local_sellers"]
+            },
+            {
+                "name": "N11",
+                "code": "n11",
+                "regions": ["TR"],
+                "categories": ["electronics", "books", "fashion", "home", "sports"],
+                "features": ["competitive_pricing", "local_delivery", "reviews", "installments"]
+            },
+            {
+                "name": "Ciceksepeti",
+                "code": "ciceksepeti",
+                "regions": ["TR"],
+                "categories": ["flowers", "gifts", "food", "special_occasions"],
+                "features": ["same_day_delivery", "fresh_flowers", "gift_wrapping", "occasions"]
+            },
+            {
+                "name": "Modanisa",
+                "code": "modanisa",
+                "regions": ["TR", "GLOBAL"],
+                "categories": ["modest_fashion", "islamic_clothing", "accessories"],
+                "features": ["international_shipping", "modest_fashion", "global_brands", "size_guides"]
+            },
+            {
+                "name": "Vatan Bilgisayar",
+                "code": "vatanbilgisayar",
+                "regions": ["TR"],
+                "categories": ["computers", "gaming", "electronics", "software"],
+                "features": ["technical_support", "installation", "gaming_focus", "warranties"]
+            }
+        ],
+        "total_platforms": 11,
+        "turkish_platforms_count": 7,
+        "global_platforms_count": 4,
+        "regions_covered": ["TR", "US", "UK", "CA", "DE", "FR", "IT", "ES", "JP", "AU", "KE", "NG", "EG", "MA", "GH", "CI", "UG", "TN"],
+        "currencies_supported": ["TRY", "USD", "EUR", "KES", "GBP", "CAD", "JPY", "AUD"],
+        "languages_supported": ["Turkish", "English", "German", "French", "Spanish", "Arabic", "Swahili"],
         "last_updated": "2025-06-17"
     }
 
