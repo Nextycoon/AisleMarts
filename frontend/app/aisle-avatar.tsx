@@ -240,59 +240,8 @@ export default function AisleAvatarScreen() {
         <Animated.View 
           entering={SlideInUp.delay(600)}
           style={styles.roleSection}
-          accessibilityRole="radiogroup"
-          accessibilityLabel="Choose your marketplace role"
         >
-          <Text style={styles.rolePrompt}>Select your role in the marketplace</Text>
-          
-          <View style={styles.roleGrid}>
-            {roleOptions.map((role, index) => (
-              <Animated.View
-                key={role.id}
-                entering={SlideInUp.delay(800 + index * 150)}
-              >
-                <Pressable
-                  style={[
-                    styles.roleCard,
-                    selectedRole === role.id && styles.selectedRoleCard
-                  ]}
-                  onPress={() => handleRoleSelect(role.id)}
-                  accessibilityRole="radio"
-                  accessibilityState={{ checked: selectedRole === role.id }}
-                  accessibilityLabel={`${role.title}: ${role.subtitle}`}
-                  accessibilityHint="Double tap to select this role"
-                >
-                  <BlurView intensity={selectedRole === role.id ? 24 : 18} style={styles.roleCardBlur}>
-                    <LinearGradient
-                      colors={role.gradient}
-                      style={styles.roleIconContainer}
-                      start={{ x: 0, y: 0 }}
-                      end={{ x: 1, y: 1 }}
-                    >
-                      <Ionicons name={role.icon} size={32} color="white" />
-                    </LinearGradient>
-                    
-                    <View style={styles.roleTextContainer}>
-                      <Text style={styles.roleTitle}>{role.title}</Text>
-                      <Text style={styles.roleSubtitle}>{role.subtitle}</Text>
-                    </View>
-                    
-                    {selectedRole === role.id && (
-                      <Animated.View 
-                        entering={FadeIn.duration(140)}
-                        style={styles.selectedIndicator}
-                        accessibilityLabel="Selected"
-                      >
-                        <View style={styles.selectedRing}>
-                          <Ionicons name="checkmark-circle" size={24} color="#4facfe" />
-                        </View>
-                      </Animated.View>
-                    )}
-                  </BlurView>
-                </Pressable>
-              </Animated.View>
-            ))}
-          </View>
+          <UserTypeSelector />
         </Animated.View>
 
         {/* CTA Button */}
