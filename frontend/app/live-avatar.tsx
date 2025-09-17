@@ -75,9 +75,29 @@ export default function LiveAvatarScreen() {
 
   const startWelcomeSequence = () => {
     setTimeout(() => {
-      speak("Welcome to AisleMarts! I'm your personal AI shopping assistant. How can I help you find what you're looking for today?");
-      addMessage("Welcome to AisleMarts! I'm your personal AI shopping assistant. How can I help you find what you're looking for today?", 'avatar');
+      // Get personalized cinematic greeting
+      const personalizedGreeting = getPersonalizedGreeting();
+      const roleSpecificMessage = getRoleSpecificWelcome();
+      const fullGreeting = `${personalizedGreeting} ${roleSpecificMessage}`;
+      
+      speak(fullGreeting);
+      addMessage(fullGreeting, 'avatar');
     }, 1000);
+  };
+
+  const getRoleSpecificWelcome = (): string => {
+    if (!profile) return "I'm your personal AI shopping assistant. How can I help you today?";
+    
+    switch (profile.role) {
+      case 'shopper':
+        return "I'm here to help you discover amazing deals and find exactly what you're looking for. What would you like to explore?";
+      case 'seller':
+        return "Ready to help you manage your inventory, boost sales, and connect with customers. How can I assist your business today?";
+      case 'hybrid':
+        return "Whether you're shopping or selling, I've got you covered. What would you like to do first?";
+      default:
+        return "I'm your personal AI marketplace assistant. How can I help you today?";
+    }
   };
 
   const addMessage = (text: string, type: 'user' | 'avatar') => {
