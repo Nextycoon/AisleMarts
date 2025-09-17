@@ -24,6 +24,7 @@ import * as Speech from 'expo-speech';
 import { router } from 'expo-router';
 import { useMicrophonePermission } from '../src/hooks/usePermissions';
 import { useUserRoles } from '../src/context/UserRolesContext';
+import { TierBadge } from '../src/components/TierBadge';
 import { 
   PermissionScreen,
   MicrophonePermissionScreen 
