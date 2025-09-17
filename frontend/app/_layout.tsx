@@ -38,6 +38,8 @@ export default function RootLayout() {
               <Stack.Screen name="nearby" options={{ title: 'Nearby', headerShown: false }} />
               <Stack.Screen name="merchant" options={{ title: 'Merchant Tools', headerShown: false }} />
               <Stack.Screen name="test-permissions" options={{ title: 'Test Permissions', headerShown: false }} />
+              <Stack.Screen name="aisle-agent" options={{ title: 'Aisle AI', headerShown: false }} />
+              <Stack.Screen name="cinematic-home" options={{ title: 'Cinematic Home', headerShown: false }} />
             </Stack>
           </UserRolesProvider>
         </AuthProvider>
