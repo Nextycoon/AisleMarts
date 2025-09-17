@@ -43,6 +43,10 @@ export default function LiveAvatarScreen() {
   const [messages, setMessages] = useState<Message[]>([]);
   const [avatarState, setAvatarState] = useState<'idle' | 'listening' | 'thinking' | 'speaking'>('idle');
   const [currentResponse, setCurrentResponse] = useState('');
+  const [showMicPermission, setShowMicPermission] = useState(false);
+  
+  // Permission hook
+  const { requestMicrophone, isLoading: isPermissionLoading } = useMicrophonePermission();
   
   // Animations
   const pulseAnim = useRef(new Animated.Value(1)).current;
