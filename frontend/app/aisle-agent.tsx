@@ -15,13 +15,8 @@ export default function AisleAgentScreen() {
   const router = useRouter();
   const { name, role, tier, setName } = useUser();
   const [query, setQuery] = useState('');
-  const message = useMemo(() => greet(name), [name]);
-
-  const quick = [
-    role === 'shopper' ? 'Noise-canceling earbuds' : 'Bulk shipping labels',
-    role === 'seller' ? 'Inventory optimizer' : 'Gift ideas under $50',
-    'What\'s trending for me?'
-  ];
+  const message = useMemo(() => getAdaptiveGreeting(name, role as any), [name, role]);
+  const quickActions = useMemo(() => getQuickActionsForUser(role as any), [role]);
 
   const handleNavigateHome = () => {
     Haptics.impactAsync(Haptics.ImpactFeedbackStyle.Light);
