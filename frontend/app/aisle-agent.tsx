@@ -88,24 +88,77 @@ export default function AisleAgentScreen() {
   );
 }
 
-const styles = StyleSheet.create({
-  wrap: { flex: 1, backgroundColor: colors.bg, paddingTop: 64 },
-  head: { paddingHorizontal: 20, marginBottom: 8 },
-  brand: { color: colors.text, fontWeight: '800', fontSize: 18, letterSpacing: 1 },
-  kicker: { color: colors.gray, marginTop: 4 },
-  title: { color: colors.text, fontSize: 28, fontWeight: '800', lineHeight: 34 },
-  inputWrap: { flexDirection: 'row', alignItems: 'center', padding: 6 },
-  input: { flex: 1, padding: 12, color: colors.text, fontSize: 16 },
-  cta: { backgroundColor: '#fff', paddingHorizontal: 16, paddingVertical: 10, borderRadius: 12, marginLeft: 8 },
-  chips: { flexDirection: 'row', flexWrap: 'wrap', gap: 8, marginTop: 12 },
+const createStyles = (theme: any) => StyleSheet.create({
+  wrap: { 
+    flex: 1, 
+    backgroundColor: theme.background, 
+    paddingTop: 64 
+  },
+  head: { 
+    paddingHorizontal: 20, 
+    marginBottom: 8 
+  },
+  brand: { 
+    color: theme.on, 
+    fontWeight: '800', 
+    fontSize: 18, 
+    letterSpacing: 1 
+  },
+  kicker: { 
+    color: theme.onDim, 
+    marginTop: 4 
+  },
+  title: { 
+    color: theme.on, 
+    fontSize: 28, 
+    fontWeight: '800', 
+    lineHeight: 34 
+  },
+  inputWrap: { 
+    flexDirection: 'row', 
+    alignItems: 'center', 
+    padding: 6,
+    backgroundColor: theme.glass.primary,
+    borderRadius: 16,
+    borderWidth: 1,
+    borderColor: theme.border.medium
+  },
+  input: { 
+    flex: 1, 
+    padding: 12, 
+    color: theme.on, 
+    fontSize: 16 
+  },
+  cta: { 
+    backgroundColor: theme.glass.accent, 
+    paddingHorizontal: 16, 
+    paddingVertical: 10, 
+    borderRadius: 12, 
+    marginLeft: 8,
+    borderWidth: 1,
+    borderColor: theme.border.strong
+  },
+  chips: { 
+    flexDirection: 'row', 
+    flexWrap: 'wrap', 
+    gap: 8, 
+    marginTop: 12 
+  },
   chip: { 
-    backgroundColor: colors.glass.primary, 
+    backgroundColor: theme.glass.primary, 
     borderRadius: 14, 
     paddingVertical: 6, 
     paddingHorizontal: 10, 
     borderWidth: 1, 
-    borderColor: colors.border.primary 
+    borderColor: theme.border.subtle 
   },
-  chipText: { color: colors.text, fontSize: 13 },
-  nameRow: { flexDirection: 'row', alignItems: 'center', marginTop: 12 }
+  chipText: { 
+    color: theme.on, 
+    fontSize: 13 
+  },
+  nameRow: { 
+    flexDirection: 'row', 
+    alignItems: 'center', 
+    marginTop: 12 
+  }
 });
