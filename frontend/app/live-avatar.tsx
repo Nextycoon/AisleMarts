@@ -413,7 +413,14 @@ export default function LiveAvatarScreen() {
         <TouchableOpacity onPress={() => router.back()}>
           <Ionicons name="arrow-back" size={24} color="white" />
         </TouchableOpacity>
-        <Text style={styles.headerTitle}>AI Shopping Assistant</Text>
+        
+        <View style={styles.headerCenter}>
+          <Text style={styles.headerTitle}>AI Shopping Assistant</Text>
+          {profile && (
+            <TierBadge tier={profile.tier} size="small" style={styles.tierBadge} />
+          )}
+        </View>
+        
         <TouchableOpacity onPress={() => Speech.stop()}>
           <Ionicons name="stop-circle" size={24} color="white" />
         </TouchableOpacity>
