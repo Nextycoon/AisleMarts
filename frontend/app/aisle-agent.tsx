@@ -23,7 +23,20 @@ export default function AisleAgentScreen() {
 
   const handleNavigateHome = () => {
     Haptics.impactAsync(Haptics.ImpactFeedbackStyle.Light);
-    router.push(`/shopper-home?q=${encodeURIComponent(query || 'Show me recommendations')}`);
+    
+    // Navigate to appropriate home screen based on user role
+    const routeMap: Record<string, string> = {
+      'shopper': '/shopper-home',
+      'seller': '/vendor-home',
+      'vendor': '/vendor-home', 
+      'business': '/business-home',
+      'hybrid': '/business-home'
+    };
+    
+    const targetRoute = routeMap[role] || '/shopper-home';
+    const queryParam = query || 'Show me recommendations';
+    
+    router.push(`${targetRoute}?q=${encodeURIComponent(queryParam)}`);
   };
 
   return (
