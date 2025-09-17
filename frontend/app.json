@@ -1,22 +1,43 @@
 {
   "expo": {
-    "name": "frontend",
-    "slug": "frontend",
+    "name": "AisleMarts",
+    "slug": "aislemarts-beta",
     "version": "1.0.0",
     "orientation": "portrait",
     "icon": "./assets/images/icon.png",
-    "scheme": "frontend",
+    "scheme": "aislemarts",
     "userInterfaceStyle": "automatic",
     "newArchEnabled": true,
     "ios": {
-      "supportsTablet": true
+      "supportsTablet": true,
+      "bundleIdentifier": "com.aislemarts.beta",
+      "infoPlist": {
+        "NSCameraUsageDescription": "AisleMarts uses your camera to scan products and barcodes for faster shopping.",
+        "NSMicrophoneUsageDescription": "The AI Avatar uses your microphone to understand your voice commands and provide personalized shopping assistance.",
+        "NSSpeechRecognitionUsageDescription": "AisleMarts transcribes your speech to help you shop hands-free with voice commands.",
+        "NSPhotoLibraryUsageDescription": "We access your photos when you choose images to identify products or upload receipts for easier shopping.",
+        "NSPhotoLibraryAddUsageDescription": "We save receipts or QR codes to your library when you ask us to for your records.",
+        "NSLocationWhenInUseUsageDescription": "We use your location to find nearby stores, deals, and pickup windows for convenient shopping."
+      }
     },
     "android": {
+      "package": "com.aislemarts.beta",
       "adaptiveIcon": {
         "foregroundImage": "./assets/images/adaptive-icon.png",
         "backgroundColor": "#000"
       },
-      "edgeToEdgeEnabled": true
+      "edgeToEdgeEnabled": true,
+      "permissions": [
+        "CAMERA",
+        "RECORD_AUDIO",
+        "ACCESS_COARSE_LOCATION",
+        "ACCESS_FINE_LOCATION",
+        "READ_MEDIA_IMAGES",
+        "READ_EXTERNAL_STORAGE",
+        "POST_NOTIFICATIONS",
+        "VIBRATE",
+        "INTERNET"
+      ]
     },
     "web": {
       "bundler": "metro",
@@ -34,7 +55,39 @@
           "backgroundColor": "#000"
         }
       ],
-      "expo-barcode-scanner"
+      "expo-barcode-scanner",
+      [
+        "expo-camera",
+        {
+          "cameraPermission": "AisleMarts uses your camera to scan products and barcodes for faster shopping."
+        }
+      ],
+      [
+        "expo-av",
+        {
+          "microphonePermission": "The AI Avatar uses your microphone to understand your voice commands and provide personalized shopping assistance."
+        }
+      ],
+      [
+        "expo-image-picker",
+        {
+          "photosPermission": "We access your photos when you choose images to identify products or upload receipts for easier shopping."
+        }
+      ],
+      [
+        "expo-location",
+        {
+          "locationForegroundPermission": "We use your location to find nearby stores, deals, and pickup windows for convenient shopping."
+        }
+      ],
+      [
+        "expo-notifications",
+        {
+          "icon": "./assets/images/notification-icon.png",
+          "color": "#4facfe",
+          "sounds": ["./assets/sounds/notification.wav"]
+        }
+      ]
     ],
     "experiments": {
       "typedRoutes": true
