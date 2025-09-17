@@ -16,8 +16,29 @@ export default function AisleAgentScreen() {
   const { name, role, tier, setName } = useUser();
   const theme = useOneColorTheme();
   const [query, setQuery] = useState('');
-  const message = useMemo(() => getAdaptiveGreeting(name, role as any), [name, role]);
-  const quickActions = useMemo(() => getQuickActionsForUser(role as any), [role]);
+  
+  // Safe greeting with error handling
+  const message = useMemo(() => {
+    try {
+      const safeName = name || 'User';
+      const safeRole = role || 'shopper';
+      return getAdaptiveGreeting(safeName, safeRole as any);
+    } catch (error) {
+      console.warn('Error generating greeting:', error);
+      return `Hello ${name || 'User'}! Welcome to AisleMarts. How can I help you today?`;
+    }
+  }, [name, role]);
+  
+  // Safe quick actions with error handling
+  const quickActions = useMemo(() => {
+    try {
+      const safeRole = role || 'shopper';
+      return getQuickActionsForUser(safeRole as any);
+    } catch (error) {
+      console.warn('Error getting quick actions:', error);
+      return ['🔍 Search products', '💰 Find deals', '📦 View orders', '💡 Get help'];
+    }
+  }, [role]);
   
   const styles = createStyles(theme);
 
