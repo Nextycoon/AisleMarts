@@ -343,15 +343,59 @@ export default function LiveAvatarScreen() {
     }
   };
 
+  const getRoleBasedQuickActions = () => {
+    const roleColors = getRoleColors();
+    
+    if (!profile) {
+      return [
+        { id: 'deals', label: 'Deals', icon: 'flash', colors: ['#FF6B6B', '#FF8E53'], query: "Show me today's deals" },
+        { id: 'nearby', label: 'Nearby', icon: 'location', colors: ['#4ECDC4', '#44A08D'], query: "Find nearby stores" },
+        { id: 'shop', label: 'Shop', icon: 'bag', colors: ['#667eea', '#764ba2'], query: "Help me shop" }
+      ];
+    }
+    
+    switch (profile.role) {
+      case 'shopper':
+        return [
+          { id: 'deals', label: 'Deals', icon: 'flash', colors: [roleColors.primary, roleColors.secondary], query: "Show me today's hottest deals" },
+          { id: 'nearby', label: 'Nearby', icon: 'location', colors: ['#43e97b', '#38f9d7'], query: "Find products nearby" },
+          { id: 'wishlist', label: 'Wishlist', icon: 'heart', colors: ['#f093fb', '#f5576c'], query: "Show my wishlist" }
+        ];
+      case 'seller':
+        return [
+          { id: 'orders', label: 'Orders', icon: 'receipt', colors: [roleColors.primary, roleColors.secondary], query: "Show my recent orders" },
+          { id: 'inventory', label: 'Inventory', icon: 'cube', colors: ['#667eea', '#764ba2'], query: "Check my inventory status" },
+          { id: 'insights', label: 'Insights', icon: 'analytics', colors: ['#f093fb', '#f5576c'], query: "Show sales insights" }
+        ];
+      case 'hybrid':
+        return [
+          { id: 'deals', label: 'Deals', icon: 'flash', colors: [roleColors.primary, roleColors.secondary], query: "Show me today's deals" },
+          { id: 'orders', label: 'Orders', icon: 'receipt', colors: ['#43e97b', '#38f9d7'], query: "Check my orders" },
+          { id: 'switch', label: 'Switch', icon: 'swap-horizontal', colors: ['#f093fb', '#f5576c'], query: "Switch between shopping and selling" }
+        ];
+      default:
+        return [
+          { id: 'deals', label: 'Deals', icon: 'flash', colors: ['#FF6B6B', '#FF8E53'], query: "Show me today's deals" },
+          { id: 'nearby', label: 'Nearby', icon: 'location', colors: ['#4ECDC4', '#44A08D'], query: "Find nearby stores" },
+          { id: 'shop', label: 'Shop', icon: 'bag', colors: ['#667eea', '#764ba2'], query: "Help me shop" }
+        ];
+    }
+  };
+
   const getStatusText = () => {
+    const roleColors = getRoleColors();
+    
     switch (avatarState) {
       case 'listening':
-        return 'Listening to you...';
+        return 'I\'m listening...';
       case 'thinking':
         return 'Processing your request...';
       case 'speaking':
         return 'Speaking...';
       default:
+        if (profile && profile.preferences.voiceEnabled) {
+          return `${profile.name ? `Hi ${profile.name}! ` : ''}Tap to talk with me!`;
+        }
         return 'Tap to talk with me!';
     }
   };
