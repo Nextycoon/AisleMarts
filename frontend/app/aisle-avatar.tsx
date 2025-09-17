@@ -18,6 +18,8 @@ import { useAuth } from '../src/context/AuthContext';
 import { useUserRoles, UserRole } from '../src/context/UserRolesContext';
 import { useHaptics } from '../src/hooks/useHaptics';  
 import { API } from '../src/api/client';
+import UserTypeSelector from '../src/components/UserTypeSelector';
+import { useUser } from '../src/state/user';
 
 type UserRole = 'shopper' | 'seller' | 'hybrid';
 
