@@ -61,6 +61,12 @@ export const colors = {
   shopper: ['#4facfe', '#00f2fe'],
   seller:  ['#43e97b', '#38f9d7'], 
   hybrid:  ['#667eea', '#764ba2'],
+  business: ['#FF6B6B', '#FF8E53'], // Enterprise red-orange gradient
+  vendor: ['#43e97b', '#38f9d7'],  // Alias for seller
+  
+  // Additional UI constants
+  primary: '#4facfe',
+  gray: 'rgba(255,255,255,0.5)',
 };
 
 // Role and Tier Types for AisleMarts 2.0
