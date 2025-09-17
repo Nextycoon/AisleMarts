@@ -1,15 +1,15 @@
 import React, { useMemo, useState } from 'react';
-import { View, Text, TextInput, StyleSheet, TouchableOpacity, KeyboardAvoidingView, Platform } from 'react-native';
+import { View, Text, TextInput, StyleSheet, TouchableOpacity, KeyboardAvoidingView, Platform, StatusBar } from 'react-native';
 import Animated, { FadeInDown } from 'react-native-reanimated';
 import * as Haptics from 'expo-haptics';
 import { useRouter } from 'expo-router';
 import { useUser } from '../src/state/user';
-import { colors, tierLabel } from '../src/theme/tokens';
-import { GradientBackdrop } from '../src/components/GradientBackdrop';
+import { tierLabel } from '../src/theme/tokens';
 import { Glass } from '../src/components/Glass';
 import RoleSwitcher from '../src/components/RoleSwitcher';
 import TierSwitcher from '../src/components/TierSwitcher';
 import { getAdaptiveGreeting, getQuickActionsForUser } from '../src/utils/aisleGreetings';
+import { useOneColorTheme } from '../src/theme/oneColorTheme';
 
 export default function AisleAgentScreen() {
   const router = useRouter();
