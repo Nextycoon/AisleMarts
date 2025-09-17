@@ -30,7 +30,7 @@ export default function AisleAgentScreen() {
 
   const handleNavigateHome = () => {
     Haptics.impactAsync(Haptics.ImpactFeedbackStyle.Light);
-    router.push(`/home?q=${encodeURIComponent(query || 'Show me recommendations')}`);
+    router.push(`/cinematic-home?q=${encodeURIComponent(query || 'Show me recommendations')}`);
   };
 
   return (
