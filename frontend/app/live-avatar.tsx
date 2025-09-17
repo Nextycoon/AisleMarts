@@ -413,26 +413,18 @@ export default function LiveAvatarScreen() {
 
       {/* Quick Actions */}
       <View style={styles.quickActions}>
-        <TouchableOpacity style={styles.quickButton} onPress={() => processUserInput("Show me today's deals")}>
-          <LinearGradient colors={['#FF6B6B', '#FF8E53']} style={styles.quickButtonGradient}>
-            <Ionicons name="flash" size={20} color="white" />
-            <Text style={styles.quickButtonText}>Deals</Text>
-          </LinearGradient>
-        </TouchableOpacity>
-        
-        <TouchableOpacity style={styles.quickButton} onPress={() => processUserInput("Find nearby stores")}>
-          <LinearGradient colors={['#4ECDC4', '#44A08D']} style={styles.quickButtonGradient}>
-            <Ionicons name="location" size={20} color="white" />
-            <Text style={styles.quickButtonText}>Nearby</Text>
-          </LinearGradient>
-        </TouchableOpacity>
-        
-        <TouchableOpacity style={styles.quickButton} onPress={() => processUserInput("Help me shop")}>
-          <LinearGradient colors={['#667eea', '#764ba2']} style={styles.quickButtonGradient}>
-            <Ionicons name="bag" size={20} color="white" />
-            <Text style={styles.quickButtonText}>Shop</Text>
-          </LinearGradient>
-        </TouchableOpacity>
+        {getRoleBasedQuickActions().map((action, index) => (
+          <TouchableOpacity 
+            key={action.id}
+            style={styles.quickButton} 
+            onPress={() => processUserInput(action.query)}
+          >
+            <LinearGradient colors={action.colors} style={styles.quickButtonGradient}>
+              <Ionicons name={action.icon as any} size={20} color="white" />
+              <Text style={styles.quickButtonText}>{action.label}</Text>
+            </LinearGradient>
+          </TouchableOpacity>
+        ))}
       </View>
     </SafeAreaView>
   );
