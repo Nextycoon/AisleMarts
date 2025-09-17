@@ -4,7 +4,7 @@ import Animated, { FadeInDown } from 'react-native-reanimated';
 import * as Haptics from 'expo-haptics';
 import { useRouter } from 'expo-router';
 import { useUser } from '../src/state/user';
-import { tierLabel } from '../src/theme/tokens';
+import { tierLabel, colors } from '../src/theme/tokens';
 import { Glass } from '../src/components/Glass';
 import RoleSwitcher from '../src/components/RoleSwitcher';
 import TierSwitcher from '../src/components/TierSwitcher';
