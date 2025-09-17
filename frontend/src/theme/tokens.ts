@@ -55,7 +55,25 @@ export const colors = {
     violet: "rgba(168,85,247,0.35)",     // Violet border
     success: "rgba(52,211,153,0.20)",    // Success border
     warning: "rgba(251,191,36,0.20)",    // Warning border
-  }
+  },
+
+  // CINEMATIC ROLE-BASED COLORS - AisleMarts 2.0 Upgrade
+  shopper: ['#4facfe', '#00f2fe'],
+  seller:  ['#43e97b', '#38f9d7'], 
+  hybrid:  ['#667eea', '#764ba2'],
+};
+
+// Role and Tier Types for AisleMarts 2.0
+export type Role = 'shopper' | 'seller' | 'hybrid';
+export type Tier = 'regular' | 'premium' | 'pro' | 'business' | 'firstclass' | 'worldclass';
+
+export const tierLabel: Record<Tier,string> = {
+  regular:'Regular', 
+  premium:'Premium', 
+  pro:'Pro',
+  business:'Business', 
+  firstclass:'First-Class', 
+  worldclass:'World-Class',
 };
 
 // Border Radius - Consistent Curvature
