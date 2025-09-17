@@ -70,7 +70,7 @@ export const colors = {
 };
 
 // Role and Tier Types for AisleMarts 2.0
-export type Role = 'shopper' | 'seller' | 'hybrid';
+export type Role = 'shopper' | 'seller' | 'hybrid' | 'vendor' | 'business';
 export type Tier = 'regular' | 'premium' | 'pro' | 'business' | 'firstclass' | 'worldclass';
 
 export const tierLabel: Record<Tier,string> = {
