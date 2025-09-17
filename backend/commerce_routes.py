@@ -1,10 +1,11 @@
 """
-Commerce Routes - Federated Search Integration
-Adds federated search endpoints to the main FastAPI app
+Commerce Routes - Enhanced Federated Search with Turkish Market Integration
+Adds federated search endpoints with complete Turkish e-commerce coverage
 """
 
 from fastapi import APIRouter, Query, HTTPException
-from federated_search import federated_search_endpoint, search_health_check, SearchResponse
+from federated_search import search_health_check, SearchResponse
+from enhanced_federated_search import enhanced_federated_search_endpoint, turkish_market_status
 from typing import Optional
 
 # Create router for commerce endpoints
