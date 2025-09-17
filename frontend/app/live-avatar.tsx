@@ -501,6 +501,14 @@ const styles = StyleSheet.create({
     fontWeight: '600',
     color: 'white',
   },
+  headerCenter: {
+    alignItems: 'center',
+    flex: 1,
+    gap: 4,
+  },
+  tierBadge: {
+    marginTop: 2,
+  },
   avatarSection: {
     flex: 1,
     justifyContent: 'center',
