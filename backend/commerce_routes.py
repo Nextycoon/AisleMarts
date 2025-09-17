@@ -13,12 +13,12 @@ commerce_router = APIRouter(prefix="/api/commerce", tags=["commerce"])
 
 @commerce_router.get("/search", response_model=SearchResponse)
 async def search_all_platforms(
-    q: str = Query(..., description="Search query", example="nike shoes under 5000"),
+    q: str = Query(..., description="Search query", example="telefon samsung or nike ayakkabı"),
     user_type: str = Query("shopper", description="User type: shopper, vendor, business"),
     limit: int = Query(20, description="Number of results", ge=1, le=100),
     offset: int = Query(0, description="Pagination offset", ge=0),
-    region: str = Query("KE", description="Country code (ISO 2-letter)"),
-    currency: str = Query("KES", description="Currency code (ISO 3-letter)"),
+    region: str = Query("GLOBAL", description="Region: TR (Turkey), KE (Kenya), US (USA), GLOBAL"),
+    currency: str = Query("USD", description="Currency: USD, EUR, TRY, KES"),
     sort_by: str = Query("relevance", description="Sort by: relevance, price_asc, price_desc, rating"),
     category: Optional[str] = Query(None, description="Filter by category"),
     min_price: Optional[float] = Query(None, description="Minimum price filter"),
@@ -26,22 +26,24 @@ async def search_all_platforms(
     brand: Optional[str] = Query(None, description="Filter by brand")
 ):
     """
-    🔍 **Federated Search Across All E-Commerce Platforms**
+    🌍 **Enhanced Federated Search with Turkish Market Coverage**
     
-    Search products from Amazon, Jumia, eBay, Shopify stores, and more platforms simultaneously.
-    Results are AI-normalized, deduplicated, and ranked for relevance.
+    Search products from global + Turkish platforms simultaneously:
+    
+    **Turkish Platforms**: Trendyol, Hepsiburada, GittiGidiyor, N11, Ciceksepeti, Modanisa, Vatan Bilgisayar
+    **Global Platforms**: Amazon, eBay, Jumia, Shopify stores
     
     **Features:**
-    - **Universal Search**: Products from all major platforms
-    - **AI-Powered**: Intelligent query understanding and ranking
-    - **User-Aware**: Results optimized for shopper/vendor/business needs
-    - **Real-Time**: Live inventory and pricing data
-    - **Localized**: Supports regional preferences and currencies
+    - **Turkish Integration**: Native Turkish language support with automatic translation
+    - **Currency Conversion**: TRY ↔ USD ↔ EUR ↔ KES automatic conversion
+    - **Regional Optimization**: Turkey-specific search algorithms and ranking
+    - **AI-Powered**: Enhanced query understanding for Turkish market context
+    - **Complete Coverage**: ALL major Turkish e-commerce platforms included
     """
     
     try:
-        # Call the federated search engine
-        response = await federated_search_endpoint(
+        # Call the enhanced federated search engine with Turkish support
+        response = await enhanced_federated_search_endpoint(
             q=q,
             user_type=user_type,
             limit=limit,
@@ -50,20 +52,15 @@ async def search_all_platforms(
             currency=currency
         )
         
-        # Add metadata for API response
-        response_dict = response.dict()
-        response_dict["api_version"] = "2.0"
-        response_dict["powered_by"] = "AisleMarts AI-Commerce"
-        
-        return response_dict
+        return response
         
     except Exception as e:
         raise HTTPException(
             status_code=500, 
             detail={
-                "error": "Federated search failed",
+                "error": "Enhanced federated search failed",
                 "message": str(e),
-                "suggestion": "Try a simpler query or check your network connection"
+                "suggestion": "Try Turkish keywords like 'telefon', 'ayakkabı', 'kitap' or check regional settings"
             }
         )
 
