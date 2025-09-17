@@ -16,6 +16,9 @@ from schemas import (
     CreatePaymentIntentIn, OrderOut, CartItemIn, CategoryIn, CategoryOut
 )
 
+# Import federated search system
+from commerce_routes import commerce_router
+
 app = FastAPI(title="AisleMarts API", version="0.1.0")
 
 app.add_middleware(
