@@ -71,12 +71,12 @@ const enqueueOfflineAction = async (action: any) => {
 };
 
 export default function AisleAvatarScreen() {
-  const [selectedRole, setSelectedRole] = useState<UserRole | null>(null);
   const [isLoading, setIsLoading] = useState(false);
   const [isOnline, setIsOnline] = useState(true);
   const { setupAvatar, hasCompletedAvatarSetup } = useAuth();
   const { setUserRole } = useUserRoles();
   const { triggerHaptic } = useHaptics();
+  const { role: selectedRole, setRole } = useUser();
 
   useEffect(() => {
     // Idempotency check: if user already completed avatar setup, redirect
