@@ -9,12 +9,7 @@ import { GradientBackdrop } from '../src/components/GradientBackdrop';
 import { Glass } from '../src/components/Glass';
 import RoleSwitcher from '../src/components/RoleSwitcher';
 import TierSwitcher from '../src/components/TierSwitcher';
-
-const greet = (name: string) => {
-  const h = new Date().getHours();
-  const p = h < 12 ? 'morning' : h < 18 ? 'afternoon' : 'evening';
-  return `Good ${p}, ${name} — I'm Aisle.\nWhat can I bring you today?`;
-};
+import { getAdaptiveGreeting, getQuickActionsForUser } from '../src/utils/aisleGreetings';
 
 export default function AisleAgentScreen() {
   const router = useRouter();
