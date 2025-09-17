@@ -14,9 +14,12 @@ import { useOneColorTheme } from '../src/theme/oneColorTheme';
 export default function AisleAgentScreen() {
   const router = useRouter();
   const { name, role, tier, setName } = useUser();
+  const theme = useOneColorTheme();
   const [query, setQuery] = useState('');
   const message = useMemo(() => getAdaptiveGreeting(name, role as any), [name, role]);
   const quickActions = useMemo(() => getQuickActionsForUser(role as any), [role]);
+  
+  const styles = createStyles(theme);
 
   const handleNavigateHome = () => {
     Haptics.impactAsync(Haptics.ImpactFeedbackStyle.Light);
