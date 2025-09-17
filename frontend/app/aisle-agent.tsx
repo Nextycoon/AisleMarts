@@ -65,9 +65,9 @@ export default function AisleAgentScreen() {
         </Glass>
 
         <View style={styles.chips}>
-          {quick.map((t, i) => (
-            <TouchableOpacity key={i} onPress={() => setQuery(t)} style={styles.chip}>
-              <Text style={styles.chipText}>{t}</Text>
+          {quickActions.map((action, i) => (
+            <TouchableOpacity key={i} onPress={() => setQuery(action)} style={styles.chip}>
+              <Text style={styles.chipText}>{action}</Text>
             </TouchableOpacity>
           ))}
         </View>
