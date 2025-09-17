@@ -63,7 +63,7 @@ export default function AisleAgentScreen() {
           <TouchableOpacity
             onPress={handleNavigateHome}
             style={styles.cta}>
-            <Text style={{ color: '#000', fontWeight: '700' }}>Go</Text>
+            <Text style={{ color: theme.on, fontWeight: '700' }}>Go</Text>
           </TouchableOpacity>
         </Glass>
 
