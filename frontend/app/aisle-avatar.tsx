@@ -19,29 +19,29 @@ import { useUserRoles, UserRole } from '../src/context/UserRolesContext';
 import { useHaptics } from '../src/hooks/useHaptics';  
 import { API } from '../src/api/client';
 
-type UserRole = 'buyer' | 'seller' | 'hybrid';
+type UserRole = 'shopper' | 'seller' | 'hybrid';
 
 const roleOptions = [
   {
-    id: 'buyer' as UserRole,
-    title: 'Buyer',
+    id: 'shopper' as UserRole,
+    title: 'Shopper',
     subtitle: 'Discover nearby stock, reserve, pick up fast.',
     icon: 'bag' as const,
-    gradient: ['#667eea', '#764ba2']
+    gradient: ['#4facfe', '#00f2fe']
   },
   {
     id: 'seller' as UserRole, 
     title: 'Seller',
     subtitle: 'List inventory, set pickup windows, grow revenue.',
     icon: 'storefront' as const,
-    gradient: ['#f093fb', '#f5576c']
+    gradient: ['#43e97b', '#38f9d7']
   },
   {
     id: 'hybrid' as UserRole,
     title: 'Hybrid',
     subtitle: 'Shop and sell from one account.',
     icon: 'infinite' as const,
-    gradient: ['#4facfe', '#00f2fe']
+    gradient: ['#667eea', '#764ba2']
   }
 ];
 
