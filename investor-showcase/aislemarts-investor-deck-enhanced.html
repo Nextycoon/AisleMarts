@@ -1,0 +1,999 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+    <meta charset="UTF-8">
+    <meta name="viewport" content="width=device-width, initial-scale=1.0">
+    <title>AisleMarts - Global Viral Launch Strategy | Investor Deck</title>
+    <style>
+        * {
+            margin: 0;
+            padding: 0;
+            box-sizing: border-box;
+        }
+
+        body {
+            font-family: -apple-system, BlinkMacSystemFont, 'Segoe UI', Roboto, 'Montserrat', sans-serif;
+            background: linear-gradient(135deg, #0D47A1 0%, #1565C0 100%);
+            color: #333;
+            overflow: hidden;
+        }
+
+        .presentation {
+            height: 100vh;
+            display: flex;
+            align-items: center;
+            justify-content: center;
+            position: relative;
+        }
+
+        .slide {
+            display: none;
+            width: 95%;
+            max-width: 1400px;
+            height: 85vh;
+            background: rgba(255, 255, 255, 0.95);
+            backdrop-filter: blur(20px);
+            border-radius: 24px;
+            box-shadow: 0 25px 50px rgba(13, 71, 161, 0.3);
+            padding: 40px 60px;
+            text-align: center;
+            position: relative;
+            animation: slideIn 0.8s ease-out;
+            overflow-y: auto;
+        }
+
+        .slide.active {
+            display: block;
+        }
+
+        @keyframes slideIn {
+            from {
+                opacity: 0;
+                transform: translateY(30px) scale(0.95);
+            }
+            to {
+                opacity: 1;
+                transform: translateY(0) scale(1);
+            }
+        }
+
+        .slide h1 {
+            font-size: 3.2rem;
+            font-weight: 800;
+            margin-bottom: 1.5rem;
+            background: linear-gradient(135deg, #0D47A1, #1565C0);
+            -webkit-background-clip: text;
+            -webkit-text-fill-color: transparent;
+            background-clip: text;
+            line-height: 1.2;
+        }
+
+        .slide h2 {
+            font-size: 2.8rem;
+            font-weight: 700;
+            margin-bottom: 1.5rem;
+            color: #0D47A1;
+        }
+
+        .slide h3 {
+            font-size: 2rem;
+            font-weight: 600;
+            margin-bottom: 1rem;
+            color: #1565C0;
+        }
+
+        .slide p, .slide li {
+            font-size: 1.2rem;
+            line-height: 1.6;
+            margin-bottom: 1rem;
+            color: #333;
+        }
+
+        .highlight {
+            background: linear-gradient(135deg, #0D47A1, #1565C0);
+            -webkit-background-clip: text;
+            -webkit-text-fill-color: transparent;
+            background-clip: text;
+            font-weight: 700;
+        }
+
+        .dual-mode-showcase {
+            display: grid;
+            grid-template-columns: 1fr 120px 1fr;
+            gap: 20px;
+            margin: 2rem 0;
+            align-items: center;
+        }
+
+        .search-mode {
+            background: linear-gradient(135deg, rgba(13, 71, 161, 0.1), rgba(21, 101, 192, 0.1));
+            border: 2px solid #0D47A1;
+            border-radius: 20px;
+            padding: 30px;
+            height: 400px;
+            display: flex;
+            flex-direction: column;
+            justify-content: space-between;
+        }
+
+        .mode-icon {
+            font-size: 4rem;
+            margin-bottom: 1rem;
+        }
+
+        .ai-connector {
+            display: flex;
+            flex-direction: column;
+            align-items: center;
+            justify-content: center;
+        }
+
+        .ai-brain {
+            width: 80px;
+            height: 80px;
+            background: linear-gradient(135deg, #0D47A1, #1565C0);
+            border-radius: 50%;
+            display: flex;
+            align-items: center;
+            justify-content: center;
+            color: white;
+            font-size: 2rem;
+            font-weight: bold;
+            margin-bottom: 10px;
+            animation: pulse 2s infinite;
+        }
+
+        @keyframes pulse {
+            0%, 100% { transform: scale(1); }
+            50% { transform: scale(1.1); }
+        }
+
+        .flow-arrow {
+            font-size: 2rem;
+            color: #0D47A1;
+            margin: 0 10px;
+        }
+
+        .metric-grid {
+            display: grid;
+            grid-template-columns: repeat(auto-fit, minmax(200px, 1fr));
+            gap: 20px;
+            margin: 2rem 0;
+        }
+
+        .metric {
+            background: linear-gradient(135deg, #0D47A1, #1565C0);
+            color: white;
+            padding: 20px;
+            border-radius: 16px;
+            text-align: center;
+            box-shadow: 0 8px 24px rgba(13, 71, 161, 0.3);
+        }
+
+        .metric-number {
+            font-size: 2.5rem;
+            font-weight: 800;
+            display: block;
+            margin-bottom: 0.5rem;
+        }
+
+        .viral-phases {
+            display: flex;
+            justify-content: space-around;
+            align-items: stretch;
+            margin: 2rem 0;
+            gap: 20px;
+        }
+
+        .phase {
+            background: rgba(255, 255, 255, 0.9);
+            border: 3px solid #0D47A1;
+            border-radius: 20px;
+            padding: 30px;
+            flex: 1;
+            min-height: 300px;
+            display: flex;
+            flex-direction: column;
+            justify-content: space-between;
+            box-shadow: 0 12px 24px rgba(13, 71, 161, 0.2);
+            transition: all 0.3s ease;
+        }
+
+        .phase:hover {
+            transform: translateY(-8px);
+            box-shadow: 0 20px 40px rgba(13, 71, 161, 0.3);
+        }
+
+        .phase.viral {
+            background: linear-gradient(135deg, #0D47A1, #1565C0);
+            color: white;
+        }
+
+        .phase-icon {
+            font-size: 3rem;
+            margin-bottom: 1rem;
+        }
+
+        .competitive-advantage {
+            display: grid;
+            grid-template-columns: repeat(auto-fit, minmax(300px, 1fr));
+            gap: 20px;
+            margin: 2rem 0;
+        }
+
+        .advantage-item {
+            background: rgba(13, 71, 161, 0.1);
+            border-left: 5px solid #0D47A1;
+            padding: 25px;
+            border-radius: 12px;
+            text-align: left;
+        }
+
+        .advantage-item h4 {
+            color: #0D47A1;
+            font-size: 1.4rem;
+            font-weight: 700;
+            margin-bottom: 10px;
+        }
+
+        .revenue-model {
+            display: grid;
+            grid-template-columns: repeat(auto-fit, minmax(250px, 1fr));
+            gap: 20px;
+            margin: 2rem 0;
+        }
+
+        .revenue-stream {
+            background: linear-gradient(135deg, #0D47A1, #1565C0);
+            color: white;
+            padding: 25px;
+            border-radius: 16px;
+            text-align: center;
+            box-shadow: 0 8px 24px rgba(13, 71, 161, 0.3);
+        }
+
+        .revenue-stream h4 {
+            font-size: 2rem;
+            font-weight: 800;
+            margin-bottom: 10px;
+        }
+
+        .growth-timeline {
+            display: flex;
+            justify-content: space-between;
+            align-items: center;
+            margin: 3rem 0;
+            position: relative;
+        }
+
+        .growth-timeline::before {
+            content: '';
+            position: absolute;
+            top: 50%;
+            left: 10%;
+            right: 10%;
+            height: 4px;
+            background: linear-gradient(90deg, #0D47A1, #1565C0);
+            transform: translateY(-50%);
+            border-radius: 2px;
+        }
+
+        .growth-item {
+            background: white;
+            border: 4px solid #0D47A1;
+            border-radius: 20px;
+            padding: 20px;
+            text-align: center;
+            position: relative;
+            z-index: 2;
+            min-width: 180px;
+            box-shadow: 0 8px 20px rgba(13, 71, 161, 0.2);
+        }
+
+        .growth-year {
+            background: #0D47A1;
+            color: white;
+            padding: 8px 16px;
+            border-radius: 12px;
+            font-weight: 700;
+            display: inline-block;
+            margin-bottom: 10px;
+        }
+
+        .navigation {
+            position: fixed;
+            bottom: 30px;
+            left: 50%;
+            transform: translateX(-50%);
+            display: flex;
+            gap: 12px;
+            z-index: 1000;
+        }
+
+        .nav-btn {
+            background: rgba(255, 255, 255, 0.95);
+            backdrop-filter: blur(10px);
+            border: 2px solid #0D47A1;
+            padding: 12px 24px;
+            border-radius: 25px;
+            cursor: pointer;
+            font-weight: 600;
+            color: #0D47A1;
+            transition: all 0.3s ease;
+        }
+
+        .nav-btn:hover {
+            background: #0D47A1;
+            color: white;
+            transform: translateY(-2px);
+            box-shadow: 0 8px 16px rgba(13, 71, 161, 0.3);
+        }
+
+        .slide-counter {
+            position: absolute;
+            top: 30px;
+            right: 30px;
+            background: rgba(13, 71, 161, 0.1);
+            padding: 8px 16px;
+            border-radius: 20px;
+            font-weight: 600;
+            color: #0D47A1;
+            border: 2px solid #0D47A1;
+        }
+
+        .logo {
+            position: absolute;
+            top: 30px;
+            left: 30px;
+            font-size: 1.8rem;
+            font-weight: 800;
+            background: linear-gradient(135deg, #0D47A1, #1565C0);
+            -webkit-background-clip: text;
+            -webkit-text-fill-color: transparent;
+            background-clip: text;
+        }
+
+        .cta {
+            background: linear-gradient(135deg, #0D47A1, #1565C0);
+            color: white;
+            padding: 20px 40px;
+            border-radius: 16px;
+            font-size: 1.6rem;
+            font-weight: 700;
+            margin-top: 2rem;
+            display: inline-block;
+            text-decoration: none;
+            transition: all 0.3s ease;
+            box-shadow: 0 12px 24px rgba(13, 71, 161, 0.3);
+        }
+
+        .cta:hover {
+            transform: translateY(-4px);
+            box-shadow: 0 16px 32px rgba(13, 71, 161, 0.4);
+        }
+
+        .platform-federation {
+            display: grid;
+            grid-template-columns: repeat(auto-fit, minmax(200px, 1fr));
+            gap: 15px;
+            margin: 2rem 0;
+        }
+
+        .platform-group {
+            background: rgba(13, 71, 161, 0.1);
+            border: 2px solid #0D47A1;
+            border-radius: 12px;
+            padding: 20px;
+        }
+
+        .platform-group h4 {
+            color: #0D47A1;
+            font-weight: 700;
+            margin-bottom: 10px;
+        }
+
+        ul {
+            text-align: left;
+            max-width: 900px;
+            margin: 0 auto;
+        }
+
+        li {
+            margin-bottom: 0.8rem;
+            position: relative;
+            padding-left: 1.5rem;
+        }
+
+        li::before {
+            content: '🚀';
+            position: absolute;
+            left: 0;
+        }
+
+        @media (max-width: 768px) {
+            .slide {
+                padding: 20px 30px;
+                height: 90vh;
+            }
+            
+            .slide h1 {
+                font-size: 2.5rem;
+            }
+            
+            .dual-mode-showcase {
+                grid-template-columns: 1fr;
+                gap: 20px;
+            }
+            
+            .ai-connector {
+                order: -1;
+            }
+            
+            .viral-phases {
+                flex-direction: column;
+            }
+        }
+    </style>
+</head>
+<body>
+    <div class="presentation">
+        <!-- Slide 1: Title + Global Opportunity -->
+        <div class="slide active">
+            <div class="logo">AisleMarts</div>
+            <div class="slide-counter">1 / 10</div>
+            
+            <h1>The AI Shopping Companion Revolution</h1>
+            <h3>"Meet Aisle - Your AI that finds the perfect option every time"</h3>
+            
+            <div class="metric-grid">
+                <div class="metric">
+                    <span class="metric-number">$6.2T</span>
+                    Global E-commerce Market
+                </div>
+                <div class="metric">
+                    <span class="metric-number">2 Modes</span>
+                    Online + Onsite AI Search
+                </div>
+                <div class="metric">
+                    <span class="metric-number">1M+</span>
+                    Target Phase 1 Shoppers
+                </div>
+                <div class="metric">
+                    <span class="metric-number">$5M</span>
+                    Series A Opportunity
+                </div>
+            </div>
+            
+            <div class="viral-phases">
+                <div class="phase viral">
+                    <div class="phase-icon">🚀</div>
+                    <h4>Phase 1: Global Viral Launch</h4>
+                    <p>Pure AI shopping companion experience across Apple, Google, Huawei, Web</p>
+                </div>
+                <div class="phase">
+                    <div class="phase-icon">🏪</div>
+                    <h4>Phase 2: Marketplace Activation</h4>
+                    <p>Country-by-country vendor onboarding with pre-populated demand</p>
+                </div>
+            </div>
+            
+            <p style="font-size: 1.4rem; margin-top: 2rem;">
+                <span class="highlight">First-mover in $1T+ AI-Commerce Revolution</span>
+            </p>
+        </div>
+
+        <!-- Slide 2: Dual-Mode AI Search Overview -->
+        <div class="slide">
+            <div class="logo">AisleMarts</div>
+            <div class="slide-counter">2 / 10</div>
+            
+            <h2>Meet Aisle: Your AI Shopping Companion</h2>
+            <h3>Dual-Mode Intelligence for Every Shopping Context</h3>
+            
+            <div class="dual-mode-showcase">
+                <div class="search-mode">
+                    <div>
+                        <div class="mode-icon">🌐</div>
+                        <h4>ONLINE MODE</h4>
+                        <p>Global digital-first search across all e-commerce platforms</p>
+                    </div>
+                    <div>
+                        <strong>Perfect for:</strong>
+                        <ul style="margin-top: 10px;">
+                            <li>Price comparison shopping</li>
+                            <li>Specialty items</li>
+                            <li>International products</li>
+                            <li>Can-wait delivery</li>
+                        </ul>
+                    </div>
+                </div>
+                
+                <div class="ai-connector">
+                    <div class="ai-brain">AI</div>
+                    <strong>AISLE</strong>
+                    <p style="font-size: 0.9rem;">One Brain, Two Modes</p>
+                </div>
+                
+                <div class="search-mode">
+                    <div>
+                        <div class="mode-icon">🏪</div>
+                        <h4>ONSITE MODE</h4>
+                        <p>Location-aware search for immediate availability</p>
+                    </div>
+                    <div>
+                        <strong>Perfect for:</strong>
+                        <ul style="margin-top: 10px;">
+                            <li>Urgent needs</li>
+                            <li>Local pickup</li>
+                            <li>Same-day delivery</li>
+                            <li>Support local business</li>
+                        </ul>
+                    </div>
+                </div>
+            </div>
+            
+            <h3 style="margin-top: 2rem;">
+                <span class="highlight">Result:</span> Perfect option every time, regardless of where you are
+            </h3>
+        </div>
+
+        <!-- Slide 3: Online Mode - Digital Search Flow -->
+        <div class="slide">
+            <div class="logo">AisleMarts</div>
+            <div class="slide-counter">3 / 10</div>
+            
+            <h2>Online Mode: Global Digital Intelligence</h2>
+            
+            <div style="display: flex; align-items: center; justify-content: center; margin: 2rem 0; font-size: 1.3rem;">
+                <div style="padding: 15px; background: rgba(13, 71, 161, 0.1); border-radius: 10px; margin: 0 10px;">User Query</div>
+                <div class="flow-arrow">→</div>
+                <div style="padding: 15px; background: #0D47A1; color: white; border-radius: 10px; margin: 0 10px;">Aisle AI</div>
+                <div class="flow-arrow">→</div>
+                <div style="padding: 15px; background: rgba(13, 71, 161, 0.1); border-radius: 10px; margin: 0 10px;">Platform Federation</div>
+                <div class="flow-arrow">→</div>
+                <div style="padding: 15px; background: rgba(13, 71, 161, 0.1); border-radius: 10px; margin: 0 10px;">Best Option</div>
+            </div>
+            
+            <div class="platform-federation">
+                <div class="platform-group">
+                    <h4>🌍 Global Giants</h4>
+                    <p>Amazon, eBay, Shopify, AliExpress, Walmart</p>
+                </div>
+                <div class="platform-group">
+                    <h4>🇹🇷 Turkish Platforms</h4>
+                    <p>Trendyol, Hepsiburada, N11, GittiGidiyor</p>
+                </div>
+                <div class="platform-group">
+                    <h4>🌍 African Platforms</h4>
+                    <p>Jumia, Konga, Local Marketplaces</p>
+                </div>
+                <div class="platform-group">
+                    <h4>🌎 Regional Leaders</h4>
+                    <p>Mercado Libre, Flipkart, Noon</p>
+                </div>
+            </div>
+            
+            <div class="metric-grid">
+                <div class="metric">
+                    <span class="metric-number">&lt;500ms</span>
+                    Average Search Time
+                </div>
+                <div class="metric">
+                    <span class="metric-number">50+</span>
+                    Integrated Platforms
+                </div>
+                <div class="metric">
+                    <span class="metric-number">94.4%</span>
+                    User Satisfaction
+                </div>
+            </div>
+        </div>
+
+        <!-- Slide 4: Onsite Mode - Location Intelligence -->
+        <div class="slide">
+            <div class="logo">AisleMarts</div>
+            <div class="slide-counter">4 / 10</div>
+            
+            <h2>Onsite Mode: Proximity-Aware Commerce</h2>
+            
+            <div style="display: flex; align-items: center; justify-content: center; margin: 2rem 0; font-size: 1.3rem;">
+                <div style="padding: 15px; background: rgba(13, 71, 161, 0.1); border-radius: 10px; margin: 0 10px;">Location</div>
+                <div class="flow-arrow">→</div>
+                <div style="padding: 15px; background: #0D47A1; color: white; border-radius: 10px; margin: 0 10px;">Aisle AI</div>
+                <div class="flow-arrow">→</div>
+                <div style="padding: 15px; background: rgba(13, 71, 161, 0.1); border-radius: 10px; margin: 0 10px;">Proximity Analysis</div>
+                <div class="flow-arrow">→</div>
+                <div style="padding: 15px; background: rgba(13, 71, 161, 0.1); border-radius: 10px; margin: 0 10px;">Best Available</div>
+            </div>
+            
+            <h3>🎯 Intelligent Search Hierarchy</h3>
+            <div class="competitive-advantage">
+                <div class="advantage-item">
+                    <h4>1. Walking Distance (0-2km)</h4>
+                    <p>Immediate pickup available with real-time inventory</p>
+                </div>
+                <div class="advantage-item">
+                    <h4>2. Same City (2-50km)</h4>
+                    <p>Same-day delivery with local optimization</p>
+                </div>
+                <div class="advantage-item">
+                    <h4>3. National (50-500km)</h4>
+                    <p>2-3 day delivery with regional fulfillment</p>
+                </div>
+                <div class="advantage-item">
+                    <h4>4. Regional (500-2000km)</h4>
+                    <p>Cross-border shipping with customs handling</p>
+                </div>
+                <div class="advantage-item">
+                    <h4>5. Global (2000km+)</h4>
+                    <p>International fulfillment with AI optimization</p>
+                </div>
+            </div>
+            
+            <div class="metric-grid">
+                <div class="metric">
+                    <span class="metric-number">100%</span>
+                    Kenya Pilot Coverage
+                </div>
+                <div class="metric">
+                    <span class="metric-number">15min</span>
+                    Inventory Sync Frequency
+                </div>
+                <div class="metric">
+                    <span class="metric-number">95%</span>
+                    Pickup Success Rate
+                </div>
+            </div>
+        </div>
+
+        <!-- Slide 5: Viral Launch Strategy -->
+        <div class="slide">
+            <div class="logo">AisleMarts</div>
+            <div class="slide-counter">5 / 10</div>
+            
+            <h2>Two-Phase Global Viral Launch</h2>
+            
+            <div class="viral-phases">
+                <div class="phase viral">
+                    <div class="phase-icon">🚀</div>
+                    <h3>Phase 1: Viral Shopper Growth</h3>
+                    <div>
+                        <p><strong>Strategy:</strong> "Meet Aisle" - Pure AI shopping companion</p>
+                        <p><strong>Platforms:</strong> Apple, Google, Huawei, Web</p>
+                        <p><strong>Target:</strong> 1M+ global shoppers in 3-6 months</p>
+                        <p><strong>UI:</strong> Pure Blue theme (one-color doctrine)</p>
+                        <p><strong>Growth:</strong> Viral campaigns + influencers + PR</p>
+                    </div>
+                </div>
+                
+                <div class="phase">
+                    <div class="phase-icon">🏪</div>
+                    <h3>Phase 2: Marketplace Activation</h3>
+                    <div>
+                        <p><strong>Trigger:</strong> ≥1M shoppers (guaranteed demand)</p>
+                        <p><strong>Launch:</strong> Business app with Vendor/Enterprise UI</p>
+                        <p><strong>Rollout:</strong> Turkey → Kenya → Brazil → India → Egypt → Mexico</p>
+                        <p><strong>Target:</strong> 75K vendors serving existing shoppers</p>
+                        <p><strong>Advantage:</strong> Pre-populated marketplace with vendor FOMO</p>
+                    </div>
+                </div>
+            </div>
+            
+            <h3>Success Metrics</h3>
+            <div class="metric-grid">
+                <div class="metric">
+                    <span class="metric-number">100K</span>
+                    Week 1 Downloads
+                </div>
+                <div class="metric">
+                    <span class="metric-number">500K</span>
+                    Month 1 Active Users
+                </div>
+                <div class="metric">
+                    <span class="metric-number">1M</span>
+                    Month 3 Phase 2 Trigger
+                </div>
+                <div class="metric">
+                    <span class="metric-number">4.5+</span>
+                    App Store Rating
+                </div>
+            </div>
+        </div>
+
+        <!-- Slide 6: Competitive Advantage -->
+        <div class="slide">
+            <div class="logo">AisleMarts</div>
+            <div class="slide-counter">6 / 10</div>
+            
+            <h2>Unmatched Competitive Position</h2>
+            
+            <div class="competitive-advantage">
+                <div class="advantage-item">
+                    <h4>vs Amazon/eBay</h4>
+                    <p><strong>Cultural AI:</strong> Adapts to local preferences, languages, and buying behaviors instead of generic global algorithms</p>
+                </div>
+                <div class="advantage-item">
+                    <h4>vs Alibaba/AliExpress</h4>
+                    <p><strong>Unified Commerce:</strong> Single platform for B2C, B2B, and nearby commerce instead of separate ecosystems</p>
+                </div>
+                <div class="advantage-item">
+                    <h4>vs Jumia/Konga</h4>
+                    <p><strong>Dual-Mode Search:</strong> Online + onsite integration with pickup windows and real-time inventory sync</p>
+                </div>
+                <div class="advantage-item">
+                    <h4>vs Shopify/WooCommerce</h4>
+                    <p><strong>Complete Solution:</strong> Built-in AI discovery, payments, logistics instead of fragmented plugins</p>
+                </div>
+            </div>
+            
+            <div style="margin: 3rem 0;">
+                <div class="metric">First-Mover Advantage</div>
+                <div class="metric">24-Month Head Start</div>
+                <div class="metric">Proven in Africa</div>
+                <div class="metric">Global Scale Ready</div>
+            </div>
+            
+            <h3><span class="highlight">The only platform</span> that solves the entire commerce value chain with AI intelligence</h3>
+        </div>
+
+        <!-- Slide 7: Market Opportunity -->
+        <div class="slide">
+            <div class="logo">AisleMarts</div>
+            <div class="slide-counter">7 / 10</div>
+            
+            <h2>Massive Global Market Opportunity</h2>
+            
+            <div class="metric-grid">
+                <div class="metric">
+                    <span class="metric-number">$6.2T</span>
+                    TAM - Global E-commerce
+                </div>
+                <div class="metric">
+                    <span class="metric-number">$1.4T</span>
+                    Cross-Border Trade
+                </div>
+                <div class="metric">
+                    <span class="metric-number">$500B</span>
+                    AI Software Market
+                </div>
+                <div class="metric">
+                    <span class="metric-number">$1T+</span>
+                    AI-Commerce Convergence
+                </div>
+            </div>
+            
+            <div class="growth-timeline">
+                <div class="growth-item">
+                    <div class="growth-year">2025</div>
+                    <div><strong>Turkey + Kenya</strong><br>$13B Market Entry</div>
+                </div>
+                <div class="growth-item">
+                    <div class="growth-year">2026</div>
+                    <div><strong>Brazil + India</strong><br>$66B Market Expansion</div>
+                </div>
+                <div class="growth-item">
+                    <div class="growth-year">2027</div>
+                    <div><strong>Egypt + Mexico</strong><br>$26B Additional Markets</div>
+                </div>
+                <div class="growth-item">
+                    <div class="growth-year">2028+</div>
+                    <div><strong>Global Scale</strong><br>$1T+ Total Opportunity</div>
+                </div>
+            </div>
+            
+            <h3><span class="highlight">Growing 15% annually</span> with mobile commerce and AI adoption accelerating expansion</h3>
+        </div>
+
+        <!-- Slide 8: Business Model -->
+        <div class="slide">
+            <div class="logo">AisleMarts</div>
+            <div class="slide-counter">8 / 10</div>
+            
+            <h2>Multiple Revenue Streams</h2>
+            
+            <div class="revenue-model">
+                <div class="revenue-stream">
+                    <h4>2.5%</h4>
+                    <p><strong>Transaction Fees</strong><br>Commission on all sales</p>
+                </div>
+                <div class="revenue-stream">
+                    <h4>$99-999</h4>
+                    <p><strong>SaaS Subscriptions</strong><br>Monthly platform access</p>
+                </div>
+                <div class="revenue-stream">
+                    <h4>$10-100K</h4>
+                    <p><strong>Enterprise Licensing</strong><br>Custom implementations</p>
+                </div>
+                <div class="revenue-stream">
+                    <h4>1-3%</h4>
+                    <p><strong>Cross-Border</strong><br>International facilitation</p>
+                </div>
+            </div>
+            
+            <h3>5-Year Financial Projections</h3>
+            <div class="growth-timeline">
+                <div class="growth-item">
+                    <div class="growth-year">Y1</div>
+                    <div><strong>$2M</strong><br>Revenue<br>2M Users</div>
+                </div>
+                <div class="growth-item">
+                    <div class="growth-year">Y2</div>
+                    <div><strong>$15M</strong><br>Revenue<br>8M Users</div>
+                </div>
+                <div class="growth-item">
+                    <div class="growth-year">Y3</div>
+                    <div><strong>$60M</strong><br>Revenue<br>25M Users</div>
+                </div>
+                <div class="growth-item">
+                    <div class="growth-year">Y5</div>
+                    <div><strong>$850M</strong><br>Revenue<br>100M Users</div>
+                </div>
+            </div>
+            
+            <div class="metric-grid">
+                <div class="metric">
+                    <span class="metric-number">85%</span>
+                    Gross Margin
+                </div>
+                <div class="metric">
+                    <span class="metric-number">16:1</span>
+                    LTV/CAC Ratio
+                </div>
+                <div class="metric">
+                    <span class="metric-number">2.5x</span>
+                    Viral Coefficient
+                </div>
+            </div>
+        </div>
+
+        <!-- Slide 9: Investment Opportunity -->
+        <div class="slide">
+            <div class="logo">AisleMarts</div>
+            <div class="slide-counter">9 / 10</div>
+            
+            <h2>Series A Investment Opportunity</h2>
+            
+            <div style="background: linear-gradient(135deg, #0D47A1, #1565C0); color: white; padding: 3rem; border-radius: 20px; margin: 2rem 0;">
+                <h3 style="color: white; margin-bottom: 2rem;">💰 $5M Series A Raise</h3>
+                <div class="metric-grid">
+                    <div style="background: rgba(255,255,255,0.2); color: white; padding: 20px; border-radius: 12px;">
+                        <span style="font-size: 2rem; font-weight: 800; display: block;">$3M</span>
+                        Product & Engineering
+                    </div>
+                    <div style="background: rgba(255,255,255,0.2); color: white; padding: 20px; border-radius: 12px;">
+                        <span style="font-size: 2rem; font-weight: 800; display: block;">$1.5M</span>
+                        Global Market Expansion
+                    </div>
+                    <div style="background: rgba(255,255,255,0.2); color: white; padding: 20px; border-radius: 12px;">
+                        <span style="font-size: 2rem; font-weight: 800; display: block;">$0.5M</span>
+                        Operations & Legal
+                    </div>
+                </div>
+            </div>
+            
+            <div class="competitive-advantage">
+                <div class="advantage-item">
+                    <h4>18-Month Runway</h4>
+                    <p>Complete global viral launch and establish market presence in 6+ countries</p>
+                </div>
+                <div class="advantage-item">
+                    <h4>1M+ Shoppers Target</h4>
+                    <p>Achieve Phase 2 activation trigger and pre-populate marketplace demand</p>
+                </div>
+                <div class="advantage-item">
+                    <h4>Series B Positioning</h4>
+                    <p>$15M+ Series B ready for accelerated global expansion</p>
+                </div>
+                <div class="advantage-item">
+                    <h4>Exit Strategy</h4>
+                    <p>Strategic acquisition or IPO path at $2-5B valuation by 2028-2030</p>
+                </div>
+            </div>
+            
+            <h3><span class="highlight">100x+ Return Potential</span> in the $1T AI-Commerce Revolution</h3>
+        </div>
+
+        <!-- Slide 10: Call to Action -->
+        <div class="slide">
+            <div class="logo">AisleMarts</div>
+            <div class="slide-counter">10 / 10</div>
+            
+            <h1>Ready to Transform Global Commerce?</h1>
+            
+            <div class="metric-grid">
+                <div class="metric">
+                    <span class="metric-number">✅</span>
+                    Complete Platform Built
+                </div>
+                <div class="metric">
+                    <span class="metric-number">✅</span>
+                    Dual-Mode AI Proven
+                </div>
+                <div class="metric">
+                    <span class="metric-number">✅</span>
+                    Viral Strategy Ready
+                </div>
+                <div class="metric">
+                    <span class="metric-number">🚀</span>
+                    Global Scale Prepared
+                </div>
+            </div>
+            
+            <p style="font-size: 1.6rem; margin: 3rem 0; line-height: 1.4;">
+                <span class="highlight">AisleMarts</span> is the Universal AI Commerce Engine the world needs.<br>
+                The first complete platform that makes shopping effortless through AI intelligence.<br>
+                <strong>Join us in building the future of global trade.</strong>
+            </p>
+            
+            <a href="mailto:investors@aislemarts.com" class="cta">
+                Schedule Your Live Demo
+            </a>
+            
+            <div style="margin-top: 3rem; font-size: 1.2rem; color: #0D47A1; line-height: 1.6;">
+                <strong>Contact:</strong> investors@aislemarts.com<br>
+                <strong>Demo Platform:</strong> Available 24/7 via live system<br>
+                <strong>Due Diligence:</strong> Technical and financial documentation ready<br>
+                <strong>Decision Timeline:</strong> Term sheet and closing within 30 days
+            </div>
+        </div>
+    </div>
+
+    <div class="navigation">
+        <button class="nav-btn" onclick="previousSlide()">← Previous</button>
+        <button class="nav-btn" onclick="nextSlide()">Next →</button>
+        <button class="nav-btn" onclick="toggleFullscreen()">Fullscreen</button>
+    </div>
+
+    <script>
+        let currentSlide = 0;
+        const slides = document.querySelectorAll('.slide');
+        const totalSlides = slides.length;
+
+        function updateCounter() {
+            const counter = document.querySelector('.slide.active .slide-counter');
+            if (counter) {
+                counter.textContent = `${currentSlide + 1} / ${totalSlides}`;
+            }
+        }
+
+        function showSlide(n) {
+            slides[currentSlide].classList.remove('active');
+            currentSlide = (n + totalSlides) % totalSlides;
+            slides[currentSlide].classList.add('active');
+            updateCounter();
+        }
+
+        function nextSlide() {
+            showSlide(currentSlide + 1);
+        }
+
+        function previousSlide() {
+            showSlide(currentSlide - 1);
+        }
+
+        function toggleFullscreen() {
+            if (!document.fullscreenElement) {
+                document.documentElement.requestFullscreen();
+            } else {
+                document.exitFullscreen();
+            }
+        }
+
+        // Keyboard navigation
+        document.addEventListener('keydown', function(e) {
+            if (e.key === 'ArrowRight' || e.key === ' ') {
+                e.preventDefault();
+                nextSlide();
+            } else if (e.key === 'ArrowLeft') {
+                e.preventDefault();
+                previousSlide();
+            } else if (e.key === 'f' || e.key === 'F') {
+                toggleFullscreen();
+            }
+        });
+
+        // Initialize counter
+        updateCounter();
+    </script>
+</body>
+</html>
