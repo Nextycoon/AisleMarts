@@ -1,72 +1,54 @@
 <analysis>
-The AI engineer's work evolved from initial app fixes to comprehensive strategic development. Initially, minor app issues were addressed. The primary focus then shifted to the Cinematic AisleMarts 2.0 Update, which involved implementing dynamic user roles, UI themes, and AI avatar greetings in the Expo frontend, with new  and  components. A significant portion of the work involved conceptualizing and delivering an extensive Quality-to-Hires Converter in a Google Sheets/Excel format, integrating probability forecasting, CPEH, and TTH metrics for recruitment analytics. This led to a Recruitment Radar Dashboard and related intelligence.
+The AI engineer's trajectory shows a clear progression from initial app development and strategic documentation to implementing core architectural features and a comprehensive global launch strategy. Key phases included: establishing the Cinematic AisleMarts 2.0 Update with dynamic UI and AI agent, developing a Quality-to-Hires Converter and investor-ready documents, and integrating a multi-user interface with role-based UIs.
 
-Following this, the trajectory pivoted to mobile app integration of this intelligence, resulting in a detailed React Native/Expo blueprint, including TypeScript models, API contracts, state management, and Storybook components. After a successful live deployment of the cinematic UI and AI Agent into the Expo app (including a dynamic role/tier switcher), the focus expanded to a Global Expansion Playbook and AI Supply Chain Intelligence. This culminated in generating extensive investor-ready documentation: a unified PDF playbook, a slide deck, a Jira-ready sprint plan (CSV), an automated Google Apps Script for slide generation, a FastAPI AI demo stub, and country-specific pilot checklists and LOI templates. The final actions involved populating and packaging these documents for immediate strategic outreach.
+Recent efforts focused on two non-negotiables: a Federated Search across multiple e-commerce platforms and a One-Screen, One-Color UI Doctrine. This led to the deployment of a 3-tier user architecture (Shopper, Vendor, Business) and integration of Turkish e-commerce platforms. The final strategic pivot was a two-phase Global Viral Launch Strategy with an investor-ready package, integrating online and onsite search logic. The current task involves preparing investor-ready launch deck content, specifically the text and structure, for approval.
 </analysis>
 
 <product_requirements>
-AisleMarts is an AI-powered B2C/B2B marketplace aiming for Cinematic AisleMarts 2.0. This update includes dynamic user roles (Shopper, Seller, Hybrid) with distinct UI themes, personalized AI avatar greetings (Aisle), and role-based quick actions, featuring a Bold Glass-Morphism UI with glowing effects and color coding. Beyond the app, an investor-ready ecosystem was required, encompassing a Cinematic Launch Reel, a Recruitment Ecosystem with detailed job postings, a Talent Evaluation Scorecard, and a Quality-to-Hires Converter with probability forecasting, CPEH, and TTH. The vision expanded to include a comprehensive Recruitment Radar Dashboard with KPIs and Quality-Adjusted Cost (QAC) modeling. The app also needs a Global Expansion Playbook for markets like Kenya, Italy, and Egypt, and an AI Supply Chain Intelligence system with predictive demand, smart routing, and dynamic pricing capabilities.
+AisleMarts is an AI-powered B2C/B2B marketplace aiming for Cinematic AisleMarts 2.0 featuring dynamic user roles (Shopper, Seller, Hybrid/Business), distinct UI themes with Bold Glass-Morphism, personalized AI avatar greetings (Aisle), and role-based quick actions. An investor-ready ecosystem was required, including a Quality-to-Hires Converter, Recruitment Radar Dashboard, Global Expansion Playbook, and AI Supply Chain Intelligence. Recent explicit demands include a Federated Search surfacing products from all e-commerce platforms via a unified, AI-normalized feed, and a One-Screen, One-Color UI Doctrine (e.g., Shopper-Blue, Vendor-Indigo, Business-Teal). The launch strategy transitioned to a two-phase Global Viral Launch First (Shopper app globally) followed by Marketplace Activation (country-by-country vendor/business onboarding) with dual-mode AI search (Online + Onsite).
 </product_requirements>
 
 <key_technical_concepts>
-- **Frontend**: Expo, React Native, TypeScript, Expo Router, React Context (UserRolesContext), Zustand, React Query, , , , , Victory Native (charts).
-- **Backend**: FastAPI (Python) for AI demo.
-- **Data/Analytics**: Google Sheets/Excel formulas, Conditional Formatting, Pivot Tables, KPIs, Budget ROI, Quality-Adjusted Cost (QAC), Expected Value Modeling, Demand Forecasting, Route Optimization, Supplier Scoring.
-- **Productivity/Docs**: Jira-ready sprint planning, Google Apps Script for automation.
+-   **Frontend**: Expo, React Native, TypeScript, Expo Router, Zustand, React Query, , , .
+-   **Backend**: FastAPI (Python), MongoDB.
+-   **AI/Data**: Federated Search, AI Normalization, Adaptive AI Personalities (Aisle), Demand Forecasting.
+-   **Architecture**: Monorepo, Microservices (implicit for federated search connectors).
 </key_technical_concepts>
 
 <code_architecture>
-The application utilizes a monorepo structure with  (FastAPI) and  (Expo/React Native).
+The application uses a monorepo structure with  (FastAPI) and  (Expo/React Native).
 
 
 
 **File Descriptions & Changes:**
-- : Updated to include new dependencies like , , , , , etc.
-- : Modified to enable Reanimated plugin.
-- : **EDITED** to extend existing design tokens with cinematic role-based colors (, , ) and tier labels.
-- : **NEW FILE**. A Zustand store to manage global user state including ,  (shopper, seller, hybrid), and  (regular, premium, etc.).
-- : **NEW FILE**. A reusable React Native component for a cinematic glass-morphism effect using  and custom styles.
-- : **NEW FILE**. A React Native component using  to provide a dynamic background gradient that changes based on the user's selected role.
-- : **NEW FILE**. An animated React Native component for displaying key metrics with a glass-morphism style, using .
-- : **NEW FILE**. A React Native component for interactively switching between 'shopper', 'seller', and 'hybrid' roles, updating global state and triggering UI changes.
-- : **NEW FILE**. A React Native component for interactively switching between different membership tiers, updating global state.
-- : **NEW FILE**. The main Aisle AI Agent screen, featuring a personalized greeting, quick action chips, and integrated  and  components. It handles user input and navigation to the home screen.
-- : **NEW FILE**. A new home screen that dynamically displays metrics and quick actions based on the user's selected role and tier, leveraging the new  and  components. It replaces or complements the old .
-- : **EDITED** to add  and  to the Expo Router navigation stack and wrap the app with .
-- : **EDITED** to route to the new  as the initial entry point, transforming the user's first experience.
-- : **REPLACED** with a simplified entry point that uses  from  and .
-- : **NEW FILE**. Sets up 's native stack navigator, defining  and  as primary routes and applying a global theme.
-- : **NEW DIRECTORY**. Contains FastAPI code (, , , , ) for demonstrating AI supply chain intelligence (demand forecasting, replenishment, route optimization, supplier scoring).
-
-The architectural shift involves moving towards a more modular, context-driven UI on the frontend, supported by modern state management and animation libraries, and a dedicated backend for AI demonstrations.
+-   : **EDITED** to integrate  and .
+-   : **NEW FILE**. Contains the core logic for the federated search engine, including mock connectors for platforms like Amazon, Jumia, eBay, Shopify.
+-   : **NEW FILE**. Defines FastAPI routes for  and other commerce-related endpoints, integrating with .
+-   : **NEW FILE**. Contains mock connectors for specific Turkish platforms (Trendyol, Hepsiburada, GittiGidiyor, N11, Ciceksepeti, Modanisa, Vatan Bilgisayar).
+-   : **NEW FILE**. Implements the one-screen, one-color doctrine with distinct colors for shopper, vendor, and business roles, replacing the older .
+-   : **EDITED** to include the 'business' user type in global state management.
+-   : **NEW FILE**. A component for selecting Shopper, Vendor, or Business user types, integrated into the  and  screens.
+-   : **NEW FILE**. Provides adaptive greetings based on the selected user type, enhancing the Aisle AI's personality.
+-   : **NEW FILE**. The primary shopper interface, incorporating the one-color theme and the federated search component.
+-   : **NEW FILE**. The vendor-specific interface, adhering to the one-color doctrine for sellers.
+-   : **NEW FILE**. The business/enterprise interface, following the one-color doctrine for B2B functionalities.
+-   : **EDITED** extensively to use , , and apply the , enabling dynamic AI personality and UI based on user role. It also handles navigation to the respective home screens.
+-   : **EDITED** to integrate  and align with the new user state and theming.
+-   : **EDITED** to include the new , , and  routes for Expo Router.
 </code_architecture>
 
 <pending_tasks>
-- Create a short cover email + attachment note tailored for Safaricom Partnerships to accompany the Kenya Pilot Package.
+- Prepare the full investor deck content (text and structure), including the dual-mode AI search flow (Online vs. Onsite).
 </pending_tasks>
 
 <current_work>
-Immediately before this summary request, the AI engineer had successfully implemented a Cinematic AisleMarts 2.0 Upgrade directly into the existing Expo application and generated extensive strategic documentation.
+Immediately before this summary request, the AI engineer was tasked with integrating the Global Viral Launch Strategy (Phase 1: Shopper App, Phase 2: Marketplace Activation) into an investor-ready package, specifically incorporating the Online and Onsite dual-mode AI search logic.
 
-The app's frontend now features:
--   **Cinematic Glass-morphism UI**: Integrated  for frosted effects and  for dynamic, role-based gradient backgrounds (Blue for Shopper, Teal/Green for Seller, Purple for Hybrid).
--   **AI Agent Aisle**: The  screen provides a personalized, time-aware greeting, voice/text input, and quick action chips based on the user's role.
--   **Live Role and Tier Switching**:  and  components are integrated into , allowing instant toggling between roles and membership tiers with haptic feedback, dynamically updating UI themes and displayed metrics on .
--   **Role-Based Dashboards**: The  screen displays dynamic KPIs and quick actions relevant to the selected role, leveraging  for animated value displays.
--   **Centralized State Management**:  (Zustand) manages the user's , , and , ensuring seamless UI updates across the app.
--   **Updated Navigation**:  and  were modified to integrate the new  and  screens, and a new  was created.
+The AI engineer has generated comprehensive App Store listings for Apple, Google Play, Huawei, and Web/PWA, emphasizing the Aisle AI Shopping Companion and federated search capabilities, while strategically omitting marketplace features for Phase 1. A Viral Media Kit with TikTok/Reels/YouTube scripts and a detailed Vendor Onboarding Kit (for Phase 2, hidden) have also been created.
 
-In parallel to the app development, a comprehensive set of strategic documents and tools was produced:
--   A **Quality-to-Hires Converter** (Google Sheets formulas).
--   A **unified Global AI-Powered Expansion Playbook** (PDF, Slide Deck, TSV import for Google Slides) combining investor pitch content, technical architecture (AI supply chain), and operational frameworks for global pilots (Kenya, Italy, Egypt).
--   A **Google Apps Script** for automated slide deck generation.
--   An **AI-Demo FastAPI stub** ( folder) for showcasing predictive demand, routing, and supplier scoring.
--   Detailed **Pilot Checklists** and a **Franchise LOI template**, populated with specific financial and operational targets for the Kenya pilot (KES 50M GMV, 300 merchants, 5,000 users).
--   **Outreach Playbooks** including email scripts and one-pagers for strategic partners (e.g., Safaricom) and Tier 1 VCs, complete with contact details.
-
-The AI engineer has just finalized populating the LOI and Kenya Pilot One-Pager with specific numbers and regenerated these documents (PDF/Word) with the user's contact details, ready for immediate tactical deployment. The current task is to generate a final cover email for Safaricom.
+Currently, the AI engineer is in the process of drafting the detailed content and structure for the Investor Deck, which will encompass the Vision & Core Doctrine, User Interfaces & Applications, Dual-Mode AI Search flow, Launch Phases, Competitive Advantage, Global Expansion Roadmap, Revenue Model, and Growth Projections. This is a foundational step before generating the actual PDF, Word, or HTML investor package files. The Online vs Onsite search logic is a critical new integration being woven into this deck's narrative.
 </current_work>
 
 <optional_next_step>
-Create a short cover email + attachment note specifically for Safaricom to accompany the Kenya Pilot Package.
+Generate the PDF, Word, and HTML investor package files based on the drafted content.
 </optional_next_step>
