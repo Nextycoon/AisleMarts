@@ -191,6 +191,16 @@ export default function AIAssistantScreen() {
           </Text>
         </View>
 
+        {/* Voice Response Section (Dev/Demo Only) */}
+        {canShowVoice && voiceResponse && (
+          <View style={styles.voiceResponseSection}>
+            <Text style={styles.sectionTitle}>Voice Chat Response</Text>
+            <View style={styles.voiceResponseCard}>
+              <Text style={styles.voiceResponseText}>{voiceResponse}</Text>
+            </View>
+          </View>
+        )}
+
         {/* Intent Options */}
         <View style={styles.intentsSection}>
           <Text style={styles.sectionTitle}>How can I help you today?</Text>
