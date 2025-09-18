@@ -210,7 +210,6 @@ const styles = StyleSheet.create({
     backgroundColor: 'rgba(255, 255, 255, 0.1)',
     borderWidth: 1,
     borderColor: 'rgba(255, 255, 255, 0.2)',
-    // Note: backdropFilter not supported in React Native, using backgroundColor instead
   },
   
   content: {
