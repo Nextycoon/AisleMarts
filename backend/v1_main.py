@@ -40,6 +40,7 @@ from routers import (
     recommendations_v2,     # /app/backend/routers/recommendations_v2.py
     payments_stripe,        # /app/backend/routers/payments_stripe.py
     orders,                 # /app/backend/routers/orders.py
+    vendor_management,      # /app/backend/routers/vendor_management.py
 )
 
 app.include_router(health.router)
