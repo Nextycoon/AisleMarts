@@ -211,6 +211,86 @@ const styles = StyleSheet.create({
     color: '#e5e5e5',
   },
   
+  // Prominent Aisle Identity Section Styles
+  aisleIdentitySection: {
+    paddingHorizontal: 24,
+    marginTop: 16,
+    marginBottom: 24,
+  },
+  
+  aisleIdentityCard: {
+    backgroundColor: 'rgba(168, 85, 247, 0.12)',
+    borderRadius: 20,
+    padding: 24,
+    borderWidth: 2,
+    borderColor: 'rgba(168, 85, 247, 0.3)',
+    shadowColor: '#a855f7',
+    shadowOffset: { width: 0, height: 4 },
+    shadowOpacity: 0.2,
+    shadowRadius: 8,
+    elevation: 8,
+  },
+  
+  aisleIdentityHeader: {
+    flexDirection: 'row',
+    alignItems: 'center',
+    marginBottom: 16,
+  },
+  
+  aisleAvatarContainer: {
+    width: 60,
+    height: 60,
+    borderRadius: 30,
+    backgroundColor: '#a855f7',
+    alignItems: 'center',
+    justifyContent: 'center',
+    marginRight: 16,
+  },
+  
+  aisleAvatarIcon: {
+    fontSize: 28,
+    color: '#ffffff',
+  },
+  
+  aisleIdentityInfo: {
+    flex: 1,
+  },
+  
+  aisleIdentityName: {
+    fontSize: 24,
+    fontWeight: 'bold',
+    color: '#a855f7',
+    marginBottom: 4,
+  },
+  
+  aisleIdentityTagline: {
+    fontSize: 14,
+    fontWeight: '600',
+    color: '#d4d4d8',
+  },
+  
+  aisleIdentityStatement: {
+    fontSize: 15,
+    fontWeight: '500',
+    color: '#ffffff',
+    lineHeight: 22,
+    marginBottom: 16,
+    textAlign: 'center',
+  },
+  
+  aisleCapabilities: {
+    flexDirection: 'row',
+    justifyContent: 'space-around',
+    alignItems: 'center',
+  },
+  
+  aisleCapability: {
+    fontSize: 12,
+    fontWeight: '600',
+    color: '#d4d4d8',
+    textAlign: 'center',
+  },
+  
   avatarSection: {
     alignItems: 'center',
     marginTop: 32,
