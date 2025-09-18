@@ -18,7 +18,7 @@
 ### **OPENING HOOK (0-15 seconds)**
 **[Face investors directly, hold phone confidently]**
 
-> *"Ladies and gentlemen, let me show you something no marketplace in the world has today — true voice-native commerce. This isn't just voice search. This is conversational shopping that completes transactions."*
+> *"Ladies and gentlemen, let me introduce you to Aisle — your 24/7/365 multilingual AI shopping expert. This isn't just voice search. This is conversational shopping that speaks every customer's language and completes transactions around the clock."*
 
 **[Tap voice button, bring phone to mouth]**
 
