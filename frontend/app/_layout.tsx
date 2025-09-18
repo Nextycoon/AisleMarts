@@ -43,6 +43,7 @@ export default function RootLayout() {
               <Stack.Screen name="shopper-home" options={{ title: 'Shopper Portal', headerShown: false }} />
               <Stack.Screen name="vendor-home" options={{ title: 'Vendor Dashboard', headerShown: false }} />
               <Stack.Screen name="aislemarts-home" options={{ title: 'AisleMarts Home', headerShown: false }} />
+              <Stack.Screen name="checkout" options={{ title: 'Checkout', headerShown: true, headerStyle: { backgroundColor: '#0f0f23' }, headerTintColor: '#ffffff' }} />
               <Stack.Screen name="completion-demo" options={{ title: 'Task Complete', headerShown: false }} />
             </Stack>
           </UserRolesProvider>
