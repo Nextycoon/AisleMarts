@@ -211,49 +211,38 @@ const styles = StyleSheet.create({
     textAlign: 'center',
   },
   
-  // Aisle AI Identity Styles
-  aisleIdentityContainer: {
-    paddingHorizontal: 24,
+  // Inline Aisle AI Identity Styles (within role card)
+  aisleIdentityInline: {
+    backgroundColor: 'rgba(168, 85, 247, 0.1)',
+    borderRadius: 12,
+    padding: 16,
     marginVertical: 16,
-  },
-  
-  aisleIdentityCard: {
-    backgroundColor: 'rgba(168, 85, 247, 0.15)',
-    borderRadius: 16,
-    padding: 20,
     borderWidth: 1,
-    borderColor: 'rgba(168, 85, 247, 0.4)',
+    borderColor: 'rgba(168, 85, 247, 0.3)',
+  },
+  
+  aisleIdentityInlineHeader: {
+    flexDirection: 'row',
     alignItems: 'center',
+    marginBottom: 8,
   },
   
-  aisleIconContainer: {
-    width: 50,
-    height: 50,
-    borderRadius: 25,
-    backgroundColor: 'rgba(245, 158, 11, 0.2)',
-    alignItems: 'center',
-    justifyContent: 'center',
-    marginBottom: 12,
-  },
-  
-  aisleIcon: {
-    fontSize: 24,
-  },
-  
-  aisleIdentityTitle: {
+  aisleIdentityInlineIcon: {
     fontSize: 18,
+    marginRight: 8,
+  },
+  
+  aisleIdentityInlineTitle: {
+    fontSize: 14,
     fontWeight: 'bold',
     color: '#a855f7',
-    marginBottom: 12,
-    textAlign: 'center',
   },
   
-  aisleIdentityText: {
-    fontSize: 14,
+  aisleIdentityInlineText: {
+    fontSize: 13,
     fontWeight: '400',
     color: '#e5e5e5',
-    textAlign: 'center',
-    lineHeight: 20,
+    lineHeight: 18,
   },
   
   roleSection: {
