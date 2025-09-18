@@ -1,9 +1,9 @@
 import React, { createContext, useContext, useState, useEffect } from 'react';
 import AsyncStorage from '@react-native-async-storage/async-storage';
 
-// User Roles & Tiers System for AisleMarts 2.0
-export type UserRole = 'shopper' | 'seller' | 'hybrid';
-export type MembershipTier = 'regular' | 'premium' | 'pro' | 'business' | 'first-class' | 'world-class';
+// User Roles & Tiers System for AisleMarts 2.0 - Shopper-Only v1
+export type UserRole = 'shopper';
+export type MembershipTier = 'regular' | 'premium' | 'pro' | 'first-class' | 'world-class';
 
 export interface UserProfile {
   id: string;
