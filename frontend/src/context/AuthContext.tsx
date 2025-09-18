@@ -183,7 +183,7 @@ export const AuthProvider: React.FC<{ children: React.ReactNode }> = ({ children
     }
   };
 
-  const setupAvatar = async (role: 'buyer' | 'seller' | 'hybrid') => {
+  const setupAvatar = async (role: 'shopper') => {
     try {
       // Save role to AsyncStorage
       await AsyncStorage.setItem('userRole', role);
