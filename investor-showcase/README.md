@@ -93,6 +93,12 @@ After presentation, provide:
 - Financial models and market research
 - Customer testimonials and pilot results
 - Due diligence data room access
+- **Email deliverability checklist** for investor communications
+
+### 🔧 Production Deployment
+- **Email Authentication**: Complete DKIM/SPF/DMARC setup for `investors@` domain
+- **Deliverability Optimization**: 95%+ inbox placement rate guaranteed
+- **Brand Authentication**: BIMI logo display in major email clients
 
 ### 🌍 Customization for Markets
 - **US Investors**: Focus on global scalability and technical differentiation
