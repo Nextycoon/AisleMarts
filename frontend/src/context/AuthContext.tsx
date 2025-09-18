@@ -7,7 +7,7 @@ interface User {
   email: string;
   name?: string;
   roles: string[];
-  role?: 'buyer' | 'seller' | 'hybrid'; // Avatar role
+  role?: 'shopper'; // Avatar role - only shopper supported
 }
 
 interface AuthContextType {
