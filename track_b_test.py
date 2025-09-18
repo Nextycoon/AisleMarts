@@ -176,13 +176,18 @@ class TrackBTester:
         
         success, data = self.make_request("POST", "/vendors", vendor_data)
         
-        if success and isinstance(data, dict) and data.get("id"):
-            self.vendor_id = data.get("id")
+        if success and isinstance(data, dict):
+            # Check for both 'id' and '_id' fields
+            self.vendor_id = data.get("id") or data.get("_id")
             business_name = data.get("business_name")
             status = data.get("status")
             tier = data.get("tier")
             commission_rate = data.get("commission_rate")
-            self.log_test("Vendor Registration", True, f"Vendor: {business_name}, Status: {status}, Tier: {tier}, Commission: {commission_rate}%")
+            
+            if self.vendor_id and business_name:
+                self.log_test("Vendor Registration", True, f"Vendor: {business_name}, Status: {status}, Tier: {tier}, Commission: {commission_rate}%")
+            else:
+                self.log_test("Vendor Registration", False, f"Missing required fields in response: {data}")
         else:
             self.log_test("Vendor Registration", False, str(data))
 
