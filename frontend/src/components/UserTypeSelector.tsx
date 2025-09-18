@@ -6,7 +6,7 @@ import { useUser } from '../state/user';
 import { colors } from '../theme/tokens';
 import { Glass } from './Glass';
 
-type UserType = 'shopper' | 'vendor' | 'business';
+type UserType = 'shopper';
 
 const userTypes = [
   {
@@ -15,20 +15,6 @@ const userTypes = [
     title: 'Shopper',
     subtitle: 'Discover, buy, enjoy',
     description: 'AI companion for effortless shopping'
-  },
-  {
-    type: 'vendor' as UserType,
-    icon: '🛍️',
-    title: 'Vendor', 
-    subtitle: 'Sell, grow, succeed',
-    description: 'AI optimizer for business growth'
-  },
-  {
-    type: 'business' as UserType,
-    icon: '🏢',
-    title: 'Business',
-    subtitle: 'Scale, trade, expand',
-    description: 'AI facilitator for enterprise commerce'
   }
 ];
 
