@@ -1,14 +1,23 @@
 import React from 'react';
-import { View, Text, StyleSheet, ActivityIndicator } from 'react-native';
+import { View, Text, StyleSheet, ActivityIndicator, TouchableOpacity } from 'react-native';
 import { LinearGradient } from 'expo-linear-gradient';
 import { router } from 'expo-router';
 import { useAuth } from '../src/context/AuthContext';
+import AsyncStorage from '@react-native-async-storage/async-storage';
 
 export default function IndexScreen() {
   const { loading, hasCompletedAvatarSetup } = useAuth();
+  const [showDebug, setShowDebug] = React.useState(false);
 
   React.useEffect(() => {
+    // Force navigation after maximum 5 seconds to prevent infinite loading
+    const forceNavTimer = setTimeout(() => {
+      console.log('🚨 Force navigation after 5 seconds');
+      router.replace('/aisle-avatar');
+    }, 5000);
+
     if (!loading) {
+      clearTimeout(forceNavTimer);
       // Navigate based on auth state after loading is complete
       setTimeout(() => {
         if (hasCompletedAvatarSetup) {
@@ -18,7 +27,27 @@ export default function IndexScreen() {
         }
       }, 1000); // Small delay to show loading screen
     }
+
+    return () => clearTimeout(forceNavTimer);
   }, [loading, hasCompletedAvatarSetup]);
+
+  const handleDebugTap = () => {
+    setShowDebug(true);
+  };
+
+  const handleClearStorage = async () => {
+    try {
+      await AsyncStorage.clear();
+      console.log('🗑️ AsyncStorage cleared');
+      router.replace('/aisle-avatar');
+    } catch (error) {
+      console.error('Failed to clear storage:', error);
+    }
+  };
+
+  const handleGoToCompletion = () => {
+    router.replace('/completion-demo');
+  };
 
   return (
     <View style={styles.container}>
