@@ -335,7 +335,6 @@ const styles = StyleSheet.create({
     color: '#ffffff',
     textAlign: 'center',
     marginBottom: 8,
-    letterSpacing: 1,
   },
   
   heroSubtitle: {
@@ -344,7 +343,6 @@ const styles = StyleSheet.create({
     color: '#f59e0b',
     textAlign: 'center',
     marginBottom: 24,
-    letterSpacing: 2,
   },
   
   taglineContainer: {
@@ -365,7 +363,6 @@ const styles = StyleSheet.create({
     fontWeight: '400',
     color: '#a1a1a3',
     textAlign: 'center',
-    letterSpacing: 1,
   },
   
   roleSection: {
@@ -379,7 +376,6 @@ const styles = StyleSheet.create({
     color: '#ffffff',
     textAlign: 'center',
     marginBottom: 32,
-    letterSpacing: 1,
   },
   
   roleCard: {
@@ -529,6 +525,5 @@ const styles = StyleSheet.create({
     fontWeight: '400',
     color: '#71717a',
     textAlign: 'center',
-    letterSpacing: 1,
   },
 });
