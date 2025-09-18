@@ -287,6 +287,40 @@ const styles = StyleSheet.create({
     marginBottom: 16,
   },
   
+  // Aisle Identity Banner Styles
+  aisleIdentityBanner: {
+    backgroundColor: 'rgba(168, 85, 247, 0.1)',
+    borderRadius: 12,
+    padding: 16,
+    marginBottom: 16,
+    borderWidth: 1,
+    borderColor: 'rgba(168, 85, 247, 0.3)',
+  },
+  
+  aisleIdentityHeader: {
+    flexDirection: 'row',
+    alignItems: 'center',
+    marginBottom: 8,
+  },
+  
+  aisleIdentityIcon: {
+    fontSize: 20,
+    marginRight: 8,
+  },
+  
+  aisleIdentityLabel: {
+    fontSize: 14,
+    fontWeight: '600',
+    color: '#a855f7',
+  },
+  
+  aisleIdentityMessage: {
+    fontSize: 13,
+    fontWeight: '400',
+    color: '#e5e5e5',
+    lineHeight: 18,
+  },
+  
   conversationText: {
     fontSize: 16,
     fontWeight: '400',
