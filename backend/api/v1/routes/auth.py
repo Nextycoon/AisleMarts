@@ -142,5 +142,5 @@ async def get_current_shopper_profile(shopper=Depends(require_shopper)):
         "created_at": shopper.get("created_at")
     }
 
-# Import the dependency function
+# Import the dependency function - moved to fix import order
 from ..deps import require_shopper
