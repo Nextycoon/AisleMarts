@@ -20,7 +20,7 @@ interface AuthContextType {
   logout: () => Promise<void>;
   updateUser: (updates: Partial<User>) => Promise<void>;
   checkAvatarSetup: () => Promise<boolean>;
-  setupAvatar: (role: 'buyer' | 'seller' | 'hybrid') => Promise<void>;
+  setupAvatar: (role: 'shopper') => Promise<void>;
 }
 
 const AuthContext = createContext<AuthContextType>({} as AuthContextType);
