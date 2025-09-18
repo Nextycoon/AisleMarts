@@ -44,38 +44,64 @@ export default function AisleMartsHomeScreen() {
 
   const loadCollections = async () => {
     try {
-      // Load different segments using existing API
-      const [luxuryRes, trendingRes, dealsRes] = await Promise.allSettled([
-        API.get('/products?q=luxury&limit=10'),
-        API.get('/products?q=trending&limit=10'), 
-        API.get('/products?q=deal&limit=10')
-      ]);
-
+      // Load collections from new v1 API
+      const collectionsData = await api.collections();
+      
       const newCollections: Collection[] = [];
 
-      if (luxuryRes.status === 'fulfilled' && luxuryRes.value.data) {
+      if (collectionsData.Luxury && collectionsData.Luxury.length > 0) {
         newCollections.push({
           title: 'Luxury Collection',
           subtitle: 'Premium brands & exclusive pieces',
-          products: luxuryRes.value.data,
+          products: collectionsData.Luxury.map((item: any) => ({
+            _id: item.id,
+            title: item.title,
+            brand: item.brand,
+            price: item.price,
+            currency: 'USD',
+            images: [item.thumb],
+            tags: [item.badges],
+            rating: 4.8,
+            rating_count: 127
+          })),
           gradient: ['#f59e0b', '#d97706', '#92400e']
         });
       }
 
-      if (trendingRes.status === 'fulfilled' && trendingRes.value.data) {
+      if (collectionsData.Trending && collectionsData.Trending.length > 0) {
         newCollections.push({
           title: 'Trending Now',
           subtitle: 'Hot picks & new arrivals',
-          products: trendingRes.value.data,
+          products: collectionsData.Trending.map((item: any) => ({
+            _id: item.id,
+            title: item.title,
+            brand: item.brand,
+            price: item.price,
+            currency: 'USD',
+            images: [item.thumb],
+            tags: [item.badges],
+            rating: 4.6,
+            rating_count: 89
+          })),
           gradient: ['#a855f7', '#7c3aed', '#5b21b6']
         });
       }
 
-      if (dealsRes.status === 'fulfilled' && dealsRes.value.data) {
+      if (collectionsData.Deal && collectionsData.Deal.length > 0) {
         newCollections.push({
           title: 'Special Deals',
           subtitle: 'Limited time offers',
-          products: dealsRes.value.data,
+          products: collectionsData.Deal.map((item: any) => ({
+            _id: item.id,
+            title: item.title,
+            brand: item.brand,
+            price: item.price,
+            currency: 'USD',
+            images: [item.thumb],
+            tags: [item.badges],
+            rating: 4.4,
+            rating_count: 156
+          })),
           gradient: ['#059669', '#047857', '#065f46']
         });
       }
