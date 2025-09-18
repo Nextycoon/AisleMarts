@@ -1,0 +1,47 @@
+{
+    email admin@aislemarts.com
+}
+
+aislemarts-staging.yourdomain.com {
+    reverse_proxy api:8000
+    
+    encode gzip
+    
+    header {
+        # Security headers
+        Strict-Transport-Security "max-age=31536000; includeSubDomains; preload"
+        X-Content-Type-Options "nosniff"
+        X-Frame-Options "DENY"
+        X-XSS-Protection "1; mode=block"
+        Referrer-Policy "strict-origin-when-cross-origin"
+        
+        # CORS headers for API
+        Access-Control-Allow-Origin "*"
+        Access-Control-Allow-Methods "GET, POST, PUT, DELETE, OPTIONS"
+        Access-Control-Allow-Headers "Content-Type, Authorization"
+    }
+    
+    # Handle OPTIONS requests
+    @options method OPTIONS
+    respond @options 204
+    
+    # API documentation
+    handle /docs* {
+        reverse_proxy api:8000
+    }
+    
+    # Health check endpoint
+    handle /health {
+        reverse_proxy api:8000
+    }
+    
+    # All API routes
+    handle /api/* {
+        reverse_proxy api:8000
+    }
+    
+    # All other routes go to API
+    handle /* {
+        reverse_proxy api:8000
+    }
+}

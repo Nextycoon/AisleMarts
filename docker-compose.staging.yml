@@ -1,0 +1,79 @@
+version: '3.9'
+
+services:
+  mongo:
+    image: mongo:6
+    container_name: aislemarts-mongo-staging
+    restart: always
+    environment:
+      MONGO_INITDB_ROOT_USERNAME: admin
+      MONGO_INITDB_ROOT_PASSWORD: aislemarts2024
+    ports:
+      - "27017:27017"
+    volumes:
+      - mongo_staging_data:/data/db
+    networks:
+      - aislemarts-network
+
+  api:
+    build:
+      context: ./backend
+      dockerfile: Dockerfile
+    container_name: aislemarts-api-staging
+    restart: always
+    environment:
+      - MONGO_URI=mongodb://admin:aislemarts2024@mongo:27017/aislemarts?authSource=admin
+      - MONGO_DB=aislemarts
+      - ENV=staging
+      - API_VERSION=v1
+      - PYTHONPATH=/app
+    depends_on:
+      - mongo
+    ports:
+      - "8000:8000"
+    networks:
+      - aislemarts-network
+    healthcheck:
+      test: ["CMD", "curl", "-f", "http://localhost:8000/health"]
+      interval: 30s
+      timeout: 10s
+      retries: 3
+      start_period: 40s
+
+  caddy:
+    image: caddy:2-alpine
+    container_name: aislemarts-proxy-staging
+    restart: always
+    ports:
+      - "80:80"
+      - "443:443"
+    volumes:
+      - ./Caddyfile.staging:/etc/caddy/Caddyfile
+      - caddy_data:/data
+      - caddy_config:/config
+    depends_on:
+      - api
+    networks:
+      - aislemarts-network
+
+  redis:
+    image: redis:7-alpine
+    container_name: aislemarts-redis-staging
+    restart: always
+    ports:
+      - "6379:6379"
+    volumes:
+      - redis_staging_data:/data
+    networks:
+      - aislemarts-network
+    command: redis-server --appendonly yes
+
+volumes:
+  mongo_staging_data:
+  redis_staging_data:
+  caddy_data:
+  caddy_config:
+
+networks:
+  aislemarts-network:
+    driver: bridge
