@@ -1,14 +1,18 @@
 /**
  * AI Assistant MVP - Minimum Lovable Flow
  * Three key intents with deep links to existing features
+ * Voice chat functionality for dev/demo mode
  */
 
-import React, { useState } from 'react';
-import { View, Text, ScrollView, Pressable, StyleSheet, SafeAreaView } from 'react-native';
+import React, { useState, useRef, useEffect } from 'react';
+import { View, Text, ScrollView, Pressable, StyleSheet, SafeAreaView, Alert } from 'react-native';
 import { useRouter } from 'expo-router';
 import { Ionicons } from '@expo/vector-icons';
 import { colors, spacing, radii } from '../src/theme/tokens';
 import { useAnalytics } from '../src/utils/analytics';
+import { VOICE, shouldShowVoice } from '../src/config/voice';
+import { useIsDevBuild } from '../src/utils/useIsDevBuild';
+import { OpenAIVoiceAdapter } from '../src/voice/OpenAIVoiceAdapter';
 
 const AI_INTENTS = [
   {
