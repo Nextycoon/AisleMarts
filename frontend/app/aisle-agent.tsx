@@ -129,175 +129,20 @@ export default function AisleAgentScreen() {
   );
 }
 
-  return (
-    <SafeAreaView style={styles.container}>
-      <StatusBar barStyle="light-content" backgroundColor="transparent" translucent />
-      
-      {/* Cinematic Background */}
-      <LinearGradient
-        colors={[
-          colors.fashion.midnight,
-          colors.fashion.charcoal,
-          colors.primary[900],
-          colors.fashion.smokeGray
-        ]}
-        locations={[0, 0.4, 0.7, 1]}
-        style={StyleSheet.absoluteFill}
-      />
-      
-      {/* Animated Background Elements */}
-      <Animated.View 
-        style={[styles.backgroundElement, styles.element1]}
-        entering={FadeIn.delay(500)}
-      />
-      <Animated.View 
-        style={[styles.backgroundElement, styles.element2]}
-        entering={FadeIn.delay(700)}
-      />
-
-      {/* Header */}
-      <Animated.View 
-        style={styles.header}
-        entering={SlideInDown.delay(200)}
-      >
-        <View style={styles.headerContent}>
-          <Text style={styles.headerTitle}>AI Shopping Assistant</Text>
-          <View style={styles.statusIndicator}>
-            <View style={styles.statusDot} />
-            <Text style={styles.statusText}>Premium Mode</Text>
-          </View>
-        </View>
-      </Animated.View>
-
-      {/* Main Content */}
-      <View style={styles.mainContent}>
-        
-        {/* AI Avatar Section */}
-        <Animated.View 
-          style={styles.avatarSection}
-          entering={SlideInUp.delay(400)}
-        >
-          <Animated.View style={[styles.avatarGlow, animatedGlowStyle]} />
-          
-          <Animated.View 
-            style={[styles.avatarContainer, animatedAvatarStyle]}
-          >
-            <LinearGradient
-              colors={[colors.primary[400], colors.primary[600], colors.gold[500]]}
-              style={styles.avatarGradient}
-            >
-              <View style={styles.avatarInner}>
-                <Text style={styles.avatarIcon}>👤</Text>
-              </View>
-            </LinearGradient>
-          </Animated.View>
-          
-          <Animated.View 
-            style={styles.voiceButton}
-            entering={FadeIn.delay(600)}
-          >
-            <LuxuryButton
-              title={isListening ? "Listening..." : "Tap to talk with me!"}
-              onPress={handleVoicePress}
-              variant={isListening ? "luxury" : "glass"}
-              size="md"
-              style={styles.voiceButtonStyle}
-            />
-          </Animated.View>
-          
-          <Animated.View 
-            style={styles.statusContainer}
-            entering={FadeIn.delay(800)}
-          >
-            <View style={styles.statusBadge}>
-              <Text style={styles.statusBadgeText}>• {isListening ? 'Listening' : 'Ready'}</Text>
-            </View>
-          </Animated.View>
-        </Animated.View>
-
-        {/* Conversation Section */}
-        <Animated.View 
-          style={styles.conversationSection}
-          entering={SlideInUp.delay(600)}
-        >
-          <LuxuryCard variant="glass" style={styles.conversationCard}>
-            <Text style={styles.conversationTitle}>Conversation</Text>
-            <Text style={styles.conversationText}>
-              Good evening! Welcome to AisleMarts Premium. I'm your personal AI shopping companion. I'm here to help you discover amazing products, find exclusive deals, and make luxury shopping effortless.
-            </Text>
-          </LuxuryCard>
-        </Animated.View>
-
-        {/* Quick Actions */}
-        <Animated.View 
-          style={styles.actionsSection}
-          entering={SlideInUp.delay(800)}
-        >
-          <Text style={styles.actionsTitle}>Quick Actions</Text>
-          <View style={styles.actionsGrid}>
-            {quickActions.map((action, index) => (
-              <Animated.View 
-                key={action.title}
-                entering={SlideInUp.delay(1000 + index * 100)}
-                style={styles.actionItem}
-              >
-                <LuxuryButton
-                  title=""
-                  onPress={action.onPress}
-                  variant="glass"
-                  style={styles.actionButton}
-                >
-                  <View style={styles.actionContent}>
-                    <LinearGradient
-                      colors={action.gradient}
-                      style={styles.actionGradient}
-                    />
-                    <Text style={styles.actionIcon}>{action.icon}</Text>
-                    <Text style={styles.actionTitle}>{action.title}</Text>
-                    <Text style={styles.actionSubtitle}>{action.subtitle}</Text>
-                  </View>
-                </LuxuryButton>
-              </Animated.View>
-            ))}
-          </View>
-        </Animated.View>
-      </View>
-    </SafeAreaView>
-  );
-}
-
 const styles = StyleSheet.create({
   container: {
     flex: 1,
-    backgroundColor: colors.fashion.midnight,
+    backgroundColor: '#0f0f23',
   },
   
-  backgroundElement: {
-    position: 'absolute',
-    borderRadius: 200,
-    opacity: 0.05,
-  },
-  
-  element1: {
-    width: 300,
-    height: 300,
-    backgroundColor: colors.primary[500],
-    top: -50,
-    right: -100,
-  },
-  
-  element2: {
-    width: 250,
-    height: 250,
-    backgroundColor: colors.gold[500],
-    bottom: 50,
-    left: -75,
+  scrollView: {
+    flex: 1,
   },
   
   header: {
-    paddingHorizontal: spacing[6],
-    paddingTop: Platform.OS === 'ios' ? spacing[2] : spacing[8],
-    paddingBottom: spacing[4],
+    paddingHorizontal: 24,
+    paddingTop: 80,
+    paddingBottom: 16,
   },
   
   headerContent: {
@@ -307,10 +152,9 @@ const styles = StyleSheet.create({
   },
   
   headerTitle: {
-    fontSize: typography.sizes.xl,
-    fontFamily: typography.fonts.heading,
-    fontWeight: typography.weights.semibold,
-    color: colors.dark.text,
+    fontSize: 20,
+    fontWeight: '600',
+    color: '#ffffff',
   },
   
   statusIndicator: {
@@ -322,46 +166,27 @@ const styles = StyleSheet.create({
     width: 8,
     height: 8,
     borderRadius: 4,
-    backgroundColor: colors.gold[500],
-    marginRight: spacing[2],
+    backgroundColor: '#f59e0b',
+    marginRight: 8,
   },
   
   statusText: {
-    fontSize: typography.sizes.sm,
-    fontFamily: typography.fonts.body,
-    fontWeight: typography.weights.medium,
-    color: colors.platinum[300],
-  },
-  
-  mainContent: {
-    flex: 1,
-    paddingHorizontal: spacing[6],
+    fontSize: 14,
+    fontWeight: '500',
+    color: '#e5e5e5',
   },
   
   avatarSection: {
     alignItems: 'center',
-    marginTop: spacing[8],
-    marginBottom: spacing[8],
-  },
-  
-  avatarGlow: {
-    position: 'absolute',
-    width: 200,
-    height: 200,
-    borderRadius: 100,
-    backgroundColor: colors.primary[500],
-    shadowColor: colors.primary[500],
-    shadowOffset: { width: 0, height: 0 },
-    shadowOpacity: 0.8,
-    shadowRadius: 30,
-    elevation: 20,
+    marginTop: 32,
+    marginBottom: 32,
   },
   
   avatarContainer: {
     width: 120,
     height: 120,
     borderRadius: 60,
-    marginBottom: spacing[6],
+    marginBottom: 24,
   },
   
   avatarGradient: {
@@ -382,16 +207,33 @@ const styles = StyleSheet.create({
   
   avatarIcon: {
     fontSize: 40,
-    color: colors.dark.text,
+    color: '#ffffff',
   },
   
   voiceButton: {
-    marginBottom: spacing[4],
+    marginBottom: 16,
+    borderRadius: 12,
+    overflow: 'hidden',
   },
   
-  voiceButtonStyle: {
-    paddingHorizontal: spacing[8],
+  voiceButtonGradient: {
+    paddingVertical: 12,
+    paddingHorizontal: 24,
+    alignItems: 'center',
+    justifyContent: 'center',
+    minHeight: 48,
     minWidth: 200,
+  },
+  
+  voiceButtonText: {
+    fontSize: 16,
+    fontWeight: '600',
+    color: '#ffffff',
+    textAlign: 'center',
+  },
+  
+  voiceButtonTextActive: {
+    color: '#0f0f23',
   },
   
   statusContainer: {
@@ -400,106 +242,98 @@ const styles = StyleSheet.create({
   
   statusBadge: {
     backgroundColor: 'rgba(245, 158, 11, 0.2)',
-    paddingHorizontal: spacing[4],
-    paddingVertical: spacing[2],
-    borderRadius: borderRadius.full,
+    paddingHorizontal: 16,
+    paddingVertical: 8,
+    borderRadius: 20,
     borderWidth: 1,
-    borderColor: colors.gold[500],
+    borderColor: '#f59e0b',
   },
   
   statusBadgeText: {
-    fontSize: typography.sizes.sm,
-    fontFamily: typography.fonts.body,
-    fontWeight: typography.weights.medium,
-    color: colors.gold[400],
+    fontSize: 14,
+    fontWeight: '500',
+    color: '#f59e0b',
   },
   
   conversationSection: {
-    marginBottom: spacing[8],
+    marginBottom: 32,
+    paddingHorizontal: 24,
   },
   
   conversationCard: {
-    padding: spacing[6],
+    backgroundColor: 'rgba(255, 255, 255, 0.05)',
+    borderRadius: 16,
+    padding: 24,
+    borderWidth: 1,
+    borderColor: 'rgba(255, 255, 255, 0.1)',
   },
   
   conversationTitle: {
-    fontSize: typography.sizes.lg,
-    fontFamily: typography.fonts.heading,
-    fontWeight: typography.weights.semibold,
-    color: colors.dark.text,
-    marginBottom: spacing[4],
+    fontSize: 18,
+    fontWeight: '600',
+    color: '#ffffff',
+    marginBottom: 16,
   },
   
   conversationText: {
-    fontSize: typography.sizes.base,
-    fontFamily: typography.fonts.body,
-    fontWeight: typography.weights.normal,
-    color: colors.platinum[300],
-    lineHeight: typography.leading.relaxed * typography.sizes.base,
+    fontSize: 16,
+    fontWeight: '400',
+    color: '#d4d4d8',
+    lineHeight: 24,
   },
   
   actionsSection: {
-    flex: 1,
+    paddingHorizontal: 24,
+    paddingBottom: 32,
   },
   
   actionsTitle: {
-    fontSize: typography.sizes.lg,
-    fontFamily: typography.fonts.heading,
-    fontWeight: typography.weights.semibold,
-    color: colors.dark.text,
-    marginBottom: spacing[6],
+    fontSize: 18,
+    fontWeight: '600',
+    color: '#ffffff',
+    marginBottom: 24,
     textAlign: 'center',
   },
   
   actionsGrid: {
     flexDirection: 'row',
     justifyContent: 'space-between',
-    gap: spacing[3],
+    gap: 16,
   },
   
   actionItem: {
     flex: 1,
-  },
-  
-  actionButton: {
+    backgroundColor: 'rgba(255, 255, 255, 0.05)',
+    borderRadius: 16,
+    borderWidth: 1,
+    borderColor: 'rgba(255, 255, 255, 0.1)',
     aspectRatio: 1,
-    padding: 0,
   },
   
   actionContent: {
     flex: 1,
     alignItems: 'center',
     justifyContent: 'center',
-    position: 'relative',
-  },
-  
-  actionGradient: {
-    position: 'absolute',
-    top: 0,
-    left: 0,
-    right: 0,
-    height: 4,
-    borderRadius: borderRadius.sm,
+    padding: 16,
   },
   
   actionIcon: {
     fontSize: 28,
-    marginBottom: spacing[2],
+    marginBottom: 8,
   },
   
   actionTitle: {
-    fontSize: typography.sizes.base,
-    fontFamily: typography.fonts.heading,
-    fontWeight: typography.weights.semibold,
-    color: colors.dark.text,
-    marginBottom: spacing[1],
+    fontSize: 16,
+    fontWeight: '600',
+    color: '#ffffff',
+    marginBottom: 4,
+    textAlign: 'center',
   },
   
   actionSubtitle: {
-    fontSize: typography.sizes.xs,
-    fontFamily: typography.fonts.body,
-    fontWeight: typography.weights.normal,
-    color: colors.platinum[400],
+    fontSize: 12,
+    fontWeight: '400',
+    color: '#a1a1a3',
     textAlign: 'center',
   },
 });
