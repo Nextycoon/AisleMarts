@@ -1,0 +1,471 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+    <meta charset="UTF-8">
+    <meta name="viewport" content="width=device-width, initial-scale=1.0">
+    <title>AisleMarts Business - Phase 2 Command Interface</title>
+    <style>
+        * {
+            margin: 0;
+            padding: 0;
+            box-sizing: border-box;
+        }
+
+        body {
+            font-family: 'Courier New', 'Monaco', monospace;
+            background: linear-gradient(135deg, #0a0a0a 0%, #1a1a1a 100%);
+            color: #00ff00;
+            height: 100vh;
+            overflow: hidden;
+            display: flex;
+            flex-direction: column;
+            justify-content: center;
+            align-items: center;
+        }
+
+        .terminal-container {
+            width: 90%;
+            max-width: 1200px;
+            background: #000000;
+            border: 2px solid #00ffff;
+            border-radius: 10px;
+            box-shadow: 0 0 50px rgba(0, 255, 255, 0.3);
+            padding: 30px;
+            position: relative;
+        }
+
+        .terminal-header {
+            display: flex;
+            justify-content: space-between;
+            align-items: center;
+            margin-bottom: 30px;
+            padding-bottom: 20px;
+            border-bottom: 2px solid #333;
+        }
+
+        .terminal-title {
+            color: #00ffff;
+            font-size: 28px;
+            font-weight: bold;
+            text-transform: uppercase;
+            letter-spacing: 2px;
+        }
+
+        .lock-status {
+            background: #dc2626;
+            color: white;
+            padding: 8px 16px;
+            border-radius: 20px;
+            font-size: 14px;
+            font-weight: bold;
+            animation: pulse 2s infinite;
+        }
+
+        @keyframes pulse {
+            0%, 100% { opacity: 1; }
+            50% { opacity: 0.7; }
+        }
+
+        .milestone-banner {
+            background: linear-gradient(135deg, #fbbf24, #f59e0b);
+            color: #000;
+            text-align: center;
+            padding: 15px;
+            margin-bottom: 20px;
+            border-radius: 8px;
+            font-weight: bold;
+            font-size: 16px;
+        }
+
+        .command-section {
+            margin-bottom: 40px;
+        }
+
+        .section-header {
+            color: #fbbf24;
+            font-size: 20px;
+            font-weight: bold;
+            margin-bottom: 15px;
+            display: flex;
+            align-items: center;
+        }
+
+        .section-icon {
+            margin-right: 10px;
+            font-size: 24px;
+        }
+
+        .command-line {
+            display: flex;
+            align-items: center;
+            margin-bottom: 12px;
+            padding: 8px 0;
+            opacity: 0;
+            transform: translateX(-20px);
+        }
+
+        .command-line.visible {
+            opacity: 1;
+            transform: translateX(0);
+            transition: all 0.5s ease;
+        }
+
+        .prompt {
+            color: #00ffff;
+            margin-right: 10px;
+        }
+
+        .command {
+            color: #00ff00;
+            font-weight: bold;
+            margin-right: 15px;
+            min-width: 300px;
+        }
+
+        .flag {
+            color: #888;
+            margin-right: 10px;
+        }
+
+        .lock-icon {
+            color: #dc2626;
+            font-size: 18px;
+            margin-right: 8px;
+            animation: glow 2s infinite alternate;
+        }
+
+        @keyframes glow {
+            from { text-shadow: 0 0 5px #dc2626; }
+            to { text-shadow: 0 0 20px #dc2626, 0 0 30px #dc2626; }
+        }
+
+        .status {
+            color: #dc2626;
+            font-weight: bold;
+            background: rgba(220, 38, 38, 0.1);
+            padding: 4px 8px;
+            border-radius: 4px;
+            border: 1px solid #dc2626;
+        }
+
+        .unlock-button {
+            position: absolute;
+            bottom: 30px;
+            right: 30px;
+            background: linear-gradient(135deg, #00ffff, #0080ff);
+            color: #000;
+            border: none;
+            padding: 15px 30px;
+            border-radius: 25px;
+            font-family: 'Courier New', monospace;
+            font-weight: bold;
+            font-size: 16px;
+            cursor: pointer;
+            transition: all 0.3s ease;
+            opacity: 0;
+        }
+
+        .unlock-button:hover {
+            transform: scale(1.05);
+            box-shadow: 0 0 20px rgba(0, 255, 255, 0.5);
+        }
+
+        .unlock-button.visible {
+            opacity: 1;
+            animation: slideUp 0.5s ease;
+        }
+
+        @keyframes slideUp {
+            from { transform: translateY(20px); opacity: 0; }
+            to { transform: translateY(0); opacity: 1; }
+        }
+
+        .typewriter-cursor {
+            color: #00ff00;
+            animation: blink 1s infinite;
+        }
+
+        @keyframes blink {
+            0%, 50% { opacity: 1; }
+            51%, 100% { opacity: 0; }
+        }
+
+        .reveal-message {
+            position: absolute;
+            top: 50%;
+            left: 50%;
+            transform: translate(-50%, -50%);
+            background: rgba(0, 0, 0, 0.9);
+            border: 2px solid #00ffff;
+            border-radius: 10px;
+            padding: 30px;
+            color: #00ffff;
+            text-align: center;
+            font-size: 24px;
+            font-weight: bold;
+            opacity: 0;
+            pointer-events: none;
+        }
+
+        .reveal-message.visible {
+            opacity: 1;
+            animation: popIn 0.5s ease;
+        }
+
+        @keyframes popIn {
+            0% { transform: translate(-50%, -50%) scale(0.8); opacity: 0; }
+            100% { transform: translate(-50%, -50%) scale(1); opacity: 1; }
+        }
+
+        @media (max-width: 768px) {
+            .terminal-container {
+                width: 95%;
+                padding: 20px;
+            }
+            
+            .terminal-title {
+                font-size: 20px;
+            }
+            
+            .command {
+                min-width: 200px;
+                font-size: 12px;
+            }
+        }
+    </style>
+</head>
+<body>
+    <div class="terminal-container">
+        <div class="terminal-header">
+            <div class="terminal-title">AisleMarts Business - Global AI Commerce Platform</div>
+            <div class="lock-status">🔒 LOCKED - SERIES A REQUIRED</div>
+        </div>
+
+        <div class="milestone-banner">
+            ⚡ ACTIVATION TRIGGER: 1,000,000+ Shopper Downloads ⚡
+        </div>
+
+        <!-- AI Storefronts & Marketplaces -->
+        <div class="command-section">
+            <div class="section-header">
+                <span class="section-icon">🏬</span>
+                AI Storefronts & Marketplaces
+            </div>
+            
+            <div class="command-line" data-delay="500">
+                <span class="prompt">$</span>
+                <span class="command">emergent business:enable-ai-storefronts</span>
+                <span class="flag">--locked</span>
+                <span class="lock-icon">🔒</span>
+                <span class="status">SERIES A REQUIRED</span>
+            </div>
+            
+            <div class="command-line" data-delay="800">
+                <span class="prompt">$</span>
+                <span class="command">emergent business:deploy-marketplace</span>
+                <span class="flag">--locked</span>
+                <span class="lock-icon">🔒</span>
+                <span class="status">SERIES A REQUIRED</span>
+            </div>
+            
+            <div class="command-line" data-delay="1100">
+                <span class="prompt">$</span>
+                <span class="command">emergent business:activate-vendor-onboarding</span>
+                <span class="flag">--locked</span>
+                <span class="lock-icon">🔒</span>
+                <span class="status">SERIES A REQUIRED</span>
+            </div>
+        </div>
+
+        <!-- Aisle AI Sales Expert -->
+        <div class="command-section">
+            <div class="section-header">
+                <span class="section-icon">🤖</span>
+                Aisle AI Sales Expert
+            </div>
+            
+            <div class="command-line" data-delay="1400">
+                <span class="prompt">$</span>
+                <span class="command">emergent aisle:enable-sales-agent</span>
+                <span class="flag">--locked</span>
+                <span class="lock-icon">🔒</span>
+                <span class="status">SERIES A REQUIRED</span>
+            </div>
+            
+            <div class="command-line" data-delay="1700">
+                <span class="prompt">$</span>
+                <span class="command">emergent aisle:deploy-negotiation-ai</span>
+                <span class="flag">--locked</span>
+                <span class="lock-icon">🔒</span>
+                <span class="status">SERIES A REQUIRED</span>
+            </div>
+            
+            <div class="command-line" data-delay="2000">
+                <span class="prompt">$</span>
+                <span class="command">emergent aisle:activate-conversion-optimizer</span>
+                <span class="flag">--locked</span>
+                <span class="lock-icon">🔒</span>
+                <span class="status">SERIES A REQUIRED</span>
+            </div>
+        </div>
+
+        <!-- AI Commerce Services -->
+        <div class="command-section">
+            <div class="section-header">
+                <span class="section-icon">💼</span>
+                AI Commerce Services
+            </div>
+            
+            <div class="command-line" data-delay="2300">
+                <span class="prompt">$</span>
+                <span class="command">emergent commerce:enable-logistics-ai</span>
+                <span class="flag">--locked</span>
+                <span class="lock-icon">🔒</span>
+                <span class="status">SERIES A REQUIRED</span>
+            </div>
+            
+            <div class="command-line" data-delay="2600">
+                <span class="prompt">$</span>
+                <span class="command">emergent commerce:deploy-inventory-forecast</span>
+                <span class="flag">--locked</span>
+                <span class="lock-icon">🔒</span>
+                <span class="status">SERIES A REQUIRED</span>
+            </div>
+            
+            <div class="command-line" data-delay="2900">
+                <span class="prompt">$</span>
+                <span class="command">emergent commerce:activate-pricing-engine</span>
+                <span class="flag">--locked</span>
+                <span class="lock-icon">🔒</span>
+                <span class="status">SERIES A REQUIRED</span>
+            </div>
+        </div>
+
+        <!-- Enterprise Expansion -->
+        <div class="command-section">
+            <div class="section-header">
+                <span class="section-icon">🌍</span>
+                Enterprise Expansion
+            </div>
+            
+            <div class="command-line" data-delay="3200">
+                <span class="prompt">$</span>
+                <span class="command">emergent enterprise:enable-white-label</span>
+                <span class="flag">--locked</span>
+                <span class="lock-icon">🔒</span>
+                <span class="status">SERIES A REQUIRED</span>
+            </div>
+            
+            <div class="command-line" data-delay="3500">
+                <span class="prompt">$</span>
+                <span class="command">emergent enterprise:deploy-b2b-marketplace</span>
+                <span class="flag">--locked</span>
+                <span class="lock-icon">🔒</span>
+                <span class="status">SERIES A REQUIRED</span>
+            </div>
+            
+            <div class="command-line" data-delay="3800">
+                <span class="prompt">$</span>
+                <span class="command">emergent enterprise:activate-franchise-model</span>
+                <span class="flag">--locked</span>
+                <span class="lock-icon">🔒</span>
+                <span class="status">SERIES A REQUIRED</span>
+            </div>
+        </div>
+
+        <button class="unlock-button" onclick="showRevealMessage()">
+            🔑 UNLOCK WITH SERIES A
+        </button>
+
+        <div class="reveal-message" id="revealMessage">
+            🚀 PHASE 2 DEPLOYMENT AUTHORIZED<br>
+            <span style="font-size: 18px; margin-top: 10px; display: block;">
+                AisleMarts Business Empire: ACTIVATED
+            </span>
+        </div>
+    </div>
+
+    <script>
+        let commandIndex = 0;
+        let isAutoPlaying = false;
+
+        function showRevealMessage() {
+            const message = document.getElementById('revealMessage');
+            message.classList.add('visible');
+            
+            setTimeout(() => {
+                message.classList.remove('visible');
+            }, 3000);
+        }
+
+        function revealCommand(element) {
+            element.classList.add('visible');
+        }
+
+        function startAutoReveal() {
+            if (isAutoPlaying) return;
+            isAutoPlaying = true;
+
+            const commands = document.querySelectorAll('.command-line');
+            let index = 0;
+
+            function showNextCommand() {
+                if (index < commands.length) {
+                    const command = commands[index];
+                    const delay = parseInt(command.dataset.delay) || 500;
+                    
+                    setTimeout(() => {
+                        revealCommand(command);
+                        index++;
+                        showNextCommand();
+                    }, index === 0 ? delay : 300);
+                } else {
+                    // Show unlock button after all commands are revealed
+                    setTimeout(() => {
+                        const button = document.querySelector('.unlock-button');
+                        button.classList.add('visible');
+                    }, 500);
+                }
+            }
+
+            showNextCommand();
+        }
+
+        // Auto-start the reveal when page loads
+        window.addEventListener('load', () => {
+            setTimeout(startAutoReveal, 1000);
+        });
+
+        // Click anywhere to reveal all commands immediately
+        document.body.addEventListener('click', (e) => {
+            if (e.target.classList.contains('unlock-button')) return;
+            
+            if (!isAutoPlaying) {
+                startAutoReveal();
+            } else {
+                // Show all remaining commands immediately
+                const commands = document.querySelectorAll('.command-line:not(.visible)');
+                commands.forEach(command => {
+                    revealCommand(command);
+                });
+                
+                const button = document.querySelector('.unlock-button');
+                if (!button.classList.contains('visible')) {
+                    button.classList.add('visible');
+                }
+            }
+        });
+
+        // Keyboard shortcuts
+        document.addEventListener('keydown', (e) => {
+            if (e.key === 'Enter' || e.key === ' ') {
+                startAutoReveal();
+            }
+            
+            if (e.key === 'u' || e.key === 'U') {
+                showRevealMessage();
+            }
+        });
+    </script>
+</body>
+</html>
