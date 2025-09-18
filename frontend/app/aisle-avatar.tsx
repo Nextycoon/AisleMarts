@@ -59,19 +59,6 @@ export default function AisleAvatarScreen() {
           </View>
         </View>
 
-        {/* Aisle AI Identity Section - More Prominent Placement */}
-        <View style={styles.aisleIdentityContainer}>
-          <View style={styles.aisleIdentityCard}>
-            <View style={styles.aisleIconContainer}>
-              <Text style={styles.aisleIcon}>🤖</Text>
-            </View>
-            <Text style={styles.aisleIdentityTitle}>Meet Aisle</Text>
-            <Text style={styles.aisleIdentityText}>
-              Aisle is an OpenAI ChatGPT‑5 AI Agent specialized in commerce and shopping — bringing the right products to the right customers, 24/7/365, in every language and market.
-            </Text>
-          </View>
-        </View>
-
         {/* Role Selection */}
         <View style={styles.roleSection}>
           <Text style={styles.sectionTitle}>Choose Your Experience</Text>
@@ -102,6 +89,17 @@ export default function AisleAvatarScreen() {
               <Text style={styles.roleDescription}>
                 Discover premium brands, exclusive deals, and personalized recommendations crafted by AI
               </Text>
+              
+              {/* Integrated Aisle Identity within Role Card */}
+              <View style={styles.aisleIdentityInline}>
+                <View style={styles.aisleIdentityInlineHeader}>
+                  <Text style={styles.aisleIdentityInlineIcon}>🤖</Text>
+                  <Text style={styles.aisleIdentityInlineTitle}>Powered by Aisle AI</Text>
+                </View>
+                <Text style={styles.aisleIdentityInlineText}>
+                  Aisle is an OpenAI ChatGPT‑5 AI Agent specialized in commerce and shopping — bringing the right products to the right customers, 24/7/365, in every language and market.
+                </Text>
+              </View>
               
               <View style={styles.featuresContainer}>
                 <View style={styles.feature}>
