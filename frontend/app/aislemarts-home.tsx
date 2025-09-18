@@ -14,7 +14,7 @@ import { LinearGradient } from 'expo-linear-gradient';
 import { SafeAreaView } from 'react-native-safe-area-context';
 import { StatusBar } from 'expo-status-bar';
 import { router } from 'expo-router';
-import { API } from '../lib/api';
+import { api } from '../lib/api';
 
 const { width } = Dimensions.get('window');
 
