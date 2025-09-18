@@ -63,9 +63,10 @@
 ## 🎤 **INVESTOR TALKING POINTS**
 
 ### **Market Positioning**
-- *"We are the world's first voice-native marketplace"*
-- *"Amazon has Alexa for shopping lists. We have Aisle for shopping decisions"*
-- *"Voice commerce is projected to hit $40B by 2027. We're positioned to capture 5%"*
+- *"Aisle is the world's first 24/7/365 multilingual AI shopping expert"*
+- *"While Amazon has Alexa for shopping lists, we have Aisle for global shopping decisions"*
+- *"From Istanbul to Nairobi to New York — one AI that speaks every customer's language"*
+- *"Voice commerce is projected to hit $40B by 2027. We're positioned to capture 5% with our multilingual advantage"*
 
 ### **Technical Advantage**
 - *"While competitors are stuck building text UIs, we leapfrogged straight to conversational commerce"*
