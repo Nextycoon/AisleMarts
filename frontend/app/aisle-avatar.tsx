@@ -8,7 +8,6 @@ import {
   SafeAreaView 
 } from 'react-native';
 import { LinearGradient } from 'expo-linear-gradient';
-import { BlurView } from 'expo-blur';
 import Animated, { 
   SlideInUp, 
   SlideInDown, 
