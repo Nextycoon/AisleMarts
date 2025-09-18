@@ -1,9 +1,8 @@
-import React, { useState, useEffect } from 'react';
+import React, { useState } from 'react';
 import { 
   View, 
   Text, 
   StyleSheet, 
-  Dimensions, 
   StatusBar,
   SafeAreaView,
   TouchableOpacity,
@@ -14,14 +13,6 @@ import { router } from 'expo-router';
 import { useAuth } from '../src/context/AuthContext';
 
 type UserRole = 'shopper';
-
-const roleOption = {
-  id: 'shopper' as UserRole,
-  title: 'Elite Shopper',
-  subtitle: 'Curated luxury shopping experience',
-  description: 'Discover premium brands, exclusive deals, and personalized recommendations crafted by AI',
-  icon: '🛍️',
-};
 
 export default function AisleAvatarScreen() {
   const [selectedRole, setSelectedRole] = useState<UserRole>('shopper');
@@ -46,15 +37,10 @@ export default function AisleAvatarScreen() {
     <SafeAreaView style={styles.container}>
       <StatusBar barStyle="light-content" backgroundColor="transparent" translucent />
       
-      {/* Luxury Background */}
       <LinearGradient
         colors={['#0f0f23', '#1a1a2e', '#16213e', '#581c87']}
         style={StyleSheet.absoluteFill}
       />
-      
-      {/* Background Orbs */}
-      <View style={[styles.backgroundOrb, styles.orb1]} />
-      <View style={[styles.backgroundOrb, styles.orb2]} />
       
       <ScrollView 
         style={styles.scrollView}
@@ -77,36 +63,32 @@ export default function AisleAvatarScreen() {
           <Text style={styles.sectionTitle}>Choose Your Experience</Text>
           
           <TouchableOpacity
-            style={[styles.roleCard, selectedRole === roleOption.id && styles.selectedCard]}
-            onPress={() => setSelectedRole(roleOption.id)}
+            style={[styles.roleCard, selectedRole === 'shopper' && styles.selectedCard]}
+            onPress={() => setSelectedRole('shopper')}
             activeOpacity={0.8}
           >
-            <LinearGradient
-              colors={['rgba(168, 85, 247, 0.2)', 'rgba(245, 158, 11, 0.1)']}
-              style={styles.roleCardGradient}
-            />
-            
             <View style={styles.roleContent}>
               <View style={styles.roleHeader}>
                 <View style={styles.iconContainer}>
-                  <Text style={styles.roleIcon}>{roleOption.icon}</Text>
+                  <Text style={styles.roleIcon}>🛍️</Text>
                 </View>
                 
                 <View style={styles.roleInfo}>
-                  <Text style={styles.roleTitle}>{roleOption.title}</Text>
-                  <Text style={styles.roleSubtitle}>{roleOption.subtitle}</Text>
+                  <Text style={styles.roleTitle}>Elite Shopper</Text>
+                  <Text style={styles.roleSubtitle}>Curated luxury shopping experience</Text>
                 </View>
                 
-                {selectedRole === roleOption.id && (
+                {selectedRole === 'shopper' && (
                   <View style={styles.checkmark}>
                     <Text style={styles.checkmarkIcon}>✓</Text>
                   </View>
                 )}
               </View>
               
-              <Text style={styles.roleDescription}>{roleOption.description}</Text>
+              <Text style={styles.roleDescription}>
+                Discover premium brands, exclusive deals, and personalized recommendations crafted by AI
+              </Text>
               
-              {/* Features */}
               <View style={styles.featuresContainer}>
                 <View style={styles.feature}>
                   <Text style={styles.featureIcon}>🤖</Text>
