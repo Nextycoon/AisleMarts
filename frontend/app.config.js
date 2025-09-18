@@ -1,0 +1,79 @@
+export default {
+  expo: {
+    name: "AisleMarts",
+    slug: "aislemarts-beta",
+    version: "1.0.0",
+    orientation: "portrait",
+    icon: "./assets/images/icon.png",
+    scheme: "aislemarts",
+    userInterfaceStyle: "automatic",
+    newArchEnabled: true,
+    ios: {
+      supportsTablet: true,
+      bundleIdentifier: "com.aislemarts.beta",
+      infoPlist: {
+        NSCameraUsageDescription: "AisleMarts uses your camera to scan products and barcodes for faster shopping.",
+        NSMicrophoneUsageDescription: "The AI Avatar uses your microphone to understand your voice commands and provide personalized shopping assistance.",
+        NSSpeechRecognitionUsageDescription: "AisleMarts transcribes your speech to help you shop hands-free with voice commands.",
+        NSPhotoLibraryUsageDescription: "We access your photos when you choose images to identify products or upload receipts for easier shopping.",
+        NSPhotoLibraryAddUsageDescription: "We save receipts or QR codes to your library when you ask us to for your records.",
+        NSLocationWhenInUseUsageDescription: "We use your location to find nearby stores, deals, and pickup windows for convenient shopping."
+      }
+    },
+    android: {
+      package: "com.aislemarts.beta",
+      adaptiveIcon: {
+        foregroundImage: "./assets/images/adaptive-icon.png",
+        backgroundColor: "#000"
+      },
+      edgeToEdgeEnabled: true,
+      permissions: [
+        "CAMERA",
+        "RECORD_AUDIO",
+        "ACCESS_COARSE_LOCATION",
+        "ACCESS_FINE_LOCATION",
+        "READ_MEDIA_IMAGES",
+        "READ_EXTERNAL_STORAGE",
+        "POST_NOTIFICATIONS",
+        "VIBRATE",
+        "INTERNET"
+      ]
+    },
+    web: {
+      bundler: "metro",
+      output: "static",
+      favicon: "./assets/images/favicon.png"
+    },
+    plugins: [
+      "expo-router",
+      [
+        "expo-splash-screen",
+        {
+          image: "./assets/images/splash-icon.png",
+          imageWidth: 200,
+          resizeMode: "contain",
+          backgroundColor: "#000"
+        }
+      ],
+      "expo-barcode-scanner",
+      "expo-camera",
+      "expo-av",
+      "expo-image-picker",
+      "expo-location",
+      "expo-notifications"
+    ],
+    experiments: {
+      typedRoutes: true
+    },
+    extra: {
+      VOICE_ENABLED: process.env.VOICE_ENABLED || "false",
+      VOICE_DEV_ONLY: process.env.VOICE_DEV_ONLY || "true",
+      VOICE_TEASER: process.env.VOICE_TEASER || "false",
+      VOICE_PROVIDER: process.env.VOICE_PROVIDER || "openai",
+      OPENAI_API_KEY: process.env.OPENAI_API_KEY || "",
+      OPENAI_STT_MODEL: process.env.OPENAI_STT_MODEL || "whisper-1",
+      OPENAI_CHAT_MODEL: process.env.OPENAI_CHAT_MODEL || "gpt-4o-mini",
+      OPENAI_TTS_VOICE: process.env.OPENAI_TTS_VOICE || "alloy"
+    }
+  }
+};
