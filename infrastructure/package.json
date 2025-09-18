@@ -1,0 +1,52 @@
+{
+  "name": "aislemarts-phase2-unlock",
+  "version": "1.0.0",
+  "description": "Production-ready unlock authorization system for AisleMarts Phase 2 Business Layer",
+  "main": "server/index.js",
+  "scripts": {
+    "start": "node server/index.js",
+    "dev": "nodemon server/index.js",
+    "test": "jest",
+    "test:watch": "jest --watch",
+    "migrate": "psql $DATABASE_URL -f db/migrations/2025_09_18_create_phase2_audit.sql",
+    "health": "curl -sS http://localhost:8080/health",
+    "build": "echo 'No build step required'",
+    "docker:build": "docker build -t aislemarts-phase2-unlock .",
+    "docker:run": "docker run -p 8080:8080 --env-file .env aislemarts-phase2-unlock"
+  },
+  "keywords": [
+    "aislemarts",
+    "phase2",
+    "unlock",
+    "authorization",
+    "business",
+    "series-a"
+  ],
+  "author": "AisleMarts Engineering Team",
+  "license": "UNLICENSED",
+  "private": true,
+  "dependencies": {
+    "express": "^4.18.2",
+    "node-fetch": "^2.6.7",
+    "ioredis": "^5.3.2",
+    "pg": "^8.11.3",
+    "body-parser": "^1.20.2",
+    "cors": "^2.8.5"
+  },
+  "devDependencies": {
+    "jest": "^29.7.0",
+    "supertest": "^6.3.3",
+    "nodemon": "^3.0.1"
+  },
+  "engines": {
+    "node": ">=16.0.0"
+  },
+  "jest": {
+    "testEnvironment": "node",
+    "coverageDirectory": "coverage",
+    "collectCoverageFrom": [
+      "server/**/*.js",
+      "!server/index.js"
+    ]
+  }
+}
