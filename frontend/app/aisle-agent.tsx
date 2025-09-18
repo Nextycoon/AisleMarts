@@ -97,9 +97,21 @@ export default function AisleAgentScreen() {
         {/* Conversation Section */}
         <View style={styles.conversationSection}>
           <View style={styles.conversationCard}>
-            <Text style={styles.conversationTitle}>Conversation</Text>
+            <Text style={styles.conversationTitle}>Meet Aisle - Your AI Shopping Expert</Text>
+            
+            {/* Aisle Identity Message */}
+            <View style={styles.aisleIdentityBanner}>
+              <View style={styles.aisleIdentityHeader}>
+                <Text style={styles.aisleIdentityIcon}>🤖</Text>
+                <Text style={styles.aisleIdentityLabel}>Powered by OpenAI ChatGPT-5</Text>
+              </View>
+              <Text style={styles.aisleIdentityMessage}>
+                Aisle is an OpenAI ChatGPT‑5 AI Agent specialized in commerce and shopping — bringing the right products to the right customers, 24/7/365, in every language and market.
+              </Text>
+            </View>
+            
             <Text style={styles.conversationText}>
-              Good evening! Welcome to AisleMarts Premium. I'm your personal AI shopping companion. I'm here to help you discover amazing products, find exclusive deals, and make luxury shopping effortless.
+              Good evening! Welcome to AisleMarts Premium. I'm your personal AI shopping companion ready to help you discover amazing products, find exclusive deals, and make luxury shopping effortless.
             </Text>
           </View>
         </View>
