@@ -226,6 +226,72 @@ const styles = StyleSheet.create({
     textAlign: 'center',
   },
   
+  // Prominent Aisle Identity Banner Styles
+  aisleIdentityBanner: {
+    marginHorizontal: 24,
+    marginVertical: 20,
+    backgroundColor: 'rgba(168, 85, 247, 0.12)',
+    borderRadius: 20,
+    padding: 24,
+    borderWidth: 2,
+    borderColor: 'rgba(168, 85, 247, 0.3)',
+    shadowColor: '#a855f7',
+    shadowOffset: { width: 0, height: 4 },
+    shadowOpacity: 0.2,
+    shadowRadius: 8,
+    elevation: 8,
+  },
+  
+  aisleIdentityHeader: {
+    flexDirection: 'row',
+    alignItems: 'center',
+    marginBottom: 16,
+  },
+  
+  aisleIconBadge: {
+    width: 40,
+    height: 40,
+    borderRadius: 20,
+    backgroundColor: '#a855f7',
+    alignItems: 'center',
+    justifyContent: 'center',
+    marginRight: 12,
+  },
+  
+  aisleIconBadgeText: {
+    fontSize: 16,
+    fontWeight: 'bold',
+    color: '#ffffff',
+  },
+  
+  aisleIdentityTitle: {
+    fontSize: 20,
+    fontWeight: 'bold',
+    color: '#a855f7',
+  },
+  
+  aisleIdentityStatement: {
+    fontSize: 15,
+    fontWeight: '500',
+    color: '#ffffff',
+    lineHeight: 22,
+    marginBottom: 16,
+    textAlign: 'center',
+  },
+  
+  aisleFeatureList: {
+    flexDirection: 'row',
+    justifyContent: 'space-around',
+    alignItems: 'center',
+  },
+  
+  aisleFeature: {
+    fontSize: 12,
+    fontWeight: '600',
+    color: '#d4d4d8',
+    textAlign: 'center',
+  },
+  
   // Simplified Aisle AI Identity Styles
   aisleIdentitySection: {
     backgroundColor: 'rgba(168, 85, 247, 0.15)',
