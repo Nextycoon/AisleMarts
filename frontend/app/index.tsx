@@ -57,7 +57,9 @@ export default function IndexScreen() {
       />
       
       <View style={styles.content}>
-        <Text style={styles.logo}>AisleMarts</Text>
+        <TouchableOpacity onPress={handleDebugTap}>
+          <Text style={styles.logo}>AisleMarts</Text>
+        </TouchableOpacity>
         <Text style={styles.tagline}>Your AI Shopping Companion</Text>
         
         <View style={styles.loadingContainer}>
@@ -66,6 +68,17 @@ export default function IndexScreen() {
             {loading ? 'Initializing...' : 'Welcome!'}
           </Text>
         </View>
+
+        {showDebug && (
+          <View style={styles.debugContainer}>
+            <TouchableOpacity style={styles.debugButton} onPress={handleClearStorage}>
+              <Text style={styles.debugButtonText}>Clear Storage & Reset</Text>
+            </TouchableOpacity>
+            <TouchableOpacity style={styles.debugButton} onPress={handleGoToCompletion}>
+              <Text style={styles.debugButtonText}>View Completion Demo</Text>
+            </TouchableOpacity>
+          </View>
+        )}
       </View>
     </View>
   );
