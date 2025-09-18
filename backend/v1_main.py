@@ -51,6 +51,10 @@ app.include_router(payments_stripe.router)
 def metrics():
     return Response(generate_latest(), media_type=CONTENT_TYPE_LATEST)
 
+@app.get("/__routes__")
+def __routes__():
+    return sorted({getattr(r, "path", "") for r in app.router.routes})
+
 # Optional: debug route list on startup
 @app.on_event("startup")
 async def _log_routes():
