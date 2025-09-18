@@ -21,29 +21,15 @@ import { API } from '../src/api/client';
 import UserTypeSelector from '../src/components/UserTypeSelector';
 import { useUser } from '../src/state/user';
 
-type UserRole = 'shopper' | 'seller' | 'hybrid';
+type UserRole = 'shopper';
 
 const roleOptions = [
   {
     id: 'shopper' as UserRole,
     title: 'Shopper',
-    subtitle: 'Discover nearby stock, reserve, pick up fast.',
+    subtitle: 'Discover, buy, enjoy - AI companion for effortless shopping',
     icon: 'bag' as const,
     gradient: ['#4facfe', '#00f2fe']
-  },
-  {
-    id: 'seller' as UserRole, 
-    title: 'Seller',
-    subtitle: 'List inventory, set pickup windows, grow revenue.',
-    icon: 'storefront' as const,
-    gradient: ['#43e97b', '#38f9d7']
-  },
-  {
-    id: 'hybrid' as UserRole,
-    title: 'Hybrid',
-    subtitle: 'Shop and sell from one account.',
-    icon: 'infinite' as const,
-    gradient: ['#667eea', '#764ba2']
   }
 ];
 
