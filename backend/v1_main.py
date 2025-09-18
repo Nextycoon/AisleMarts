@@ -41,6 +41,7 @@ from routers import (
     payments_stripe,        # /app/backend/routers/payments_stripe.py
     orders,                 # /app/backend/routers/orders.py
     vendor_management,      # /app/backend/routers/vendor_management.py
+    analytics_api,          # /app/backend/routers/analytics_api.py
 )
 
 app.include_router(health.router)
