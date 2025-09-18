@@ -5,7 +5,8 @@ import {
   StyleSheet, 
   Dimensions, 
   StatusBar,
-  SafeAreaView 
+  SafeAreaView,
+  TouchableOpacity 
 } from 'react-native';
 import { LinearGradient } from 'expo-linear-gradient';
 import Animated, { 
@@ -16,14 +17,9 @@ import Animated, {
   useAnimatedStyle, 
   withTiming, 
   withSpring,
-  interpolate,
-  Extrapolate 
 } from 'react-native-reanimated';
 import { router } from 'expo-router';
 import { useAuth } from '../src/context/AuthContext';
-import { LuxuryButton } from '../src/components/LuxuryButton';
-import { LuxuryCard } from '../src/components/LuxuryCard';
-import { colors, typography, spacing, borderRadius, shadows, animations } from '../src/theme/luxuryTokens';
 
 type UserRole = 'shopper';
 
@@ -34,8 +30,6 @@ const roleOptions = [
     subtitle: 'Curated luxury shopping experience',
     description: 'Discover premium brands, exclusive deals, and personalized recommendations crafted by AI',
     icon: '🛍️',
-    gradient: [colors.primary[400], colors.primary[600], colors.gold[500]],
-    accent: colors.gold[400]
   }
 ];
 
@@ -46,24 +40,14 @@ export default function AisleAvatarScreen() {
   const [isLoading, setIsLoading] = useState(false);
   const { setupAvatar } = useAuth();
   
-  // Animation values
   const fadeAnim = useSharedValue(0);
-  const slideAnim = useSharedValue(50);
-  const scaleAnim = useSharedValue(0.9);
 
   useEffect(() => {
-    // Cinematic entrance animation
-    fadeAnim.value = withTiming(1, { duration: animations.duration.cinematic });
-    slideAnim.value = withSpring(0, animations.spring.luxury);
-    scaleAnim.value = withSpring(1, animations.spring.luxury);
+    fadeAnim.value = withTiming(1, { duration: 1000 });
   }, []);
 
-  const animatedContainerStyle = useAnimatedStyle(() => ({
+  const animatedStyle = useAnimatedStyle(() => ({
     opacity: fadeAnim.value,
-    transform: [
-      { translateY: slideAnim.value },
-      { scale: scaleAnim.value },
-    ],
   }));
 
   const handleContinue = async () => {
@@ -73,19 +57,138 @@ export default function AisleAvatarScreen() {
     
     try {
       await setupAvatar(selectedRole);
-      
-      // Cinematic exit animation
-      fadeAnim.value = withTiming(0, { duration: animations.duration.slow });
-      
-      setTimeout(() => {
-        router.replace('/aisle-agent');
-      }, 300);
-
+      router.replace('/aisle-agent');
     } catch (error) {
       console.error('Failed to setup avatar:', error);
       setIsLoading(false);
     }
   };
+
+  return (
+    <SafeAreaView style={styles.container}>
+      <StatusBar barStyle="light-content" backgroundColor="transparent" translucent />
+      
+      {/* Luxury Background */}
+      <LinearGradient
+        colors={['#0f0f23', '#1a1a2e', '#16213e', '#581c87']}
+        style={StyleSheet.absoluteFill}
+      />
+      
+      {/* Animated Background Orbs */}
+      <View style={[styles.backgroundOrb, styles.orb1]} />
+      <View style={[styles.backgroundOrb, styles.orb2]} />
+      
+      <Animated.ScrollView 
+        style={styles.scrollView}
+        contentContainerStyle={styles.scrollContent}
+        showsVerticalScrollIndicator={false}
+      >
+        {/* Luxury Header */}
+        <Animated.View 
+          style={[styles.header, animatedStyle]}
+          entering={SlideInDown.delay(200)}
+        >
+          <View style={styles.brandAccent} />
+          <Text style={styles.heroTitle}>AisleMarts</Text>
+          <Text style={styles.heroSubtitle}>Luxury Shopping Redefined</Text>
+          <View style={styles.taglineContainer}>
+            <Text style={styles.tagline}>Your personal AI concierge awaits</Text>
+            <Text style={styles.taglineSecondary}>Curated experiences • Premium service • Exclusive access</Text>
+          </View>
+        </Animated.View>
+
+        {/* Role Selection */}
+        <Animated.View 
+          style={styles.roleSection}
+          entering={SlideInUp.delay(400)}
+        >
+          <Text style={styles.sectionTitle}>Choose Your Experience</Text>
+          
+          {roleOptions.map((role, index) => (
+            <Animated.View 
+              key={role.id}
+              entering={SlideInUp.delay(600)}
+            >
+              <TouchableOpacity
+                style={[styles.roleCard, selectedRole === role.id && styles.selectedCard]}
+                onPress={() => setSelectedRole(role.id)}
+                activeOpacity={0.8}
+              >
+                <LinearGradient
+                  colors={['rgba(168, 85, 247, 0.2)', 'rgba(245, 158, 11, 0.1)']}
+                  style={styles.roleCardGradient}
+                />
+                
+                <View style={styles.roleContent}>
+                  <View style={styles.roleHeader}>
+                    <View style={styles.iconContainer}>
+                      <Text style={styles.roleIcon}>{role.icon}</Text>
+                    </View>
+                    
+                    <View style={styles.roleInfo}>
+                      <Text style={styles.roleTitle}>{role.title}</Text>
+                      <Text style={styles.roleSubtitle}>{role.subtitle}</Text>
+                    </View>
+                    
+                    {selectedRole === role.id && (
+                      <View style={styles.checkmark}>
+                        <Text style={styles.checkmarkIcon}>✓</Text>
+                      </View>
+                    )}
+                  </View>
+                  
+                  <Text style={styles.roleDescription}>{role.description}</Text>
+                  
+                  {/* Premium Features */}
+                  <View style={styles.featuresContainer}>
+                    <View style={styles.feature}>
+                      <Text style={styles.featureIcon}>🤖</Text>
+                      <Text style={styles.featureText}>AI Personal Stylist</Text>
+                    </View>
+                    <View style={styles.feature}>
+                      <Text style={styles.featureIcon}>💎</Text>
+                      <Text style={styles.featureText}>VIP Access</Text>
+                    </View>
+                    <View style={styles.feature}>
+                      <Text style={styles.featureIcon}>🎯</Text>
+                      <Text style={styles.featureText}>Smart Recommendations</Text>
+                    </View>
+                  </View>
+                </View>
+              </TouchableOpacity>
+            </Animated.View>
+          ))}
+        </Animated.View>
+
+        {/* CTA Section */}
+        <Animated.View 
+          style={styles.ctaSection}
+          entering={SlideInUp.delay(800)}
+        >
+          <TouchableOpacity
+            style={[styles.ctaButton, (!selectedRole || isLoading) && styles.ctaButtonDisabled]}
+            onPress={handleContinue}
+            disabled={!selectedRole || isLoading}
+            activeOpacity={0.8}
+          >
+            <LinearGradient
+              colors={['#f59e0b', '#d97706']}
+              style={styles.ctaButtonGradient}
+            >
+              <Text style={styles.ctaButtonText}>
+                {isLoading ? "Preparing Your Experience..." : "Enter the Luxury Marketplace"}
+              </Text>
+            </LinearGradient>
+          </TouchableOpacity>
+          
+          <Text style={styles.disclaimer}>
+            Premium shopping experience • Personalized service • Exclusive brands
+          </Text>
+        </Animated.View>
+      </Animated.ScrollView>
+    </SafeAreaView>
+  );
+}
 
   return (
     <SafeAreaView style={styles.container}>
