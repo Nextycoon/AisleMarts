@@ -190,154 +190,10 @@ export default function AisleAvatarScreen() {
   );
 }
 
-  return (
-    <SafeAreaView style={styles.container}>
-      <StatusBar barStyle="light-content" backgroundColor="transparent" translucent />
-      
-      {/* Cinematic Background */}
-      <LinearGradient
-        colors={[
-          colors.fashion.midnight,
-          colors.fashion.charcoal,
-          colors.fashion.smokeGray,
-          colors.primary[900]
-        ]}
-        locations={[0, 0.3, 0.7, 1]}
-        style={StyleSheet.absoluteFill}
-      />
-      
-      {/* Animated Background Orbs */}
-      <Animated.View style={[styles.backgroundOrb, styles.orb1]} />
-      <Animated.View style={[styles.backgroundOrb, styles.orb2]} />
-      <Animated.View style={[styles.backgroundOrb, styles.orb3]} />
-      
-      <Animated.ScrollView 
-        style={styles.scrollView}
-        contentContainerStyle={styles.scrollContent}
-        showsVerticalScrollIndicator={false}
-        entering={FadeIn.delay(200)}
-      >
-        {/* Luxury Header */}
-        <Animated.View 
-          style={[styles.header, animatedContainerStyle]}
-          entering={SlideInDown.delay(400)}
-        >
-          <LinearGradient
-            colors={[colors.gold[400], colors.gold[500]]}
-            start={{ x: 0, y: 0 }}
-            end={{ x: 1, y: 0 }}
-            style={styles.brandAccent}
-          />
-          
-          <Text style={styles.heroTitle}>AisleMarts</Text>
-          <Text style={styles.heroSubtitle}>Luxury Shopping Redefined</Text>
-          
-          <View style={styles.taglineContainer}>
-            <Text style={styles.tagline}>Your personal AI concierge awaits</Text>
-            <Text style={styles.taglineSecondary}>Curated experiences • Premium service • Exclusive access</Text>
-          </View>
-        </Animated.View>
-
-        {/* Role Selection Card */}
-        <Animated.View 
-          style={styles.roleSection}
-          entering={SlideInUp.delay(600)}
-        >
-          <Text style={styles.sectionTitle}>Choose Your Experience</Text>
-          
-          {roleOptions.map((role, index) => (
-            <Animated.View 
-              key={role.id}
-              entering={SlideInUp.delay(800 + index * 100)}
-            >
-              <LuxuryCard
-                variant="glass"
-                elevation="lg"
-                style={[
-                  styles.roleCard,
-                  selectedRole === role.id && styles.selectedCard
-                ]}
-                onPress={() => setSelectedRole(role.id)}
-              >
-                <LinearGradient
-                  colors={role.gradient}
-                  start={{ x: 0, y: 0 }}
-                  end={{ x: 1, y: 1 }}
-                  style={styles.roleGradient}
-                />
-                
-                <View style={styles.roleContent}>
-                  <View style={styles.roleHeader}>
-                    <View style={styles.iconContainer}>
-                      <Text style={styles.roleIcon}>{role.icon}</Text>
-                    </View>
-                    
-                    <View style={styles.roleInfo}>
-                      <Text style={styles.roleTitle}>{role.title}</Text>
-                      <Text style={styles.roleSubtitle}>{role.subtitle}</Text>
-                    </View>
-                    
-                    {selectedRole === role.id && (
-                      <Animated.View 
-                        style={styles.checkmark}
-                        entering={FadeIn.duration(200)}
-                      >
-                        <Text style={styles.checkmarkIcon}>✓</Text>
-                      </Animated.View>
-                    )}
-                  </View>
-                  
-                  <Text style={styles.roleDescription}>{role.description}</Text>
-                  
-                  {/* Premium Features */}
-                  <View style={styles.featuresContainer}>
-                    <View style={styles.feature}>
-                      <Text style={styles.featureIcon}>🤖</Text>
-                      <Text style={styles.featureText}>AI Personal Stylist</Text>
-                    </View>
-                    <View style={styles.feature}>
-                      <Text style={styles.featureIcon}>💎</Text>
-                      <Text style={styles.featureText}>VIP Access</Text>
-                    </View>
-                    <View style={styles.feature}>
-                      <Text style={styles.featureIcon}>🎯</Text>
-                      <Text style={styles.featureText}>Smart Recommendations</Text>
-                    </View>
-                  </View>
-                </View>
-              </LuxuryCard>
-            </Animated.View>
-          ))}
-        </Animated.View>
-
-        {/* CTA Section */}
-        <Animated.View 
-          style={styles.ctaSection}
-          entering={SlideInUp.delay(1000)}
-        >
-          <LuxuryButton
-            title={isLoading ? "Preparing Your Experience..." : "Enter the Luxury Marketplace"}
-            onPress={handleContinue}
-            variant="luxury"
-            size="lg"
-            fullWidth
-            disabled={!selectedRole || isLoading}
-            style={styles.ctaButton}
-          />
-          
-          <Text style={styles.disclaimer}>
-            Premium shopping experience • Personalized service • Exclusive brands
-          </Text>
-        </Animated.View>
-      </Animated.ScrollView>
-    </SafeAreaView>
-  );
-}
-
 const styles = StyleSheet.create({
   container: {
     flex: 1,
-    backgroundColor: colors.fashion.midnight,
+    backgroundColor: '#0f0f23',
   },
   
   backgroundOrb: {
@@ -349,7 +205,7 @@ const styles = StyleSheet.create({
   orb1: {
     width: 300,
     height: 300,
-    backgroundColor: colors.primary[500],
+    backgroundColor: '#a855f7',
     top: -100,
     right: -100,
   },
@@ -357,17 +213,9 @@ const styles = StyleSheet.create({
   orb2: {
     width: 200,
     height: 200,
-    backgroundColor: colors.gold[500],
+    backgroundColor: '#f59e0b',
     bottom: 100,
     left: -50,
-  },
-  
-  orb3: {
-    width: 150,
-    height: 150,
-    backgroundColor: colors.primary[400],
-    top: height * 0.4,
-    right: -75,
   },
   
   scrollView: {
@@ -375,13 +223,13 @@ const styles = StyleSheet.create({
   },
   
   scrollContent: {
-    paddingBottom: spacing[20],
+    paddingBottom: 80,
   },
   
   header: {
-    paddingHorizontal: spacing[6],
-    paddingTop: spacing[16],
-    paddingBottom: spacing[12],
+    paddingHorizontal: 24,
+    paddingTop: 64,
+    paddingBottom: 48,
     alignItems: 'center',
   },
   
@@ -389,94 +237,95 @@ const styles = StyleSheet.create({
     width: 60,
     height: 4,
     borderRadius: 2,
-    marginBottom: spacing[6],
+    backgroundColor: '#f59e0b',
+    marginBottom: 24,
   },
   
   heroTitle: {
-    fontSize: typography.sizes['5xl'],
-    fontFamily: typography.fonts.luxury,
-    fontWeight: typography.weights.bold,
-    color: colors.dark.text,
+    fontSize: 48,
+    fontWeight: '800',
+    color: '#ffffff',
     textAlign: 'center',
-    letterSpacing: typography.tracking.wide,
-    marginBottom: spacing[2],
+    marginBottom: 8,
+    letterSpacing: 1,
   },
   
   heroSubtitle: {
-    fontSize: typography.sizes.xl,
-    fontFamily: typography.fonts.heading,
-    fontWeight: typography.weights.light,
-    color: colors.gold[400],
+    fontSize: 20,
+    fontWeight: '300',
+    color: '#f59e0b',
     textAlign: 'center',
-    letterSpacing: typography.tracking.wider,
-    marginBottom: spacing[6],
+    marginBottom: 24,
+    letterSpacing: 2,
   },
   
   taglineContainer: {
     alignItems: 'center',
-    marginTop: spacing[4],
+    marginTop: 16,
   },
   
   tagline: {
-    fontSize: typography.sizes.lg,
-    fontFamily: typography.fonts.body,
-    fontWeight: typography.weights.medium,
-    color: colors.platinum[200],
+    fontSize: 18,
+    fontWeight: '500',
+    color: '#e5e5e5',
     textAlign: 'center',
-    marginBottom: spacing[2],
+    marginBottom: 8,
   },
   
   taglineSecondary: {
-    fontSize: typography.sizes.sm,
-    fontFamily: typography.fonts.body,
-    fontWeight: typography.weights.normal,
-    color: colors.platinum[400],
+    fontSize: 14,
+    fontWeight: '400',
+    color: '#a1a1a3',
     textAlign: 'center',
-    letterSpacing: typography.tracking.wide,
+    letterSpacing: 1,
   },
   
   roleSection: {
-    paddingHorizontal: spacing[6],
-    marginTop: spacing[8],
+    paddingHorizontal: 24,
+    marginTop: 32,
   },
   
   sectionTitle: {
-    fontSize: typography.sizes['2xl'],
-    fontFamily: typography.fonts.heading,
-    fontWeight: typography.weights.semibold,
-    color: colors.dark.text,
+    fontSize: 24,
+    fontWeight: '600',
+    color: '#ffffff',
     textAlign: 'center',
-    marginBottom: spacing[8],
-    letterSpacing: typography.tracking.wide,
+    marginBottom: 32,
+    letterSpacing: 1,
   },
   
   roleCard: {
-    marginBottom: spacing[4],
+    marginBottom: 16,
+    borderRadius: 16,
     overflow: 'hidden',
-    position: 'relative',
+    backgroundColor: 'rgba(255, 255, 255, 0.05)',
+    borderWidth: 1,
+    borderColor: 'rgba(255, 255, 255, 0.1)',
   },
   
   selectedCard: {
-    borderColor: colors.gold[400],
+    borderColor: '#f59e0b',
     borderWidth: 2,
   },
   
-  roleGradient: {
+  roleCardGradient: {
     position: 'absolute',
     top: 0,
     left: 0,
     right: 0,
-    height: 4,
+    bottom: 0,
   },
   
   roleContent: {
-    padding: spacing[6],
+    padding: 24,
+    position: 'relative',
+    zIndex: 1,
   },
   
   roleHeader: {
     flexDirection: 'row',
     alignItems: 'center',
-    marginBottom: spacing[4],
+    marginBottom: 16,
   },
   
   iconContainer: {
@@ -486,7 +335,7 @@ const styles = StyleSheet.create({
     backgroundColor: 'rgba(245, 158, 11, 0.2)',
     alignItems: 'center',
     justifyContent: 'center',
-    marginRight: spacing[4],
+    marginRight: 16,
   },
   
   roleIcon: {
@@ -498,42 +347,39 @@ const styles = StyleSheet.create({
   },
   
   roleTitle: {
-    fontSize: typography.sizes.xl,
-    fontFamily: typography.fonts.heading,
-    fontWeight: typography.weights.bold,
-    color: colors.dark.text,
-    marginBottom: spacing[1],
+    fontSize: 20,
+    fontWeight: '700',
+    color: '#ffffff',
+    marginBottom: 4,
   },
   
   roleSubtitle: {
-    fontSize: typography.sizes.base,
-    fontFamily: typography.fonts.body,
-    fontWeight: typography.weights.medium,
-    color: colors.gold[400],
+    fontSize: 16,
+    fontWeight: '500',
+    color: '#f59e0b',
   },
   
   checkmark: {
     width: 32,
     height: 32,
     borderRadius: 16,
-    backgroundColor: colors.gold[500],
+    backgroundColor: '#f59e0b',
     alignItems: 'center',
     justifyContent: 'center',
   },
   
   checkmarkIcon: {
     fontSize: 18,
-    color: colors.dark.bg,
-    fontWeight: typography.weights.bold,
+    color: '#0f0f23',
+    fontWeight: '700',
   },
   
   roleDescription: {
-    fontSize: typography.sizes.base,
-    fontFamily: typography.fonts.body,
-    fontWeight: typography.weights.normal,
-    color: colors.platinum[300],
-    lineHeight: typography.leading.relaxed * typography.sizes.base,
-    marginBottom: spacing[6],
+    fontSize: 16,
+    fontWeight: '400',
+    color: '#d4d4d8',
+    lineHeight: 24,
+    marginBottom: 24,
   },
   
   featuresContainer: {
@@ -548,33 +394,53 @@ const styles = StyleSheet.create({
   
   featureIcon: {
     fontSize: 20,
-    marginBottom: spacing[1],
+    marginBottom: 4,
   },
   
   featureText: {
-    fontSize: typography.sizes.xs,
-    fontFamily: typography.fonts.body,
-    fontWeight: typography.weights.medium,
-    color: colors.platinum[400],
+    fontSize: 12,
+    fontWeight: '500',
+    color: '#a1a1a3',
     textAlign: 'center',
   },
   
   ctaSection: {
-    paddingHorizontal: spacing[6],
-    marginTop: spacing[8],
+    paddingHorizontal: 24,
+    marginTop: 32,
     alignItems: 'center',
   },
   
   ctaButton: {
-    marginBottom: spacing[4],
+    width: '100%',
+    borderRadius: 12,
+    overflow: 'hidden',
+    marginBottom: 16,
+  },
+  
+  ctaButtonDisabled: {
+    opacity: 0.5,
+  },
+  
+  ctaButtonGradient: {
+    paddingVertical: 16,
+    paddingHorizontal: 32,
+    alignItems: 'center',
+    justifyContent: 'center',
+    minHeight: 56,
+  },
+  
+  ctaButtonText: {
+    fontSize: 18,
+    fontWeight: '600',
+    color: '#0f0f23',
+    textAlign: 'center',
   },
   
   disclaimer: {
-    fontSize: typography.sizes.sm,
-    fontFamily: typography.fonts.body,
-    fontWeight: typography.weights.normal,
-    color: colors.platinum[500],
+    fontSize: 14,
+    fontWeight: '400',
+    color: '#71717a',
     textAlign: 'center',
-    letterSpacing: typography.tracking.wide,
+    letterSpacing: 1,
   },
 });
