@@ -6,49 +6,27 @@ import {
   Dimensions, 
   StatusBar,
   SafeAreaView,
-  TouchableOpacity 
+  TouchableOpacity,
+  ScrollView 
 } from 'react-native';
 import { LinearGradient } from 'expo-linear-gradient';
-import Animated, { 
-  SlideInUp, 
-  SlideInDown, 
-  FadeIn, 
-  useSharedValue, 
-  useAnimatedStyle, 
-  withTiming, 
-  withSpring,
-} from 'react-native-reanimated';
 import { router } from 'expo-router';
 import { useAuth } from '../src/context/AuthContext';
 
 type UserRole = 'shopper';
 
-const roleOptions = [
-  {
-    id: 'shopper' as UserRole,
-    title: 'Elite Shopper',
-    subtitle: 'Curated luxury shopping experience',
-    description: 'Discover premium brands, exclusive deals, and personalized recommendations crafted by AI',
-    icon: '🛍️',
-  }
-];
-
-const { width, height } = Dimensions.get('window');
+const roleOption = {
+  id: 'shopper' as UserRole,
+  title: 'Elite Shopper',
+  subtitle: 'Curated luxury shopping experience',
+  description: 'Discover premium brands, exclusive deals, and personalized recommendations crafted by AI',
+  icon: '🛍️',
+};
 
 export default function AisleAvatarScreen() {
   const [selectedRole, setSelectedRole] = useState<UserRole>('shopper');
   const [isLoading, setIsLoading] = useState(false);
   const { setupAvatar } = useAuth();
-  
-  const fadeAnim = useSharedValue(0);
-
-  useEffect(() => {
-    fadeAnim.value = withTiming(1, { duration: 1000 });
-  }, []);
-
-  const animatedStyle = useAnimatedStyle(() => ({
-    opacity: fadeAnim.value,
-  }));
 
   const handleContinue = async () => {
     if (!selectedRole) return;
@@ -63,6 +41,116 @@ export default function AisleAvatarScreen() {
       setIsLoading(false);
     }
   };
+
+  return (
+    <SafeAreaView style={styles.container}>
+      <StatusBar barStyle="light-content" backgroundColor="transparent" translucent />
+      
+      {/* Luxury Background */}
+      <LinearGradient
+        colors={['#0f0f23', '#1a1a2e', '#16213e', '#581c87']}
+        style={StyleSheet.absoluteFill}
+      />
+      
+      {/* Background Orbs */}
+      <View style={[styles.backgroundOrb, styles.orb1]} />
+      <View style={[styles.backgroundOrb, styles.orb2]} />
+      
+      <ScrollView 
+        style={styles.scrollView}
+        contentContainerStyle={styles.scrollContent}
+        showsVerticalScrollIndicator={false}
+      >
+        {/* Header */}
+        <View style={styles.header}>
+          <View style={styles.brandAccent} />
+          <Text style={styles.heroTitle}>AisleMarts</Text>
+          <Text style={styles.heroSubtitle}>Luxury Shopping Redefined</Text>
+          <View style={styles.taglineContainer}>
+            <Text style={styles.tagline}>Your personal AI concierge awaits</Text>
+            <Text style={styles.taglineSecondary}>Curated experiences • Premium service • Exclusive access</Text>
+          </View>
+        </View>
+
+        {/* Role Selection */}
+        <View style={styles.roleSection}>
+          <Text style={styles.sectionTitle}>Choose Your Experience</Text>
+          
+          <TouchableOpacity
+            style={[styles.roleCard, selectedRole === roleOption.id && styles.selectedCard]}
+            onPress={() => setSelectedRole(roleOption.id)}
+            activeOpacity={0.8}
+          >
+            <LinearGradient
+              colors={['rgba(168, 85, 247, 0.2)', 'rgba(245, 158, 11, 0.1)']}
+              style={styles.roleCardGradient}
+            />
+            
+            <View style={styles.roleContent}>
+              <View style={styles.roleHeader}>
+                <View style={styles.iconContainer}>
+                  <Text style={styles.roleIcon}>{roleOption.icon}</Text>
+                </View>
+                
+                <View style={styles.roleInfo}>
+                  <Text style={styles.roleTitle}>{roleOption.title}</Text>
+                  <Text style={styles.roleSubtitle}>{roleOption.subtitle}</Text>
+                </View>
+                
+                {selectedRole === roleOption.id && (
+                  <View style={styles.checkmark}>
+                    <Text style={styles.checkmarkIcon}>✓</Text>
+                  </View>
+                )}
+              </View>
+              
+              <Text style={styles.roleDescription}>{roleOption.description}</Text>
+              
+              {/* Features */}
+              <View style={styles.featuresContainer}>
+                <View style={styles.feature}>
+                  <Text style={styles.featureIcon}>🤖</Text>
+                  <Text style={styles.featureText}>AI Personal Stylist</Text>
+                </View>
+                <View style={styles.feature}>
+                  <Text style={styles.featureIcon}>💎</Text>
+                  <Text style={styles.featureText}>VIP Access</Text>
+                </View>
+                <View style={styles.feature}>
+                  <Text style={styles.featureIcon}>🎯</Text>
+                  <Text style={styles.featureText}>Smart Recommendations</Text>
+                </View>
+              </View>
+            </View>
+          </TouchableOpacity>
+        </View>
+
+        {/* CTA */}
+        <View style={styles.ctaSection}>
+          <TouchableOpacity
+            style={[styles.ctaButton, (!selectedRole || isLoading) && styles.ctaButtonDisabled]}
+            onPress={handleContinue}
+            disabled={!selectedRole || isLoading}
+            activeOpacity={0.8}
+          >
+            <LinearGradient
+              colors={['#f59e0b', '#d97706']}
+              style={styles.ctaButtonGradient}
+            >
+              <Text style={styles.ctaButtonText}>
+                {isLoading ? "Preparing Your Experience..." : "Enter the Luxury Marketplace"}
+              </Text>
+            </LinearGradient>
+          </TouchableOpacity>
+          
+          <Text style={styles.disclaimer}>
+            Premium shopping experience • Personalized service • Exclusive brands
+          </Text>
+        </View>
+      </ScrollView>
+    </SafeAreaView>
+  );
+}
 
   return (
     <SafeAreaView style={styles.container}>
