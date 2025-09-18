@@ -39,6 +39,7 @@ from routers import (
     voice_commands,         # /app/backend/routers/voice_commands.py
     recommendations_v2,     # /app/backend/routers/recommendations_v2.py
     payments_stripe,        # /app/backend/routers/payments_stripe.py
+    orders,                 # /app/backend/routers/orders.py
 )
 
 app.include_router(health.router)
@@ -46,6 +47,7 @@ app.include_router(cart_persistence.router)
 app.include_router(voice_commands.router)
 app.include_router(recommendations_v2.router)
 app.include_router(payments_stripe.router)
+app.include_router(orders.router)
 
 @app.get("/metrics")
 def metrics():
