@@ -47,7 +47,95 @@ const AI_INTENTS = [
 export default function AIAssistantScreen() {
   const router = useRouter();
   const { track } = useAnalytics();
+  const isDev = useIsDevBuild();
+  
+  // AI Assistant state
   const [selectedIntent, setSelectedIntent] = useState<string | null>(null);
+  
+  // Voice chat state (dev/demo only)
+  const [voiceUnlocked, setVoiceUnlocked] = useState(false);
+  const [listening, setListening] = useState(false);
+  const [voiceResponse, setVoiceResponse] = useState<string | null>(null);
+  const voiceAdapterRef = useRef<OpenAIVoiceAdapter | null>(null);
+
+  // Check if voice features should be visible
+  const canShowVoice = shouldShowVoice(isDev, voiceUnlocked);
+
+  // Cleanup voice adapter on unmount
+  useEffect(() => {
+    return () => {
+      if (voiceAdapterRef.current) {
+        voiceAdapterRef.current.cleanup();
+      }
+    };
+  }, []);
+
+  // Secret gesture to unlock voice in dev mode
+  const onLongPressHeader = () => {
+    if (VOICE.devOnly && !voiceUnlocked) {
+      setVoiceUnlocked(true);
+      Alert.alert('Voice Chat Unlocked', 'Voice features are now available for demo purposes.');
+      track('voice_dev_unlock', { timestamp: new Date().toISOString() });
+    }
+  };
+
+  // Voice chat functionality
+  const handleVoicePress = async () => {
+    try {
+      if (!voiceAdapterRef.current) {
+        voiceAdapterRef.current = new OpenAIVoiceAdapter();
+      }
+
+      if (!listening) {
+        setListening(true);
+        setVoiceResponse(null);
+        
+        track('voice_chat_start', { 
+          feature: 'ai_assistant', 
+          timestamp: new Date().toISOString() 
+        });
+
+        const { transcript, reply, audioUri } = await voiceAdapterRef.current.startConversation();
+        
+        // Update UI with response
+        setVoiceResponse(`You said: "${transcript}"\n\nAisle: ${reply}`);
+        
+        // Play audio response if available
+        if (audioUri) {
+          await voiceAdapterRef.current.play(audioUri);
+        }
+
+        track('voice_chat_complete', { 
+          transcript_length: transcript.length,
+          reply_length: reply.length,
+          has_audio: !!audioUri
+        });
+
+      } else {
+        // Stop listening
+        setListening(false);
+        await voiceAdapterRef.current.stop();
+        
+        track('voice_chat_stop', { 
+          manual_stop: true 
+        });
+      }
+    } catch (error: any) {
+      setListening(false);
+      console.error('Voice chat error:', error);
+      
+      Alert.alert(
+        'Voice Chat Error', 
+        error?.message || 'Failed to process voice request. Please try again.',
+        [{ text: 'OK' }]
+      );
+
+      track('voice_chat_error', { 
+        error: error?.message || 'Unknown error',
+        timestamp: new Date().toISOString()
+      });
+    }
+  };
 
   const handleIntentSelect = (intent: any) => {
     setSelectedIntent(intent.id);
