@@ -64,6 +64,16 @@
     ],
     "experiments": {
       "typedRoutes": true
+    },
+    "extra": {
+      "VOICE_ENABLED": process.env.VOICE_ENABLED,
+      "VOICE_DEV_ONLY": process.env.VOICE_DEV_ONLY,
+      "VOICE_TEASER": process.env.VOICE_TEASER,
+      "VOICE_PROVIDER": process.env.VOICE_PROVIDER,
+      "OPENAI_API_KEY": process.env.OPENAI_API_KEY,
+      "OPENAI_STT_MODEL": process.env.OPENAI_STT_MODEL,
+      "OPENAI_CHAT_MODEL": process.env.OPENAI_CHAT_MODEL,
+      "OPENAI_TTS_VOICE": process.env.OPENAI_TTS_VOICE
     }
   }
 }
