@@ -11,6 +11,7 @@ import asyncio
 from ...security import create_access_token
 from ...db import db
 from ...config import settings
+from ..deps import require_shopper
 
 router = APIRouter(prefix="/v1/auth", tags=["auth"])
 
