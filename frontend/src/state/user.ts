@@ -13,7 +13,7 @@ type State = {
 
 export const useUser = create<State>((set) => ({
   name: 'Alex',
-  role: 'hybrid',
+  role: 'shopper',
   tier: 'premium',
   setName: (name) => set({ name }),
   setRole: (role) => set({ role }),
