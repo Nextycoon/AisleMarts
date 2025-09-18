@@ -1,73 +1,47 @@
 <analysis>
-The trajectory details a comprehensive development effort by the previous AI engineer, evolving from initial mobile app feature development and bug fixes to the meticulous construction of a full investor-ready package and a sophisticated investor acquisition system. The initial phase involved fixing a critical JavaScript error in the mobile app () and restructuring the core navigation for a clean Home and feature-rich Profile. Subsequent work focused heavily on localization (i18n, RTL, locale auto-detection) and enhancing the user profile with dynamic data. The bulk of the later work pivoted to creating an exhaustive 26-slide investor deck (HTML, PPTX, PDF) incorporating detailed financial projections, competitive analysis, and a 60-second live demo script with visual cues. This was complemented by an investor portal featuring UTM tracking, a contact form, auto-reply emails, calendar integration (ICS), and HubSpot CRM automation, all meticulously bundled for production deployment. The overall progression demonstrates a high degree of responsiveness to user requests, technical proficiency, and strategic thinking towards an investor-ready global launch.
+The previous AI engineer meticulously developed the AisleMarts application from core mobile features to a sophisticated investor-ready ecosystem. Initial efforts focused on critical mobile app fixes, navigation overhaul, and robust localization. This transitioned into building a comprehensive 26-slide investor deck, an investor portal with UTM tracking, and associated CRM automation. Subsequently, the engineer implemented a dev/demo-only voice chat feature using OpenAI and the Emergent LLM key, complete with feature flags and an adapter architecture for future native integration. A significant portion of work then focused on strategic investor messaging, including a detailed voice chat demo playbook, integrating a 24/7/365 multilingual AI shopping expert identity, and explicitly positioning v1 as shopper-only while preloading a locked Phase 2 (business/seller layer). The most recent work involved creating a production-grade backend unlock authorization system (Node/Express, Redis, PostgreSQL) to gate Phase 2, and generating verifiable evidence exhibits (SQL queries, dashboard screenshots, architecture diagrams) for investor due diligence, demonstrating a high level of technical and strategic foresight.
 </analysis>
 
 <product_requirements>
-The overarching goal for AisleMarts is to become an AI-powered B2C/B2B marketplace, Cinematic AisleMarts 2.0, with dynamic user roles (Shopper, Seller, Business), distinct UI themes following a One-Screen, One-Color UI Doctrine, and personalized AI avatar greetings. A critical requirement was an investor-ready ecosystem including a Quality-to-Hires Converter and AI Supply Chain Intelligence. Recent explicit demands centered on a Federated Search across all e-commerce platforms and a Global Viral Launch Strategy (Phase 1: Shopper App globally; Phase 2: Marketplace Activation country-by-country). The AI engineer was tasked with creating an investor deck incorporating a Dual-Mode AI Search (Online vs. Onsite) and then evolved into building a comprehensive, polished investor package, a global-ready mobile app, and a trackable investor acquisition system.
+AisleMarts aims to be an AI-powered B2C/B2B marketplace, Cinematic AisleMarts 2.0, with dynamic user roles (Shopper, Seller, Business), One-Screen, One-Color UI Doctrine, and personalized AI avatar greetings. Key demands included Federated Search and a Global Viral Launch Strategy. The AI engineer was tasked with creating an investor deck featuring Dual-Mode AI Search, a global-ready mobile app, and a trackable investor acquisition system. The product is currently positioned as Shopper-Only v1, emphasizing a perfected buyer journey, with a pre-built, locked Phase 2 for seller and business functionalities, requiring 1M+ shopper downloads and Series A funding to unlock. This strategy aims for investor confidence by demonstrating focus and a clear, architected growth roadmap.
 </product_requirements>
 
 <key_technical_concepts>
-- **Frontend**: Expo, React Native, TypeScript, Expo Router, Zustand, React Query, i18n, AsyncStorage.
-- **Backend**: FastAPI (Python), MongoDB.
-- **AI/Data**: Federated Search, AI Normalization, Adaptive AI Personalities, Demand Forecasting, Dual-Mode AI Search.
-- **Architecture**: Monorepo, Microservices (implicit for federated search connectors), React Context API for Auth.
+- **Frontend**: Expo, React Native, TypeScript, Expo Router, Zustand, React Query, i18n, AsyncStorage, .
+- **Backend**: FastAPI (Python), MongoDB, Node.js (Express for unlock handler), PostgreSQL, Redis.
+- **AI/Data**: Federated Search, Adaptive AI, Dual-Mode AI Search, OpenAI API (Whisper, Chat Completion, TTS), Emergent LLM Key.
+- **Architecture**: Monorepo, Microservices (for federated search connectors), React Context API, Feature Flags, CI/CD for infrastructure.
 </key_technical_concepts>
 
 <code_architecture>
 
-
-**File Descriptions & Changes (relevant to the trajectory):**
--   : Integrated  and .
--   : Core logic for federated search, including mock connectors.
--   : FastAPI routes for .
--   : Mock connectors for Turkish platforms.
--   : Implemented one-screen, one-color doctrine.
--   : Edited to include 'business' user type.
--   : Component for selecting user types.
--   : Provides adaptive greetings, edited for robustness and error handling.
--   : Primary shopper interface.
--   : Vendor-specific interface.
--   : Business/enterprise interface.
--   : Edited to use , , apply , fix missing  import, and add error handling.
--   : Integrated  and new theming.
--   : Included new home routes for Expo Router.
--   : Extended with user profile fields (name, username, location, language, currency), locale bootstrapping, , , and  for dev demos.
--   : New hook to display live local time based on user's timezone.
--   : New component to display user details (name, username, location, live time, language, currency) at the top of the Profile screen.
--   : New hidden modal for quick role toggling in demo scenarios.
--   : New file for i18n configuration, including  for locale auto-detection and  for RTL support.
--   , : New files for multi-language support (EN, TR, AR) and translation resources.
--   : Refactored to only show Aisle intro, Signin, and Signup, using i18n.
--   : Refactored to centralize all features, integrate , and handle guest users with a sign-in CTA.
--   : New screen for language and currency selection with regional presets and RTL awareness.
--   : This directory was used to house all investor-related files.
-    -   : Existing structure for the investor deck.
-    -   : Draft outline for the investor deck.
-    -   : Interactive HTML presentation.
-    -   : Comprehensive technical specifications for the Aisle Algorithm Stack v1.0.
-    -   : The 26-slide master HTML deck with embedded content, speaker notes, and visuals.
-    -   : Branded PowerPoint version with embedded financial charts and competitive matrix.
-    -   : Branded PDF version with embedded financial charts and competitive matrix.
-    -   : Branded HTML one-page executive summary.
-    -   : Branded PDF one-page executive summary.
-    -    (in ): Investor portal landing page with UTM tracking and GA hooks.
-    -   : Investor contact form with UTM capture and Netlify/Formspree compatibility.
-    -   : Thank you page after form submission, with conversion tracking.
-    -   : Confirmation page after meeting booking, with final conversion tracking.
-    -   , : HTML and plain text templates for auto-reply emails.
-    -   ICS template snippet: Provided for calendar integration.
-    -   HubSpot webhook snippet: Provided for CRM automation.
--   : The final comprehensive bundle of all investor-related assets.
+**File Descriptions & Changes:**
+*   : Main AI chat screen. Modified to integrate voice chat UI, feature flags, and long-press gesture for dev-mode activation.
+*   : Environment variables. Updated to include , , , , and OpenAI API keys.
+*   : Expo app configuration. Modified to use  for environment variables, which was later reverted in favor of .
+*   : NEW file created to properly expose environment variables for Expo builds, replacing direct  usage in .
+*   : NEW file defining voice-related feature flags and OpenAI API configuration, centralizing voice settings.
+*   : NEW hook to determine if the app is running in a development build, used for  logic.
+*   : NEW file implementing the  interface for OpenAI, handling speech-to-text (Whisper), chat completion (GPT-5 Plus), and text-to-speech, utilizing  for audio. It uses the Emergent LLM key.
+*   : NEW file providing a detailed checklist for email deliverability (DKIM, SPF, DMARC, BIMI, TLS/MTA-STS).
+*   : EDITED to integrate the 24/7/365 multilingual AI shopping expert identity and explicitly position AisleMarts v1 as shopper-only with locked Phase 2 features.
+*   : NEW, then EDITED to include the Aisle identity, shopper-only v1 positioning, and a script for showcasing multilingual voice capabilities and the Phase 2 unlock.
+*   : EDITED to integrate the Aisle identity and shopper-only v1 focus.
+*   : NEW interactive HTML slide (Slide 27) showcasing locked Phase 2 commands with a terminal-style interface and typewriter animation, gated by 1M shopper downloads.
+*   : NEW directory containing the Phase 2 Unlock Authorization System. This includes a Node/Express server () using Redis for multi-admin approvals and PostgreSQL for an audit trail (), an admin React component (), documentation, and test scaffolds.
+*   : NEW HTML appendix page (Slide 28) presenting SQL query evidence for download progression, multi-admin approvals, and unlock events.
+*   : NEW HTML appendix page (Slide 29) providing dashboard screenshots as visual proof of the admin panel and unlock workflow.
 </code_architecture>
 
 <pending_tasks>
-All explicitly requested tasks related to the investor package, mobile app enhancements, and investor acquisition funnel were completed and bundled.
+- Complete the creation of the Infrastructure Architecture slide (Slide 30) and its corresponding HTML appendix page.
+- Generate and bundle the full Evidence Exhibits package (Slides 28-30 visuals and HTML appendix pages) into .
 </pending_tasks>
 
 <current_work>
-Immediately before this summary request, the AI engineer had just completed generating and packaging the final elements of the investor acquisition system. This included creating HTML and plain text auto-reply email templates, a  confirmation page for scheduled meetings, an ICS calendar invite template, and a HubSpot webhook integration snippet. These components were then consolidated and compressed into the final  bundle, ensuring all elements of the comprehensive Series A domination package were deployment-ready. The AI engineer also provided a 2-minute checklist for wiring these features live in a production environment.
+Immediately before this summary, the AI engineer was in the process of generating the Evidence Exhibits for the investor arsenal. This task involves creating HD appendix slides (Slides 28-30) and their corresponding HTML appendix pages, which provide documented, verifiable infrastructure proof for the Phase 2 Unlock Authorization System. Specifically, the AI engineer had successfully created  (representing SQL query evidence) and  (representing dashboard visual proof). The engineer was about to create the final slide, Slide 30: Infrastructure Architecture, when the trajectory concluded. This work is critical for investor due diligence, transforming the abstract concept of a pre-built Phase 2 empire into concrete, auditable, production-ready infrastructure documentation, enhancing the overall Series A package's credibility.
 </current_work>
 
 <optional_next_step>
-Add a DKIM/SPF/DMARC checklist for the  domain to maximize email deliverability.
+Create Slide 30 (Infrastructure Architecture) as both an HD static slide and an HTML appendix page, then ensure all evidence exhibits are bundled.
 </optional_next_step>

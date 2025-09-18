@@ -104,7 +104,7 @@ Best regards,
 Zain Elabden
 Founder & CEO, AisleMarts
 
-Demo: https://global-aisle.preview.emergentagent.com
+Demo: https://aislemarts-ai.preview.emergentagent.com
 ```
 
 ### **Template 2: Strategic Partner Approach**
@@ -191,7 +191,7 @@ Founder & CEO, AisleMarts
 
 ### **QR Code for Instant Access**
 ```
-Scan & Experience: https://global-aisle.preview.emergentagent.com
+Scan & Experience: https://aislemarts-ai.preview.emergentagent.com
 
 Mobile Demo Instructions:
 1. Choose your role: Shopper/Vendor/Business
