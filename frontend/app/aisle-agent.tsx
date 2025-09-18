@@ -3,77 +3,15 @@ import {
   View,
   Text,
   StyleSheet,
-  Dimensions,
   StatusBar,
   SafeAreaView,
-  Platform
+  TouchableOpacity,
+  ScrollView
 } from 'react-native';
 import { LinearGradient } from 'expo-linear-gradient';
-import Animated, {
-  SlideInUp,
-  SlideInDown,
-  FadeIn,
-  useSharedValue,
-  useAnimatedStyle,
-  withTiming,
-  withSpring,
-  withRepeat,
-  interpolate
-} from 'react-native-reanimated';
-import { LuxuryButton } from '../src/components/LuxuryButton';
-import { LuxuryCard } from '../src/components/LuxuryCard';
-import { colors, typography, spacing, borderRadius, shadows, animations } from '../src/theme/luxuryTokens';
-
-const { width, height } = Dimensions.get('window');
 
 export default function AisleAgentScreen() {
   const [isListening, setIsListening] = useState(false);
-  const [currentGreeting, setCurrentGreeting] = useState(0);
-  
-  // Animation values
-  const pulseAnim = useSharedValue(1);
-  const glowAnim = useSharedValue(0);
-  const floatAnim = useSharedValue(0);
-
-  const greetings = [
-    "Good evening! Welcome to AisleMarts Premium",
-    "I'm Aisle, your luxury shopping companion",
-    "How can I elevate your shopping experience today?"
-  ];
-
-  useEffect(() => {
-    // Cinematic breathing animation for the AI avatar
-    pulseAnim.value = withRepeat(
-      withTiming(1.1, { duration: 2000 }),
-      -1,
-      true
-    );
-    
-    // Subtle floating animation
-    floatAnim.value = withRepeat(
-      withTiming(10, { duration: 3000 }),
-      -1,
-      true
-    );
-    
-    // Glow effect
-    glowAnim.value = withRepeat(
-      withTiming(1, { duration: 1500 }),
-      -1,
-      true
-    );
-  }, []);
-
-  const animatedAvatarStyle = useAnimatedStyle(() => ({
-    transform: [
-      { scale: pulseAnim.value },
-      { translateY: interpolate(floatAnim.value, [0, 10], [-5, 5]) }
-    ],
-  }));
-
-  const animatedGlowStyle = useAnimatedStyle(() => ({
-    opacity: interpolate(glowAnim.value, [0, 1], [0.3, 0.8]),
-  }));
 
   const handleVoicePress = () => {
     setIsListening(!isListening);
@@ -84,24 +22,112 @@ export default function AisleAgentScreen() {
       icon: '🔥',
       title: 'Trending',
       subtitle: 'Hot deals & new arrivals',
-      gradient: [colors.primary[500], colors.primary[600]],
       onPress: () => console.log('Trending pressed')
     },
     {
       icon: '📍',
       title: 'Nearby',
       subtitle: 'Local boutiques & stores',
-      gradient: [colors.gold[500], colors.gold[600]],
       onPress: () => console.log('Nearby pressed')
     },
     {
       icon: '🛒',
       title: 'Shop',
       subtitle: 'Browse premium brands',
-      gradient: [colors.platinum[400], colors.platinum[500]],
       onPress: () => console.log('Shop pressed')
     }
   ];
+
+  return (
+    <SafeAreaView style={styles.container}>
+      <StatusBar barStyle="light-content" backgroundColor="transparent" translucent />
+      
+      <LinearGradient
+        colors={['#0f0f23', '#1a1a2e', '#16213e', '#581c87']}
+        style={StyleSheet.absoluteFill}
+      />
+
+      <ScrollView style={styles.scrollView} showsVerticalScrollIndicator={false}>
+        {/* Header */}
+        <View style={styles.header}>
+          <View style={styles.headerContent}>
+            <Text style={styles.headerTitle}>AI Shopping Assistant</Text>
+            <View style={styles.statusIndicator}>
+              <View style={styles.statusDot} />
+              <Text style={styles.statusText}>Premium Mode</Text>
+            </View>
+          </View>
+        </View>
+
+        {/* AI Avatar Section */}
+        <View style={styles.avatarSection}>
+          <View style={styles.avatarContainer}>
+            <LinearGradient
+              colors={['#a855f7', '#3b82f6', '#f59e0b']}
+              style={styles.avatarGradient}
+            >
+              <View style={styles.avatarInner}>
+                <Text style={styles.avatarIcon}>🤖</Text>
+              </View>
+            </LinearGradient>
+          </View>
+          
+          <TouchableOpacity
+            style={styles.voiceButton}
+            onPress={handleVoicePress}
+            activeOpacity={0.8}
+          >
+            <LinearGradient
+              colors={isListening ? ['#f59e0b', '#d97706'] : ['rgba(255, 255, 255, 0.1)', 'rgba(255, 255, 255, 0.05)']}
+              style={styles.voiceButtonGradient}
+            >
+              <Text style={[styles.voiceButtonText, isListening && styles.voiceButtonTextActive]}>
+                {isListening ? "Listening..." : "Tap to talk with me!"}
+              </Text>
+            </LinearGradient>
+          </TouchableOpacity>
+          
+          <View style={styles.statusContainer}>
+            <View style={styles.statusBadge}>
+              <Text style={styles.statusBadgeText}>• {isListening ? 'Listening' : 'Ready'}</Text>
+            </View>
+          </View>
+        </View>
+
+        {/* Conversation Section */}
+        <View style={styles.conversationSection}>
+          <View style={styles.conversationCard}>
+            <Text style={styles.conversationTitle}>Conversation</Text>
+            <Text style={styles.conversationText}>
+              Good evening! Welcome to AisleMarts Premium. I'm your personal AI shopping companion. I'm here to help you discover amazing products, find exclusive deals, and make luxury shopping effortless.
+            </Text>
+          </View>
+        </View>
+
+        {/* Quick Actions */}
+        <View style={styles.actionsSection}>
+          <Text style={styles.actionsTitle}>Quick Actions</Text>
+          <View style={styles.actionsGrid}>
+            {quickActions.map((action, index) => (
+              <TouchableOpacity
+                key={action.title}
+                style={styles.actionItem}
+                onPress={action.onPress}
+                activeOpacity={0.8}
+              >
+                <View style={styles.actionContent}>
+                  <Text style={styles.actionIcon}>{action.icon}</Text>
+                  <Text style={styles.actionTitle}>{action.title}</Text>
+                  <Text style={styles.actionSubtitle}>{action.subtitle}</Text>
+                </View>
+              </TouchableOpacity>
+            ))}
+          </View>
+        </View>
+      </ScrollView>
+    </SafeAreaView>
+  );
+}
 
   return (
     <SafeAreaView style={styles.container}>
