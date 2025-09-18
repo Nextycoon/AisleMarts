@@ -361,6 +361,21 @@ const styles = StyleSheet.create({
   },
   headerSpacer: {
     width: 40,
+    alignItems: 'center',
+    justifyContent: 'center',
+  },
+  voiceTeaser: {
+    fontSize: 16,
+    opacity: 0.6,
+  },
+  devIndicator: {
+    color: colors.cyan,
+    fontSize: 10,
+    fontWeight: '700',
+    backgroundColor: colors.glass.accent,
+    paddingHorizontal: 6,
+    paddingVertical: 2,
+    borderRadius: 4,
   },
   content: {
     flex: 1,
