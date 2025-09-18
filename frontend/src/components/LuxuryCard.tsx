@@ -164,8 +164,6 @@ const styles = StyleSheet.create({
   glassCard: {
     backgroundColor: 'rgba(255, 255, 255, 0.1)',
     borderWidth: 1,
-    // Note: backdropFilter not supported in React Native
-    // Using backgroundColor with opacity instead
   },
   
   content: {
