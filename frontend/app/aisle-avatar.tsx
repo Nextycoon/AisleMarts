@@ -208,34 +208,24 @@ const styles = StyleSheet.create({
     textAlign: 'center',
   },
   
-  // Inline Aisle AI Identity Styles (within role card)
-  aisleIdentityInline: {
-    backgroundColor: 'rgba(168, 85, 247, 0.1)',
+  // Simplified Aisle AI Identity Styles
+  aisleIdentitySection: {
+    backgroundColor: 'rgba(168, 85, 247, 0.15)',
     borderRadius: 12,
     padding: 16,
     marginVertical: 16,
     borderWidth: 1,
-    borderColor: 'rgba(168, 85, 247, 0.3)',
+    borderColor: 'rgba(168, 85, 247, 0.4)',
   },
   
-  aisleIdentityInlineHeader: {
-    flexDirection: 'row',
-    alignItems: 'center',
-    marginBottom: 8,
-  },
-  
-  aisleIdentityInlineIcon: {
-    fontSize: 18,
-    marginRight: 8,
-  },
-  
-  aisleIdentityInlineTitle: {
+  aisleIdentityLabel: {
     fontSize: 14,
     fontWeight: 'bold',
     color: '#a855f7',
+    marginBottom: 8,
   },
   
-  aisleIdentityInlineText: {
+  aisleIdentityDescription: {
     fontSize: 13,
     fontWeight: '400',
     color: '#e5e5e5',
