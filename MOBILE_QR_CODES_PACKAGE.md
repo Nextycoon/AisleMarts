@@ -4,7 +4,7 @@
 
 ### Web Preview (Desktop/Mobile Browser)
 ```
-🌐 Live Preview: https://shopperfocus.preview.emergentagent.com
+🌐 Live Preview: https://investor-command-1.preview.emergentagent.com
 ```
 
 ### Mobile App Testing (Expo Go)
