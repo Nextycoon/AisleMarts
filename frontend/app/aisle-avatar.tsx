@@ -266,28 +266,6 @@ const styles = StyleSheet.create({
     backgroundColor: '#0f0f23',
   },
   
-  backgroundOrb: {
-    position: 'absolute',
-    borderRadius: 200,
-    opacity: 0.1,
-  },
-  
-  orb1: {
-    width: 300,
-    height: 300,
-    backgroundColor: '#a855f7',
-    top: -100,
-    right: -100,
-  },
-  
-  orb2: {
-    width: 200,
-    height: 200,
-    backgroundColor: '#f59e0b',
-    bottom: 100,
-    left: -50,
-  },
-  
   scrollView: {
     flex: 1,
   },
@@ -298,7 +276,7 @@ const styles = StyleSheet.create({
   
   header: {
     paddingHorizontal: 24,
-    paddingTop: 64,
+    paddingTop: 80,
     paddingBottom: 48,
     alignItems: 'center',
   },
@@ -312,15 +290,15 @@ const styles = StyleSheet.create({
   },
   
   heroTitle: {
-    fontSize: 48,
-    fontWeight: '800',
+    fontSize: 42,
+    fontWeight: 'bold',
     color: '#ffffff',
     textAlign: 'center',
     marginBottom: 8,
   },
   
   heroSubtitle: {
-    fontSize: 20,
+    fontSize: 18,
     fontWeight: '300',
     color: '#f59e0b',
     textAlign: 'center',
@@ -333,7 +311,7 @@ const styles = StyleSheet.create({
   },
   
   tagline: {
-    fontSize: 18,
+    fontSize: 16,
     fontWeight: '500',
     color: '#e5e5e5',
     textAlign: 'center',
@@ -353,7 +331,7 @@ const styles = StyleSheet.create({
   },
   
   sectionTitle: {
-    fontSize: 24,
+    fontSize: 22,
     fontWeight: '600',
     color: '#ffffff',
     textAlign: 'center',
@@ -363,7 +341,6 @@ const styles = StyleSheet.create({
   roleCard: {
     marginBottom: 16,
     borderRadius: 16,
-    overflow: 'hidden',
     backgroundColor: 'rgba(255, 255, 255, 0.05)',
     borderWidth: 1,
     borderColor: 'rgba(255, 255, 255, 0.1)',
@@ -374,18 +351,8 @@ const styles = StyleSheet.create({
     borderWidth: 2,
   },
   
-  roleCardGradient: {
-    position: 'absolute',
-    top: 0,
-    left: 0,
-    right: 0,
-    bottom: 0,
-  },
-  
   roleContent: {
     padding: 24,
-    position: 'relative',
-    zIndex: 1,
   },
   
   roleHeader: {
@@ -414,7 +381,7 @@ const styles = StyleSheet.create({
   
   roleTitle: {
     fontSize: 20,
-    fontWeight: '700',
+    fontWeight: 'bold',
     color: '#ffffff',
     marginBottom: 4,
   },
@@ -435,9 +402,9 @@ const styles = StyleSheet.create({
   },
   
   checkmarkIcon: {
-    fontSize: 18,
+    fontSize: 16,
     color: '#0f0f23',
-    fontWeight: '700',
+    fontWeight: 'bold',
   },
   
   roleDescription: {
@@ -496,7 +463,7 @@ const styles = StyleSheet.create({
   },
   
   ctaButtonText: {
-    fontSize: 18,
+    fontSize: 16,
     fontWeight: '600',
     color: '#0f0f23',
     textAlign: 'center',
