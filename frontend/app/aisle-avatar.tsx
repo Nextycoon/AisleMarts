@@ -220,7 +220,7 @@ export default function AisleAvatarScreen() {
           <Text style={styles.heroTitle}>Choose your Aisle.</Text>
           <Text style={styles.heroTitle}>Define your journey.</Text>
           <Text style={styles.heroSubtitle}>
-            Your avatar is your key.{'\n'}It unlocks your path.
+            Your interface is your key.{'\n'}It unlocks your path.
           </Text>
         </Animated.View>
 
