@@ -52,6 +52,20 @@ export default function AisleAvatarScreen() {
           <View style={styles.brandAccent} />
           <Text style={styles.heroTitle}>AisleMarts</Text>
           <Text style={styles.heroSubtitle}>Luxury Shopping Redefined</Text>
+          
+          {/* Aisle AI Identity Section */}
+          <View style={styles.aisleIdentityContainer}>
+            <View style={styles.aisleIdentityCard}>
+              <View style={styles.aisleIconContainer}>
+                <Text style={styles.aisleIcon}>🤖</Text>
+              </View>
+              <Text style={styles.aisleIdentityTitle}>Meet Aisle</Text>
+              <Text style={styles.aisleIdentityText}>
+                Aisle is an OpenAI ChatGPT‑5 AI Agent specialized in commerce and shopping — bringing the right products to the right customers, 24/7/365, in every language and market.
+              </Text>
+            </View>
+          </View>
+          
           <View style={styles.taglineContainer}>
             <Text style={styles.tagline}>Your personal AI concierge awaits</Text>
             <Text style={styles.taglineSecondary}>Curated experiences • Premium service • Exclusive access</Text>
