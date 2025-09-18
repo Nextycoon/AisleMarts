@@ -293,6 +293,39 @@ export default function AIAssistantScreen() {
             💡 This is an early preview of AI Assistant. More capabilities coming soon!
           </Text>
         </View>
+
+        {/* Voice Chat Button (Dev/Demo Only) */}
+        {canShowVoice && (
+          <View style={styles.voiceSection}>
+            <Text style={styles.sectionTitle}>Voice Chat (Demo)</Text>
+            <Pressable
+              onPress={handleVoicePress}
+              style={[
+                styles.voiceButton,
+                listening && styles.voiceButtonListening
+              ]}
+              disabled={false}
+            >
+              <Ionicons 
+                name={listening ? "stop" : "mic"} 
+                size={24} 
+                color={listening ? "#dc2626" : colors.text} 
+              />
+              <Text style={[
+                styles.voiceButtonText,
+                listening && styles.voiceButtonTextListening
+              ]}>
+                {listening ? 'Stop Recording' : 'Start Voice Chat'}
+              </Text>
+            </Pressable>
+            
+            {listening && (
+              <Text style={styles.listeningIndicator}>
+                🎤 Listening... Speak now
+              </Text>
+            )}
+          </View>
+        )}
       </ScrollView>
     </SafeAreaView>
   );
