@@ -215,16 +215,16 @@ const styles = StyleSheet.create({
   
   // Aisle AI Identity Styles
   aisleIdentityContainer: {
-    marginVertical: 24,
-    paddingHorizontal: 8,
+    paddingHorizontal: 24,
+    marginVertical: 16,
   },
   
   aisleIdentityCard: {
-    backgroundColor: 'rgba(168, 85, 247, 0.1)',
+    backgroundColor: 'rgba(168, 85, 247, 0.15)',
     borderRadius: 16,
     padding: 20,
     borderWidth: 1,
-    borderColor: 'rgba(168, 85, 247, 0.3)',
+    borderColor: 'rgba(168, 85, 247, 0.4)',
     alignItems: 'center',
   },
   
