@@ -519,4 +519,56 @@ const styles = StyleSheet.create({
     fontSize: 14,
     textAlign: 'center',
   },
+  // Voice Chat Styles (Dev/Demo Only)
+  voiceResponseSection: {
+    marginBottom: spacing.xl,
+  },
+  voiceResponseCard: {
+    backgroundColor: colors.glass.info,
+    borderColor: colors.border.info,
+    borderWidth: 1,
+    borderRadius: radii.lg,
+    padding: spacing.md,
+  },
+  voiceResponseText: {
+    color: colors.text,
+    fontSize: 14,
+    lineHeight: 20,
+  },
+  voiceSection: {
+    marginBottom: spacing.xl,
+    alignItems: 'center',
+  },
+  voiceButton: {
+    backgroundColor: colors.panel,
+    borderColor: colors.line,
+    borderWidth: 1,
+    borderRadius: radii.lg,
+    paddingVertical: spacing.md,
+    paddingHorizontal: spacing.lg,
+    flexDirection: 'row',
+    alignItems: 'center',
+    gap: spacing.sm,
+    minWidth: 200,
+    justifyContent: 'center',
+  },
+  voiceButtonListening: {
+    backgroundColor: colors.glass.error,
+    borderColor: colors.border.error,
+  },
+  voiceButtonText: {
+    color: colors.text,
+    fontSize: 16,
+    fontWeight: '600',
+  },
+  voiceButtonTextListening: {
+    color: '#dc2626',
+  },
+  listeningIndicator: {
+    marginTop: spacing.sm,
+    color: colors.textDim,
+    fontSize: 14,
+    textAlign: 'center',
+    fontStyle: 'italic',
+  },
 });
