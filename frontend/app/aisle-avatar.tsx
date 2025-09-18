@@ -213,6 +213,51 @@ const styles = StyleSheet.create({
     textAlign: 'center',
   },
   
+  // Aisle AI Identity Styles
+  aisleIdentityContainer: {
+    marginVertical: 24,
+    paddingHorizontal: 8,
+  },
+  
+  aisleIdentityCard: {
+    backgroundColor: 'rgba(168, 85, 247, 0.1)',
+    borderRadius: 16,
+    padding: 20,
+    borderWidth: 1,
+    borderColor: 'rgba(168, 85, 247, 0.3)',
+    alignItems: 'center',
+  },
+  
+  aisleIconContainer: {
+    width: 50,
+    height: 50,
+    borderRadius: 25,
+    backgroundColor: 'rgba(245, 158, 11, 0.2)',
+    alignItems: 'center',
+    justifyContent: 'center',
+    marginBottom: 12,
+  },
+  
+  aisleIcon: {
+    fontSize: 24,
+  },
+  
+  aisleIdentityTitle: {
+    fontSize: 18,
+    fontWeight: 'bold',
+    color: '#a855f7',
+    marginBottom: 12,
+    textAlign: 'center',
+  },
+  
+  aisleIdentityText: {
+    fontSize: 14,
+    fontWeight: '400',
+    color: '#e5e5e5',
+    textAlign: 'center',
+    lineHeight: 20,
+  },
+  
   roleSection: {
     paddingHorizontal: 24,
     marginTop: 32,
