@@ -164,14 +164,22 @@ export default function AIAssistantScreen() {
 
   return (
     <SafeAreaView style={styles.container}>
-      {/* Header */}
-      <View style={styles.header}>
+      {/* Header with secret long-press to unlock voice */}
+      <Pressable onLongPress={onLongPressHeader} style={styles.header}>
         <Pressable onPress={() => router.back()} style={styles.backButton}>
           <Ionicons name="arrow-back" size={24} color={colors.text} />
         </Pressable>
         <Text style={styles.headerTitle}>AI Assistant</Text>
-        <View style={styles.headerSpacer} />
-      </View>
+        <View style={styles.headerSpacer}>
+          {/* Voice teaser or dev indicator */}
+          {VOICE.teaser && !canShowVoice && (
+            <Text style={styles.voiceTeaser}>🎙️</Text>
+          )}
+          {voiceUnlocked && (
+            <Text style={styles.devIndicator}>DEV</Text>
+          )}
+        </View>
+      </Pressable>
 
       <ScrollView style={styles.content} showsVerticalScrollIndicator={false}>
         {/* Welcome Message */}
