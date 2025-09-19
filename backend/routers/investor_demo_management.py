@@ -17,6 +17,13 @@ router = APIRouter()
 # Load demo configuration
 DEMO_CONFIG_PATH = "/app/docs/BW-04_EMAIL_OUTREACH_SEQUENCES/INVESTOR_BUNDLES/_DEMO_HUB/Demo_Context_Map.json"
 
+class TrackingRequest(BaseModel):
+    bundle: str
+    event_type: str
+    page: str
+    utm_content: Optional[str] = None
+    session_id: Optional[str] = None
+
 def load_demo_config():
     """Load investor demo configuration"""
     try:
