@@ -456,7 +456,8 @@ try:
     app.include_router(wishlist_router)
     app.include_router(orders_cancel_router)
     app.include_router(products_cached_router)
-    app.include_router(auth_router)
+    app.include_router(auth_router, prefix="/api/auth")
+    app.include_router(mood_to_cart_router, prefix="/api/mood")
     print("✅ ALL-IN MICRO-SPRINT routers loaded successfully")
 except ImportError as e:
     print(f"⚠️ ALL-IN MICRO-SPRINT routers not available: {e}")
