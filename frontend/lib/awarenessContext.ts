@@ -533,7 +533,8 @@ export const AwarenessProvider: React.FC<AwarenessProviderProps> = ({ children }
     return 'DD/MM/YYYY'; // Default for most locales
   };
 
-  const contextValue: AwarenessContextType = {
+  // Create context value object
+  const contextValue: AwarenessContextType = React.useMemo(() => ({
     profile,
     adaptiveResponse,
     isLoading,
@@ -545,7 +546,19 @@ export const AwarenessProvider: React.FC<AwarenessProviderProps> = ({ children }
     formatDateTime,
     shouldShowFeature,
     getLocalizedContent,
-  };
+  }), [
+    profile,
+    adaptiveResponse,
+    isLoading,
+    error,
+    detectContext,
+    updatePreferences,
+    getLanguagePack,
+    formatCurrency,
+    formatDateTime,
+    shouldShowFeature,
+    getLocalizedContent,
+  ]);
 
   return (
     <AwarenessContext.Provider value={contextValue}>
