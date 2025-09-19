@@ -187,7 +187,7 @@ class SchemaFixTester:
             "thumbnail_url": "https://example.com/thumbnail.jpg"
         }
         
-        success, data = self.make_request("POST", "/biz/livesales", livesale_request)
+        success, data = self.make_request("POST", "/livesale/biz/livesales", livesale_request)
         
         if success and isinstance(data, dict) and data.get("id"):
             livesale_id = data.get("id")
