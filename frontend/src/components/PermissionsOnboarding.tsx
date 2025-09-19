@@ -299,7 +299,11 @@ export default function PermissionsOnboarding({
             {/* Skip All */}
             <TouchableOpacity
               style={styles.skipAllButton}
-              onPress={handleSkipAll}
+              onPress={() => {
+                console.log('🔥 SKIP ALL BUTTON PRESSED!');
+                handleSkipAll();
+              }}
+              activeOpacity={0.7}
             >
               <Text style={styles.skipAllText}>Skip All Permissions</Text>
             </TouchableOpacity>
