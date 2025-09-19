@@ -574,7 +574,7 @@ function StepVision({ onNext }: { onNext: () => void }) {
       title="AisleMarts Vision"
       subtitle="Modern Lifestyle Commerce Platform — Where shopping, lifestyle, and social merge."
       step={3}
-      total={6}
+      total={7}
     >
       <ScrollView style={{ maxHeight: 400 }} showsVerticalScrollIndicator={false}>
         <View style={{ gap: 20 }}>
