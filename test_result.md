@@ -267,6 +267,9 @@ test_plan:
         - working: false
           agent: "testing"
           comment: "❌ CRITICAL ISSUE: Wishlist APIs returning 404 Not Found. All 3 wishlist tests failed (add item, list items, add duplicate). Router import failing due to relative import path issues preventing proper loading into FastAPI application."
+        - working: false
+          agent: "testing"
+          comment: "❌ ISSUE: Wishlist APIs accessible but failing due to parameter handling. Add endpoint expects query parameters (user_id, product_id) but receives empty strings, causing ObjectId validation error. List endpoint works correctly (returns empty items array). API design needs adjustment to accept request body data or proper parameter validation."
 
   - task: "ALL-IN MICRO-SPRINT: Order Cancellation API"
     implemented: true
