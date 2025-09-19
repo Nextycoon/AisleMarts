@@ -212,35 +212,17 @@ const ti = {
   elevation: 2,
 } as const;
 
-/** ========= Step 1: Promo (Epic Full-Screen Video Background - ABSOLUTE ZERO WHITE SPACES) ========= */
+/** ========= Step 1: Promo (Epic Full-Screen Video Background - ZERO WHITE SPACE GUARANTEED) ========= */
 function StepPromo({ onSignIn, onSignUp }: { onSignIn: () => void; onSignUp: () => void }) {
   const videoRef = useRef<Video | null>(null);
   
   return (
-    <View style={{
-      position: 'absolute',
-      top: -100,
-      left: -100,
-      right: -100,
-      bottom: -100,
-      width: '130%',
-      height: '130%',
-      margin: 0,
-      padding: 0,
-    }}>
-      {/* FULL SCREEN VIDEO BACKGROUND - EXTENDS BEYOND ALL BOUNDARIES */}
+    <View style={StyleSheet.absoluteFillObject}>
+      {/* FULL SCREEN VIDEO BACKGROUND - ABSOLUTE FILL */}
       <Video
         ref={videoRef}
         source={{ uri: "https://cdn.coverr.co/videos/coverr-shopping-aisles-8515/1080p.mp4" }}
-        style={{
-          position: 'absolute',
-          top: 0,
-          left: 0,
-          right: 0,
-          bottom: 0,
-          width: '100%',
-          height: '100%',
-        }}
+        style={StyleSheet.absoluteFillObject}
         resizeMode="cover"
         isLooping
         shouldPlay
@@ -256,25 +238,16 @@ function StepPromo({ onSignIn, onSignUp }: { onSignIn: () => void; onSignUp: () 
           'rgba(0,0,0,0.8)'
         ]}
         locations={[0, 0.3, 0.7, 1]}
-        style={{
-          position: 'absolute',
-          top: 0,
-          left: 0,
-          right: 0,
-          bottom: 0,
-          width: '100%',
-          height: '100%',
-        }}
+        style={StyleSheet.absoluteFillObject}
       />
       
-      {/* CONTENT OVERLAY - POSITIONED TO AVOID WHITE AREAS */}
+      {/* CONTENT OVERLAY - ABSOLUTE FILL WITH PROPER SPACING */}
       <View style={{
-        position: 'absolute',
-        top: 150,
-        left: 100,
-        right: 100,
-        bottom: 150,
+        ...StyleSheet.absoluteFillObject,
         justifyContent: 'space-between',
+        paddingTop: 120,
+        paddingBottom: 60,
+        paddingHorizontal: 24,
       }}>
         
         {/* TOP CONTENT */}
