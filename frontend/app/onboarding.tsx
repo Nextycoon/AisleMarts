@@ -135,22 +135,11 @@ function ScreenShell({
   children, title, subtitle, step, total,
 }: { children: React.ReactNode; title: string; subtitle?: string; step: number; total: number }) {
   return (
-    <View style={{ 
-      flex: 1, 
-      backgroundColor: BRAND.bg,
-      minHeight: "100vh",
-      position: "relative"
-    }}>
-      {/* Cinematic background gradient overlay */}
-      <View style={{
-        position: "absolute",
-        top: 0,
-        left: 0,
-        right: 0,
-        bottom: 0,
-        background: "radial-gradient(circle at center top, rgba(212, 175, 55, 0.1) 0%, rgba(0,0,0,0.9) 70%)",
-        zIndex: 0,
-      }} />
+    <View style={{ flex: 1 }}>
+      <LinearGradient
+        colors={['#000000', '#0a0a0a', '#1a1a1a']}
+        style={StyleSheet.absoluteFill}
+      />
       
       <ScrollView 
         contentContainerStyle={{ 
@@ -158,11 +147,12 @@ function ScreenShell({
           paddingTop: 60, 
           paddingBottom: 40, 
           gap: 24,
-          minHeight: "100vh",
-          justifyContent: "center"
+          minHeight: '100%',
+          justifyContent: 'center'
         }} 
         keyboardShouldPersistTaps="handled"
         showsVerticalScrollIndicator={false}
+        style={{ flex: 1 }}
       >
         {/* Luxury brand header */}
         <Text style={{ 
@@ -172,9 +162,6 @@ function ScreenShell({
           fontWeight: "600",
           textAlign: "center",
           opacity: 0.9,
-          textShadowColor: "rgba(212, 175, 55, 0.3)",
-          textShadowOffset: { width: 0, height: 1 },
-          textShadowRadius: 4,
         }}>
           AISLEMARTS
         </Text>
@@ -187,9 +174,6 @@ function ScreenShell({
           textAlign: "center",
           letterSpacing: 1,
           lineHeight: 38,
-          textShadowColor: "rgba(0,0,0,0.8)",
-          textShadowOffset: { width: 0, height: 2 },
-          textShadowRadius: 4,
         }}>{title}</Text>
         
         {!!subtitle && (
@@ -206,7 +190,7 @@ function ScreenShell({
         
         <ProgressDots step={step} total={total} />
         
-        <View style={{ gap: 24, zIndex: 1 }}>{children}</View>
+        <View style={{ gap: 24 }}>{children}</View>
       </ScrollView>
     </View>
   );
