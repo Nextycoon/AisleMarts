@@ -12328,7 +12328,7 @@ SKU-CSV-002,8,15000,9876543210987,KES,red,large,new"""
         """Test demo interaction tracking for various event types"""
         print("\n💎 Testing Investor Demo - Interaction Tracking...")
         
-        # Test different event types
+        # Test different event types using query parameters
         test_events = [
             {
                 "bundle": "SEQUOIA_ROELOF_BOTHA",
@@ -12361,7 +12361,8 @@ SKU-CSV-002,8,15000,9876543210987,KES,red,large,new"""
         ]
         
         for event in test_events:
-            success, data = self.make_request("POST", "/demo/track-interaction", event)
+            # Use GET request with query parameters instead of POST with JSON body
+            success, data = self.make_request("POST", "/demo/track-interaction", data=event)
             
             if success and isinstance(data, dict) and data.get("tracked") is True:
                 tracked_event = data.get("event", {})
@@ -12380,7 +12381,7 @@ SKU-CSV-002,8,15000,9876543210987,KES,red,large,new"""
             "page": "home"
         }
         
-        success, data = self.make_request("POST", "/demo/track-interaction", invalid_event)
+        success, data = self.make_request("POST", "/demo/track-interaction", data=invalid_event)
         
         if not success and "404" in str(data):
             self.log_test("Demo Tracking (Invalid Bundle)", True, "Correctly rejected tracking for non-existent bundle")
