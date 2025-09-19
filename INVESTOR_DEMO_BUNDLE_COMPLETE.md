@@ -13,7 +13,7 @@
 cd /app/frontend
 
 # 1. Production Environment Setup
-export EXPO_PUBLIC_API_URL="https://ai-marketplace-12.preview.emergentagent.com"
+export EXPO_PUBLIC_API_URL="https://market-welcome-1.preview.emergentagent.com"
 export NODE_ENV="production"
 export EAS_BUILD_PROFILE="investor-demo"
 
@@ -128,7 +128,7 @@ eas submit -p ios --latest
 - **Installation Instructions**: Step-by-step setup guide
 
 ### **2. Demo Environment Access**:
-- **Staging URL**: https://ai-marketplace-12.preview.emergentagent.com
+- **Staging URL**: https://market-welcome-1.preview.emergentagent.com
 - **Demo Credentials**: Pre-configured test accounts
 - **Admin Dashboard**: Backend metrics and analytics view
 - **API Documentation**: Live API explorer and testing interface
@@ -174,10 +174,10 @@ Demo Account: investor@aislemarts.com / DemoPass123
 ## **🌐 Web Demo Environment**:
 ```
 💻 STAGING ENVIRONMENT
-URL: https://ai-marketplace-12.preview.emergentagent.com
-Admin Portal: https://ai-marketplace-12.preview.emergentagent.com/admin
-API Explorer: https://ai-marketplace-12.preview.emergentagent.com/docs
-Monitoring: https://ai-marketplace-12.preview.emergentagent.com/metrics
+URL: https://market-welcome-1.preview.emergentagent.com
+Admin Portal: https://market-welcome-1.preview.emergentagent.com/admin
+API Explorer: https://market-welcome-1.preview.emergentagent.com/docs
+Monitoring: https://market-welcome-1.preview.emergentagent.com/metrics
 ```
 
 ---
