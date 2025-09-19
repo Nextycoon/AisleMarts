@@ -272,8 +272,7 @@ test_plan:
     - "ALL-IN MICRO-SPRINT: AI Integration Library"
     - "ALL-IN MICRO-SPRINT: Order Success UX Component"
     - "ALL-IN MICRO-SPRINT: Frontend Testing Suite"
-  stuck_tasks:
-    - "ALL-IN MICRO-SPRINT: Wishlist APIs"
+  stuck_tasks: []
   test_all: false
   test_priority: "high_first"
   completed_focus:
