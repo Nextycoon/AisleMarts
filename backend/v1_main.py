@@ -42,6 +42,7 @@ from routers import (
     orders,                 # /app/backend/routers/orders.py
     vendor_management,      # /app/backend/routers/vendor_management.py
     analytics_api,          # /app/backend/routers/analytics_api.py
+    multilang_voice_ai,     # /app/backend/routers/multilang_voice_ai.py
 )
 
 app.include_router(health.router)
