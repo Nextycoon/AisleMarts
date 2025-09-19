@@ -1,0 +1,137 @@
+{
+  "awareness_engine": {
+    "version": "1.0.0",
+    "service_name": "AisleMarts Awareness Engine",
+    "description": "Comprehensive context-awareness system for luxury commerce personalization",
+    "capabilities": [
+      "location_awareness",
+      "time_awareness",
+      "user_awareness", 
+      "currency_awareness",
+      "language_awareness",
+      "device_awareness",
+      "cultural_sensitivity",
+      "real_time_adaptation"
+    ],
+    "supported_languages": [
+      "en", "es", "fr", "de", "zh", "ja", "ar"
+    ],
+    "supported_currencies": [
+      "USD", "EUR", "GBP", "JPY", "CAD", "AUD", "CNY", "INR", "BRL", "MXN", "KES", "NGN", "ZAR", "AED", "SAR"
+    ],
+    "detection_methods": {
+      "location": {
+        "primary": "gps_coordinates",
+        "fallback": "ip_geolocation",
+        "backup": "locale_inference"
+      },
+      "time": {
+        "source": "device_timezone",
+        "context_categories": ["morning", "afternoon", "evening", "night"],
+        "business_hours": "9:00-18:00",
+        "weekend_detection": true,
+        "holiday_integration": "external_api"
+      },
+      "language": {
+        "priority": ["user_preference", "accept_language_header", "location_inference", "default_en"],
+        "auto_translation": true,
+        "rtl_support": true
+      },
+      "currency": {
+        "detection_order": ["user_preference", "location_mapping", "default_usd"],
+        "exchange_rates": "real_time_api",
+        "dual_display": true
+      },
+      "device": {
+        "type_detection": "user_agent_analysis",
+        "capability_detection": "feature_support_check",
+        "performance_adaptation": true
+      }
+    },
+    "personalization": {
+      "scoring_algorithm": "multi_factor_weighted",
+      "factors": {
+        "purchase_history": 0.3,
+        "preferences": 0.2,
+        "behavioral_patterns": 0.2,
+        "location_data": 0.15,
+        "time_context": 0.15
+      },
+      "thresholds": {
+        "high_personalization": 0.8,
+        "medium_personalization": 0.5,
+        "low_personalization": 0.2
+      }
+    },
+    "privacy_compliance": {
+      "gdpr_compliant": true,
+      "ccpa_compliant": true,
+      "data_encryption": "AES-256-GCM",
+      "consent_management": true,
+      "data_retention_days": 365,
+      "anonymization": true,
+      "opt_out_support": true
+    },
+    "performance": {
+      "cache_duration_minutes": 30,
+      "refresh_interval_minutes": 15,
+      "background_updates": true,
+      "bandwidth_optimization": true,
+      "offline_mode": true
+    },
+    "ui_adaptations": {
+      "theme_switching": true,
+      "layout_optimization": true,
+      "font_scaling": true,
+      "color_contrast": true,
+      "accessibility_features": true
+    },
+    "content_adaptations": {
+      "time_based_recommendations": true,
+      "location_based_content": true,
+      "cultural_customization": true,
+      "seasonal_promotions": true,
+      "local_trending": true
+    },
+    "pricing_adaptations": {
+      "currency_conversion": true,
+      "tax_calculation": true,
+      "regional_pricing": true,
+      "dynamic_pricing": false,
+      "promotion_targeting": true
+    },
+    "notification_system": {
+      "context_aware_timing": true,
+      "language_localization": true,
+      "timezone_scheduling": true,
+      "cultural_sensitivity": true,
+      "quiet_hours": "22:00-08:00"
+    },
+    "api_endpoints": {
+      "detection": "/api/awareness/detect-context",
+      "adaptive_response": "/api/awareness/adaptive-response/{session_id}",
+      "update_preferences": "/api/awareness/update-preferences/{session_id}",
+      "currency_rates": "/api/awareness/currency-rates",
+      "health_check": "/api/awareness/health"
+    },
+    "integration_points": {
+      "frontend_context": "lib/awarenessContext.ts",
+      "backend_router": "routers/awareness_engine.py",
+      "database_storage": "mongodb.awareness_profiles",
+      "cache_layer": "redis.awareness_cache",
+      "external_apis": [
+        "currency_exchange",
+        "geolocation_service",
+        "timezone_api",
+        "holiday_calendar"
+      ]
+    },
+    "monitoring": {
+      "success_rate_tracking": true,
+      "performance_metrics": true,
+      "error_logging": true,
+      "user_feedback_integration": true,
+      "analytics_dashboard": true
+    }
+  }
+}
