@@ -26,22 +26,22 @@ export default function AisleAgentScreen() {
       onPress: () => router.push('/chat')
     },
     {
-      icon: '🔥',
-      title: 'Trending',
-      subtitle: 'Hot deals & new arrivals',
-      onPress: () => console.log('Trending pressed')
+      icon: '📞',
+      title: 'Calls',
+      subtitle: 'Voice & video calls',
+      onPress: () => router.push('/calls')
     },
     {
-      icon: '📍',
-      title: 'Nearby',
-      subtitle: 'Local boutiques & stores',
-      onPress: () => console.log('Nearby pressed')
+      icon: '📺',
+      title: 'Channels',
+      subtitle: 'Creator & vendor channels',
+      onPress: () => router.push('/channels')
     },
     {
-      icon: '🛒',
-      title: 'Shop',
-      subtitle: 'Browse premium brands',
-      onPress: () => console.log('Shop pressed')
+      icon: '🔴',
+      title: 'LiveSale',
+      subtitle: 'Live shopping events',
+      onPress: () => router.push('/livesale')
     }
   ];
 
