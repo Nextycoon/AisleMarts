@@ -65,8 +65,8 @@ export default function CreateLiveSaleScreen() {
         products: selectedProducts.map(product => ({
           product_id: product.id,
           name: product.name,
-          price: product.price,
-          discount_percent: product.discount_percent || 0,
+          original_price: product.price,
+          drop_price: product.price * (1 - (product.discount_percent || 0) / 100),
           quantity_available: product.quantity_available
         }))
       };
