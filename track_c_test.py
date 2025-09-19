@@ -47,7 +47,11 @@ class TrackCTester:
             if method.upper() == "GET":
                 response = self.session.get(url, headers=headers, params=data)
             elif method.upper() == "POST":
-                response = self.session.post(url, json=data, headers=headers)
+                if endpoint.endswith("/mood-to-cart"):
+                    # Special handling for mood-to-cart which expects query parameters
+                    response = self.session.post(url, headers=headers, params=data)
+                else:
+                    response = self.session.post(url, json=data, headers=headers)
             else:
                 return False, f"Unsupported method: {method}"
                 
