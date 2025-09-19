@@ -435,6 +435,9 @@ except ImportError as e:
 
 # Include ALL-IN MICRO-SPRINT routers
 try:
+    import sys
+    import os
+    sys.path.append(os.path.dirname(__file__))
     from routers.ai_intent import router as ai_intent_router
     from routers.wishlist import router as wishlist_router
     from routers.orders_cancel import router as orders_cancel_router
