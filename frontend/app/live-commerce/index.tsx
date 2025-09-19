@@ -326,7 +326,7 @@ export default function LiveCommerceScreen() {
                 </View>
               </View>
             )}
-          </View>
+          </LinearGradient>
         </View>
 
         {/* Product Carousel */}
