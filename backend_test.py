@@ -7684,6 +7684,393 @@ SKU-CSV-002,8,15000,9876543210987,KES,red,large,new"""
         print("\n🚚 PICKUP WINDOWS SYSTEM COMPREHENSIVE TEST COMPLETED")
         print("=" * 80)
 
+    # ========== TRACK C AI SUPERCHARGE TESTS ==========
+    
+    def test_multilang_voice_health_check(self):
+        """Test multi-language voice AI health check"""
+        print("\n🎤 Testing Multi-Language Voice AI Health Check...")
+        
+        success, data = self.make_request("GET", "/multilang-voice/health")
+        
+        if success and isinstance(data, dict) and data.get("status") == "healthy":
+            service = data.get("service")
+            languages = data.get("supported_languages", [])
+            features = data.get("features", [])
+            language_count = data.get("language_count", 0)
+            self.log_test("Multi-Language Voice AI Health Check", True, f"Service: {service}, Languages: {language_count}, Features: {len(features)}")
+        else:
+            self.log_test("Multi-Language Voice AI Health Check", False, str(data))
+    
+    def test_multilang_voice_processing(self):
+        """Test voice command processing across languages"""
+        print("\n🎤 Testing Multi-Language Voice Command Processing...")
+        
+        # Test English voice command
+        english_command = {
+            "text": "Show me luxury handbags under $200",
+            "language": "en",
+            "user_id": "test_user_123",
+            "context": {"budget": "medium"}
+        }
+        
+        success, data = self.make_request("POST", "/multilang-voice/process", english_command)
+        
+        if success and isinstance(data, dict) and data.get("success") is True:
+            intent = data.get("detected_intent")
+            confidence = data.get("confidence", 0)
+            language = data.get("language")
+            ai_response = data.get("ai_response", "")
+            products_found = len(data.get("products_found", []))
+            self.log_test("Voice Processing (English)", True, f"Intent: {intent}, Confidence: {confidence:.2f}, Language: {language}, Products: {products_found}")
+        else:
+            self.log_test("Voice Processing (English)", False, str(data))
+        
+        # Test Turkish voice command
+        turkish_command = {
+            "text": "200 dolardan ucuz lüks çanta göster",
+            "language": "tr",
+            "user_id": "test_user_123"
+        }
+        
+        success, data = self.make_request("POST", "/multilang-voice/process", turkish_command)
+        
+        if success and isinstance(data, dict) and data.get("success") is True:
+            intent = data.get("detected_intent")
+            confidence = data.get("confidence", 0)
+            ai_response = data.get("ai_response", "")
+            self.log_test("Voice Processing (Turkish)", True, f"Intent: {intent}, Confidence: {confidence:.2f}, Response in Turkish: {len(ai_response) > 0}")
+        else:
+            self.log_test("Voice Processing (Turkish)", False, str(data))
+        
+        # Test Arabic voice command
+        arabic_command = {
+            "text": "أرني حقائب فاخرة تحت 200 دولار",
+            "language": "ar",
+            "user_id": "test_user_123"
+        }
+        
+        success, data = self.make_request("POST", "/multilang-voice/process", arabic_command)
+        
+        if success and isinstance(data, dict) and data.get("success") is True:
+            intent = data.get("detected_intent")
+            confidence = data.get("confidence", 0)
+            self.log_test("Voice Processing (Arabic)", True, f"Intent: {intent}, Confidence: {confidence:.2f}")
+        else:
+            self.log_test("Voice Processing (Arabic)", False, str(data))
+        
+        # Test Swahili voice command
+        swahili_command = {
+            "text": "Nionyeshe mifuko ya anasa chini ya dola 200",
+            "language": "sw",
+            "user_id": "test_user_123"
+        }
+        
+        success, data = self.make_request("POST", "/multilang-voice/process", swahili_command)
+        
+        if success and isinstance(data, dict) and data.get("success") is True:
+            intent = data.get("detected_intent")
+            confidence = data.get("confidence", 0)
+            self.log_test("Voice Processing (Swahili)", True, f"Intent: {intent}, Confidence: {confidence:.2f}")
+        else:
+            self.log_test("Voice Processing (Swahili)", False, str(data))
+        
+        # Test French voice command
+        french_command = {
+            "text": "Montre-moi des sacs de luxe sous 200$",
+            "language": "fr",
+            "user_id": "test_user_123"
+        }
+        
+        success, data = self.make_request("POST", "/multilang-voice/process", french_command)
+        
+        if success and isinstance(data, dict) and data.get("success") is True:
+            intent = data.get("detected_intent")
+            confidence = data.get("confidence", 0)
+            self.log_test("Voice Processing (French)", True, f"Intent: {intent}, Confidence: {confidence:.2f}")
+        else:
+            self.log_test("Voice Processing (French)", False, str(data))
+    
+    def test_multilang_voice_languages_list(self):
+        """Test getting supported languages list"""
+        print("\n🎤 Testing Multi-Language Voice Languages List...")
+        
+        success, data = self.make_request("GET", "/multilang-voice/languages")
+        
+        if success and isinstance(data, dict) and "supported_languages" in data:
+            languages = data.get("supported_languages", [])
+            total_languages = data.get("total_languages", 0)
+            features_per_lang = data.get("features_per_language", [])
+            
+            # Verify we have 5 languages as specified in review request
+            if total_languages >= 5:
+                self.log_test("Multi-Language Voice Languages List", True, f"Found {total_languages} languages with {len(features_per_lang)} features each")
+            else:
+                self.log_test("Multi-Language Voice Languages List", False, f"Expected 5+ languages, found {total_languages}")
+        else:
+            self.log_test("Multi-Language Voice Languages List", False, str(data))
+    
+    def test_multilang_voice_demo(self):
+        """Test multi-language voice demo capabilities"""
+        print("\n🎤 Testing Multi-Language Voice Demo...")
+        
+        # Test demo for English
+        success, data = self.make_request("POST", "/multilang-voice/demo", {"language": "en"})
+        
+        if success and isinstance(data, dict) and "demo_results" in data:
+            demo_results = data.get("demo_results", [])
+            success_rate = data.get("success_rate", 0)
+            language = data.get("language")
+            
+            if success_rate >= 0.8:  # 80% success rate threshold
+                self.log_test("Multi-Language Voice Demo (English)", True, f"Language: {language}, Success Rate: {success_rate:.2f}, Commands: {len(demo_results)}")
+            else:
+                self.log_test("Multi-Language Voice Demo (English)", False, f"Low success rate: {success_rate:.2f}")
+        else:
+            self.log_test("Multi-Language Voice Demo (English)", False, str(data))
+        
+        # Test demo for Swahili (Kenya pilot language)
+        success, data = self.make_request("POST", "/multilang-voice/demo", {"language": "sw"})
+        
+        if success and isinstance(data, dict) and "demo_results" in data:
+            demo_results = data.get("demo_results", [])
+            success_rate = data.get("success_rate", 0)
+            self.log_test("Multi-Language Voice Demo (Swahili)", True, f"Swahili demo completed with {success_rate:.2f} success rate")
+        else:
+            self.log_test("Multi-Language Voice Demo (Swahili)", False, str(data))
+    
+    def test_contextual_ai_health_check(self):
+        """Test contextual AI recommendations health check"""
+        print("\n🧠 Testing Contextual AI Recommendations Health Check...")
+        
+        success, data = self.make_request("GET", "/contextual-ai/health")
+        
+        if success and isinstance(data, dict) and data.get("status") == "healthy":
+            service = data.get("service")
+            features = data.get("features", [])
+            contexts = data.get("supported_contexts", [])
+            moods = data.get("supported_moods", [])
+            active_sessions = data.get("active_sessions", 0)
+            
+            # Verify key features are present
+            required_features = ["session_memory", "mood_based_recommendations", "purchase_intent_detection"]
+            has_required_features = all(feature in features for feature in required_features)
+            
+            if has_required_features and len(moods) >= 10:
+                self.log_test("Contextual AI Health Check", True, f"Service: {service}, Features: {len(features)}, Contexts: {len(contexts)}, Moods: {len(moods)}, Sessions: {active_sessions}")
+            else:
+                self.log_test("Contextual AI Health Check", False, f"Missing required features or insufficient moods. Features: {features}, Moods: {len(moods)}")
+        else:
+            self.log_test("Contextual AI Health Check", False, str(data))
+    
+    def test_contextual_ai_recommendations(self):
+        """Test contextual AI recommendations with personalization"""
+        print("\n🧠 Testing Contextual AI Recommendations...")
+        
+        # Test browsing context recommendations
+        browsing_request = {
+            "session_id": "test_session_123",
+            "user_id": "test_user_123",
+            "context": "browsing",
+            "current_mood": "luxurious",
+            "search_query": "luxury handbags",
+            "price_range": {"min": 100, "max": 500},
+            "categories": ["Fashion", "Accessories"],
+            "language": "en"
+        }
+        
+        success, data = self.make_request("POST", "/contextual-ai/recommend", browsing_request)
+        
+        if success and isinstance(data, dict) and data.get("success") is True:
+            recommendations = data.get("recommendations", [])
+            personalization_score = data.get("personalization_score", 0)
+            ai_explanation = data.get("ai_explanation", "")
+            mood_insights = data.get("mood_insights")
+            session_memory = data.get("session_memory", {})
+            
+            if personalization_score >= 0.5 and len(recommendations) > 0:
+                self.log_test("Contextual AI Recommendations (Browsing)", True, f"Recommendations: {len(recommendations)}, Personalization: {personalization_score:.2f}, Mood Insights: {mood_insights is not None}")
+            else:
+                self.log_test("Contextual AI Recommendations (Browsing)", False, f"Low personalization score: {personalization_score} or no recommendations")
+        else:
+            self.log_test("Contextual AI Recommendations (Browsing)", False, str(data))
+        
+        # Test cart viewing context with high purchase intent
+        cart_request = {
+            "session_id": "test_session_123",
+            "user_id": "test_user_123", 
+            "context": "cart_viewing",
+            "current_mood": "excited",
+            "language": "en"
+        }
+        
+        success, data = self.make_request("POST", "/contextual-ai/recommend", cart_request)
+        
+        if success and isinstance(data, dict) and data.get("success") is True:
+            context_analysis = data.get("context_analysis", {})
+            purchase_intent = context_analysis.get("purchase_intent", 0)
+            next_suggestions = data.get("next_suggestions", [])
+            
+            # Cart viewing should have higher purchase intent
+            if purchase_intent >= 0.4:
+                self.log_test("Contextual AI Recommendations (Cart)", True, f"Purchase Intent: {purchase_intent:.2f}, Next Suggestions: {len(next_suggestions)}")
+            else:
+                self.log_test("Contextual AI Recommendations (Cart)", False, f"Expected higher purchase intent for cart context: {purchase_intent}")
+        else:
+            self.log_test("Contextual AI Recommendations (Cart)", False, str(data))
+    
+    def test_mood_to_cart_feature(self):
+        """Test revolutionary Mood-to-Cart feature"""
+        print("\n🛒 Testing Mood-to-Cart Revolutionary Feature...")
+        
+        # Test luxurious mood to cart
+        mood_request = {
+            "mood": "luxurious",
+            "session_id": "test_session_mood_123",
+            "user_id": "test_user_123",
+            "budget": 1000
+        }
+        
+        success, data = self.make_request("POST", "/contextual-ai/mood-to-cart", mood_request)
+        
+        if success and isinstance(data, dict) and data.get("success") is True:
+            cart_items = data.get("cart_items", [])
+            total_items = data.get("total_items", 0)
+            total_price = data.get("total_price", 0)
+            mood = data.get("mood")
+            mood_insights = data.get("mood_insights")
+            ai_explanation = data.get("ai_explanation", "")
+            
+            if total_items > 0 and total_price <= 1000 and mood_insights:
+                self.log_test("Mood-to-Cart (Luxurious)", True, f"Items: {total_items}, Total: ${total_price}, Mood: {mood}, AI Explanation: {len(ai_explanation) > 0}")
+            else:
+                self.log_test("Mood-to-Cart (Luxurious)", False, f"Failed to create proper cart. Items: {total_items}, Price: {total_price}")
+        else:
+            self.log_test("Mood-to-Cart (Luxurious)", False, str(data))
+        
+        # Test casual mood to cart
+        casual_mood_request = {
+            "mood": "casual",
+            "session_id": "test_session_casual_123",
+            "budget": 200
+        }
+        
+        success, data = self.make_request("POST", "/contextual-ai/mood-to-cart", casual_mood_request)
+        
+        if success and isinstance(data, dict) and data.get("success") is True:
+            cart_items = data.get("cart_items", [])
+            total_price = data.get("total_price", 0)
+            
+            if len(cart_items) > 0 and total_price <= 200:
+                self.log_test("Mood-to-Cart (Casual)", True, f"Casual mood cart created with {len(cart_items)} items under budget")
+            else:
+                self.log_test("Mood-to-Cart (Casual)", False, f"Budget exceeded or no items: {total_price}")
+        else:
+            self.log_test("Mood-to-Cart (Casual)", False, str(data))
+        
+        # Test bold mood to cart
+        bold_mood_request = {
+            "mood": "bold",
+            "session_id": "test_session_bold_123",
+            "user_id": "test_user_123"
+        }
+        
+        success, data = self.make_request("POST", "/contextual-ai/mood-to-cart", bold_mood_request)
+        
+        if success and isinstance(data, dict):
+            success_flag = data.get("success", False)
+            message = data.get("message", "")
+            self.log_test("Mood-to-Cart (Bold)", success_flag, f"Bold mood processing: {message}")
+        else:
+            self.log_test("Mood-to-Cart (Bold)", False, str(data))
+    
+    def test_session_memory_tracking(self):
+        """Test session memory and interaction tracking"""
+        print("\n🧠 Testing Session Memory & Interaction Tracking...")
+        
+        session_id = "test_session_memory_123"
+        
+        # Make multiple interactions to build session memory
+        interactions = [
+            {"context": "browsing", "current_mood": "happy", "search_query": "summer dresses"},
+            {"context": "searching", "current_mood": "elegant", "search_query": "formal wear"},
+            {"context": "cart_viewing", "current_mood": "excited"}
+        ]
+        
+        for i, interaction in enumerate(interactions):
+            request_data = {
+                "session_id": session_id,
+                "user_id": "test_user_123",
+                **interaction,
+                "language": "en"
+            }
+            
+            success, data = self.make_request("POST", "/contextual-ai/recommend", request_data)
+            
+            if success and isinstance(data, dict) and data.get("success") is True:
+                session_memory = data.get("session_memory", {})
+                interactions_count = session_memory.get("interactions_count", 0)
+                
+                if interactions_count == i + 1:
+                    self.log_test(f"Session Memory Interaction {i+1}", True, f"Interactions tracked: {interactions_count}")
+                else:
+                    self.log_test(f"Session Memory Interaction {i+1}", False, f"Expected {i+1} interactions, got {interactions_count}")
+        
+        # Test session retrieval
+        success, data = self.make_request("GET", f"/contextual-ai/session/{session_id}")
+        
+        if success and isinstance(data, dict):
+            interactions_count = data.get("interactions_count", 0)
+            recent_interactions = data.get("recent_interactions", [])
+            mood_history = data.get("mood_history", [])
+            purchase_intent = data.get("purchase_intent", 0)
+            
+            if interactions_count >= 3 and len(mood_history) > 0:
+                self.log_test("Session Memory Retrieval", True, f"Session tracked: {interactions_count} interactions, {len(mood_history)} moods, Intent: {purchase_intent:.2f}")
+            else:
+                self.log_test("Session Memory Retrieval", False, f"Insufficient session data: {interactions_count} interactions")
+        else:
+            self.log_test("Session Memory Retrieval", False, str(data))
+    
+    def test_available_moods_with_insights(self):
+        """Test available moods with AI insights"""
+        print("\n🎭 Testing Available Moods with AI Insights...")
+        
+        success, data = self.make_request("GET", "/contextual-ai/moods")
+        
+        if success and isinstance(data, dict) and "available_moods" in data:
+            available_moods = data.get("available_moods", [])
+            total_moods = data.get("total_moods", 0)
+            
+            # Verify we have comprehensive mood options
+            required_moods = ["luxurious", "bold", "casual", "elegant", "professional"]
+            mood_values = [mood.get("value") for mood in available_moods]
+            has_required_moods = all(mood in mood_values for mood in required_moods)
+            
+            # Check that each mood has description
+            has_descriptions = all(mood.get("description") for mood in available_moods)
+            
+            if total_moods >= 10 and has_required_moods and has_descriptions:
+                self.log_test("Available Moods with Insights", True, f"Found {total_moods} moods with descriptions and required moods")
+            else:
+                self.log_test("Available Moods with Insights", False, f"Missing moods or descriptions. Total: {total_moods}, Required moods: {has_required_moods}")
+        else:
+            self.log_test("Available Moods with Insights", False, str(data))
+    
+    def test_session_cleanup(self):
+        """Test session management and cleanup"""
+        print("\n🧹 Testing Session Management & Cleanup...")
+        
+        success, data = self.make_request("GET", "/contextual-ai/sessions/cleanup")
+        
+        if success and isinstance(data, dict) and "message" in data:
+            sessions_before = data.get("sessions_before", 0)
+            sessions_after = data.get("sessions_after", 0)
+            message = data.get("message", "")
+            
+            self.log_test("Session Cleanup", True, f"Cleanup completed: {sessions_before} → {sessions_after} sessions, Message: {message}")
+        else:
+            self.log_test("Session Cleanup", False, str(data))
+
     def run_all_tests(self):
         """Run all tests in sequence - PHASE 2 CRITICAL INTEGRATION FOCUS"""
         print(f"🚀 Starting AisleMarts Backend API Tests - PHASE 2 CRITICAL INTEGRATION")
