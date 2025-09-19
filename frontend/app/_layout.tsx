@@ -5,6 +5,7 @@ import { View, StyleSheet } from 'react-native';
 import { AuthProvider } from '@/src/context/AuthContext'; 
 import { UserRolesProvider } from '@/src/context/UserRolesContext';
 import { ErrorBoundary } from '../src/components/ErrorBoundary';
+import { AwarenessProvider } from '../lib/awarenessContext';
 
 export default function RootLayout() {
   return (
