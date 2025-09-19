@@ -8,6 +8,7 @@ import * as Notifications from "expo-notifications";
 import * as Location from "expo-location";
 import * as ImagePicker from "expo-image-picker";
 import { useRouter } from "expo-router";
+import AsyncStorage from '@react-native-async-storage/async-storage';
 
 /** ========= THEME (Luxury) ========= */
 const BRAND = {
