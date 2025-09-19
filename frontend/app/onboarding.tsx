@@ -302,7 +302,7 @@ function StepPromo({ onSignIn, onSignUp }: { onSignIn: () => void; onSignUp: () 
           
           {/* Progress dots with cinematic styling */}
           <View style={{ flexDirection: "row", gap: 16, marginTop: 20 }}>
-            {Array.from({ length: 6 }).map((_, i) => (
+            {Array.from({ length: 7 }).map((_, i) => (
               <View
                 key={i}
                 style={{
