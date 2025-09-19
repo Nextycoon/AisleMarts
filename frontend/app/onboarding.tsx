@@ -815,7 +815,7 @@ function StepPackages({ onNext, onBack }: { onNext: (pkg: string) => void; onBac
   ], []);
 
   return (
-    <ScreenShell title="Choose your package" subtitle="Upgrade anytime. Elite includes premium courier partners in select regions." step={5} total={6}>
+    <ScreenShell title="Choose your package" subtitle="Upgrade anytime. Elite includes premium courier partners in select regions." step={6} total={7}>
       <View style={{ gap: 12 }}>
         {tiers.map((t) => {
           const isSel = selected === t.name;
