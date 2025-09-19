@@ -1,6 +1,5 @@
-from fastapi import APIRouter, Depends
-from ..deps import get_db, get_redis
-from ..models import Product
+from fastapi import APIRouter
+from ..db import db
 from ..ai.intent import IntentCandidate, NLUResult
 import re
 
