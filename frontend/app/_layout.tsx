@@ -27,7 +27,7 @@ export default function RootLayout() {
               <Stack.Screen name="auth" options={{ title: 'Sign In' }} />
               <Stack.Screen name="product/[id]" options={{ title: 'Product' }} />
               <Stack.Screen name="cart" options={{ title: 'Shopping Cart' }} />
-              <Stack.Screen name="checkout" options={{ title: 'Checkout' }} />
+              <Stack.Screen name="checkout" options={{ title: 'Checkout', headerShown: true, headerStyle: { backgroundColor: '#0f0f23' }, headerTintColor: '#ffffff' }} />
               <Stack.Screen name="orders" options={{ title: 'My Orders' }} />
               <Stack.Screen name="profile" options={{ title: 'Profile' }} />
               <Stack.Screen name="vendor-dashboard" options={{ title: 'Seller Dashboard' }} />
@@ -43,7 +43,6 @@ export default function RootLayout() {
               <Stack.Screen name="shopper-home" options={{ title: 'Shopper Portal', headerShown: false }} />
               <Stack.Screen name="vendor-home" options={{ title: 'Vendor Dashboard', headerShown: false }} />
               <Stack.Screen name="aislemarts-home" options={{ title: 'AisleMarts Home', headerShown: false }} />
-              <Stack.Screen name="checkout" options={{ title: 'Checkout', headerShown: true, headerStyle: { backgroundColor: '#0f0f23' }, headerTintColor: '#ffffff' }} />
               <Stack.Screen name="completion-demo" options={{ title: 'Task Complete', headerShown: false }} />
             </Stack>
           </UserRolesProvider>
