@@ -113,7 +113,7 @@ async def get_active_livesales(
     }
 
 # Business routes (vendor/creator management)
-business_router = APIRouter(prefix="/api/biz/livesales", tags=["Business - LiveSale Management"])
+business_router = APIRouter(prefix="/biz/livesales", tags=["Business - LiveSale Management"])
 
 @business_router.post("", response_model=LiveSaleModel)
 async def create_livesale(
