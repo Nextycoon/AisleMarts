@@ -1,6 +1,7 @@
 // app/onboarding.tsx
 import React, { useMemo, useRef, useState } from "react";
-import { View, Text, Pressable, TextInput, ScrollView, Image, Platform, Alert } from "react-native";
+import { View, Text, Pressable, TextInput, ScrollView, Image, Platform, Alert, StyleSheet } from "react-native";
+import { LinearGradient } from "expo-linear-gradient";
 import { Video } from "expo-av";
 import * as AppleAuthentication from "expo-apple-authentication";
 import * as WebBrowser from "expo-web-browser";
