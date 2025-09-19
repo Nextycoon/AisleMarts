@@ -899,7 +899,7 @@ function Row({ label, value }: { label: string; value: string }) {
 /** ========= Root Wizard ========= */
 export default function OnboardingWizard() {
   const router = useRouter();
-  const [step, setStep] = useState<0 | 1 | 2 | 3 | 4 | 5 | 6>(0);
+  const [step, setStep] = useState<0 | 1 | 2 | 3 | 4 | 5 | 6 | 7>(0);
   const [authMode, setAuthMode] = useState<"signin" | "signup">("signup");
   const [userId, setUserId] = useState<string>(""); const [token, setToken] = useState<string>("");
   const [prefs, setPrefs] = useState<{ styles: string[]; budget: string; language: string } | null>(null);
