@@ -206,10 +206,10 @@ const ti = {
   fontSize: 16,
 } as const;
 
-/** ========= Step 1: Promo (video + CTA to Commander's link) ========= */
+/** ========= Step 1: Promo (Cinematic Full-Screen) ========= */
 function StepPromo({ onSignIn, onSignUp }: { onSignIn: () => void; onSignUp: () => void }) {
   const videoRef = useRef<Video | null>(null);
-  // Keep a cinematic loop; include CTA to your URL
+  
   return (
     <ScreenShell
       title="AisleMarts"
@@ -217,24 +217,68 @@ function StepPromo({ onSignIn, onSignUp }: { onSignIn: () => void; onSignUp: () 
       step={0}
       total={6}
     >
-      <View style={{ borderRadius: 20, overflow: "hidden", borderWidth: 1, borderColor: BRAND.line, backgroundColor: "#111" }}>
+      {/* Cinematic Video Container */}
+      <View
+        style={{
+          borderRadius: 24,
+          overflow: "hidden",
+          borderWidth: 2,
+          borderColor: BRAND.gold,
+          backgroundColor: BRAND.card,
+          shadowColor: BRAND.goldGlow,
+          shadowOffset: { width: 0, height: 8 },
+          shadowOpacity: 0.4,
+          shadowRadius: 16,
+          elevation: 12,
+        }}
+      >
         <Video
           ref={videoRef}
           source={{ uri: "https://cdn.coverr.co/videos/coverr-shopping-aisles-8515/1080p.mp4" }}
-          style={{ width: "100%", height: 220 }}
+          style={{ width: "100%", height: 280 }}
           resizeMode="cover"
           isLooping
           shouldPlay
           isMuted
         />
+        
+        {/* Luxury overlay gradient */}
+        <LinearGradient
+          colors={['transparent', 'rgba(0,0,0,0.4)', 'rgba(212,175,55,0.2)']}
+          style={{
+            position: 'absolute',
+            bottom: 0,
+            left: 0,
+            right: 0,
+            height: 80,
+          }}
+        />
       </View>
 
-      <View style={{ flexDirection: "row", gap: 12 }}>
-        <SecondaryButton label="Watch Promo" onPress={() => WebBrowser.openBrowserAsync(PROMO_URL)} />
-        <SecondaryButton label="Sign In" onPress={onSignIn} />
+      {/* Action Buttons with Cinematic Styling */}
+      <View style={{ gap: 16, marginTop: 8 }}>
+        <View style={{ flexDirection: "row", gap: 12 }}>
+          <View style={{ flex: 1 }}>
+            <SecondaryButton label="Watch Promo" onPress={() => WebBrowser.openBrowserAsync(PROMO_URL)} />
+          </View>
+          <View style={{ flex: 1 }}>
+            <SecondaryButton label="Sign In" onPress={onSignIn} />
+          </View>
+        </View>
+        
         <PrimaryButton label="Sign Up" onPress={onSignUp} />
       </View>
-      <Text style={{ color: "#7f7f7f", fontSize: 13 }}>By continuing you agree to our Terms & Privacy Policy.</Text>
+      
+      {/* Terms with luxury styling */}
+      <Text style={{ 
+        color: "rgba(192,192,192,0.7)", 
+        fontSize: 13,
+        textAlign: "center",
+        fontWeight: "300",
+        letterSpacing: 0.3,
+      }}>
+        By continuing you agree to our Terms & Privacy Policy.
+      </Text>
     </ScreenShell>
   );
 }
