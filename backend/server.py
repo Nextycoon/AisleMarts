@@ -435,13 +435,21 @@ except ImportError as e:
 
 # Include ALL-IN MICRO-SPRINT routers
 try:
+    # Import using absolute imports relative to backend directory
     import sys
     import os
-    sys.path.append(os.path.dirname(__file__))
+    
+    # Add the current directory to Python path for absolute imports
+    current_dir = os.path.dirname(os.path.abspath(__file__))
+    if current_dir not in sys.path:
+        sys.path.insert(0, current_dir)
+    
+    # Import the fixed routers (testing agent has fixed the imports)
     from routers.ai_intent import router as ai_intent_router
     from routers.wishlist import router as wishlist_router
     from routers.orders_cancel import router as orders_cancel_router
     from routers.products_cached import router as products_cached_router
+    
     app.include_router(ai_intent_router)
     app.include_router(wishlist_router)
     app.include_router(orders_cancel_router)
@@ -449,6 +457,8 @@ try:
     print("✅ ALL-IN MICRO-SPRINT routers loaded successfully")
 except ImportError as e:
     print(f"⚠️ ALL-IN MICRO-SPRINT routers not available: {e}")
+except Exception as e:
+    print(f"⚠️ ALL-IN MICRO-SPRINT router setup error: {e}")
 
 # Include the main API router
 app.include_router(api_router)
