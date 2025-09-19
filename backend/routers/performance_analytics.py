@@ -522,45 +522,8 @@ async def get_performance_alerts(
         logger.error(f"Performance alerts failed: {str(e)}")
         raise HTTPException(status_code=500, detail="Failed to get performance alerts")
 
-# Middleware to automatically track performance metrics
-@router.middleware("http")
-async def performance_tracking_middleware(request, call_next):
-    """Middleware to automatically track API performance"""
-    start_time = time.time()
-    
-    try:
-        response = await call_next(request)
-        process_time = int((time.time() - start_time) * 1000)
-        
-        # Track the metric automatically
-        metric = PerformanceMetrics(
-            timestamp=datetime.utcnow(),
-            endpoint=str(request.url.path),
-            response_time_ms=process_time,
-            status_code=response.status_code,
-            user_id=getattr(request.state, 'user_id', None)
-        )
-        
-        # Store in background
-        asyncio.create_task(store_metric_async(metric))
-        
-        return response
-        
-    except Exception as e:
-        process_time = int((time.time() - start_time) * 1000)
-        
-        # Track error metric
-        metric = PerformanceMetrics(
-            timestamp=datetime.utcnow(),
-            endpoint=str(request.url.path),
-            response_time_ms=process_time,
-            status_code=500,
-            error_message=str(e),
-            user_id=getattr(request.state, 'user_id', None)
-        )
-        
-        asyncio.create_task(store_metric_async(metric))
-        raise
+# Note: Middleware removed as APIRouter doesn't support middleware
+# Performance tracking is handled within individual endpoints
 
 async def store_metric_async(metric: PerformanceMetrics):
     """Asynchronously store performance metric"""
