@@ -874,7 +874,7 @@ function StepComplete({
   };
 
   return (
-    <ScreenShell title="You're set — welcome to AisleMarts" subtitle="Your preferences are saved. Let's shop by mood, voice, and style." step={6} total={6}>
+    <ScreenShell title="You're set — welcome to AisleMarts" subtitle="Your preferences are saved. Let's shop by mood, voice, and style." step={7} total={7}>
       <View style={{ padding: 16, borderRadius: 16, borderWidth: 1, borderColor: BRAND.line, backgroundColor: BRAND.card, gap: 8 }}>
         <Row label="Account" value={summary.userId} />
         <Row label="Language" value={summary.language.toUpperCase()} />
