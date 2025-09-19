@@ -103,6 +103,40 @@ export default function PermissionsOnboarding({
     let result = 'denied';
 
     try {
+      // Check if running in web environment
+      if (Platform.OS === 'web') {
+        // Simulate permission request in web for demo purposes
+        Alert.alert(
+          `${permission.title} Permission`,
+          `In a real mobile app, this would request ${permission.title.toLowerCase()} permission. On web, we'll simulate approval for demo purposes.`,
+          [
+            { 
+              text: 'Simulate Grant', 
+              onPress: () => {
+                result = 'granted';
+                const granted = true;
+                setPermissions(prev => prev.map(p => 
+                  p.id === permission.id ? { ...p, granted } : p
+                ));
+              }
+            },
+            { 
+              text: 'Simulate Deny', 
+              style: 'cancel',
+              onPress: () => {
+                result = 'denied';
+                const granted = false;
+                setPermissions(prev => prev.map(p => 
+                  p.id === permission.id ? { ...p, granted } : p
+                ));
+              }
+            }
+          ]
+        );
+        return;
+      }
+
+      // Real mobile permission requests
       switch (permission.id) {
         case 'microphone':
           result = await requestMicrophone('voice-shopping');
@@ -139,6 +173,13 @@ export default function PermissionsOnboarding({
       }
     } catch (error) {
       console.error(`Error requesting ${permission.id} permission:`, error);
+      
+      // Fallback for web or error cases
+      Alert.alert(
+        'Permission Request',
+        `Unable to request ${permission.title} permission. This may be because you're testing in a web browser. Permissions work properly on real mobile devices.`,
+        [{ text: 'OK' }]
+      );
     } finally {
       setIsRequesting(false);
     }
