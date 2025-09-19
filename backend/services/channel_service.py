@@ -54,7 +54,7 @@ class ChannelService:
             
             await self.channels.insert_one(channel_doc)
             
-            logger.info(f"Created {request.type.value} channel: {channel_doc['_id']}")
+            logger.info(f"Created {request.channel_type.value} channel: {channel_doc['_id']}")
             
             return ChannelModel(**channel_doc)
             
