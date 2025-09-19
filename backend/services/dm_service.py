@@ -4,12 +4,19 @@ from bson import ObjectId
 from motor.motor_asyncio import AsyncIOMotorDatabase
 from fastapi import HTTPException
 import logging
+import sys
+import os
 
-from ..models.conversation import (
+# Add the backend directory to the Python path
+backend_dir = os.path.dirname(os.path.dirname(os.path.abspath(__file__)))
+if backend_dir not in sys.path:
+    sys.path.insert(0, backend_dir)
+
+from models.conversation import (
     ConversationModel, MessageModel, EncryptionKeyModel,
     CreateConversationRequest, SendMessageRequest, MessageType, ChannelType
 )
-from .encryption_service import encryption_service
+from services.encryption_service import encryption_service
 
 logger = logging.getLogger(__name__)
 
