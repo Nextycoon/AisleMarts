@@ -443,7 +443,17 @@ export default function OnboardingWizard() {
   const [prefs, setPrefs] = useState<{ styles: string[]; budget: string; language: string } | null>(null);
   const [pkg, setPkg] = useState<string>("Starter");
 
-  const enterApp = () => router.replace("/"); // main app route
+  const enterApp = async () => {
+    try {
+      // Save onboarding completion flag
+      await AsyncStorage.setItem('hasCompletedOnboarding', 'true');
+      console.log('✅ Onboarding completed, navigating to main app');
+      router.replace("/"); // main app route
+    } catch (error) {
+      console.error('Error saving onboarding completion:', error);
+      router.replace("/"); // proceed anyway
+    }
+  };
 
   if (step === 0) return <StepPromo onSignIn={() => { setAuthMode("signin"); setStep(1); }} onSignUp={() => { setAuthMode("signup"); setStep(1); }} />;
   if (step === 1) return <StepAuth onNext={(uid, t) => { setUserId(uid); setToken(t); setStep(2); }} mode={authMode} setMode={setAuthMode} />;
