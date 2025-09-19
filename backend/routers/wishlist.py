@@ -1,5 +1,8 @@
 from fastapi import APIRouter
-from ..db import db
+import sys
+import os
+sys.path.append(os.path.dirname(os.path.dirname(__file__)))
+from db import db
 from bson import ObjectId
 
 router = APIRouter(prefix="/api/wishlist", tags=["wishlist"])
