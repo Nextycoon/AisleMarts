@@ -220,11 +220,15 @@ metadata:
 
 test_plan:
   current_focus:
-    - "Track C: Multi-Language Voice AI System"
-    - "Track C: Contextual AI Recommendations with Mood-to-Cart"
+    - "ALL-IN MICRO-SPRINT: AI Intent Parser"
+    - "ALL-IN MICRO-SPRINT: Wishlist APIs"
+    - "ALL-IN MICRO-SPRINT: Order Cancellation API"
+    - "ALL-IN MICRO-SPRINT: Performance Optimization"
+    - "ALL-IN MICRO-SPRINT: Security Rate Limiting"
+    - "ALL-IN MICRO-SPRINT: Business KPI Monitoring"
   stuck_tasks: []
   test_all: false
-  test_priority: "critical_first"
+  test_priority: "high_first"
   completed_focus:
     - "Track C AI Supercharge Validation"
     - "Multi-Language Voice AI Testing"
