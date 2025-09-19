@@ -485,7 +485,10 @@ metadata:
   run_ui: false
 
 test_plan:
-  current_focus: []
+  current_focus:
+    - "Voice/Video Calls System API Schema Validation"
+    - "Channels & Groups System API Schema Validation"
+    - "Business LiveSale Management Endpoint Routing"
   stuck_tasks: []
   test_all: false
   test_priority: "high_first"
@@ -504,6 +507,10 @@ test_plan:
     - "TikTok-Style Social Feed Testing"
     - "AI Mood-to-Cart System Testing"
     - "Enhanced User Profiles Testing"
+    - "Direct Messaging System Testing"
+    - "LiveSale Commerce Consumer APIs Testing"
+    - "Business Leads Kanban System Testing"
+    - "AI Mood-to-Cart System Testing"
 
   - task: "ALL-IN MICRO-SPRINT: AI Intent Parser"
     implemented: true
