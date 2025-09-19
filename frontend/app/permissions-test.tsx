@@ -6,19 +6,13 @@ import {
   StyleSheet,
   ScrollView,
   Alert,
+  Platform,
 } from 'react-native';
 import { SafeAreaView } from 'react-native-safe-area-context';
 import { LinearGradient } from 'expo-linear-gradient';
 import { Ionicons } from '@expo/vector-icons';
 import AsyncStorage from '@react-native-async-storage/async-storage';
 import { router } from 'expo-router';
-import { 
-  useCameraPermission, 
-  useMicrophonePermission, 
-  useLocationPermission, 
-  usePhotosPermission,
-  useNotificationsPermission 
-} from '../src/hooks/usePermissions';
 
 export default function PermissionsTestScreen() {
   const [permissionStatus, setPermissionStatus] = useState<{ [key: string]: string }>({});
