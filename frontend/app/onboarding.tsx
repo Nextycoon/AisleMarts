@@ -10,16 +10,20 @@ import * as ImagePicker from "expo-image-picker";
 import { useRouter } from "expo-router";
 import AsyncStorage from '@react-native-async-storage/async-storage';
 
-/** ========= THEME (Luxury) ========= */
+/** ========= THEME (Luxury Cinematic) ========= */
 const BRAND = {
-  bg: "#0A0A0A",
-  card: "#0F0F0F",
-  line: "#222",
-  ink: "#FFFFFF",
-  sub: "#BDBDBD",
-  gold: "#E8C968", // softer champagne gold
-  goldDeep: "#C9A638",
+  bg: "#000000", // Pure black for cinema
+  bgGradient: "linear-gradient(135deg, #000000 0%, #0a0a0a 25%, #1a1a1a 100%)",
+  card: "#0A0A0A", // Darker cards
+  cardGlass: "rgba(10, 10, 10, 0.8)", // Glass morphism
+  line: "#333333", // Subtle borders
+  ink: "#FFFFFF", // Pure white text
+  sub: "#C0C0C0", // Lighter secondary text
+  gold: "#D4AF37", // Rich gold
+  goldGlow: "#FFD700", // Bright gold for accents
+  goldDeep: "#B8860B", // Darker gold
   focus: "#2a2100",
+  shadow: "rgba(212, 175, 55, 0.3)", // Gold shadow
 };
 
 /** ========= API CONFIG ========= */
