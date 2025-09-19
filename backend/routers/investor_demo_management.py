@@ -10,8 +10,6 @@ from typing import Optional, Dict, List, Any
 from datetime import datetime, timedelta
 import json
 import os
-from ..models.awareness_engine import AwarenessContext
-from ..services.awareness_service import AwarenessService
 
 router = APIRouter()
 
