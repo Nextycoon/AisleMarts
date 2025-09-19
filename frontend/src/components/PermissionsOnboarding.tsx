@@ -253,6 +253,16 @@ export default function PermissionsOnboarding({
               </View>
             </View>
 
+            {/* Web Demo Notice */}
+            {Platform.OS === 'web' && (
+              <View style={styles.webDemoNotice}>
+                <Ionicons name="information-circle-outline" size={20} color="#9FE7F5" />
+                <Text style={styles.webDemoText}>
+                  Web Preview Mode - Permissions will simulate mobile behavior
+                </Text>
+              </View>
+            )}
+
             {/* Permission Card */}
             <View style={styles.permissionCard}>
               <View style={styles.iconContainer}>
