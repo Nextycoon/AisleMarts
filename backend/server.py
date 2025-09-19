@@ -457,6 +457,7 @@ try:
     from routers.livesale_routes import router as livesale_router
     from routers.lead_routes import router as lead_router
     from routers.advanced_ai_recommendations import router as advanced_ai_router
+    from routers.performance_analytics import router as performance_analytics_router
     
     app.include_router(ai_intent_router)
     app.include_router(wishlist_router)
@@ -470,7 +471,8 @@ try:
     app.include_router(livesale_router)  # LiveSale Commerce routes
     app.include_router(lead_router)  # Business Leads Management routes
     app.include_router(advanced_ai_router)  # Advanced AI Recommendations routes
-    print("✅ ALL-IN MICRO-SPRINT + PHASE 2 LUXURY COMMUNICATION SUITE + ADVANCED AI routers loaded successfully")
+    app.include_router(performance_analytics_router)  # Performance Analytics routes
+    print("✅ ALL-IN MICRO-SPRINT + PHASE 2 LUXURY COMMUNICATION SUITE + ADVANCED AI + PERFORMANCE ANALYTICS routers loaded successfully")
 except ImportError as e:
     print(f"⚠️ Routers not available: {e}")
 except Exception as e:
