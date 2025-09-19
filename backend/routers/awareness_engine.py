@@ -804,11 +804,13 @@ def generate_contextual_recommendations(profile: AwarenessProfile) -> List[Dict[
         
         # Location-based recommendations
         if profile.location_context:
+            seasonal_context = profile.time_context.seasonal_context if profile.time_context else "summer"
             recommendations.append({
                 "type": "location_based",
                 "title": f"Popular in {profile.location_context.city}",
                 "products": ["local_favorites", "weather_appropriate", "cultural_items"],
-                "reason": f"Trending now in {profile.location_context.city}"
+                "reason": f"Trending now in {profile.location_context.city}",
+                "seasonal_context": seasonal_context
             })
         
         # User behavior recommendations
