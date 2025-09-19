@@ -71,7 +71,7 @@ export default function CreatorToolsScreen() {
     (async () => {
       const { status: cameraStatus } = await Camera.requestCameraPermissionsAsync();
       const { status: audioStatus } = await Camera.requestMicrophonePermissionsAsync();
-      const { status: mediaStatus } = await MediaLibrary.requestPermissionsAsync();
+      // const { status: mediaStatus } = await MediaLibrary.requestPermissionsAsync();
       
       if (cameraStatus !== 'granted' || audioStatus !== 'granted' || mediaStatus !== 'granted') {
         Alert.alert('Permissions Required', 'Camera, microphone, and media library access are required for creator tools.');
