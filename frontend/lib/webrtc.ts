@@ -286,6 +286,209 @@ class WebRTCManager {
   get isConnected(): boolean {
     return this.peerConnection?.connectionState === 'connected';
   }
+
+  // Quality monitoring
+  private startQualityMonitoring() {
+    if (!this.peerConnection) return;
+
+    const interval = setInterval(async () => {
+      if (!this.peerConnection || this.peerConnection.connectionState !== 'connected') {
+        clearInterval(interval);
+        return;
+      }
+
+      try {
+        const stats = await this.peerConnection.getStats();
+        this.analyzeCallQuality(stats);
+      } catch (error) {
+        console.error('Failed to get call stats:', error);
+      }
+    }, 5000); // Check every 5 seconds
+  }
+
+  private analyzeCallQuality(stats: RTCStatsReport) {
+    let inboundAudio: RTCInboundRtpStreamStats | null = null;
+    let outboundAudio: RTCOutboundRtpStreamStats | null = null;
+
+    stats.forEach((report) => {
+      if (report.type === 'inbound-rtp' && report.kind === 'audio') {
+        inboundAudio = report as RTCInboundRtpStreamStats;
+      } else if (report.type === 'outbound-rtp' && report.kind === 'audio') {
+        outboundAudio = report as RTCOutboundRtpStreamStats;
+      }
+    });
+
+    if (inboundAudio) {
+      const packetsLost = inboundAudio.packetsLost || 0;
+      const packetsReceived = inboundAudio.packetsReceived || 0;
+      const packetLossRate = packetsLost / (packetsLost + packetsReceived);
+      
+      this.networkStats.packetLoss = packetLossRate;
+      
+      // Determine call quality based on packet loss
+      if (packetLossRate < 0.01) {
+        this.callQuality = 'excellent';
+      } else if (packetLossRate < 0.03) {
+        this.callQuality = 'good';
+      } else if (packetLossRate < 0.05) {
+        this.callQuality = 'fair';
+      } else {
+        this.callQuality = 'poor';
+      }
+    }
+  }
+
+  // Screen sharing
+  async startScreenShare(): Promise<MediaStream> {
+    try {
+      const screenStream = await navigator.mediaDevices.getDisplayMedia({
+        video: true,
+        audio: true
+      });
+
+      const videoTrack = screenStream.getVideoTracks()[0];
+      const sender = this.peerConnection?.getSenders().find(s => s.track?.kind === 'video');
+
+      if (sender && videoTrack) {
+        await sender.replaceTrack(videoTrack);
+        console.log('🖥️ Screen sharing started');
+      }
+
+      // Handle screen share end
+      videoTrack.onended = () => {
+        this.stopScreenShare();
+      };
+
+      return screenStream;
+    } catch (error) {
+      console.error('❌ Failed to start screen share:', error);
+      throw error;
+    }
+  }
+
+  async stopScreenShare() {
+    try {
+      // Get camera stream back
+      const cameraStream = await navigator.mediaDevices.getUserMedia({
+        video: true,
+        audio: true
+      });
+
+      const videoTrack = cameraStream.getVideoTracks()[0];
+      const sender = this.peerConnection?.getSenders().find(s => s.track?.kind === 'video');
+
+      if (sender && videoTrack) {
+        await sender.replaceTrack(videoTrack);
+        console.log('📱 Screen sharing stopped, camera resumed');
+      }
+    } catch (error) {
+      console.error('❌ Failed to stop screen share:', error);
+    }
+  }
+
+  // Recording functionality
+  private mediaRecorder: MediaRecorder | null = null;
+  private recordedChunks: Blob[] = [];
+
+  async startRecording(): Promise<void> {
+    if (!this.localStream) throw new Error('No local stream available');
+
+    try {
+      this.recordedChunks = [];
+      this.mediaRecorder = new MediaRecorder(this.localStream, {
+        mimeType: 'audio/webm;codecs=opus'
+      });
+
+      this.mediaRecorder.ondataavailable = (event) => {
+        if (event.data.size > 0) {
+          this.recordedChunks.push(event.data);
+        }
+      };
+
+      this.mediaRecorder.start(1000); // Collect data every second
+      console.log('🎙️ Recording started');
+    } catch (error) {
+      console.error('❌ Failed to start recording:', error);
+      throw error;
+    }
+  }
+
+  stopRecording(): Promise<Blob> {
+    return new Promise((resolve, reject) => {
+      if (!this.mediaRecorder) {
+        reject(new Error('No recording in progress'));
+        return;
+      }
+
+      this.mediaRecorder.onstop = () => {
+        const blob = new Blob(this.recordedChunks, { type: 'audio/webm' });
+        console.log('🎙️ Recording stopped');
+        resolve(blob);
+      };
+
+      this.mediaRecorder.stop();
+    });
+  }
+
+  // Noise cancellation (if supported)
+  async enableNoiseCancellation(enable: boolean) {
+    if (!this.localStream) return false;
+
+    try {
+      const audioTrack = this.localStream.getAudioTracks()[0];
+      if (audioTrack && 'applyConstraints' in audioTrack) {
+        await audioTrack.applyConstraints({
+          noiseSuppression: enable,
+          echoCancellation: enable,
+          autoGainControl: enable
+        });
+        console.log('🎧 Noise cancellation:', enable ? 'enabled' : 'disabled');
+        return true;
+      }
+    } catch (error) {
+      console.error('❌ Failed to toggle noise cancellation:', error);
+    }
+    return false;
+  }
+
+  // Audio level monitoring
+  private audioContext: AudioContext | null = null;
+  private analyser: AnalyserNode | null = null;
+
+  async startAudioLevelMonitoring(): Promise<() => number> {
+    if (!this.localStream) throw new Error('No local stream available');
+
+    try {
+      this.audioContext = new AudioContext();
+      this.analyser = this.audioContext.createAnalyser();
+      const source = this.audioContext.createMediaStreamSource(this.localStream);
+      
+      source.connect(this.analyser);
+      this.analyser.fftSize = 256;
+      
+      const dataArray = new Uint8Array(this.analyser.frequencyBinCount);
+
+      return () => {
+        if (!this.analyser) return 0;
+        this.analyser.getByteFrequencyData(dataArray);
+        const average = dataArray.reduce((sum, value) => sum + value, 0) / dataArray.length;
+        return average / 255; // Normalize to 0-1
+      };
+    } catch (error) {
+      console.error('❌ Failed to start audio monitoring:', error);
+      throw error;
+    }
+  }
+
+  // Send data channel message
+  sendDataChannelMessage(message: string) {
+    if (this.dataChannel && this.dataChannel.readyState === 'open') {
+      this.dataChannel.send(message);
+      console.log('📨 Data channel message sent:', message);
+      return true;
+    }
+    return false;
+  }
 }
 
 // Global WebRTC manager instance
