@@ -217,8 +217,18 @@ function StepPromo({ onSignIn, onSignUp }: { onSignIn: () => void; onSignUp: () 
   const videoRef = useRef<Video | null>(null);
   
   return (
-    <View style={{ flex: 1, backgroundColor: BRAND.bg }}>
-      {/* FULL SCREEN VIDEO BACKGROUND */}
+    <View style={{ 
+      flex: 1, 
+      backgroundColor: BRAND.bg,
+      position: 'absolute',
+      top: 0,
+      left: 0,
+      right: 0,
+      bottom: 0,
+      width: '100%',
+      height: '100%',
+    }}>
+      {/* FULL SCREEN VIDEO BACKGROUND - COVERS EVERYTHING */}
       <Video
         ref={videoRef}
         source={{ uri: "https://cdn.coverr.co/videos/coverr-shopping-aisles-8515/1080p.mp4" }}
@@ -241,10 +251,10 @@ function StepPromo({ onSignIn, onSignUp }: { onSignIn: () => void; onSignUp: () 
       {/* CINEMATIC OVERLAY FOR READABILITY */}
       <LinearGradient
         colors={[
-          'rgba(0,0,0,0.4)', 
-          'rgba(0,0,0,0.2)', 
-          'rgba(0,0,0,0.3)',
-          'rgba(0,0,0,0.8)'
+          'rgba(0,0,0,0.3)', 
+          'rgba(0,0,0,0.1)', 
+          'rgba(0,0,0,0.2)',
+          'rgba(0,0,0,0.7)'
         ]}
         locations={[0, 0.3, 0.7, 1]}
         style={{
@@ -257,14 +267,16 @@ function StepPromo({ onSignIn, onSignUp }: { onSignIn: () => void; onSignUp: () 
         }}
       />
       
-      {/* CONTENT OVERLAY */}
+      {/* CONTENT OVERLAY - FULL SCREEN */}
       <View style={{
         flex: 1,
         justifyContent: 'space-between',
-        paddingTop: 80,  
-        paddingBottom: 60,
+        paddingTop: 100,  // Extra space for status bar
+        paddingBottom: 40,
         paddingHorizontal: 24,
         zIndex: 2,
+        width: '100%',
+        height: '100%',
       }}>
         
         {/* TOP CONTENT */}
@@ -446,6 +458,7 @@ function StepPromo({ onSignIn, onSignUp }: { onSignIn: () => void; onSignUp: () 
             textShadowColor: "rgba(0,0,0,0.8)",
             textShadowOffset: { width: 0, height: 1 },
             textShadowRadius: 2,
+            marginBottom: 20, // Extra margin for bottom edge
           }}>
             By continuing you agree to our Terms & Privacy Policy.
           </Text>
