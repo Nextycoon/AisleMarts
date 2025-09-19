@@ -1,0 +1,61 @@
+apiVersion: networking.k8s.io/v1
+kind: Ingress
+metadata:
+  name: aislemarts-ingress
+  namespace: staging
+  annotations:
+    kubernetes.io/ingress.class: "gce"
+    networking.gke.io/managed-certificates: "aislemarts-staging-cert"
+    kubernetes.io/ingress.global-static-ip-name: "aislemarts-staging-ip"
+spec:
+  rules:
+  - host: staging.AisleMarts.com
+    http:
+      paths:
+      - path: /
+        pathType: Prefix
+        backend:
+          service:
+            name: aislemarts-svc
+            port:
+              number: 80
+---
+apiVersion: networking.k8s.io/v1
+kind: Ingress
+metadata:
+  name: aislemarts-ingress
+  namespace: prod
+  annotations:
+    kubernetes.io/ingress.class: "gce"
+    networking.gke.io/managed-certificates: "aislemarts-prod-cert"
+    kubernetes.io/ingress.global-static-ip-name: "aislemarts-prod-ip"
+spec:
+  rules:
+  - host: AisleMarts.com
+    http:
+      paths:
+      - path: /
+        pathType: Prefix
+        backend:
+          service:
+            name: aislemarts-svc
+            port:
+              number: 80
+---
+apiVersion: networking.gke.io/v1
+kind: ManagedCertificate
+metadata:
+  name: aislemarts-staging-cert
+  namespace: staging
+spec:
+  domains:
+  - staging.AisleMarts.com
+---
+apiVersion: networking.gke.io/v1
+kind: ManagedCertificate
+metadata:
+  name: aislemarts-prod-cert
+  namespace: prod
+spec:
+  domains:
+  - AisleMarts.com
