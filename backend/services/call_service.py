@@ -31,16 +31,22 @@ class CallService:
         try:
             call_id = f"call_{secrets.token_hex(8)}"
             
+            # Generate conversation_id if not provided
+            conversation_id = request.conversation_id
+            if not conversation_id:
+                # Create a conversation ID for the call participants
+                conversation_id = f"call_conv_{caller_id}_{request.callee_id}_{secrets.token_hex(4)}"
+            
             call_doc = {
                 "_id": str(ObjectId()),
                 "call_id": call_id,
-                "conversation_id": request.conversation_id,
+                "conversation_id": conversation_id,
                 "caller_id": caller_id,
                 "callee_id": request.callee_id,
                 "mode": request.mode.value,
                 "status": CallStatus.INITIATED.value,
                 "started_at": datetime.utcnow(),
-                "metadata": {}
+                "metadata": {"context": request.context} if request.context else {}
             }
             
             await self.calls.insert_one(call_doc)
