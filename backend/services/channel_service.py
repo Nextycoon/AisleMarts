@@ -36,15 +36,15 @@ class ChannelService:
         try:
             channel_doc = {
                 "_id": str(ObjectId()),
-                "type": request.type.value,
+                "type": request.channel_type.value,
                 "title": request.title,
                 "description": request.description,
                 "owner_id": owner_id,
-                "members": [owner_id] if request.type == ChannelType.GROUP else [],
+                "members": [owner_id] if request.channel_type == ChannelType.GROUP else [],
                 "roles": {owner_id: MemberRole.OWNER.value},
                 "verified": False,
                 "theme": request.theme.value,
-                "member_count": 1 if request.type == ChannelType.GROUP else 0,
+                "member_count": 1 if request.channel_type == ChannelType.GROUP else 0,
                 "is_public": request.is_public,
                 "tags": request.tags or [],
                 "created_at": datetime.utcnow(),
