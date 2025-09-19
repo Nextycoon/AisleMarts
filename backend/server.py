@@ -474,7 +474,12 @@ try:
     app.include_router(advanced_ai_router)  # Advanced AI Recommendations routes
     app.include_router(performance_analytics_router)  # Performance Analytics routes
     app.include_router(awareness_engine_router)  # Awareness Engine routes
-    print("✅ ALL-IN MICRO-SPRINT + PHASE 2 LUXURY COMMUNICATION SUITE + ADVANCED AI + PERFORMANCE ANALYTICS + AWARENESS ENGINE routers loaded successfully")
+    
+    # Import and include Investor Demo Management router
+    from routers.investor_demo_management import router as investor_demo_router
+    app.include_router(investor_demo_router, prefix="/api", tags=["investor_demos"])
+    
+    print("✅ ALL-IN MICRO-SPRINT + PHASE 2 LUXURY COMMUNICATION SUITE + ADVANCED AI + PERFORMANCE ANALYTICS + AWARENESS ENGINE + INVESTOR DEMO MANAGEMENT routers loaded successfully")
 except ImportError as e:
     print(f"⚠️ Routers not available: {e}")
 except Exception as e:
