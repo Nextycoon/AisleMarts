@@ -14,6 +14,38 @@ AisleMarts represents the convergence of **AI curation**, **social commerce**, a
 - **Market**: $2.3T global luxury market with 12% annual growth
 - **Differentiation**: Commerce ownership vs advertising dependency
 
+## 🚀 **NEW: INVESTOR DEMO BUNDLES (SERIES A READY)**
+
+### **AisleMarts Awareness-Personalized Investor Demos**
+**Location**: `/docs/BW-04_EMAIL_OUTREACH_SEQUENCES/INVESTOR_BUNDLES/`
+**Status**: ✅ **OPERATIONAL** - All 8 bundles ready for Series A outreach
+
+#### **Demo Hub Command Center**
+- **[Demo Context Map](BW-04_EMAIL_OUTREACH_SEQUENCES/INVESTOR_BUNDLES/_DEMO_HUB/Demo_Context_Map.json)** - Investor context configurations
+- **[Demo Credentials](BW-04_EMAIL_OUTREACH_SEQUENCES/INVESTOR_BUNDLES/_DEMO_HUB/Demo_Users_Credentials.csv)** - All demo account credentials  
+- **[Deep Links Index](BW-04_EMAIL_OUTREACH_SEQUENCES/INVESTOR_BUNDLES/_DEMO_HUB/Deep_Links_Index.md)** - Complete deep link patterns
+- **[Reset Playbook](BW-04_EMAIL_OUTREACH_SEQUENCES/INVESTOR_BUNDLES/_DEMO_HUB/Reset_Seeds_Playbook.md)** - Automated reset procedures
+- **[QA Checklist](BW-04_EMAIL_OUTREACH_SEQUENCES/INVESTOR_BUNDLES/_DEMO_HUB/QA_Verification_Checklist.md)** - 5-step smoke test protocol
+
+#### **Individual Investor Bundles (8 Total)**
+1. **[Sequoia - Roelof Botha](BW-04_EMAIL_OUTREACH_SEQUENCES/INVESTOR_BUNDLES/SEQUOIA_ROELOF_BOTHA/)** - Network Effects Focus
+2. **[a16z - Chris Dixon](BW-04_EMAIL_OUTREACH_SEQUENCES/INVESTOR_BUNDLES/A16Z_CHRIS_DIXON/)** - AI Infrastructure Focus
+3. **[LVMH - Julie Bercovy](BW-04_EMAIL_OUTREACH_SEQUENCES/INVESTOR_BUNDLES/LVMH_JULIE_BERCOVY/)** - European Luxury Focus
+4. **[General Catalyst - Hemant Taneja](BW-04_EMAIL_OUTREACH_SEQUENCES/INVESTOR_BUNDLES/GENERAL_CATALYST_HEMANT_TANEJA/)** - Marketplace Focus
+5. **[Lightspeed - Jeremy Liew](BW-04_EMAIL_OUTREACH_SEQUENCES/INVESTOR_BUNDLES/LIGHTSPEED_JEREMY_LIEW/)** - Social Mobile Focus
+6. **[Index - Sofia Dolfe](BW-04_EMAIL_OUTREACH_SEQUENCES/INVESTOR_BUNDLES/INDEX_SOFOA_DOLFE/)** - European Enterprise Focus
+7. **[Bessemer - Jeremy Levine](BW-04_EMAIL_OUTREACH_SEQUENCES/INVESTOR_BUNDLES/BESSEMER_JEREMY_LEVINE/)** - SaaS Marketplace Focus
+8. **[Tiger Global - Chase Coleman](BW-04_EMAIL_OUTREACH_SEQUENCES/INVESTOR_BUNDLES/TIGER_GLOBAL_CHASE_COLEMAN/)** - Global Growth Focus
+
+#### **Technical Infrastructure**
+- **Backend API**: `/app/backend/routers/investor_demo_management.py` - Demo management system
+- **Frontend Service**: `/app/frontend/lib/investorDemoService.ts` - Awareness integration
+- **[Provisioning Summary](BW-04_EMAIL_OUTREACH_SEQUENCES/INVESTOR_BUNDLES/Investor_Demo_Provisioning_Summary.md)** - Complete system overview
+
+**Demo Base URL**: `https://luxury-comms.preview.emergentagent.com`  
+**API Health**: `GET /api/demo/health`  
+**All Bundles**: `GET /api/demo/all-bundles`
+
 ---
 
 ## 📋 **COMPLETE ASSET INDEX**
