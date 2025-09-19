@@ -362,7 +362,7 @@ export default function LiveSaleScreen() {
         refreshControl={
           <RefreshControl
             refreshing={refreshing}
-            onRefresh={onResh}
+            onRefresh={onRefresh}
             tintColor="#D4AF37"
             colors={['#D4AF37']}
           />
