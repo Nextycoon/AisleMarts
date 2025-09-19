@@ -920,9 +920,10 @@ export default function OnboardingWizard() {
   if (step === 0) return <StepPromo onSignIn={() => { setAuthMode("signin"); setStep(1); }} onSignUp={() => { setAuthMode("signup"); setStep(1); }} />;
   if (step === 1) return <StepAuth onNext={(uid, t) => { setUserId(uid); setToken(t); setStep(2); }} mode={authMode} setMode={setAuthMode} />;
   if (step === 2) return <StepPermissions onNext={() => setStep(3)} />;
-  if (step === 3) return <StepAIWelcome onNext={() => setStep(4)} />;
-  if (step === 4) return <StepPreferences onBack={() => setStep(3)} onNext={(p) => { setPrefs(p); setStep(5); }} />;
-  if (step === 5) return <StepPackages onBack={() => setStep(4)} onNext={(sel) => { setPkg(sel); setStep(6); }} />;
+  if (step === 3) return <StepVision onNext={() => setStep(4)} />;
+  if (step === 4) return <StepAIWelcome onNext={() => setStep(5)} />;
+  if (step === 5) return <StepPreferences onBack={() => setStep(4)} onNext={(p) => { setPrefs(p); setStep(6); }} />;
+  if (step === 6) return <StepPackages onBack={() => setStep(5)} onNext={(sel) => { setPkg(sel); setStep(7); }} />;
   return (
     <StepComplete
       onEnterApp={enterApp}
