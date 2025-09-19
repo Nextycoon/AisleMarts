@@ -20,6 +20,12 @@ export default function AisleAgentScreen() {
 
   const quickActions = [
     {
+      icon: '💬',
+      title: 'Messages',
+      subtitle: 'Direct messaging & chat',
+      onPress: () => router.push('/chat')
+    },
+    {
       icon: '🔥',
       title: 'Trending',
       subtitle: 'Hot deals & new arrivals',
