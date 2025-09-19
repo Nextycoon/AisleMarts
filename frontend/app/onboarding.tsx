@@ -567,27 +567,148 @@ function PermRow({ label, value, onPress }: { label: string; value: boolean; onP
   );
 }
 
-/** ========= Step 4: AI Welcome ========= */
-function StepAIWelcome({ onNext }: { onNext: () => void }) {
-  const subtitle = "Say 'I feel luxurious today' and we'll curate a cart in seconds. Ask in English, Turkish, Arabic, French, or Swahili.";
-  
+/** ========= Step 4: AisleMarts Vision & Strategy ========= */
+function StepVision({ onNext }: { onNext: () => void }) {
   return (
     <ScreenShell
-      title="Meet Aisle — your AI"
-      subtitle={subtitle}
+      title="AisleMarts Vision"
+      subtitle="Modern Lifestyle Commerce Platform — Where shopping, lifestyle, and social merge."
       step={3}
       total={6}
     >
-      <View style={{ padding: 16, borderRadius: 20, borderWidth: 1, borderColor: BRAND.line, backgroundColor: BRAND.card, gap: 12 }}>
-        <Image
-          source={{ uri: "https://images.unsplash.com/photo-1517245386807-bb43f82c33c4?q=80&w=1400&auto=format&fit=crop" }}
-          style={{ width: "100%", height: 140, borderRadius: 14 }}
-        />
-        <Text style={{ color: BRAND.sub, fontSize: 14, lineHeight: 20 }}>
-          Aisle understands mood, context, and style. Your session memory stays private and improves recommendations across devices.
-        </Text>
-      </View>
-      <PrimaryButton label="Continue" onPress={onNext} />
+      <ScrollView style={{ maxHeight: 400 }} showsVerticalScrollIndicator={false}>
+        <View style={{ gap: 20 }}>
+          
+          {/* Vision Statement */}
+          <View style={{ 
+            padding: 20, 
+            borderRadius: 20, 
+            borderWidth: 1, 
+            borderColor: BRAND.gold, 
+            backgroundColor: "rgba(212, 175, 55, 0.1)" 
+          }}>
+            <Text style={{ 
+              color: BRAND.gold, 
+              fontSize: 18, 
+              fontWeight: "800",
+              textAlign: "center",
+              marginBottom: 12
+            }}>
+              💎🔥 Modern Lifestyle Commerce Platform
+            </Text>
+            <Text style={{ 
+              color: BRAND.ink, 
+              fontSize: 16, 
+              lineHeight: 24,
+              textAlign: "center",
+              fontWeight: "600"
+            }}>
+              Shop. Socialise. Live Modern.
+            </Text>
+          </View>
+
+          {/* Categories */}
+          <View style={{ gap: 12 }}>
+            <Text style={{ 
+              color: BRAND.gold, 
+              fontSize: 16, 
+              fontWeight: "700",
+              marginBottom: 8
+            }}>
+              🌍 Lifestyle Categories
+            </Text>
+            
+            {[
+              { icon: "👗", title: "Fashion & Style", desc: "OOTD, runway, streetwear" },
+              { icon: "📱", title: "Electronics & Innovation", desc: "Gadgets, reviews, unboxings" },
+              { icon: "🏡", title: "Home & Living", desc: "Interior design, lifestyle setups" },
+              { icon: "🏋️", title: "Sports & Health", desc: "Fitness gear, wellness" },
+              { icon: "✈️", title: "Travel & Experiences", desc: "Global lifestyle journeys" },
+              { icon: "🍱", title: "Food & Beverages", desc: "Recipes, cafés, unique finds" }
+            ].map((category, index) => (
+              <View key={index} style={{
+                padding: 12,
+                borderRadius: 12,
+                backgroundColor: BRAND.card,
+                borderLeftWidth: 3,
+                borderLeftColor: BRAND.gold,
+                flexDirection: "row",
+                alignItems: "center",
+                gap: 12
+              }}>
+                <Text style={{ fontSize: 20 }}>{category.icon}</Text>
+                <View style={{ flex: 1 }}>
+                  <Text style={{ color: BRAND.ink, fontWeight: "600", fontSize: 14 }}>
+                    {category.title}
+                  </Text>
+                  <Text style={{ color: BRAND.sub, fontSize: 12 }}>
+                    {category.desc}
+                  </Text>
+                </View>
+              </View>
+            ))}
+          </View>
+
+          {/* Social Layer */}
+          <View style={{ 
+            padding: 16, 
+            borderRadius: 16, 
+            backgroundColor: BRAND.card,
+            borderWidth: 1,
+            borderColor: BRAND.line
+          }}>
+            <Text style={{ 
+              color: BRAND.gold, 
+              fontSize: 16, 
+              fontWeight: "700",
+              marginBottom: 12
+            }}>
+              🎥 AisleMarts Socialise
+            </Text>
+            <Text style={{ 
+              color: BRAND.sub, 
+              fontSize: 14, 
+              lineHeight: 20
+            }}>
+              TikTok-style commerce-integrated feed:{'\n'}
+              • Lifestyle Reels with Shop the Look{'\n'}
+              • #AisleOOTD, #AisleTech challenges{'\n'}
+              • Authentic peer-to-peer discovery
+            </Text>
+          </View>
+
+          {/* Competitive Advantage */}
+          <View style={{ 
+            padding: 16, 
+            borderRadius: 16, 
+            backgroundColor: "rgba(212, 175, 55, 0.05)",
+            borderWidth: 1,
+            borderColor: BRAND.gold
+          }}>
+            <Text style={{ 
+              color: BRAND.gold, 
+              fontSize: 16, 
+              fontWeight: "700",
+              marginBottom: 12
+            }}>
+              ⭐ Our Advantage
+            </Text>
+            <Text style={{ 
+              color: BRAND.ink, 
+              fontSize: 14, 
+              lineHeight: 20
+            }}>
+              • Amazon = shopping only{'\n'}
+              • TikTok = entertainment only{'\n'}
+              • Instagram = inspiration, limited commerce{'\n'}
+              • AisleMarts = Complete Lifestyle Commerce
+            </Text>
+          </View>
+
+        </View>
+      </ScrollView>
+
+      <PrimaryButton label="Continue to AI Welcome" onPress={onNext} />
     </ScreenShell>
   );
 }
