@@ -109,32 +109,103 @@ function SecondaryButton({ label, onPress }: { label: string; onPress: () => voi
 }
 function ProgressDots({ step, total }: { step: number; total: number }) {
   return (
-    <View style={{ flexDirection: "row", gap: 8, alignSelf: "center", marginVertical: 12 }}>
+    <View style={{ flexDirection: "row", gap: 12, alignSelf: "center", marginVertical: 20 }}>
       {Array.from({ length: total }).map((_, i) => (
         <View
           key={i}
           style={{
-            width: i === step ? 18 : 8,
-            height: 8,
+            width: i === step ? 32 : 12,
+            height: 4,
             borderRadius: 8,
-            backgroundColor: i <= step ? BRAND.gold : "#333",
+            backgroundColor: i <= step ? BRAND.gold : "rgba(255,255,255,0.2)",
+            shadowColor: i <= step ? BRAND.goldGlow : "transparent",
+            shadowOffset: { width: 0, height: 0 },
+            shadowOpacity: 0.8,
+            shadowRadius: 6,
+            elevation: 4,
           }}
         />
       ))}
     </View>
   );
 }
+
 function ScreenShell({
   children, title, subtitle, step, total,
 }: { children: React.ReactNode; title: string; subtitle?: string; step: number; total: number }) {
   return (
-    <View style={{ flex: 1, backgroundColor: BRAND.bg }}>
-      <ScrollView contentContainerStyle={{ padding: 20, paddingTop: 28, gap: 18 }} keyboardShouldPersistTaps="handled">
-        <Text style={{ color: BRAND.gold, fontSize: 12, letterSpacing: 1.6 }}>AISLEMARTS</Text>
-        <Text style={{ color: BRAND.ink, fontSize: 26, fontWeight: "800" }}>{title}</Text>
-        {!!subtitle && <Text style={{ color: BRAND.sub, fontSize: 14, lineHeight: 20 }}>{subtitle}</Text>}
+    <View style={{ 
+      flex: 1, 
+      backgroundColor: BRAND.bg,
+      minHeight: "100vh",
+      position: "relative"
+    }}>
+      {/* Cinematic background gradient overlay */}
+      <View style={{
+        position: "absolute",
+        top: 0,
+        left: 0,
+        right: 0,
+        bottom: 0,
+        background: "radial-gradient(circle at center top, rgba(212, 175, 55, 0.1) 0%, rgba(0,0,0,0.9) 70%)",
+        zIndex: 0,
+      }} />
+      
+      <ScrollView 
+        contentContainerStyle={{ 
+          padding: 24, 
+          paddingTop: 60, 
+          paddingBottom: 40, 
+          gap: 24,
+          minHeight: "100vh",
+          justifyContent: "center"
+        }} 
+        keyboardShouldPersistTaps="handled"
+        showsVerticalScrollIndicator={false}
+      >
+        {/* Luxury brand header */}
+        <Text style={{ 
+          color: BRAND.gold, 
+          fontSize: 14, 
+          letterSpacing: 3, 
+          fontWeight: "600",
+          textAlign: "center",
+          opacity: 0.9,
+          textShadowColor: "rgba(212, 175, 55, 0.3)",
+          textShadowOffset: { width: 0, height: 1 },
+          textShadowRadius: 4,
+        }}>
+          AISLEMARTS
+        </Text>
+        
+        {/* Main title with cinematic styling */}
+        <Text style={{ 
+          color: BRAND.ink, 
+          fontSize: 32, 
+          fontWeight: "900",
+          textAlign: "center",
+          letterSpacing: 1,
+          lineHeight: 38,
+          textShadowColor: "rgba(0,0,0,0.8)",
+          textShadowOffset: { width: 0, height: 2 },
+          textShadowRadius: 4,
+        }}>{title}</Text>
+        
+        {!!subtitle && (
+          <Text style={{ 
+            color: BRAND.sub, 
+            fontSize: 16, 
+            lineHeight: 24,
+            textAlign: "center",
+            paddingHorizontal: 8,
+            opacity: 0.9,
+            fontWeight: "400"
+          }}>{subtitle}</Text>
+        )}
+        
         <ProgressDots step={step} total={total} />
-        <View style={{ gap: 16 }}>{children}</View>
+        
+        <View style={{ gap: 24, zIndex: 1 }}>{children}</View>
       </ScrollView>
     </View>
   );
