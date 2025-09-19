@@ -268,13 +268,12 @@ metadata:
 
 test_plan:
   current_focus:
-    - "ALL-IN MICRO-SPRINT: AI Intent Parser"
+    - "ALL-IN MICRO-SPRINT: AI Copilot Bar Component"
+    - "ALL-IN MICRO-SPRINT: AI Integration Library"
+    - "ALL-IN MICRO-SPRINT: Order Success UX Component"
+    - "ALL-IN MICRO-SPRINT: Frontend Testing Suite"
+  stuck_tasks:
     - "ALL-IN MICRO-SPRINT: Wishlist APIs"
-    - "ALL-IN MICRO-SPRINT: Order Cancellation API"
-    - "ALL-IN MICRO-SPRINT: Performance Optimization"
-    - "ALL-IN MICRO-SPRINT: Security Rate Limiting"
-    - "ALL-IN MICRO-SPRINT: Business KPI Monitoring"
-  stuck_tasks: []
   test_all: false
   test_priority: "high_first"
   completed_focus:
