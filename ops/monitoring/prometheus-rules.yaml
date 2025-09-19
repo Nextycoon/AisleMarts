@@ -1,0 +1,150 @@
+apiVersion: monitoring.coreos.com/v1
+kind: PrometheusRule
+metadata:
+  name: aislemarts-slo-rules
+  namespace: prod
+  labels:
+    app: aislemarts
+    prometheus: kube-prometheus
+spec:
+  groups:
+  - name: aislemarts.slo
+    interval: 30s
+    rules:
+    # SLI: Error Rate (99.95% success rate target)
+    - alert: AisleMartsHighErrorRate
+      expr: |
+        (
+          sum(rate(http_server_requests_total{job="aislemarts",status=~"5.."}[5m])) 
+          / 
+          sum(rate(http_server_requests_total{job="aislemarts"}[5m]))
+        ) > 0.0005
+      for: 2m
+      labels:
+        severity: critical
+        service: aislemarts
+        slo: availability
+      annotations:
+        summary: "AisleMarts high error rate detected"
+        description: "Error rate is {{ $value | humanizePercentage }} over the last 5 minutes, exceeding the 0.05% threshold"
+        runbook: "https://runbook.AisleMarts.com/alerts/high-error-rate"
+    
+    # SLI: Latency (p95 < 300ms target)
+    - alert: AisleMartsHighLatency
+      expr: |
+        histogram_quantile(0.95, 
+          sum(rate(http_server_request_duration_seconds_bucket{job="aislemarts"}[5m])) by (le)
+        ) > 0.3
+      for: 5m
+      labels:
+        severity: critical
+        service: aislemarts
+        slo: latency
+      annotations:
+        summary: "AisleMarts high latency detected"
+        description: "P95 latency is {{ $value }}s over the last 5 minutes, exceeding 300ms threshold"
+        runbook: "https://runbook.AisleMarts.com/alerts/high-latency"
+    
+    # Infrastructure: Pod availability
+    - alert: AisleMartsPodDown
+      expr: |
+        (
+          kube_deployment_status_replicas_available{deployment="aislemarts-backend"} 
+          / 
+          kube_deployment_spec_replicas{deployment="aislemarts-backend"}
+        ) < 0.8
+      for: 1m
+      labels:
+        severity: critical
+        service: aislemarts
+        type: infrastructure
+      annotations:
+        summary: "AisleMarts pods unavailable"
+        description: "Only {{ $value | humanizePercentage }} of AisleMarts pods are available"
+    
+    # Business metrics
+    - alert: AisleMartsLowOrderRate
+      expr: |
+        rate(aisle_orders_total{status="completed"}[1h]) < 0.01
+      for: 10m
+      labels:
+        severity: warning
+        service: aislemarts
+        type: business
+      annotations:
+        summary: "Low order completion rate"
+        description: "Order rate is {{ $value }}/hour, below expected threshold"
+    
+    - alert: AisleMartsStripeFailures
+      expr: |
+        rate(aisle_stripe_failures_total[5m]) > 0.05
+      for: 5m
+      labels:
+        severity: critical
+        service: aislemarts
+        type: payment
+      annotations:
+        summary: "High Stripe payment failure rate"
+        description: "Stripe failures at {{ $value }}/min"
+    
+    # Backup monitoring
+    - alert: AisleMartsBackupStale
+      expr: |
+        time() - aisle_backup_last_success_timestamp_seconds > 43200
+      for: 5m
+      labels:
+        severity: warning
+        service: aislemarts
+        type: backup
+      annotations:
+        summary: "Database backup is stale"
+        description: "Last successful backup was {{ $value | humanizeDuration }} ago"
+    
+    - alert: AisleMartsBackupFailed
+      expr: |
+        increase(aisle_backup_failures_total[24h]) > 0
+      for: 0s
+      labels:
+        severity: critical
+        service: aislemarts
+        type: backup
+      annotations:
+        summary: "Database backup failed"
+        description: "{{ $value }} backup failures in last 24h"
+
+  - name: aislemarts.business
+    interval: 60s
+    rules:
+    # Recording rules for business metrics
+    - record: aislemarts:orders_per_minute
+      expr: rate(aisle_orders_total[1m]) * 60
+    
+    - record: aislemarts:carts_per_minute  
+      expr: rate(aisle_carts_updated_total[1m]) * 60
+    
+    - record: aislemarts:payments_per_minute
+      expr: rate(aisle_payments_total[1m]) * 60
+    
+    - record: aislemarts:voice_intents_per_minute
+      expr: rate(aisle_voice_intents_total[1m]) * 60
+    
+    # SLI recording rules
+    - record: aislemarts:error_rate_5m
+      expr: |
+        sum(rate(http_server_requests_total{job="aislemarts",status=~"5.."}[5m])) 
+        / 
+        sum(rate(http_server_requests_total{job="aislemarts"}[5m]))
+    
+    - record: aislemarts:latency_p95_5m
+      expr: |
+        histogram_quantile(0.95, 
+          sum(rate(http_server_request_duration_seconds_bucket{job="aislemarts"}[5m])) by (le)
+        )
+    
+    - record: aislemarts:availability_5m
+      expr: |
+        (
+          sum(rate(http_server_requests_total{job="aislemarts",status!~"5.."}[5m]))
+          /
+          sum(rate(http_server_requests_total{job="aislemarts"}[5m]))
+        )

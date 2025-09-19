@@ -1,0 +1,114 @@
+global:
+  smtp_smarthost: 'localhost:587'
+  smtp_from: 'alerts@AisleMarts.com'
+  slack_api_url: 'https://hooks.slack.com/services/YOUR/SLACK/WEBHOOK'
+  pagerduty_url: 'https://events.pagerduty.com/v2/enqueue'
+
+route:
+  group_by: ['alertname', 'cluster', 'service']
+  group_wait: 10s
+  group_interval: 10s
+  repeat_interval: 1h
+  receiver: 'slack-general'
+  routes:
+  - matchers:
+    - severity=critical
+    receiver: 'pagerduty-critical'
+    group_wait: 10s
+    repeat_interval: 5m
+  - matchers:
+    - alertname=AisleMartsHighErrorRate
+    receiver: 'pagerduty-critical'
+    group_wait: 5s
+    repeat_interval: 2m
+  - matchers:
+    - alertname=AisleMartsHighLatency
+    receiver: 'pagerduty-critical'
+    group_wait: 5s
+    repeat_interval: 2m
+  - matchers:
+    - type=backup
+    receiver: 'slack-ops'
+    repeat_interval: 12h
+  - matchers:
+    - type=business
+    receiver: 'slack-business'
+    repeat_interval: 30m
+
+receivers:
+- name: 'slack-general'
+  slack_configs:
+  - api_url: 'https://hooks.slack.com/services/YOUR/SLACK/WEBHOOK'
+    channel: '#aislemarts-alerts'
+    title: 'AisleMarts Alert - {{ .GroupLabels.alertname }}'
+    text: |
+      {{ range .Alerts }}
+      *Alert:* {{ .Annotations.summary }}
+      *Severity:* {{ .Labels.severity }}
+      *Description:* {{ .Annotations.description }}
+      *Runbook:* {{ .Annotations.runbook }}
+      {{ end }}
+    send_resolved: true
+
+- name: 'slack-ops'
+  slack_configs:
+  - api_url: 'https://hooks.slack.com/services/YOUR/SLACK/WEBHOOK'
+    channel: '#aislemarts-ops'
+    title: 'AisleMarts Ops Alert'
+    text: |
+      {{ range .Alerts }}
+      *{{ .Annotations.summary }}*
+      {{ .Annotations.description }}
+      {{ end }}
+    send_resolved: true
+
+- name: 'slack-business'
+  slack_configs:
+  - api_url: 'https://hooks.slack.com/services/YOUR/SLACK/WEBHOOK'  
+    channel: '#aislemarts-business'
+    title: 'AisleMarts Business Metrics Alert'
+    text: |
+      {{ range .Alerts }}
+      📊 *{{ .Annotations.summary }}*
+      {{ .Annotations.description }}
+      {{ end }}
+
+- name: 'pagerduty-critical'
+  pagerduty_configs:
+  - routing_key: 'YOUR_PAGERDUTY_INTEGRATION_KEY'
+    description: 'AisleMarts Critical Alert: {{ .GroupLabels.alertname }}'
+    severity: 'critical'
+    details:
+      summary: '{{ range .Alerts }}{{ .Annotations.summary }}{{ end }}'
+      description: '{{ range .Alerts }}{{ .Annotations.description }}{{ end }}'
+      runbook: '{{ range .Alerts }}{{ .Annotations.runbook }}{{ end }}'
+      service: 'AisleMarts'
+      component: '{{ .GroupLabels.service }}'
+
+- name: 'email-sre'
+  email_configs:
+  - to: 'sre-team@AisleMarts.com'
+    subject: 'AisleMarts Alert: {{ .GroupLabels.alertname }}'
+    body: |
+      Alert Details:
+      {{ range .Alerts }}
+      - Summary: {{ .Annotations.summary }}
+      - Description: {{ .Annotations.description }}
+      - Severity: {{ .Labels.severity }}
+      - Time: {{ .StartsAt }}
+      {{ if .Annotations.runbook }}- Runbook: {{ .Annotations.runbook }}{{ end }}
+      {{ end }}
+
+# Inhibition rules to reduce noise
+inhibit_rules:
+- source_matchers:
+  - severity=critical
+  target_matchers:
+  - severity=warning
+  equal: ['alertname', 'service']
+
+- source_matchers:
+  - alertname=AisleMartsPodDown
+  target_matchers:
+  - alertname=AisleMartsHighErrorRate
+  equal: ['service']

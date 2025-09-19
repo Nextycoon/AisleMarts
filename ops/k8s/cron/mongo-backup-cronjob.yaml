@@ -1,0 +1,137 @@
+apiVersion: batch/v1
+kind: CronJob
+metadata:
+  name: mongo-backup
+  namespace: prod
+  labels:
+    app: mongo-backup
+spec:
+  schedule: "0 2,14 * * *"  # Every 12 hours (02:00 and 14:00 UTC) for RPO < 12h
+  concurrencyPolicy: Forbid
+  successfulJobsHistoryLimit: 3
+  failedJobsHistoryLimit: 1
+  jobTemplate:
+    spec:
+      template:
+        metadata:
+          labels:
+            app: mongo-backup
+        spec:
+          serviceAccountName: mongo-backup-sa
+          restartPolicy: OnFailure
+          containers:
+          - name: backup
+            image: gcr.io/google.com/cloudsdktool/google-cloud-cli:alpine
+            env:
+            - name: MONGO_URI
+              valueFrom:
+                secretKeyRef:
+                  name: aislemarts-secrets
+                  key: MONGO_URI
+            - name: GCS_BUCKET
+              value: "gs://aislemarts-backups"
+            - name: PROJECT_ID
+              value: "aislemarts-prod"
+            command: ["/bin/bash"]
+            args:
+            - -c
+            - |
+              set -euo pipefail
+              
+              # Install MongoDB tools
+              apk add --no-cache mongodb-tools curl jq
+              
+              # Generate timestamp
+              TIMESTAMP=$(date -u +%Y%m%dT%H%M%SZ)
+              BACKUP_DIR="/tmp/backup-${TIMESTAMP}"
+              BACKUP_FILE="${BACKUP_DIR}.tar.gz"
+              
+              echo "Starting backup at ${TIMESTAMP}"
+              
+              # Create backup directory
+              mkdir -p "${BACKUP_DIR}"
+              
+              # Perform backup
+              mongodump --uri="${MONGO_URI}" --out="${BACKUP_DIR}"
+              
+              # Compress backup
+              tar -czf "${BACKUP_FILE}" -C "/tmp" "backup-${TIMESTAMP}"
+              
+              # Upload to GCS with metadata
+              gsutil -h "x-goog-meta-timestamp:${TIMESTAMP}" \
+                     -h "x-goog-meta-database:aislemarts" \
+                     cp "${BACKUP_FILE}" "${GCS_BUCKET}/$(date -u +%Y)/$(date -u +%m)/backup-${TIMESTAMP}.tar.gz"
+              
+              # Update backup metric for monitoring
+              echo "aisle_backup_last_success_timestamp_seconds $(date +%s)" > /tmp/metrics
+              
+              # Cleanup
+              rm -rf "${BACKUP_DIR}" "${BACKUP_FILE}"
+              
+              echo "Backup completed successfully: ${TIMESTAMP}"
+            resources:
+              requests:
+                cpu: "250m"
+                memory: "512Mi"
+              limits:
+                cpu: "1"
+                memory: "2Gi"
+            securityContext:
+              runAsNonRoot: true
+              runAsUser: 1000
+              allowPrivilegeEscalation: false
+              readOnlyRootFilesystem: false
+---
+apiVersion: batch/v1
+kind: CronJob
+metadata:
+  name: mongo-backup-staging
+  namespace: staging
+  labels:
+    app: mongo-backup
+spec:
+  schedule: "0 3 * * *"  # Daily at 03:00 UTC for staging
+  concurrencyPolicy: Forbid
+  successfulJobsHistoryLimit: 2
+  failedJobsHistoryLimit: 1
+  jobTemplate:
+    spec:
+      template:
+        metadata:
+          labels:
+            app: mongo-backup
+        spec:
+          serviceAccountName: mongo-backup-sa
+          restartPolicy: OnFailure
+          containers:
+          - name: backup
+            image: gcr.io/google.com/cloudsdktool/google-cloud-cli:alpine
+            env:
+            - name: MONGO_URI
+              valueFrom:
+                secretKeyRef:
+                  name: aislemarts-secrets
+                  key: MONGO_URI
+            - name: GCS_BUCKET
+              value: "gs://aislemarts-backups-staging"
+            command: ["/bin/bash"]
+            args:
+            - -c
+            - |
+              set -euo pipefail
+              apk add --no-cache mongodb-tools
+              TIMESTAMP=$(date -u +%Y%m%dT%H%M%SZ)
+              BACKUP_DIR="/tmp/backup-${TIMESTAMP}"
+              mkdir -p "${BACKUP_DIR}"
+              mongodump --uri="${MONGO_URI}" --out="${BACKUP_DIR}"
+              tar -czf "${BACKUP_DIR}.tar.gz" -C "/tmp" "backup-${TIMESTAMP}"
+              gsutil cp "${BACKUP_DIR}.tar.gz" "${GCS_BUCKET}/staging/backup-${TIMESTAMP}.tar.gz"
+              rm -rf "${BACKUP_DIR}" "${BACKUP_DIR}.tar.gz"
+              echo "Staging backup completed: ${TIMESTAMP}"
+            resources:
+              requests:
+                cpu: "250m"
+                memory: "256Mi"
+              limits:
+                cpu: "500m"
+                memory: "1Gi"
