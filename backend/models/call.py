@@ -68,9 +68,10 @@ class CallSignalMessage(BaseModel):
 
 # Request Models
 class InitiateCallRequest(BaseModel):
-    conversation_id: str
     callee_id: str
     mode: CallMode = CallMode.VOICE
+    conversation_id: Optional[str] = None
+    context: Optional[str] = None
 
 class CallAnswerRequest(BaseModel):
     call_id: str
