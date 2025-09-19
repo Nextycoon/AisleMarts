@@ -12,17 +12,19 @@ export default function RootLayout() {
     <View style={styles.container}>
       <StatusBar style="light" backgroundColor="transparent" translucent={true} hidden={false} />
       <ErrorBoundary>
-        <AuthProvider>
-          <UserRolesProvider>
-            <Stack 
-              screenOptions={{ 
-                headerShown: false,
-                contentStyle: styles.screen,
-                animation: 'fade',
-              }} 
-            />
-          </UserRolesProvider>
-        </AuthProvider>
+        <AwarenessProvider>
+          <AuthProvider>
+            <UserRolesProvider>
+              <Stack 
+                screenOptions={{ 
+                  headerShown: false,
+                  contentStyle: styles.screen,
+                  animation: 'fade',
+                }} 
+              />
+            </UserRolesProvider>
+          </AuthProvider>
+        </AwarenessProvider>
       </ErrorBoundary>
     </View>
   );
