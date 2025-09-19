@@ -82,7 +82,7 @@ async def create_conversation(
 ):
     """Create a new conversation"""
     dm_service = DMService(db)
-    return await dm_service.create_conversation(request, current_user.id)
+    return await dm_service.create_conversation(request, current_user["_id"])
 
 @router.get("/conversations", response_model=List[ConversationModel])
 async def get_conversations(
@@ -91,7 +91,7 @@ async def get_conversations(
 ):
     """Get all conversations for the current user"""
     dm_service = DMService(db)
-    return await dm_service.get_conversations(current_user.id)
+    return await dm_service.get_conversations(current_user["_id"])
 
 @router.get("/conversations/{conversation_id}", response_model=ConversationModel)
 async def get_conversation(
@@ -101,7 +101,7 @@ async def get_conversation(
 ):
     """Get a specific conversation"""
     dm_service = DMService(db)
-    conversation = await dm_service.get_conversation(conversation_id, current_user.id)
+    conversation = await dm_service.get_conversation(conversation_id, current_user["_id"])
     if not conversation:
         raise HTTPException(status_code=404, detail="Conversation not found")
     return conversation
@@ -116,7 +116,7 @@ async def get_messages(
 ):
     """Get messages from a conversation"""
     dm_service = DMService(db)
-    return await dm_service.get_messages(conversation_id, current_user.id, limit, before)
+    return await dm_service.get_messages(conversation_id, current_user["_id"], limit, before)
 
 @router.post("/messages", response_model=MessageModel)
 async def send_message(
@@ -126,14 +126,14 @@ async def send_message(
 ):
     """Send a message (fallback when WebSocket is not available)"""
     dm_service = DMService(db)
-    message = await dm_service.send_message(request, current_user.id)
+    message = await dm_service.send_message(request, current_user["_id"])
     
     # Broadcast to connected users
     broadcast_data = {
         "type": WSMessageType.MESSAGE_NEW,
         "data": {
             "message": message.dict(),
-            "sender_id": current_user.id
+            "sender_id": current_user["_id"]
         },
         "timestamp": datetime.utcnow().isoformat()
     }
@@ -141,7 +141,7 @@ async def send_message(
     await connection_registry.broadcast_to_conversation(
         request.conversation_id, 
         broadcast_data,
-        exclude_user=current_user.id
+        exclude_user=current_user["_id"]
     )
     
     return message
@@ -155,7 +155,7 @@ async def send_typing_indicator(
     """Send typing indicator (fallback)"""
     # Verify user is in conversation
     dm_service = DMService(db)
-    conversation = await dm_service.get_conversation(request.conversation_id, current_user.id)
+    conversation = await dm_service.get_conversation(request.conversation_id, current_user["_id"])
     if not conversation:
         raise HTTPException(status_code=404, detail="Conversation not found")
     
@@ -163,7 +163,7 @@ async def send_typing_indicator(
     broadcast_data = {
         "type": WSMessageType.TYPING,
         "data": {
-            "user_id": current_user.id,
+            "user_id": current_user["_id"],
             "state": request.state,
             "conversation_id": request.conversation_id
         },
@@ -173,7 +173,7 @@ async def send_typing_indicator(
     await connection_registry.broadcast_to_conversation(
         request.conversation_id,
         broadcast_data,
-        exclude_user=current_user.id
+        exclude_user=current_user["_id"]
     )
     
     return {"status": "sent"}
@@ -188,19 +188,19 @@ async def mark_read(
     dm_service = DMService(db)
     
     # Verify user is in conversation
-    conversation = await dm_service.get_conversation(request.conversation_id, current_user.id)
+    conversation = await dm_service.get_conversation(request.conversation_id, current_user["_id"])
     if not conversation:
         raise HTTPException(status_code=404, detail="Conversation not found")
     
     # Mark as read
-    await dm_service.mark_message_read(request.message_id, current_user.id)
+    await dm_service.mark_message_read(request.message_id, current_user["_id"])
     
     # Broadcast read receipt
     broadcast_data = {
         "type": WSMessageType.READ_RECEIPT,
         "data": {
             "message_id": request.message_id,
-            "user_id": current_user.id,
+            "user_id": current_user["_id"],
             "conversation_id": request.conversation_id
         },
         "timestamp": datetime.utcnow().isoformat()
@@ -209,7 +209,7 @@ async def mark_read(
     await connection_registry.broadcast_to_conversation(
         request.conversation_id,
         broadcast_data,
-        exclude_user=current_user.id
+        exclude_user=current_user["_id"]
     )
     
     return {"status": "marked"}
