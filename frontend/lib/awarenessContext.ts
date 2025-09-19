@@ -551,13 +551,6 @@ export const AwarenessProvider: React.FC<AwarenessProviderProps> = ({ children }
     adaptiveResponse,
     isLoading,
     error,
-    detectContext,
-    updatePreferences,
-    getLanguagePack,
-    formatCurrency,
-    formatDateTime,
-    shouldShowFeature,
-    getLocalizedContent,
   ]);
 
   return (
