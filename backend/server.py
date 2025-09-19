@@ -450,6 +450,7 @@ try:
     from routers.orders_cancel import router as orders_cancel_router
     from routers.products_cached import router as products_cached_router
     from routers.auth import router as auth_router
+    from routers.mood_to_cart import router as mood_to_cart_router
     
     app.include_router(ai_intent_router)
     app.include_router(wishlist_router)
