@@ -1,0 +1,307 @@
+# AisleMarts Production Helm Values
+# Optimized for enterprise-grade deployment with security hardening
+
+replicaCount: 5
+
+image:
+  repository: us-central1-docker.pkg.dev/aislemarts-prod/aislemarts/backend
+  pullPolicy: IfNotPresent
+  # Overridden by CI/CD with specific version tags
+  tag: "latest"
+
+nameOverride: ""
+fullnameOverride: ""
+
+serviceAccount:
+  create: true
+  annotations:
+    iam.gke.io/gcp-service-account: aislemarts-backend@aislemarts-prod.iam.gserviceaccount.com
+  name: "aislemarts-backend"
+
+podAnnotations:
+  prometheus.io/scrape: "true"
+  prometheus.io/port: "8000"
+  prometheus.io/path: "/metrics"
+  cluster-autoscaler.kubernetes.io/safe-to-evict: "true"
+
+podSecurityContext:
+  runAsNonRoot: true
+  runAsUser: 10001
+  runAsGroup: 10001
+  fsGroup: 10001
+
+securityContext:
+  allowPrivilegeEscalation: false
+  readOnlyRootFilesystem: true
+  capabilities:
+    drop:
+    - ALL
+
+service:
+  type: ClusterIP
+  port: 80
+  targetPort: 8000
+  annotations:
+    cloud.google.com/neg: '{"ingress": true}'
+    service.alpha.kubernetes.io/tolerate-unready-endpoints: "true"
+
+ingress:
+  enabled: true
+  className: "gce"
+  annotations:
+    kubernetes.io/ingress.class: "gce"
+    cert-manager.io/cluster-issuer: "letsencrypt-prod"
+    networking.gke.io/managed-certificates: "aislemarts-prod-cert"
+    networking.gke.io/security-policy: "aislemarts-waf"
+    kubernetes.io/ingress.global-static-ip-name: "aislemarts-prod-ip"
+    ingress.gcp.kubernetes.io/frontend-config: "aislemarts-frontend-config"
+  hosts:
+    - host: api.aislemarts.com
+      paths:
+        - path: /
+          pathType: Prefix
+  tls:
+    - secretName: aislemarts-prod-tls
+      hosts:
+        - api.aislemarts.com
+
+resources:
+  limits:
+    cpu: 2000m
+    memory: 2Gi
+    ephemeral-storage: 1Gi
+  requests:
+    cpu: 1000m
+    memory: 1Gi
+    ephemeral-storage: 500Mi
+
+autoscaling:
+  enabled: true
+  minReplicas: 5
+  maxReplicas: 50
+  targetCPUUtilizationPercentage: 60
+  targetMemoryUtilizationPercentage: 70
+  behavior:
+    scaleUp:
+      stabilizationWindowSeconds: 60
+      policies:
+      - type: Percent
+        value: 100
+        periodSeconds: 60
+      - type: Pods
+        value: 5
+        periodSeconds: 60
+    scaleDown:
+      stabilizationWindowSeconds: 300
+      policies:
+      - type: Percent
+        value: 10
+        periodSeconds: 60
+
+nodeSelector: {}
+
+tolerations: []
+
+affinity:
+  podAntiAffinity:
+    preferredDuringSchedulingIgnoredDuringExecution:
+    - weight: 100
+      podAffinityTerm:
+        labelSelector:
+          matchExpressions:
+          - key: app.kubernetes.io/name
+            operator: In
+            values:
+            - aislemarts
+        topologyKey: kubernetes.io/hostname
+
+# Environment variables
+env:
+  APP_NAME: "AisleMarts"
+  LOG_LEVEL: "INFO"
+  ENVIRONMENT: "production"
+  SLA_P95_TARGET_MS: "300"
+  SLA_AVAILABILITY_TARGET: "99.95"
+  SLA_ERROR_RATE_TARGET: "0.0005"
+  
+  # Feature flags for production
+  FEATURE_VOICE_COMMANDS: "true"
+  FEATURE_MOOD_TO_CART: "true"
+  FEATURE_AI_RECOMMENDATIONS: "true"
+  FEATURE_MULTILANG_VOICE: "true"
+  FEATURE_BUSINESS_ANALYTICS: "true"
+  FEATURE_VENDOR_PORTAL: "true"
+  FEATURE_ADMIN_DASHBOARD: "true"
+  
+  # AI Configuration
+  AI_LANGUAGES: "en,tr,ar,fr,es,de,sw"
+  AI_RECOMMENDER_VERSION: "v2"
+  AI_MOOD_DETECTION_ENABLED: "true"
+  AI_CONTEXTUAL_RECOMMENDATIONS: "true"
+  
+  # Performance & Monitoring
+  METRICS_ENABLED: "true"
+  REQUEST_TIMEOUT_SECONDS: "30"
+  DB_CONNECTION_POOL_SIZE: "20"
+  DB_CONNECTION_TIMEOUT_SECONDS: "10"
+  
+  # Security
+  CORS_ORIGINS: "https://aislemarts.com,https://www.aislemarts.com,https://app.aislemarts.com"
+  RATE_LIMIT_REQUESTS_PER_MINUTE: "1000"
+  JWT_ALGORITHM: "HS256"
+  JWT_EXPIRE_HOURS: "24"
+
+# Secret references
+envFromSecret: "aislemarts-secrets"
+
+# ConfigMap references  
+envFromConfigMap: "aislemarts-config"
+
+# Probes configuration
+livenessProbe:
+  httpGet:
+    path: /health
+    port: 8000
+    httpHeaders:
+    - name: User-Agent
+      value: "k8s-liveness-probe"
+  initialDelaySeconds: 30
+  periodSeconds: 15
+  timeoutSeconds: 5
+  successThreshold: 1
+  failureThreshold: 3
+
+readinessProbe:
+  httpGet:
+    path: /health
+    port: 8000
+    httpHeaders:
+    - name: User-Agent
+      value: "k8s-readiness-probe"
+  initialDelaySeconds: 10
+  periodSeconds: 10
+  timeoutSeconds: 5
+  successThreshold: 1
+  failureThreshold: 3
+
+startupProbe:
+  httpGet:
+    path: /health
+    port: 8000
+  initialDelaySeconds: 10
+  periodSeconds: 5
+  timeoutSeconds: 5
+  successThreshold: 1
+  failureThreshold: 30
+
+# Network policy
+networkPolicy:
+  enabled: true
+  policyTypes:
+    - Ingress
+    - Egress
+  ingress:
+    - from:
+      - namespaceSelector:
+          matchLabels:
+            name: kube-system
+      - podSelector: {}
+      ports:
+      - protocol: TCP
+        port: 8000
+  egress:
+    - to: []
+      ports:
+      - protocol: TCP
+        port: 443  # HTTPS outbound
+      - protocol: TCP
+        port: 27017  # MongoDB
+      - protocol: UDP
+        port: 53   # DNS
+
+# Monitoring
+serviceMonitor:
+  enabled: true
+  namespace: prod
+  interval: 30s
+  path: /metrics
+  labels:
+    app: aislemarts
+    environment: production
+
+# Pod Disruption Budget
+podDisruptionBudget:
+  enabled: true
+  minAvailable: 3
+  # maxUnavailable: 25%
+
+# Volume mounts for writable directories (read-only root filesystem)
+volumeMounts:
+  - name: tmp-volume
+    mountPath: /tmp
+  - name: var-log-volume
+    mountPath: /var/log
+
+volumes:
+  - name: tmp-volume
+    emptyDir: {}
+  - name: var-log-volume
+    emptyDir: {}
+
+# Backup configuration
+backup:
+  enabled: true
+  schedule: "0 2,14 * * *"  # Every 12 hours
+  gcsBackup:
+    bucket: "gs://aislemarts-backups"
+    retention: "90d"
+  serviceAccount:
+    annotations:
+      iam.gke.io/gcp-service-account: mongo-backup@aislemarts-prod.iam.gserviceaccount.com
+
+# Frontend configuration for ingress
+frontendConfig:
+  enabled: true
+  redirectToHttps:
+    enabled: true
+  sslPolicy: "aislemarts-ssl-policy"
+  connectionDrainingTimeoutSec: 60
+
+# Additional labels for all resources
+commonLabels:
+  app.kubernetes.io/name: aislemarts
+  app.kubernetes.io/instance: aislemarts-prod
+  app.kubernetes.io/version: "v1.0.0"
+  app.kubernetes.io/component: backend
+  app.kubernetes.io/part-of: aislemarts-platform
+  app.kubernetes.io/managed-by: helm
+  environment: production
+  tier: backend
+  
+# Production-specific tolerations
+tolerations:
+  - key: "production-workload"
+    operator: "Equal"
+    value: "true"
+    effect: "NoSchedule"
+
+# Resource quotas for namespace (if managing via Helm)
+resourceQuota:
+  enabled: false  # Managed separately via ops/k8s/security/
+  hard:
+    requests.cpu: "50"
+    requests.memory: "100Gi"
+    limits.cpu: "100"
+    limits.memory: "200Gi"
+
+# Limit ranges for namespace (if managing via Helm) 
+limitRange:
+  enabled: false  # Managed separately via ops/k8s/security/
+  limits:
+    - type: Container
+      default:
+        cpu: "2"
+        memory: "2Gi"
+      defaultRequest:
+        cpu: "500m"
+        memory: "1Gi"

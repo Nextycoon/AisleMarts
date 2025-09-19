@@ -1,0 +1,237 @@
+# AisleMarts Staging Helm Values
+# Optimized for development and testing with cost efficiency
+
+replicaCount: 2
+
+image:
+  repository: us-central1-docker.pkg.dev/aislemarts-prod/aislemarts/backend
+  pullPolicy: IfNotPresent
+  tag: "latest"
+
+nameOverride: ""
+fullnameOverride: ""
+
+serviceAccount:
+  create: true
+  annotations:
+    iam.gke.io/gcp-service-account: aislemarts-backend@aislemarts-prod.iam.gserviceaccount.com
+  name: "aislemarts-backend"
+
+podAnnotations:
+  prometheus.io/scrape: "true"
+  prometheus.io/port: "8000"
+  prometheus.io/path: "/metrics"
+
+podSecurityContext:
+  runAsNonRoot: true
+  runAsUser: 10001
+  runAsGroup: 10001
+  fsGroup: 10001
+
+securityContext:
+  allowPrivilegeEscalation: false
+  readOnlyRootFilesystem: true
+  capabilities:
+    drop:
+    - ALL
+
+service:
+  type: ClusterIP
+  port: 80
+  targetPort: 8000
+  annotations:
+    cloud.google.com/neg: '{"ingress": true}'
+
+ingress:
+  enabled: true
+  className: "gce"
+  annotations:
+    kubernetes.io/ingress.class: "gce"
+    cert-manager.io/cluster-issuer: "letsencrypt-staging"
+    networking.gke.io/managed-certificates: "aislemarts-staging-cert"
+    networking.gke.io/security-policy: "aislemarts-waf"
+    kubernetes.io/ingress.global-static-ip-name: "aislemarts-staging-ip"
+  hosts:
+    - host: staging.aislemarts.com
+      paths:
+        - path: /
+          pathType: Prefix
+  tls:
+    - secretName: aislemarts-staging-tls
+      hosts:
+        - staging.aislemarts.com
+
+resources:
+  limits:
+    cpu: 1000m
+    memory: 1Gi
+    ephemeral-storage: 500Mi
+  requests:
+    cpu: 250m
+    memory: 512Mi
+    ephemeral-storage: 250Mi
+
+autoscaling:
+  enabled: true
+  minReplicas: 2
+  maxReplicas: 10
+  targetCPUUtilizationPercentage: 70
+  targetMemoryUtilizationPercentage: 75
+
+nodeSelector: {}
+
+tolerations: []
+
+affinity: {}
+
+# Environment variables for staging
+env:
+  APP_NAME: "AisleMarts (Staging)"
+  LOG_LEVEL: "DEBUG"
+  ENVIRONMENT: "staging"
+  SLA_P95_TARGET_MS: "500"  # More relaxed for staging
+  SLA_AVAILABILITY_TARGET: "99.0"
+  SLA_ERROR_RATE_TARGET: "0.001"
+  
+  # Feature flags - enable all for testing
+  FEATURE_VOICE_COMMANDS: "true"
+  FEATURE_MOOD_TO_CART: "true"
+  FEATURE_AI_RECOMMENDATIONS: "true"
+  FEATURE_MULTILANG_VOICE: "true"
+  FEATURE_BUSINESS_ANALYTICS: "true"
+  FEATURE_VENDOR_PORTAL: "true"
+  FEATURE_ADMIN_DASHBOARD: "true"
+  FEATURE_EXPERIMENTAL_AI: "true"  # Staging-only features
+  
+  # AI Configuration
+  AI_LANGUAGES: "en,tr,ar,fr"  # Reduced set for staging
+  AI_RECOMMENDER_VERSION: "v2"
+  AI_MOOD_DETECTION_ENABLED: "true"
+  AI_CONTEXTUAL_RECOMMENDATIONS: "true"
+  
+  # Performance & Monitoring
+  METRICS_ENABLED: "true"
+  REQUEST_TIMEOUT_SECONDS: "45"  # More time for debugging
+  DB_CONNECTION_POOL_SIZE: "10"  # Smaller pool for staging
+  DB_CONNECTION_TIMEOUT_SECONDS: "15"
+  
+  # Security - relaxed for testing
+  CORS_ORIGINS: "*"  # Allow all origins in staging
+  RATE_LIMIT_REQUESTS_PER_MINUTE: "10000"  # Higher limit for testing
+  JWT_ALGORITHM: "HS256"
+  JWT_EXPIRE_HOURS: "72"  # Longer expiry for testing
+
+# Secret references
+envFromSecret: "aislemarts-secrets"
+
+# ConfigMap references  
+envFromConfigMap: "aislemarts-config"
+
+# Probes configuration - more lenient for staging
+livenessProbe:
+  httpGet:
+    path: /health
+    port: 8000
+  initialDelaySeconds: 20
+  periodSeconds: 20
+  timeoutSeconds: 10
+  successThreshold: 1
+  failureThreshold: 5
+
+readinessProbe:
+  httpGet:
+    path: /health
+    port: 8000
+  initialDelaySeconds: 5
+  periodSeconds: 10
+  timeoutSeconds: 10
+  successThreshold: 1
+  failureThreshold: 3
+
+startupProbe:
+  httpGet:
+    path: /health
+    port: 8000
+  initialDelaySeconds: 5
+  periodSeconds: 5
+  timeoutSeconds: 5
+  successThreshold: 1
+  failureThreshold: 20
+
+# Network policy - more permissive for staging
+networkPolicy:
+  enabled: true
+  policyTypes:
+    - Ingress
+    - Egress
+  ingress:
+    - from: []  # Allow all ingress in staging
+      ports:
+      - protocol: TCP
+        port: 8000
+  egress:
+    - to: []  # Allow all egress in staging
+
+# Monitoring
+serviceMonitor:
+  enabled: true
+  namespace: staging
+  interval: 30s
+  path: /metrics
+  labels:
+    app: aislemarts
+    environment: staging
+
+# Pod Disruption Budget - more lenient
+podDisruptionBudget:
+  enabled: true
+  minAvailable: 1
+
+# Volume mounts for writable directories
+volumeMounts:
+  - name: tmp-volume
+    mountPath: /tmp
+  - name: var-log-volume
+    mountPath: /var/log
+
+volumes:
+  - name: tmp-volume
+    emptyDir: {}
+  - name: var-log-volume
+    emptyDir: {}
+
+# Backup configuration - daily for staging
+backup:
+  enabled: true
+  schedule: "0 3 * * *"  # Daily at 3 AM
+  gcsBackup:
+    bucket: "gs://aislemarts-backups-staging"
+    retention: "30d"  # Shorter retention for staging
+  serviceAccount:
+    annotations:
+      iam.gke.io/gcp-service-account: mongo-backup@aislemarts-prod.iam.gserviceaccount.com
+
+# Frontend configuration
+frontendConfig:
+  enabled: false  # Simplified for staging
+
+# Additional labels
+commonLabels:
+  app.kubernetes.io/name: aislemarts
+  app.kubernetes.io/instance: aislemarts-staging
+  app.kubernetes.io/version: "v1.0.0-staging"
+  app.kubernetes.io/component: backend
+  app.kubernetes.io/part-of: aislemarts-platform
+  app.kubernetes.io/managed-by: helm
+  environment: staging
+  tier: backend
+
+# No production-specific tolerations for staging
+tolerations: []
+
+# Resource quotas and limits disabled - managed separately
+resourceQuota:
+  enabled: false
+
+limitRange:
+  enabled: false

@@ -1,0 +1,78 @@
+apiVersion: cert-manager.io/v1
+kind: ClusterIssuer
+metadata:
+  name: letsencrypt-staging
+  labels:
+    app: cert-manager
+    environment: staging
+spec:
+  acme:
+    email: devops@aislemarts.com
+    server: https://acme-staging-v02.api.letsencrypt.org/directory
+    privateKeySecretRef:
+      name: letsencrypt-staging-account-key
+    solvers:
+    - dns01:
+        cloudDNS:
+          project: aislemarts-prod
+          hostedZoneName: aislemarts-zone
+          serviceAccountSecretRef:
+            name: clouddns-dns01-solver-svc-acct
+            key: key.json
+      selector:
+        dnsZones:
+        - "aislemarts.com"
+---
+apiVersion: cert-manager.io/v1
+kind: ClusterIssuer
+metadata:
+  name: letsencrypt-prod
+  labels:
+    app: cert-manager
+    environment: production
+spec:
+  acme:
+    email: security@aislemarts.com
+    server: https://acme-v02.api.letsencrypt.org/directory
+    privateKeySecretRef:
+      name: letsencrypt-prod-account-key
+    solvers:
+    - dns01:
+        cloudDNS:
+          project: aislemarts-prod
+          hostedZoneName: aislemarts-zone
+          serviceAccountSecretRef:
+            name: clouddns-dns01-solver-svc-acct
+            key: key.json
+      selector:
+        dnsZones:
+        - "aislemarts.com"
+---
+# Wildcard certificate for AisleMarts subdomains
+apiVersion: cert-manager.io/v1
+kind: Certificate
+metadata:
+  name: aislemarts-wildcard-cert
+  namespace: prod
+spec:
+  secretName: aislemarts-wildcard-tls
+  issuerRef:
+    name: letsencrypt-prod
+    kind: ClusterIssuer
+  dnsNames:
+  - "*.aislemarts.com"
+  - "aislemarts.com"
+---
+apiVersion: cert-manager.io/v1
+kind: Certificate
+metadata:
+  name: aislemarts-staging-wildcard-cert
+  namespace: staging
+spec:
+  secretName: aislemarts-staging-wildcard-tls
+  issuerRef:
+    name: letsencrypt-staging
+    kind: ClusterIssuer
+  dnsNames:
+  - "*.aislemarts.com"
+  - "aislemarts.com"
