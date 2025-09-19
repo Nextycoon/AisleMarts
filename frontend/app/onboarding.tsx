@@ -544,7 +544,7 @@ function StepPermissions({ onNext }: { onNext: () => void }) {
       title="Enable your experience"
       subtitle="Turn on key permissions for the best Mood-to-Cart™ results. (Other devices can be linked later in Settings.)"
       step={2}
-      total={6}
+      total={7}
     >
       <PermRow label="Notifications" value={notif} onPress={() => ask(Notifications.requestPermissionsAsync, setNotif)} />
       <PermRow label="Location (Nearby & delivery)" value={loc} onPress={() => ask(Location.requestForegroundPermissionsAsync, setLoc)} />
