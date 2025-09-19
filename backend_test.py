@@ -9999,6 +9999,1251 @@ SKU-CSV-002,8,15000,9876543210987,KES,red,large,new"""
         
         return passed == total
 
+    # ========== LUXURY COMMUNICATION SUITE TEST METHODS ==========
+    
+    # Voice/Video Calls System Tests
+    def test_calls_initiate(self):
+        """Test initiating voice/video calls"""
+        print("\n📞 Testing Calls - Initiate Call...")
+        
+        if not self.auth_token:
+            self.log_test("Calls Initiate", False, "No auth token available")
+            return
+        
+        # Test voice call initiation
+        voice_call_data = {
+            "callee_id": "user_alice_123",
+            "mode": "voice",
+            "context": "direct_call"
+        }
+        
+        success, data = self.make_request("POST", "/calls/initiate", voice_call_data)
+        
+        if success and isinstance(data, dict) and data.get("id"):
+            self.test_call_id = data.get("id")
+            call_mode = data.get("mode")
+            status = data.get("status")
+            caller_id = data.get("caller_id")
+            self.log_test("Calls Initiate (Voice)", True, f"Call ID: {self.test_call_id[:8]}..., Mode: {call_mode}, Status: {status}, Caller: {caller_id}")
+        else:
+            self.log_test("Calls Initiate (Voice)", False, str(data))
+        
+        # Test video call initiation
+        video_call_data = {
+            "callee_id": "user_bob_456",
+            "mode": "video",
+            "context": "business_call"
+        }
+        
+        success, data = self.make_request("POST", "/calls/initiate", video_call_data)
+        
+        if success and isinstance(data, dict) and data.get("id"):
+            call_mode = data.get("mode")
+            status = data.get("status")
+            self.log_test("Calls Initiate (Video)", True, f"Video call initiated, Mode: {call_mode}, Status: {status}")
+        else:
+            self.log_test("Calls Initiate (Video)", False, str(data))
+
+    def test_calls_answer(self):
+        """Test answering calls"""
+        print("\n📞 Testing Calls - Answer Call...")
+        
+        if not self.auth_token:
+            self.log_test("Calls Answer", False, "No auth token available")
+            return
+        
+        if not hasattr(self, 'test_call_id') or not self.test_call_id:
+            self.log_test("Calls Answer", False, "No call ID available for testing")
+            return
+        
+        # Test answering call with SDP
+        answer_data = {
+            "call_id": self.test_call_id,
+            "sdp": "v=0\r\no=- 123456789 123456789 IN IP4 192.168.1.1\r\ns=-\r\nt=0 0\r\n"
+        }
+        
+        success, data = self.make_request("POST", "/calls/answer", answer_data)
+        
+        if success and isinstance(data, dict) and data.get("status") == "answered":
+            call_data = data.get("call", {})
+            call_status = call_data.get("status")
+            self.log_test("Calls Answer", True, f"Call answered successfully, Status: {call_status}")
+        else:
+            self.log_test("Calls Answer", False, str(data))
+
+    def test_calls_decline(self):
+        """Test declining calls"""
+        print("\n📞 Testing Calls - Decline Call...")
+        
+        if not self.auth_token:
+            self.log_test("Calls Decline", False, "No auth token available")
+            return
+        
+        # Create a new call to decline
+        call_data = {
+            "callee_id": "user_charlie_789",
+            "mode": "voice",
+            "context": "test_decline"
+        }
+        
+        success, call_response = self.make_request("POST", "/calls/initiate", call_data)
+        
+        if not success or not call_response.get("id"):
+            self.log_test("Calls Decline", False, "Could not create call to decline")
+            return
+        
+        decline_call_id = call_response.get("id")
+        
+        # Test declining call
+        decline_data = {
+            "call_id": decline_call_id,
+            "reason": "busy"
+        }
+        
+        success, data = self.make_request("POST", "/calls/decline", decline_data)
+        
+        if success and isinstance(data, dict) and data.get("status") == "declined":
+            call_data = data.get("call", {})
+            call_status = call_data.get("status")
+            reason = call_data.get("end_reason")
+            self.log_test("Calls Decline", True, f"Call declined successfully, Status: {call_status}, Reason: {reason}")
+        else:
+            self.log_test("Calls Decline", False, str(data))
+
+    def test_calls_end(self):
+        """Test ending calls"""
+        print("\n📞 Testing Calls - End Call...")
+        
+        if not self.auth_token:
+            self.log_test("Calls End", False, "No auth token available")
+            return
+        
+        if not hasattr(self, 'test_call_id') or not self.test_call_id:
+            self.log_test("Calls End", False, "No call ID available for testing")
+            return
+        
+        # Test ending call
+        end_data = {
+            "call_id": self.test_call_id,
+            "reason": "completed"
+        }
+        
+        success, data = self.make_request("POST", "/calls/end", end_data)
+        
+        if success and isinstance(data, dict) and data.get("status") == "ended":
+            call_data = data.get("call", {})
+            call_status = call_data.get("status")
+            duration = call_data.get("duration_seconds", 0)
+            self.log_test("Calls End", True, f"Call ended successfully, Status: {call_status}, Duration: {duration}s")
+        else:
+            self.log_test("Calls End", False, str(data))
+
+    def test_calls_ice_candidate(self):
+        """Test sending ICE candidates"""
+        print("\n📞 Testing Calls - ICE Candidate...")
+        
+        if not self.auth_token:
+            self.log_test("Calls ICE Candidate", False, "No auth token available")
+            return
+        
+        # Create a new call for ICE candidate testing
+        call_data = {
+            "callee_id": "user_ice_test",
+            "mode": "video",
+            "context": "ice_test"
+        }
+        
+        success, call_response = self.make_request("POST", "/calls/initiate", call_data)
+        
+        if not success or not call_response.get("id"):
+            self.log_test("Calls ICE Candidate", False, "Could not create call for ICE testing")
+            return
+        
+        ice_call_id = call_response.get("id")
+        
+        # Test sending ICE candidate
+        ice_data = {
+            "call_id": ice_call_id,
+            "candidate": {
+                "candidate": "candidate:1 1 UDP 2130706431 192.168.1.100 54400 typ host",
+                "sdpMid": "0",
+                "sdpMLineIndex": 0
+            }
+        }
+        
+        success, data = self.make_request("POST", "/calls/ice-candidate", ice_data)
+        
+        if success and isinstance(data, dict) and data.get("status") == "sent":
+            self.log_test("Calls ICE Candidate", True, "ICE candidate sent successfully")
+        else:
+            self.log_test("Calls ICE Candidate", False, str(data))
+
+    def test_calls_history(self):
+        """Test getting call history"""
+        print("\n📞 Testing Calls - Call History...")
+        
+        if not self.auth_token:
+            self.log_test("Calls History", False, "No auth token available")
+            return
+        
+        success, data = self.make_request("GET", "/calls/history")
+        
+        if success and isinstance(data, list):
+            call_count = len(data)
+            if call_count > 0:
+                first_call = data[0]
+                call_mode = first_call.get("mode")
+                call_status = first_call.get("status")
+                duration = first_call.get("duration_seconds", 0)
+                self.log_test("Calls History", True, f"Found {call_count} calls, First call: {call_mode} ({call_status}), Duration: {duration}s")
+            else:
+                self.log_test("Calls History", True, "No call history found (expected for new user)")
+        else:
+            self.log_test("Calls History", False, str(data))
+
+    def test_calls_active(self):
+        """Test getting active calls"""
+        print("\n📞 Testing Calls - Active Calls...")
+        
+        if not self.auth_token:
+            self.log_test("Calls Active", False, "No auth token available")
+            return
+        
+        success, data = self.make_request("GET", "/calls/active")
+        
+        if success and isinstance(data, dict) and "active_calls" in data:
+            active_calls = data.get("active_calls", {})
+            active_count = len(active_calls)
+            self.log_test("Calls Active", True, f"Found {active_count} active calls")
+        else:
+            self.log_test("Calls Active", False, str(data))
+
+    def test_calls_error_scenarios(self):
+        """Test call system error scenarios"""
+        print("\n📞 Testing Calls - Error Scenarios...")
+        
+        if not self.auth_token:
+            self.log_test("Calls Error Scenarios", False, "No auth token available")
+            return
+        
+        # Test answering non-existent call
+        invalid_answer = {
+            "call_id": "invalid_call_id",
+            "sdp": "test_sdp"
+        }
+        
+        success, data = self.make_request("POST", "/calls/answer", invalid_answer)
+        
+        if not success and "404" in str(data):
+            self.log_test("Calls Error (Invalid Call ID)", True, "Correctly returned 404 for invalid call")
+        else:
+            self.log_test("Calls Error (Invalid Call ID)", False, f"Expected 404 error, got: {data}")
+        
+        # Test ending non-existent call
+        invalid_end = {
+            "call_id": "invalid_call_id",
+            "reason": "test"
+        }
+        
+        success, data = self.make_request("POST", "/calls/end", invalid_end)
+        
+        if not success:
+            self.log_test("Calls Error (End Invalid Call)", True, "Correctly handled invalid call end request")
+        else:
+            self.log_test("Calls Error (End Invalid Call)", False, "Should reject invalid call end")
+
+    # Channels & Groups System Tests
+    def test_channels_create(self):
+        """Test creating channels and groups"""
+        print("\n📺 Testing Channels - Create Channel...")
+        
+        if not self.auth_token:
+            self.log_test("Channels Create", False, "No auth token available")
+            return
+        
+        # Test creating a public channel
+        public_channel_data = {
+            "title": "Tech Discussions",
+            "description": "Channel for technology discussions",
+            "channel_type": "public",
+            "tags": ["tech", "discussion", "community"]
+        }
+        
+        success, data = self.make_request("POST", "/channels", public_channel_data)
+        
+        if success and isinstance(data, dict) and data.get("id"):
+            self.test_channel_id = data.get("id")
+            channel_title = data.get("title")
+            channel_type = data.get("channel_type")
+            owner_id = data.get("owner_id")
+            member_count = data.get("member_count", 0)
+            self.log_test("Channels Create (Public)", True, f"Channel '{channel_title}' created, Type: {channel_type}, Owner: {owner_id}, Members: {member_count}")
+        else:
+            self.log_test("Channels Create (Public)", False, str(data))
+        
+        # Test creating a private group
+        private_group_data = {
+            "title": "Private Team",
+            "description": "Private team collaboration space",
+            "channel_type": "private",
+            "tags": ["team", "private", "work"]
+        }
+        
+        success, data = self.make_request("POST", "/channels", private_group_data)
+        
+        if success and isinstance(data, dict) and data.get("id"):
+            self.test_private_channel_id = data.get("id")
+            channel_title = data.get("title")
+            channel_type = data.get("channel_type")
+            self.log_test("Channels Create (Private)", True, f"Private group '{channel_title}' created, Type: {channel_type}")
+        else:
+            self.log_test("Channels Create (Private)", False, str(data))
+
+    def test_channels_list(self):
+        """Test listing user channels"""
+        print("\n📺 Testing Channels - List Channels...")
+        
+        if not self.auth_token:
+            self.log_test("Channels List", False, "No auth token available")
+            return
+        
+        success, data = self.make_request("GET", "/channels")
+        
+        if success and isinstance(data, list):
+            channel_count = len(data)
+            if channel_count > 0:
+                first_channel = data[0]
+                channel_title = first_channel.get("title")
+                channel_type = first_channel.get("channel_type")
+                member_count = first_channel.get("member_count", 0)
+                self.log_test("Channels List", True, f"Found {channel_count} channels, First: '{channel_title}' ({channel_type}), Members: {member_count}")
+            else:
+                self.log_test("Channels List", True, "No channels found (expected for new user)")
+        else:
+            self.log_test("Channels List", False, str(data))
+
+    def test_channels_get_details(self):
+        """Test getting channel details"""
+        print("\n📺 Testing Channels - Get Channel Details...")
+        
+        if not self.auth_token:
+            self.log_test("Channels Get Details", False, "No auth token available")
+            return
+        
+        if not hasattr(self, 'test_channel_id') or not self.test_channel_id:
+            self.log_test("Channels Get Details", False, "No channel ID available for testing")
+            return
+        
+        success, data = self.make_request("GET", f"/channels/{self.test_channel_id}")
+        
+        if success and isinstance(data, dict):
+            channel_id = data.get("id")
+            channel_title = data.get("title")
+            description = data.get("description")
+            member_count = data.get("member_count", 0)
+            created_at = data.get("created_at")
+            self.log_test("Channels Get Details", True, f"Channel '{channel_title}' retrieved, Members: {member_count}, Created: {created_at}")
+        else:
+            self.log_test("Channels Get Details", False, str(data))
+
+    def test_channels_join(self):
+        """Test joining channels"""
+        print("\n📺 Testing Channels - Join Channel...")
+        
+        if not self.auth_token:
+            self.log_test("Channels Join", False, "No auth token available")
+            return
+        
+        if not hasattr(self, 'test_channel_id') or not self.test_channel_id:
+            self.log_test("Channels Join", False, "No channel ID available for testing")
+            return
+        
+        # Test joining channel (user is already owner, so this might not change much)
+        join_data = {
+            "invite_code": None  # Public channel, no invite code needed
+        }
+        
+        success, data = self.make_request("POST", f"/channels/{self.test_channel_id}/join", join_data)
+        
+        if success and isinstance(data, dict):
+            channel_title = data.get("title")
+            member_count = data.get("member_count", 0)
+            self.log_test("Channels Join", True, f"Joined channel '{channel_title}', Members: {member_count}")
+        else:
+            self.log_test("Channels Join", False, str(data))
+
+    def test_channels_post_message(self):
+        """Test posting messages to channels"""
+        print("\n📺 Testing Channels - Post Message...")
+        
+        if not self.auth_token:
+            self.log_test("Channels Post Message", False, "No auth token available")
+            return
+        
+        if not hasattr(self, 'test_channel_id') or not self.test_channel_id:
+            self.log_test("Channels Post Message", False, "No channel ID available for testing")
+            return
+        
+        # Test posting text message
+        text_message_data = {
+            "content": "Hello everyone! Welcome to our tech discussion channel.",
+            "message_type": "text"
+        }
+        
+        success, data = self.make_request("POST", f"/channels/{self.test_channel_id}/messages", text_message_data)
+        
+        if success and isinstance(data, dict) and data.get("id"):
+            self.test_channel_message_id = data.get("id")
+            message_content = data.get("content")
+            message_type = data.get("message_type")
+            author_id = data.get("author_id")
+            created_at = data.get("created_at")
+            self.log_test("Channels Post Message (Text)", True, f"Message posted: '{message_content[:50]}...', Type: {message_type}, Author: {author_id}")
+        else:
+            self.log_test("Channels Post Message (Text)", False, str(data))
+        
+        # Test posting announcement message
+        announcement_data = {
+            "content": "📢 Important: Channel guidelines have been updated!",
+            "message_type": "announcement"
+        }
+        
+        success, data = self.make_request("POST", f"/channels/{self.test_channel_id}/messages", announcement_data)
+        
+        if success and isinstance(data, dict) and data.get("id"):
+            message_type = data.get("message_type")
+            self.log_test("Channels Post Message (Announcement)", True, f"Announcement posted, Type: {message_type}")
+        else:
+            self.log_test("Channels Post Message (Announcement)", False, str(data))
+
+    def test_channels_get_messages(self):
+        """Test getting channel messages"""
+        print("\n📺 Testing Channels - Get Messages...")
+        
+        if not self.auth_token:
+            self.log_test("Channels Get Messages", False, "No auth token available")
+            return
+        
+        if not hasattr(self, 'test_channel_id') or not self.test_channel_id:
+            self.log_test("Channels Get Messages", False, "No channel ID available for testing")
+            return
+        
+        success, data = self.make_request("GET", f"/channels/{self.test_channel_id}/messages")
+        
+        if success and isinstance(data, list):
+            message_count = len(data)
+            if message_count > 0:
+                first_message = data[0]
+                content = first_message.get("content", "")
+                message_type = first_message.get("message_type")
+                author_id = first_message.get("author_id")
+                self.log_test("Channels Get Messages", True, f"Retrieved {message_count} messages, First: '{content[:30]}...', Type: {message_type}")
+            else:
+                self.log_test("Channels Get Messages", True, "No messages found (expected for new channel)")
+        else:
+            self.log_test("Channels Get Messages", False, str(data))
+
+    def test_channels_pin_message(self):
+        """Test pinning messages in channels"""
+        print("\n📺 Testing Channels - Pin Message...")
+        
+        if not self.auth_token:
+            self.log_test("Channels Pin Message", False, "No auth token available")
+            return
+        
+        if not hasattr(self, 'test_channel_id') or not self.test_channel_id:
+            self.log_test("Channels Pin Message", False, "No channel ID available for testing")
+            return
+        
+        if not hasattr(self, 'test_channel_message_id') or not self.test_channel_message_id:
+            self.log_test("Channels Pin Message", False, "No message ID available for testing")
+            return
+        
+        # Test pinning message
+        pin_data = {
+            "message_id": self.test_channel_message_id
+        }
+        
+        success, data = self.make_request("POST", f"/channels/{self.test_channel_id}/pin", pin_data)
+        
+        if success and isinstance(data, dict):
+            message_id = data.get("id")
+            is_pinned = data.get("is_pinned", False)
+            pinned_by = data.get("pinned_by")
+            self.log_test("Channels Pin Message", True, f"Message pinned: {message_id[:8]}..., Pinned: {is_pinned}, By: {pinned_by}")
+        else:
+            self.log_test("Channels Pin Message", False, str(data))
+
+    def test_channels_create_invite(self):
+        """Test creating channel invites"""
+        print("\n📺 Testing Channels - Create Invite...")
+        
+        if not self.auth_token:
+            self.log_test("Channels Create Invite", False, "No auth token available")
+            return
+        
+        if not hasattr(self, 'test_channel_id') or not self.test_channel_id:
+            self.log_test("Channels Create Invite", False, "No channel ID available for testing")
+            return
+        
+        success, data = self.make_request("POST", f"/channels/{self.test_channel_id}/invite", {"expires_hours": 24, "max_uses": 10})
+        
+        if success and isinstance(data, dict) and data.get("invite_code"):
+            invite_code = data.get("invite_code")
+            expires_at = data.get("expires_at")
+            max_uses = data.get("max_uses")
+            created_by = data.get("created_by")
+            self.log_test("Channels Create Invite", True, f"Invite created: {invite_code}, Expires: {expires_at}, Max uses: {max_uses}")
+        else:
+            self.log_test("Channels Create Invite", False, str(data))
+
+    def test_channels_update(self):
+        """Test updating channel details"""
+        print("\n📺 Testing Channels - Update Channel...")
+        
+        if not self.auth_token:
+            self.log_test("Channels Update", False, "No auth token available")
+            return
+        
+        if not hasattr(self, 'test_channel_id') or not self.test_channel_id:
+            self.log_test("Channels Update", False, "No channel ID available for testing")
+            return
+        
+        # Test updating channel details
+        update_data = {
+            "title": "Updated Tech Discussions",
+            "description": "Updated description for technology discussions",
+            "tags": ["tech", "discussion", "community", "updated"]
+        }
+        
+        success, data = self.make_request("PATCH", f"/channels/{self.test_channel_id}", update_data)
+        
+        if success and isinstance(data, dict):
+            updated_title = data.get("title")
+            updated_description = data.get("description")
+            updated_at = data.get("updated_at")
+            self.log_test("Channels Update", True, f"Channel updated: '{updated_title}', Updated: {updated_at}")
+        else:
+            self.log_test("Channels Update", False, str(data))
+
+    def test_channels_error_scenarios(self):
+        """Test channel system error scenarios"""
+        print("\n📺 Testing Channels - Error Scenarios...")
+        
+        if not self.auth_token:
+            self.log_test("Channels Error Scenarios", False, "No auth token available")
+            return
+        
+        # Test getting non-existent channel
+        success, data = self.make_request("GET", "/channels/invalid_channel_id")
+        
+        if not success and "404" in str(data):
+            self.log_test("Channels Error (Invalid Channel)", True, "Correctly returned 404 for invalid channel")
+        else:
+            self.log_test("Channels Error (Invalid Channel)", False, f"Expected 404 error, got: {data}")
+        
+        # Test posting to non-existent channel
+        message_data = {
+            "content": "Test message",
+            "message_type": "text"
+        }
+        
+        success, data = self.make_request("POST", "/channels/invalid_channel_id/messages", message_data)
+        
+        if not success:
+            self.log_test("Channels Error (Post to Invalid Channel)", True, "Correctly rejected message to invalid channel")
+        else:
+            self.log_test("Channels Error (Post to Invalid Channel)", False, "Should reject message to invalid channel")
+
+    # LiveSale Commerce System Tests
+    def test_livesale_get_all(self):
+        """Test getting all LiveSales"""
+        print("\n🎥 Testing LiveSale - Get All LiveSales...")
+        
+        if not self.auth_token:
+            self.log_test("LiveSale Get All", False, "No auth token available")
+            return
+        
+        success, data = self.make_request("GET", "/livesale")
+        
+        if success and isinstance(data, list):
+            livesale_count = len(data)
+            if livesale_count > 0:
+                first_livesale = data[0]
+                title = first_livesale.get("title")
+                status = first_livesale.get("status")
+                vendor_id = first_livesale.get("vendor_id")
+                viewer_count = first_livesale.get("viewer_count", 0)
+                self.log_test("LiveSale Get All", True, f"Found {livesale_count} LiveSales, First: '{title}' ({status}), Vendor: {vendor_id}, Viewers: {viewer_count}")
+                # Store first livesale for other tests
+                self.test_livesale_id = first_livesale.get("id")
+            else:
+                self.log_test("LiveSale Get All", True, "No LiveSales found (expected for new system)")
+        else:
+            self.log_test("LiveSale Get All", False, str(data))
+
+    def test_livesale_get_details(self):
+        """Test getting specific LiveSale details"""
+        print("\n🎥 Testing LiveSale - Get Details...")
+        
+        if not self.auth_token:
+            self.log_test("LiveSale Get Details", False, "No auth token available")
+            return
+        
+        if not hasattr(self, 'test_livesale_id') or not self.test_livesale_id:
+            self.log_test("LiveSale Get Details", False, "No LiveSale ID available for testing")
+            return
+        
+        success, data = self.make_request("GET", f"/livesale/{self.test_livesale_id}")
+        
+        if success and isinstance(data, dict):
+            title = data.get("title")
+            description = data.get("description")
+            status = data.get("status")
+            starts_at = data.get("starts_at")
+            duration = data.get("duration_minutes")
+            products = data.get("products", [])
+            self.log_test("LiveSale Get Details", True, f"LiveSale '{title}' retrieved, Status: {status}, Duration: {duration}min, Products: {len(products)}")
+        else:
+            self.log_test("LiveSale Get Details", False, str(data))
+
+    def test_livesale_join(self):
+        """Test joining a LiveSale as viewer"""
+        print("\n🎥 Testing LiveSale - Join LiveSale...")
+        
+        if not self.auth_token:
+            self.log_test("LiveSale Join", False, "No auth token available")
+            return
+        
+        if not hasattr(self, 'test_livesale_id') or not self.test_livesale_id:
+            self.log_test("LiveSale Join", False, "No LiveSale ID available for testing")
+            return
+        
+        success, data = self.make_request("POST", f"/livesale/{self.test_livesale_id}/join")
+        
+        if success and isinstance(data, dict):
+            viewer_id = data.get("viewer_id")
+            joined_at = data.get("joined_at")
+            livesale_id = data.get("livesale_id")
+            self.log_test("LiveSale Join", True, f"Joined LiveSale as viewer: {viewer_id}, Joined: {joined_at}")
+        else:
+            self.log_test("LiveSale Join", False, str(data))
+
+    def test_livesale_leave(self):
+        """Test leaving a LiveSale"""
+        print("\n🎥 Testing LiveSale - Leave LiveSale...")
+        
+        if not self.auth_token:
+            self.log_test("LiveSale Leave", False, "No auth token available")
+            return
+        
+        if not hasattr(self, 'test_livesale_id') or not self.test_livesale_id:
+            self.log_test("LiveSale Leave", False, "No LiveSale ID available for testing")
+            return
+        
+        success, data = self.make_request("POST", f"/livesale/{self.test_livesale_id}/leave")
+        
+        if success and isinstance(data, dict) and data.get("status") == "left":
+            self.log_test("LiveSale Leave", True, "Successfully left LiveSale")
+        else:
+            self.log_test("LiveSale Leave", False, str(data))
+
+    def test_livesale_purchase(self):
+        """Test purchasing from LiveSale"""
+        print("\n🎥 Testing LiveSale - Purchase from LiveSale...")
+        
+        if not self.auth_token:
+            self.log_test("LiveSale Purchase", False, "No auth token available")
+            return
+        
+        if not hasattr(self, 'test_livesale_id') or not self.test_livesale_id:
+            self.log_test("LiveSale Purchase", False, "No LiveSale ID available for testing")
+            return
+        
+        # Test purchasing product from LiveSale
+        purchase_data = {
+            "product_id": "livesale_product_123",
+            "quantity": 1,
+            "special_price": 99.99
+        }
+        
+        success, data = self.make_request("POST", f"/livesale/{self.test_livesale_id}/purchase", purchase_data)
+        
+        if success and isinstance(data, dict):
+            order_id = data.get("order_id")
+            product_id = data.get("product_id")
+            total_amount = data.get("total_amount")
+            status = data.get("status")
+            self.log_test("LiveSale Purchase", True, f"Purchase initiated: Order {order_id}, Product: {product_id}, Amount: ${total_amount}, Status: {status}")
+        else:
+            self.log_test("LiveSale Purchase", False, str(data))
+
+    def test_livesale_share(self):
+        """Test sharing a LiveSale"""
+        print("\n🎥 Testing LiveSale - Share LiveSale...")
+        
+        if not self.auth_token:
+            self.log_test("LiveSale Share", False, "No auth token available")
+            return
+        
+        if not hasattr(self, 'test_livesale_id') or not self.test_livesale_id:
+            self.log_test("LiveSale Share", False, "No LiveSale ID available for testing")
+            return
+        
+        # Test sharing LiveSale
+        share_data = {
+            "platform": "social_media",
+            "message": "Check out this amazing LiveSale!"
+        }
+        
+        success, data = self.make_request("POST", f"/livesale/{self.test_livesale_id}/share", share_data)
+        
+        if success and isinstance(data, dict):
+            share_url = data.get("share_url")
+            platform = data.get("platform")
+            shared_by = data.get("shared_by")
+            self.log_test("LiveSale Share", True, f"LiveSale shared on {platform}, URL: {share_url}, By: {shared_by}")
+        else:
+            self.log_test("LiveSale Share", False, str(data))
+
+    def test_livesale_get_active(self):
+        """Test getting active LiveSales"""
+        print("\n🎥 Testing LiveSale - Get Active LiveSales...")
+        
+        if not self.auth_token:
+            self.log_test("LiveSale Get Active", False, "No auth token available")
+            return
+        
+        success, data = self.make_request("GET", "/livesale/active/all")
+        
+        if success and isinstance(data, dict) and "active_livesales" in data:
+            active_livesales = data.get("active_livesales", [])
+            count = data.get("count", 0)
+            self.log_test("LiveSale Get Active", True, f"Found {count} active LiveSales")
+        else:
+            self.log_test("LiveSale Get Active", False, str(data))
+
+    def test_livesale_error_scenarios(self):
+        """Test LiveSale system error scenarios"""
+        print("\n🎥 Testing LiveSale - Error Scenarios...")
+        
+        if not self.auth_token:
+            self.log_test("LiveSale Error Scenarios", False, "No auth token available")
+            return
+        
+        # Test getting non-existent LiveSale
+        success, data = self.make_request("GET", "/livesale/invalid_livesale_id")
+        
+        if not success and "404" in str(data):
+            self.log_test("LiveSale Error (Invalid ID)", True, "Correctly returned 404 for invalid LiveSale")
+        else:
+            self.log_test("LiveSale Error (Invalid ID)", False, f"Expected 404 error, got: {data}")
+        
+        # Test joining non-existent LiveSale
+        success, data = self.make_request("POST", "/livesale/invalid_livesale_id/join")
+        
+        if not success:
+            self.log_test("LiveSale Error (Join Invalid)", True, "Correctly rejected join to invalid LiveSale")
+        else:
+            self.log_test("LiveSale Error (Join Invalid)", False, "Should reject join to invalid LiveSale")
+
+    # Business LiveSale Management Tests
+    def test_biz_livesale_create(self):
+        """Test creating LiveSales (business endpoint)"""
+        print("\n🏢 Testing Business LiveSale - Create LiveSale...")
+        
+        if not self.auth_token:
+            self.log_test("Biz LiveSale Create", False, "No auth token available")
+            return
+        
+        # Test creating a new LiveSale
+        livesale_data = {
+            "title": "Tech Product Showcase",
+            "description": "Live showcase of the latest tech products with special discounts",
+            "starts_at": "2024-12-20T15:00:00Z",
+            "duration_minutes": 60,
+            "products": [
+                {
+                    "product_id": "tech_product_001",
+                    "special_price": 199.99,
+                    "discount_percent": 20
+                },
+                {
+                    "product_id": "tech_product_002", 
+                    "special_price": 299.99,
+                    "discount_percent": 15
+                }
+            ],
+            "thumbnail_url": "https://example.com/livesale-thumbnail.jpg"
+        }
+        
+        success, data = self.make_request("POST", "/biz/livesales", livesale_data)
+        
+        if success and isinstance(data, dict) and data.get("id"):
+            self.test_biz_livesale_id = data.get("id")
+            title = data.get("title")
+            status = data.get("status")
+            vendor_id = data.get("vendor_id")
+            products_count = len(data.get("products", []))
+            duration = data.get("duration_minutes")
+            self.log_test("Biz LiveSale Create", True, f"LiveSale '{title}' created, Status: {status}, Vendor: {vendor_id}, Products: {products_count}, Duration: {duration}min")
+        else:
+            self.log_test("Biz LiveSale Create", False, str(data))
+
+    def test_biz_livesale_get_my(self):
+        """Test getting vendor's own LiveSales"""
+        print("\n🏢 Testing Business LiveSale - Get My LiveSales...")
+        
+        if not self.auth_token:
+            self.log_test("Biz LiveSale Get My", False, "No auth token available")
+            return
+        
+        success, data = self.make_request("GET", "/biz/livesales")
+        
+        if success and isinstance(data, list):
+            livesale_count = len(data)
+            if livesale_count > 0:
+                first_livesale = data[0]
+                title = first_livesale.get("title")
+                status = first_livesale.get("status")
+                products_count = len(first_livesale.get("products", []))
+                self.log_test("Biz LiveSale Get My", True, f"Found {livesale_count} vendor LiveSales, First: '{title}' ({status}), Products: {products_count}")
+            else:
+                self.log_test("Biz LiveSale Get My", True, "No vendor LiveSales found (expected for new vendor)")
+        else:
+            self.log_test("Biz LiveSale Get My", False, str(data))
+
+    def test_biz_livesale_update(self):
+        """Test updating LiveSale details"""
+        print("\n🏢 Testing Business LiveSale - Update LiveSale...")
+        
+        if not self.auth_token:
+            self.log_test("Biz LiveSale Update", False, "No auth token available")
+            return
+        
+        if not hasattr(self, 'test_biz_livesale_id') or not self.test_biz_livesale_id:
+            self.log_test("Biz LiveSale Update", False, "No business LiveSale ID available for testing")
+            return
+        
+        # Test updating LiveSale details
+        update_data = {
+            "title": "Updated Tech Product Showcase",
+            "description": "Updated description with more exciting content",
+            "duration_minutes": 90
+        }
+        
+        success, data = self.make_request("PATCH", f"/biz/livesales/{self.test_biz_livesale_id}", update_data)
+        
+        if success and isinstance(data, dict):
+            updated_title = data.get("title")
+            updated_duration = data.get("duration_minutes")
+            updated_at = data.get("updated_at")
+            self.log_test("Biz LiveSale Update", True, f"LiveSale updated: '{updated_title}', Duration: {updated_duration}min, Updated: {updated_at}")
+        else:
+            self.log_test("Biz LiveSale Update", False, str(data))
+
+    def test_biz_livesale_start(self):
+        """Test starting a LiveSale"""
+        print("\n🏢 Testing Business LiveSale - Start LiveSale...")
+        
+        if not self.auth_token:
+            self.log_test("Biz LiveSale Start", False, "No auth token available")
+            return
+        
+        if not hasattr(self, 'test_biz_livesale_id') or not self.test_biz_livesale_id:
+            self.log_test("Biz LiveSale Start", False, "No business LiveSale ID available for testing")
+            return
+        
+        # Test starting LiveSale
+        start_data = {
+            "stream_url": "https://stream.example.com/live/tech_showcase_123"
+        }
+        
+        success, data = self.make_request("POST", f"/biz/livesales/{self.test_biz_livesale_id}/start", start_data)
+        
+        if success and isinstance(data, dict):
+            status = data.get("status")
+            stream_url = data.get("stream_url")
+            started_at = data.get("started_at")
+            self.log_test("Biz LiveSale Start", True, f"LiveSale started, Status: {status}, Stream: {stream_url}, Started: {started_at}")
+        else:
+            self.log_test("Biz LiveSale Start", False, str(data))
+
+    def test_biz_livesale_analytics(self):
+        """Test getting LiveSale analytics"""
+        print("\n🏢 Testing Business LiveSale - Analytics...")
+        
+        if not self.auth_token:
+            self.log_test("Biz LiveSale Analytics", False, "No auth token available")
+            return
+        
+        if not hasattr(self, 'test_biz_livesale_id') or not self.test_biz_livesale_id:
+            self.log_test("Biz LiveSale Analytics", False, "No business LiveSale ID available for testing")
+            return
+        
+        success, data = self.make_request("GET", f"/biz/livesales/{self.test_biz_livesale_id}/analytics")
+        
+        if success and isinstance(data, dict):
+            total_viewers = data.get("total_viewers", 0)
+            peak_viewers = data.get("peak_viewers", 0)
+            total_sales = data.get("total_sales", 0)
+            revenue = data.get("revenue", 0)
+            engagement_rate = data.get("engagement_rate", 0)
+            self.log_test("Biz LiveSale Analytics", True, f"Analytics: {total_viewers} viewers (peak: {peak_viewers}), {total_sales} sales, ${revenue} revenue, {engagement_rate}% engagement")
+        else:
+            self.log_test("Biz LiveSale Analytics", False, str(data))
+
+    def test_biz_livesale_error_scenarios(self):
+        """Test business LiveSale error scenarios"""
+        print("\n🏢 Testing Business LiveSale - Error Scenarios...")
+        
+        if not self.auth_token:
+            self.log_test("Biz LiveSale Error Scenarios", False, "No auth token available")
+            return
+        
+        # Test updating non-existent LiveSale
+        update_data = {
+            "title": "Non-existent LiveSale"
+        }
+        
+        success, data = self.make_request("PATCH", "/biz/livesales/invalid_livesale_id", update_data)
+        
+        if not success and "404" in str(data):
+            self.log_test("Biz LiveSale Error (Update Invalid)", True, "Correctly returned 404 for invalid LiveSale update")
+        else:
+            self.log_test("Biz LiveSale Error (Update Invalid)", False, f"Expected 404 error, got: {data}")
+        
+        # Test starting non-existent LiveSale
+        start_data = {
+            "stream_url": "https://example.com/stream"
+        }
+        
+        success, data = self.make_request("POST", "/biz/livesales/invalid_livesale_id/start", start_data)
+        
+        if not success:
+            self.log_test("Biz LiveSale Error (Start Invalid)", True, "Correctly rejected start of invalid LiveSale")
+        else:
+            self.log_test("Biz LiveSale Error (Start Invalid)", False, "Should reject start of invalid LiveSale")
+
+    # Business Leads Kanban System Tests
+    def test_leads_get_all(self):
+        """Test getting all leads for business"""
+        print("\n📊 Testing Leads - Get All Leads...")
+        
+        if not self.auth_token:
+            self.log_test("Leads Get All", False, "No auth token available")
+            return
+        
+        success, data = self.make_request("GET", "/biz/leads")
+        
+        if success and isinstance(data, list):
+            leads_count = len(data)
+            if leads_count > 0:
+                first_lead = data[0]
+                customer_name = first_lead.get("customer_name")
+                stage = first_lead.get("stage")
+                priority = first_lead.get("priority")
+                value = first_lead.get("value", 0)
+                self.log_test("Leads Get All", True, f"Found {leads_count} leads, First: {customer_name} ({stage}), Priority: {priority}, Value: ${value}")
+                # Store first lead for other tests
+                self.test_lead_id = first_lead.get("id")
+            else:
+                self.log_test("Leads Get All", True, "No leads found (expected for new business)")
+        else:
+            self.log_test("Leads Get All", False, str(data))
+
+    def test_leads_analytics(self):
+        """Test getting lead analytics"""
+        print("\n📊 Testing Leads - Analytics...")
+        
+        if not self.auth_token:
+            self.log_test("Leads Analytics", False, "No auth token available")
+            return
+        
+        success, data = self.make_request("GET", "/biz/leads/analytics")
+        
+        if success and isinstance(data, dict):
+            total_leads = data.get("total_leads", 0)
+            conversion_rate = data.get("conversion_rate", 0)
+            total_revenue = data.get("total_revenue", 0)
+            by_stage = data.get("by_stage", {})
+            by_priority = data.get("by_priority", {})
+            self.log_test("Leads Analytics", True, f"Analytics: {total_leads} leads, {conversion_rate}% conversion, ${total_revenue} revenue, Stages: {len(by_stage)}, Priorities: {len(by_priority)}")
+        else:
+            self.log_test("Leads Analytics", False, str(data))
+
+    def test_leads_get_details(self):
+        """Test getting lead details with activities"""
+        print("\n📊 Testing Leads - Get Lead Details...")
+        
+        if not self.auth_token:
+            self.log_test("Leads Get Details", False, "No auth token available")
+            return
+        
+        if not hasattr(self, 'test_lead_id') or not self.test_lead_id:
+            self.log_test("Leads Get Details", False, "No lead ID available for testing")
+            return
+        
+        success, data = self.make_request("GET", f"/biz/leads/{self.test_lead_id}")
+        
+        if success and isinstance(data, dict):
+            lead_data = data.get("lead", {})
+            activities = data.get("activities", [])
+            notes = data.get("notes", [])
+            customer_name = lead_data.get("customer_name")
+            stage = lead_data.get("stage")
+            last_activity = lead_data.get("last_activity_at")
+            self.log_test("Leads Get Details", True, f"Lead '{customer_name}' retrieved, Stage: {stage}, Activities: {len(activities)}, Notes: {len(notes)}, Last activity: {last_activity}")
+        else:
+            self.log_test("Leads Get Details", False, str(data))
+
+    def test_leads_update(self):
+        """Test updating lead details"""
+        print("\n📊 Testing Leads - Update Lead...")
+        
+        if not self.auth_token:
+            self.log_test("Leads Update", False, "No auth token available")
+            return
+        
+        if not hasattr(self, 'test_lead_id') or not self.test_lead_id:
+            self.log_test("Leads Update", False, "No lead ID available for testing")
+            return
+        
+        # Test updating lead stage and priority
+        update_data = {
+            "stage": "engaged",
+            "priority": "high",
+            "value": 1500.00,
+            "notes": "Updated lead with higher priority and value"
+        }
+        
+        success, data = self.make_request("PATCH", f"/biz/leads/{self.test_lead_id}", update_data)
+        
+        if success and isinstance(data, dict):
+            updated_stage = data.get("stage")
+            updated_priority = data.get("priority")
+            updated_value = data.get("value")
+            updated_at = data.get("updated_at")
+            self.log_test("Leads Update", True, f"Lead updated: Stage: {updated_stage}, Priority: {updated_priority}, Value: ${updated_value}, Updated: {updated_at}")
+        else:
+            self.log_test("Leads Update", False, str(data))
+
+    def test_leads_add_note(self):
+        """Test adding notes to leads"""
+        print("\n📊 Testing Leads - Add Note...")
+        
+        if not self.auth_token:
+            self.log_test("Leads Add Note", False, "No auth token available")
+            return
+        
+        if not hasattr(self, 'test_lead_id') or not self.test_lead_id:
+            self.log_test("Leads Add Note", False, "No lead ID available for testing")
+            return
+        
+        # Test adding note to lead
+        note_data = {
+            "content": "Customer showed strong interest in premium package. Follow up scheduled for next week.",
+            "note_type": "follow_up"
+        }
+        
+        success, data = self.make_request("POST", f"/biz/leads/{self.test_lead_id}/notes", note_data)
+        
+        if success and isinstance(data, dict) and data.get("id"):
+            note_content = data.get("content")
+            note_type = data.get("note_type")
+            created_by = data.get("created_by")
+            created_at = data.get("created_at")
+            self.log_test("Leads Add Note", True, f"Note added: '{note_content[:50]}...', Type: {note_type}, By: {created_by}")
+        else:
+            self.log_test("Leads Add Note", False, str(data))
+
+    def test_leads_initiate_call(self):
+        """Test initiating call with lead"""
+        print("\n📊 Testing Leads - Initiate Call...")
+        
+        if not self.auth_token:
+            self.log_test("Leads Initiate Call", False, "No auth token available")
+            return
+        
+        if not hasattr(self, 'test_lead_id') or not self.test_lead_id:
+            self.log_test("Leads Initiate Call", False, "No lead ID available for testing")
+            return
+        
+        success, data = self.make_request("POST", f"/biz/leads/{self.test_lead_id}/call")
+        
+        if success and isinstance(data, dict) and data.get("status") == "call_initiated":
+            lead_id = data.get("lead_id")
+            customer_id = data.get("customer_id")
+            call_data = data.get("call_data", {})
+            caller_id = call_data.get("caller_id")
+            mode = call_data.get("mode")
+            context = call_data.get("context")
+            self.log_test("Leads Initiate Call", True, f"Call initiated for lead {lead_id}, Customer: {customer_id}, Mode: {mode}, Context: {context}")
+        else:
+            self.log_test("Leads Initiate Call", False, str(data))
+
+    def test_leads_jump_to_dm(self):
+        """Test jumping to DM conversation for lead"""
+        print("\n📊 Testing Leads - Jump to DM...")
+        
+        if not self.auth_token:
+            self.log_test("Leads Jump to DM", False, "No auth token available")
+            return
+        
+        if not hasattr(self, 'test_lead_id') or not self.test_lead_id:
+            self.log_test("Leads Jump to DM", False, "No lead ID available for testing")
+            return
+        
+        success, data = self.make_request("POST", f"/biz/leads/{self.test_lead_id}/dm")
+        
+        if success and isinstance(data, dict) and data.get("status") == "dm_redirect":
+            conversation_id = data.get("conversation_id")
+            customer_id = data.get("customer_id")
+            redirect_url = data.get("redirect_url")
+            self.log_test("Leads Jump to DM", True, f"DM redirect prepared: Conversation {conversation_id}, Customer: {customer_id}, URL: {redirect_url}")
+        else:
+            self.log_test("Leads Jump to DM", False, str(data))
+
+    def test_leads_create_offer(self):
+        """Test creating custom offer for lead"""
+        print("\n📊 Testing Leads - Create Offer...")
+        
+        if not self.auth_token:
+            self.log_test("Leads Create Offer", False, "No auth token available")
+            return
+        
+        if not hasattr(self, 'test_lead_id') or not self.test_lead_id:
+            self.log_test("Leads Create Offer", False, "No lead ID available for testing")
+            return
+        
+        # Test creating custom offer
+        offer_data = {
+            "type": "discount",
+            "discount_percent": 15,
+            "products": ["product_123", "product_456"],
+            "expires_at": "2024-12-31T23:59:59Z"
+        }
+        
+        success, data = self.make_request("POST", f"/biz/leads/{self.test_lead_id}/offer", offer_data)
+        
+        if success and isinstance(data, dict) and data.get("status") == "offer_created":
+            offer = data.get("offer", {})
+            offer_type = offer.get("offer_type")
+            discount_percent = offer.get("discount_percent")
+            products_count = len(offer.get("products", []))
+            expires_at = offer.get("expires_at")
+            self.log_test("Leads Create Offer", True, f"Offer created: {offer_type} ({discount_percent}% off), Products: {products_count}, Expires: {expires_at}")
+        else:
+            self.log_test("Leads Create Offer", False, str(data))
+
+    def test_leads_kanban_summary(self):
+        """Test getting Kanban board summary"""
+        print("\n📊 Testing Leads - Kanban Summary...")
+        
+        if not self.auth_token:
+            self.log_test("Leads Kanban Summary", False, "No auth token available")
+            return
+        
+        success, data = self.make_request("GET", "/biz/leads/kanban/summary")
+        
+        if success and isinstance(data, dict) and "columns" in data:
+            columns = data.get("columns", {})
+            totals = data.get("totals", {})
+            
+            # Check each stage column
+            new_count = columns.get("new", {}).get("count", 0)
+            engaged_count = columns.get("engaged", {}).get("count", 0)
+            qualified_count = columns.get("qualified", {}).get("count", 0)
+            won_count = columns.get("won", {}).get("count", 0)
+            lost_count = columns.get("lost", {}).get("count", 0)
+            
+            total_leads = totals.get("total_leads", 0)
+            conversion_rate = totals.get("conversion_rate", 0)
+            total_revenue = totals.get("total_revenue", 0)
+            
+            self.log_test("Leads Kanban Summary", True, f"Kanban: New({new_count}), Engaged({engaged_count}), Qualified({qualified_count}), Won({won_count}), Lost({lost_count}), Total: {total_leads}, Conversion: {conversion_rate}%, Revenue: ${total_revenue}")
+        else:
+            self.log_test("Leads Kanban Summary", False, str(data))
+
+    def test_leads_kanban_move(self):
+        """Test moving lead between stages (drag & drop)"""
+        print("\n📊 Testing Leads - Kanban Move...")
+        
+        if not self.auth_token:
+            self.log_test("Leads Kanban Move", False, "No auth token available")
+            return
+        
+        if not hasattr(self, 'test_lead_id') or not self.test_lead_id:
+            self.log_test("Leads Kanban Move", False, "No lead ID available for testing")
+            return
+        
+        # Test moving lead to qualified stage
+        move_data = {
+            "lead_id": self.test_lead_id,
+            "new_stage": "qualified"
+        }
+        
+        success, data = self.make_request("POST", "/biz/leads/kanban/move", move_data)
+        
+        if success and isinstance(data, dict) and data.get("status") == "moved":
+            lead = data.get("lead", {})
+            new_stage = data.get("new_stage")
+            lead_name = lead.get("customer_name")
+            self.log_test("Leads Kanban Move", True, f"Lead '{lead_name}' moved to stage: {new_stage}")
+        else:
+            self.log_test("Leads Kanban Move", False, str(data))
+
+    def test_leads_error_scenarios(self):
+        """Test leads system error scenarios"""
+        print("\n📊 Testing Leads - Error Scenarios...")
+        
+        if not self.auth_token:
+            self.log_test("Leads Error Scenarios", False, "No auth token available")
+            return
+        
+        # Test getting non-existent lead
+        success, data = self.make_request("GET", "/biz/leads/invalid_lead_id")
+        
+        if not success:
+            self.log_test("Leads Error (Invalid Lead)", True, "Correctly rejected invalid lead request")
+        else:
+            self.log_test("Leads Error (Invalid Lead)", False, "Should reject invalid lead request")
+        
+        # Test updating non-existent lead
+        update_data = {
+            "stage": "engaged",
+            "priority": "high"
+        }
+        
+        success, data = self.make_request("PATCH", "/biz/leads/invalid_lead_id", update_data)
+        
+        if not success:
+            self.log_test("Leads Error (Update Invalid)", True, "Correctly rejected update of invalid lead")
+        else:
+            self.log_test("Leads Error (Update Invalid)", False, "Should reject update of invalid lead")
+
+    def print_test_summary(self):
+        """Print comprehensive test summary"""
+        print("\n" + "=" * 80)
+        print("📊 COMPREHENSIVE TEST SUMMARY")
+        print("=" * 80)
+        
+        passed = sum(1 for result in self.test_results if result["success"])
+        total = len(self.test_results)
+        
+        print(f"✅ Passed: {passed}/{total}")
+        print(f"❌ Failed: {total - passed}/{total}")
+        
+        if total - passed > 0:
+            print("\n🔍 FAILED TESTS:")
+            for result in self.test_results:
+                if not result["success"]:
+                    print(f"   ❌ {result['test']}: {result['details']}")
+        
+        print(f"\n🎯 Success Rate: {(passed/total)*100:.1f}%")
+        
+        return passed == total
+
 def main():
     """Main test runner"""
     tester = APITester()
