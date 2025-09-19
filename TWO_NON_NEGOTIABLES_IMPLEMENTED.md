@@ -116,7 +116,7 @@ export const oneColorTheme = {
 ## 🚀 **LIVE SYSTEM STATUS**
 
 ### **✅ Frontend (Expo)**
-- **URL**: https://market-welcome-1.preview.emergentagent.com
+- **URL**: https://cinematic-aislemarts.preview.emergentagent.com
 - **Status**: Fully operational with one-color UI
 - **Features**: Role selection, adaptive Aisle AI, federated search
 - **Theme**: Dynamic single-color per user type
