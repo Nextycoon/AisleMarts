@@ -1,0 +1,127 @@
+{
+  "demo_contexts": {
+    "SEQUOIA_ROELOF_BOTHA": {
+      "locale": "en-US",
+      "currency": "USD",
+      "timezone": "America/Los_Angeles",
+      "device": "desktop",
+      "firm_focus": "Network Effects & B2B Infrastructure",
+      "investment_thesis": "Platform businesses with network effects",
+      "demo_emphasis": "Social Commerce Network Effects",
+      "key_metrics": ["GMV", "Network Density", "B2B Vendor Growth"],
+      "preferred_language": "English",
+      "demo_duration": "90s_patrol"
+    },
+    "A16Z_CHRIS_DIXON": {
+      "locale": "en-US",
+      "currency": "USD",
+      "timezone": "America/New_York",
+      "device": "desktop",
+      "firm_focus": "Infrastructure + Consumer Tech",
+      "investment_thesis": "Next-generation consumer platforms",
+      "demo_emphasis": "AI-First Consumer Experience",
+      "key_metrics": ["AI Engagement Rate", "Consumer Retention", "Platform Growth"],
+      "preferred_language": "English",
+      "demo_duration": "3_minute_deep_dive"
+    },
+    "LVMH_JULIE_BERCOVY": {
+      "locale": "fr-FR",
+      "currency": "EUR",
+      "timezone": "Europe/Paris",
+      "device": "mobile",
+      "firm_focus": "Strategic EU & Luxury Brands",
+      "investment_thesis": "Digital transformation of luxury commerce",
+      "demo_emphasis": "Luxury Brand Integration & European Market",
+      "key_metrics": ["AOV", "Luxury Brand Partnerships", "European GMV"],
+      "preferred_language": "French",
+      "demo_duration": "luxury_brand_showcase"
+    },
+    "GENERAL_CATALYST_HEMANT_TANEJA": {
+      "locale": "en-US",
+      "currency": "USD",
+      "timezone": "America/New_York",
+      "device": "desktop",
+      "firm_focus": "Consumer Health & Marketplace",
+      "investment_thesis": "Transformative consumer experiences",
+      "demo_emphasis": "Consumer Marketplace Dynamics",
+      "key_metrics": ["Consumer Acquisition", "Marketplace Health", "Unit Economics"],
+      "preferred_language": "English",
+      "demo_duration": "marketplace_focus"
+    },
+    "LIGHTSPEED_JEREMY_LIEW": {
+      "locale": "en-US",
+      "currency": "USD",
+      "timezone": "America/Los_Angeles",
+      "device": "mobile",
+      "firm_focus": "Social & Consumer",
+      "investment_thesis": "Social-first consumer platforms",
+      "demo_emphasis": "Social Commerce & Mobile-First UX",
+      "key_metrics": ["Social Engagement", "Mobile Conversion", "Viral Coefficient"],
+      "preferred_language": "English",
+      "demo_duration": "social_mobile_showcase"
+    },
+    "INDEX_SOFOA_DOLFE": {
+      "locale": "en-GB",
+      "currency": "GBP",
+      "timezone": "Europe/London",
+      "device": "desktop",
+      "firm_focus": "EU Focus & Enterprise",
+      "investment_thesis": "European market leadership",
+      "demo_emphasis": "European Commerce & Enterprise Features",
+      "key_metrics": ["European Revenue", "Enterprise Adoption", "Multi-Market Growth"],
+      "preferred_language": "English",
+      "demo_duration": "european_enterprise_focus"
+    },
+    "BESSEMER_JEREMY_LEVINE": {
+      "locale": "en-US",
+      "currency": "USD",
+      "timezone": "America/New_York",
+      "device": "desktop",
+      "firm_focus": "Marketplace & SaaS",
+      "investment_thesis": "Multi-sided marketplace excellence",
+      "demo_emphasis": "Marketplace Mechanics & SaaS Features",
+      "key_metrics": ["Marketplace Take Rate", "SaaS Revenue", "Multi-Sided Growth"],
+      "preferred_language": "English",
+      "demo_duration": "marketplace_saas_deep_dive"
+    },
+    "TIGER_GLOBAL_CHASE_COLEMAN": {
+      "locale": "en-SG",
+      "currency": "SGD",
+      "timezone": "Asia/Singapore",
+      "device": "mobile",
+      "firm_focus": "Global Growth & Emerging Markets",
+      "investment_thesis": "Global scalability & emerging market penetration",
+      "demo_emphasis": "Global Commerce & Multi-Currency Operations",
+      "key_metrics": ["Global GMV", "Multi-Currency Revenue", "Emerging Market Penetration"],
+      "preferred_language": "English",
+      "demo_duration": "global_growth_showcase"
+    }
+  },
+  "awareness_engine_mappings": {
+    "time_based_demos": {
+      "morning": "energy_focus",
+      "afternoon": "productivity_focus", 
+      "evening": "luxury_focus"
+    },
+    "device_optimizations": {
+      "mobile": "touch_first_navigation",
+      "desktop": "comprehensive_analytics",
+      "tablet": "hybrid_experience"
+    },
+    "cultural_adaptations": {
+      "US": "fast_paced_metrics",
+      "EU": "compliance_focused",
+      "APAC": "growth_velocity"
+    }
+  },
+  "demo_flow_sequences": {
+    "90s_patrol": ["home", "ai_mood_cart", "livesale", "analytics"],
+    "3_minute_deep_dive": ["home", "ai_assistant", "communication_suite", "analytics", "livesale"],
+    "luxury_brand_showcase": ["home", "luxury_collections", "brand_partnerships", "european_features"],
+    "marketplace_focus": ["home", "vendor_portal", "leads_kanban", "marketplace_metrics"],
+    "social_mobile_showcase": ["home", "social_feed", "communication_suite", "mobile_features"],
+    "european_enterprise_focus": ["home", "multi_currency", "compliance_features", "enterprise_dashboard"],
+    "marketplace_saas_deep_dive": ["home", "vendor_portal", "analytics", "saas_features", "leads_management"],
+    "global_growth_showcase": ["home", "multi_currency", "global_features", "growth_analytics"]
+  }
+}
