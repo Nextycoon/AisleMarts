@@ -31,4 +31,11 @@ def rank_intents(q:str)->NLUResult:
 
 @router.post("/parse", response_model=NLUResult)
 def parse_intent(payload: dict):
-    return rank_intents(payload.get("q",""))
+    result = rank_intents(payload.get("q",""))
+    # Track KPI
+    try:
+        from ..metrics.business import kpi_on_intent
+        kpi_on_intent(result.top.label)
+    except ImportError:
+        pass
+    return result
