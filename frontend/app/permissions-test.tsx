@@ -16,12 +16,6 @@ import { router } from 'expo-router';
 
 export default function PermissionsTestScreen() {
   const [permissionStatus, setPermissionStatus] = useState<{ [key: string]: string }>({});
-  
-  const { requestMicrophone } = useMicrophonePermission();
-  const { requestCamera } = useCameraPermission();
-  const { requestLocation } = useLocationPermission();
-  const { requestPhotos } = usePhotosPermission();
-  const { requestNotifications } = useNotificationsPermission();
 
   const permissions = [
     {
@@ -29,50 +23,67 @@ export default function PermissionsTestScreen() {
       title: 'Microphone',
       description: 'For voice shopping with Aisle AI',
       icon: 'mic-outline' as keyof typeof Ionicons.glyphMap,
-      request: requestMicrophone,
     },
     {
       id: 'camera',
       title: 'Camera',
       description: 'For product scanning and photos',
       icon: 'camera-outline' as keyof typeof Ionicons.glyphMap,
-      request: requestCamera,
     },
     {
       id: 'location',
       title: 'Location',
       description: 'For nearby stores and delivery',
       icon: 'location-outline' as keyof typeof Ionicons.glyphMap,
-      request: requestLocation,
     },
     {
       id: 'photos',
       title: 'Photo Library',
       description: 'For saving and accessing images',
       icon: 'images-outline' as keyof typeof Ionicons.glyphMap,
-      request: requestPhotos,
     },
     {
       id: 'notifications',
       title: 'Notifications',
       description: 'For order updates and deals',
       icon: 'notifications-outline' as keyof typeof Ionicons.glyphMap,
-      request: requestNotifications,
     },
   ];
 
   const testPermission = async (permission: any) => {
-    const result = await permission.request('testing');
-    setPermissionStatus(prev => ({
-      ...prev,
-      [permission.id]: result
-    }));
+    console.log(`Testing ${permission.title} permission`);
     
-    Alert.alert(
-      `${permission.title} Permission`,
-      `Result: ${result}`,
-      [{ text: 'OK' }]
-    );
+    if (Platform.OS === 'web') {
+      Alert.alert(
+        `${permission.title} Permission Test`,
+        `This would request ${permission.title} permission on a real mobile device. Choose simulation:`,
+        [
+          {
+            text: 'Simulate Grant',
+            onPress: () => {
+              setPermissionStatus(prev => ({
+                ...prev,
+                [permission.id]: 'granted'
+              }));
+              Alert.alert('Success!', `${permission.title} permission granted`);
+            }
+          },
+          {
+            text: 'Simulate Deny',
+            style: 'cancel',
+            onPress: () => {
+              setPermissionStatus(prev => ({
+                ...prev,
+                [permission.id]: 'denied'
+              }));
+              Alert.alert('Denied', `${permission.title} permission denied`);
+            }
+          }
+        ]
+      );
+    } else {
+      Alert.alert('Mobile Device', 'Real permission request would happen here');
+    }
   };
 
   const resetOnboarding = async () => {
