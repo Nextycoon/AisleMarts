@@ -212,17 +212,35 @@ const ti = {
   elevation: 2,
 } as const;
 
-/** ========= Step 1: Promo (Epic Full-Screen Video Background - ZERO WHITE SPACE GUARANTEED) ========= */
+/** ========= Step 1: Promo (Epic Full-Screen Video Background - COMPLETE REDESIGN) ========= */
 function StepPromo({ onSignIn, onSignUp }: { onSignIn: () => void; onSignUp: () => void }) {
   const videoRef = useRef<Video | null>(null);
   
   return (
-    <View style={StyleSheet.absoluteFillObject}>
-      {/* FULL SCREEN VIDEO BACKGROUND - ABSOLUTE FILL */}
+    <View style={{
+      position: 'absolute',
+      top: 0,
+      left: 0,
+      right: 0,
+      bottom: 0,
+      width: '100%',
+      height: '100%',
+      backgroundColor: '#000000', // Fallback black background
+    }}>
+      {/* FULL SCREEN VIDEO BACKGROUND - COVERS EVERY PIXEL */}
       <Video
         ref={videoRef}
         source={{ uri: "https://cdn.coverr.co/videos/coverr-shopping-aisles-8515/1080p.mp4" }}
-        style={StyleSheet.absoluteFillObject}
+        style={{
+          position: 'absolute',
+          top: 0,
+          left: 0,
+          right: 0,
+          bottom: 0,
+          width: '100%',
+          height: '100%',
+          zIndex: 1,
+        }}
         resizeMode="cover"
         isLooping
         shouldPlay
@@ -238,20 +256,36 @@ function StepPromo({ onSignIn, onSignUp }: { onSignIn: () => void; onSignUp: () 
           'rgba(0,0,0,0.8)'
         ]}
         locations={[0, 0.3, 0.7, 1]}
-        style={StyleSheet.absoluteFillObject}
+        style={{
+          position: 'absolute',
+          top: 0,
+          left: 0,
+          right: 0,
+          bottom: 0,
+          width: '100%',
+          height: '100%',
+          zIndex: 2,
+        }}
       />
       
-      {/* CONTENT OVERLAY - ABSOLUTE FILL WITH PROPER SPACING */}
+      {/* CONTENT OVERLAY - ABSOLUTE POSITIONING */}
       <View style={{
-        ...StyleSheet.absoluteFillObject,
-        justifyContent: 'space-between',
+        position: 'absolute',
+        top: 0,
+        left: 0,
+        right: 0,
+        bottom: 0,
+        width: '100%',
+        height: '100%',
         paddingTop: 120,
-        paddingBottom: 60,
         paddingHorizontal: 24,
+        paddingBottom: 30,
+        justifyContent: 'space-between',
+        zIndex: 3,
       }}>
         
         {/* TOP CONTENT */}
-        <View style={{ alignItems: 'center', gap: 24 }}>
+        <View style={{ alignItems: 'center', gap: 24, flex: 1, justifyContent: 'center' }}>
           {/* Luxury brand header */}
           <Text style={{ 
             color: BRAND.gold, 
@@ -322,7 +356,7 @@ function StepPromo({ onSignIn, onSignUp }: { onSignIn: () => void; onSignUp: () 
         </View>
         
         {/* BOTTOM CONTENT - Action Buttons */}
-        <View style={{ gap: 20 }}>
+        <View style={{ gap: 20, paddingBottom: 0 }}>
           <View style={{ flexDirection: "row", gap: 12 }}>
             <View style={{ flex: 1 }}>
               <Pressable
@@ -420,7 +454,7 @@ function StepPromo({ onSignIn, onSignUp }: { onSignIn: () => void; onSignUp: () 
             }}>Sign Up</Text>
           </Pressable>
           
-          {/* Terms with luxury styling */}
+          {/* Terms with luxury styling - NO WHITE BACKGROUND */}
           <Text style={{ 
             color: "rgba(255,255,255,0.8)", 
             fontSize: 13,
@@ -430,6 +464,8 @@ function StepPromo({ onSignIn, onSignUp }: { onSignIn: () => void; onSignUp: () 
             textShadowColor: "rgba(0,0,0,0.8)",
             textShadowOffset: { width: 0, height: 1 },
             textShadowRadius: 2,
+            marginBottom: 0,
+            paddingBottom: 0,
           }}>
             By continuing you agree to our Terms & Privacy Policy.
           </Text>
