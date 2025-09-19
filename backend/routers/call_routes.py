@@ -13,7 +13,7 @@ if backend_dir not in sys.path:
 from routers.deps import get_db
 from security import get_current_user
 from models.call import (
-    CallModel, CallSignalMessage, CallSignalType,
+    CallModel, CallSignalMessage, CallSignalType, CallStatus,
     InitiateCallRequest, CallAnswerRequest, CallDeclineRequest,
     CallEndRequest, ICECandidateRequest
 )
