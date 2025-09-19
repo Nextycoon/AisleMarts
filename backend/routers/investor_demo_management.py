@@ -6,6 +6,7 @@ UTM tracking, and personalized experiences for Series A outreach.
 """
 
 from fastapi import APIRouter, HTTPException, Query, Depends
+from pydantic import BaseModel
 from typing import Optional, Dict, List, Any
 from datetime import datetime, timedelta
 import json
