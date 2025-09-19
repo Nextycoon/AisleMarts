@@ -73,8 +73,8 @@ export default function CreatorToolsScreen() {
       const { status: audioStatus } = await Camera.requestMicrophonePermissionsAsync();
       // const { status: mediaStatus } = await MediaLibrary.requestPermissionsAsync();
       
-      if (cameraStatus !== 'granted' || audioStatus !== 'granted' || mediaStatus !== 'granted') {
-        Alert.alert('Permissions Required', 'Camera, microphone, and media library access are required for creator tools.');
+      if (cameraStatus !== 'granted' || audioStatus !== 'granted') {
+        Alert.alert('Permissions Required', 'Camera and microphone access are required for creator tools.');
       }
     })();
   }, []);
