@@ -457,6 +457,10 @@ async def startup_event():
         from nearby_cache import init_nearby_cache
         await init_nearby_cache()
         
+        # Initialize ALL-IN MICRO-SPRINT indexes
+        from db.indexes import ensure_indexes
+        await ensure_indexes(db())
+        
         print("✅ AisleMarts API startup complete")
     except Exception as e:
         print(f"⚠️ Startup warning: {e}")
