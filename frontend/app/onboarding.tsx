@@ -713,7 +713,30 @@ function StepVision({ onNext }: { onNext: () => void }) {
   );
 }
 
-/** ========= Step 5: Preferences ========= */
+/** ========= Step 5: AI Welcome ========= */
+function StepAIWelcome({ onNext }: { onNext: () => void }) {
+  const subtitle = "Say 'I feel luxurious today' and we'll curate a cart in seconds. Ask in English, Turkish, Arabic, French, or Swahili.";
+  
+  return (
+    <ScreenShell
+      title="Meet Aisle — your AI"
+      subtitle={subtitle}
+      step={4}
+      total={6}
+    >
+      <View style={{ padding: 16, borderRadius: 20, borderWidth: 1, borderColor: BRAND.line, backgroundColor: BRAND.card, gap: 12 }}>
+        <Image
+          source={{ uri: "https://images.unsplash.com/photo-1517245386807-bb43f82c33c4?q=80&w=1400&auto=format&fit=crop" }}
+          style={{ width: "100%", height: 140, borderRadius: 14 }}
+        />
+        <Text style={{ color: BRAND.sub, fontSize: 14, lineHeight: 20 }}>
+          Aisle understands mood, context, and style. Your session memory stays private and improves recommendations across devices.
+        </Text>
+      </View>
+      <PrimaryButton label="Continue" onPress={onNext} />
+    </ScreenShell>
+  );
+}
 function StepPreferences({ onNext, onBack }: { onNext: (p: { styles: string[]; budget: string; language: string }) => void; onBack: () => void; }) {
   const [styles, setStyles] = useState<string[]>([]);
   const [budget, setBudget] = useState("$$");
