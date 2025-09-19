@@ -65,6 +65,11 @@ export default function IndexScreen() {
     router.replace('/completion-demo');
   };
 
+  const handleGoToOnboarding = () => {
+    console.log('🎯 Navigating to new onboarding flow');
+    router.push('/onboarding');
+  };
+
   const handleGoToPermissions = () => {
     console.log('🛡️ Navigating to working permissions');
     router.push('/working-permissions');
