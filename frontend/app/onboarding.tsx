@@ -42,39 +42,68 @@ async function api<T>(path: string, init?: RequestInit): Promise<T> {
   return res.json() as Promise<T>;
 }
 
-/** ========= UI PRIMITIVES ========= */
+/** ========= UI PRIMITIVES (Luxury Cinematic) ========= */
 function PrimaryButton({ label, onPress, disabled }: { label: string; onPress: () => void; disabled?: boolean }) {
   return (
     <Pressable
       onPress={disabled ? undefined : onPress}
       style={({ pressed }) => ({
-        backgroundColor: disabled ? "#2a2a2a" : BRAND.ink,
+        backgroundColor: disabled ? "#2a2a2a" : BRAND.gold,
         opacity: pressed ? 0.9 : 1,
-        paddingVertical: 14,
-        borderRadius: 16,
+        paddingVertical: 16,
+        paddingHorizontal: 24,
+        borderRadius: 24,
         alignItems: "center",
         justifyContent: "center",
+        shadowColor: BRAND.goldGlow,
+        shadowOffset: { width: 0, height: 4 },
+        shadowOpacity: 0.6,
+        shadowRadius: 12,
+        elevation: 8,
+        borderWidth: 1,
+        borderColor: BRAND.goldGlow,
       })}
     >
-      <Text style={{ color: BRAND.bg, fontWeight: "800", fontSize: 16 }}>{label}</Text>
+      <Text style={{ 
+        color: BRAND.bg, 
+        fontWeight: "900", 
+        fontSize: 18,
+        letterSpacing: 0.5,
+        textShadowColor: "rgba(0,0,0,0.3)",
+        textShadowOffset: { width: 0, height: 1 },
+        textShadowRadius: 2,
+      }}>{label}</Text>
     </Pressable>
   );
 }
+
 function SecondaryButton({ label, onPress }: { label: string; onPress: () => void }) {
   return (
     <Pressable
       onPress={onPress}
       style={({ pressed }) => ({
-        borderColor: BRAND.line,
-        borderWidth: 1,
+        borderColor: BRAND.gold,
+        borderWidth: 2,
+        backgroundColor: "rgba(212, 175, 55, 0.1)",
         opacity: pressed ? 0.8 : 1,
         paddingVertical: 14,
-        borderRadius: 16,
+        paddingHorizontal: 20,
+        borderRadius: 22,
         alignItems: "center",
         justifyContent: "center",
+        shadowColor: BRAND.shadow,
+        shadowOffset: { width: 0, height: 2 },
+        shadowOpacity: 0.4,
+        shadowRadius: 8,
+        elevation: 4,
       })}
     >
-      <Text style={{ color: BRAND.ink, fontWeight: "700", fontSize: 15 }}>{label}</Text>
+      <Text style={{ 
+        color: BRAND.gold, 
+        fontWeight: "800", 
+        fontSize: 16,
+        letterSpacing: 0.3,
+      }}>{label}</Text>
     </Pressable>
   );
 }
