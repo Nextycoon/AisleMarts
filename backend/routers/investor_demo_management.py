@@ -65,30 +65,33 @@ async def get_demo_context(bundle_name: str):
         }
     }
 
-@router.post("/demo/track-interaction")
-async def track_demo_interaction(
-    bundle: str,
-    event_type: str,
-    page: str,
-    utm_content: Optional[str] = None,
+from pydantic import BaseModel
+
+class TrackingRequest(BaseModel):
+    bundle: str
+    event_type: str
+    page: str
+    utm_content: Optional[str] = None
     session_id: Optional[str] = None
-):
+
+@router.post("/demo/track-interaction")
+async def track_demo_interaction(request: TrackingRequest):
     """Track investor demo interactions for analytics"""
     
     # Validate bundle exists
     config = load_demo_config()
-    if bundle not in config.get("demo_contexts", {}):
-        raise HTTPException(status_code=404, detail=f"Bundle {bundle} not found")
+    if request.bundle not in config.get("demo_contexts", {}):
+        raise HTTPException(status_code=404, detail=f"Bundle {request.bundle} not found")
     
     # Create tracking event
     tracking_event = {
         "timestamp": datetime.utcnow().isoformat(),
-        "bundle": bundle,
-        "event_type": event_type,  # demo_started, demo_progression, demo_engagement, demo_completed
-        "page": page,
-        "utm_content": utm_content,
-        "session_id": session_id,
-        "investor_context": config["demo_contexts"][bundle]
+        "bundle": request.bundle,
+        "event_type": request.event_type,  # demo_started, demo_progression, demo_engagement, demo_completed
+        "page": request.page,
+        "utm_content": request.utm_content,
+        "session_id": request.session_id,
+        "investor_context": config["demo_contexts"][request.bundle]
     }
     
     # In production, this would go to analytics database
@@ -96,7 +99,7 @@ async def track_demo_interaction(
     return {
         "tracked": True,
         "event": tracking_event,
-        "message": f"Demo interaction tracked for {bundle}"
+        "message": f"Demo interaction tracked for {request.bundle}"
     }
 
 @router.get("/demo/analytics/{bundle_name}")
