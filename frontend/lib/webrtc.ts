@@ -66,6 +66,35 @@ class WebRTCManager {
 
       this.peerConnection.onconnectionstatechange = () => {
         console.log('🔗 Connection state:', this.peerConnection?.connectionState);
+        if (this.onConnectionStateChangeCallback && this.peerConnection) {
+          this.onConnectionStateChangeCallback(this.peerConnection.connectionState);
+        }
+        
+        // Start monitoring call quality when connected
+        if (this.peerConnection?.connectionState === 'connected') {
+          this.startQualityMonitoring();
+        }
+      };
+
+      this.peerConnection.ondatachannel = (event) => {
+        const channel = event.channel;
+        console.log('📡 Data channel received:', channel.label);
+        if (this.onDataChannelCallback) {
+          this.onDataChannelCallback(channel);
+        }
+      };
+
+      // Create data channel for text messages during calls
+      this.dataChannel = this.peerConnection.createDataChannel('messages', {
+        ordered: true
+      });
+
+      this.dataChannel.onopen = () => {
+        console.log('📡 Data channel opened');
+      };
+
+      this.dataChannel.onmessage = (event) => {
+        console.log('📨 Data channel message:', event.data);
       };
 
       // Get local media
