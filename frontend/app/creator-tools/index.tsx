@@ -13,7 +13,7 @@ import { router } from 'expo-router';
 import { useSafeAreaInsets } from 'react-native-safe-area-context';
 import { Camera, CameraType } from 'expo-camera';
 import { Video, ResizeMode } from 'expo-av';
-import * as MediaLibrary from 'expo-media-library';
+// import * as MediaLibrary from 'expo-media-library';
 
 const { width, height } = Dimensions.get('window');
 
