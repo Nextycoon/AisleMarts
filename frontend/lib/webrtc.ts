@@ -292,19 +292,46 @@ class WebRTCManager {
   cleanup() {
     console.log('🧹 Cleaning up WebRTC');
     
+    // Clean up local stream
     if (this.localStream) {
       this.localStream.getTracks().forEach(track => track.stop());
       this.localStream = null;
     }
 
+    // Clean up peer connection
     if (this.peerConnection) {
       this.peerConnection.close();
       this.peerConnection = null;
     }
 
+    // Clean up data channel
+    if (this.dataChannel) {
+      this.dataChannel.close();
+      this.dataChannel = null;
+    }
+
+    // Clean up recording
+    if (this.mediaRecorder && this.mediaRecorder.state !== 'inactive') {
+      this.mediaRecorder.stop();
+    }
+    this.mediaRecorder = null;
+    this.recordedChunks = [];
+
+    // Clean up audio context
+    if (this.audioContext) {
+      this.audioContext.close();
+      this.audioContext = null;
+    }
+    this.analyser = null;
+
+    // Reset state
     this.remoteStream = null;
     this.onRemoteStreamCallback = undefined;
     this.onICECandidateCallback = undefined;
+    this.onConnectionStateChangeCallback = undefined;
+    this.onDataChannelCallback = undefined;
+    this.callQuality = 'excellent';
+    this.networkStats = { bitrate: 0, packetLoss: 0, latency: 0 };
   }
 
   // Getters
