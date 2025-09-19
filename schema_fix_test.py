@@ -142,9 +142,9 @@ class SchemaFixTester:
             self.log_test("Channels Create Schema Fix", False, "No auth token available")
             return
         
-        # Test with channel_type field (the fix should accept this)
+        # Test with type field (the correct field name based on alias)
         channel_request = {
-            "channel_type": "group",
+            "type": "group",
             "title": "Test Group Channel",
             "description": "A test group channel for schema validation",
             "is_public": True,
