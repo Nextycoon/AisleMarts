@@ -322,7 +322,7 @@ agent_communication:
     file: "/app/backend/routers/livesale_routes.py"
     stuck_count: 0
     priority: "high"
-    needs_retesting: true
+    needs_retesting: false
     status_history:
         - working: "NA"
           agent: "main"
@@ -330,6 +330,9 @@ agent_communication:
         - working: false
           agent: "testing"
           comment: "❌ ISSUE: Business LiveSale Management API routing error. POST /api/biz/livesales endpoint returning HTTP 404 Not Found. This suggests the business_router is not properly included in the main router or the endpoint path is incorrect. The business router is defined but may not be accessible at the expected URL path."
+        - working: false
+          agent: "testing"
+          comment: "✅ ROUTING FIXED, ❌ SERVICE ISSUE: Business LiveSale Management routing issue resolved by fixing business_router prefix from '/api/biz/livesales' to '/biz/livesales'. Endpoint now accessible at /api/livesale/biz/livesales and returns HTTP 200 for GET requests. However, POST requests return HTTP 500 'Failed to create LiveSale' with error 'sku' indicating service implementation issue with product data structure. Routing is working, but LiveSale service needs debugging for creation logic."
 
   - task: "Business Leads Kanban System"
     implemented: true
