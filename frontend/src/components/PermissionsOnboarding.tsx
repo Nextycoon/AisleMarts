@@ -494,4 +494,22 @@ const styles = StyleSheet.create({
     opacity: 0.6,
     textDecorationLine: 'underline',
   },
+  webDemoNotice: {
+    flexDirection: 'row',
+    alignItems: 'center',
+    justifyContent: 'center',
+    backgroundColor: 'rgba(159,231,245,0.15)',
+    paddingHorizontal: 16,
+    paddingVertical: 8,
+    borderRadius: 8,
+    marginBottom: 16,
+    borderWidth: 1,
+    borderColor: 'rgba(159,231,245,0.3)',
+  },
+  webDemoText: {
+    marginLeft: 8,
+    fontSize: 12,
+    color: '#9FE7F5',
+    textAlign: 'center',
+  },
 });
