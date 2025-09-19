@@ -82,6 +82,9 @@ export default function IndexScreen() {
             <TouchableOpacity style={styles.debugButton} onPress={handleGoToCompletion}>
               <Text style={styles.debugButtonText}>View Completion Demo</Text>
             </TouchableOpacity>
+            <TouchableOpacity style={[styles.debugButton, { borderColor: '#EBD6A0', backgroundColor: 'rgba(235, 214, 160, 0.2)' }]} onPress={handleGoToPermissions}>
+              <Text style={[styles.debugButtonText, { color: '#EBD6A0' }]}>🛡️ Test Permissions System</Text>
+            </TouchableOpacity>
           </View>
         )}
       </View>
