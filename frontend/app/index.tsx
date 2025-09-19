@@ -95,8 +95,11 @@ export default function IndexScreen() {
           </Text>
         </View>
 
-        {/* Always show permissions test button */}
+        {/* Always show both buttons for testing */}
         <View style={styles.debugContainer}>
+          <TouchableOpacity style={[styles.debugButton, { borderColor: '#E8C968', backgroundColor: 'rgba(232, 201, 104, 0.2)' }]} onPress={handleGoToOnboarding}>
+            <Text style={[styles.debugButtonText, { color: '#E8C968' }]}>🚀 Test New Onboarding Flow</Text>
+          </TouchableOpacity>
           <TouchableOpacity style={[styles.debugButton, { borderColor: '#EBD6A0', backgroundColor: 'rgba(235, 214, 160, 0.2)' }]} onPress={handleGoToPermissions}>
             <Text style={[styles.debugButtonText, { color: '#EBD6A0' }]}>🛡️ Test Permissions System</Text>
           </TouchableOpacity>
