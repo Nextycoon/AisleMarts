@@ -452,6 +452,10 @@ try:
     from routers.auth import router as auth_router
     from routers.mood_to_cart import router as mood_to_cart_router
     from routers.dm_routes import router as dm_router
+    from routers.call_routes import router as call_router
+    from routers.channel_routes import router as channel_router
+    from routers.livesale_routes import router as livesale_router
+    from routers.lead_routes import router as lead_router
     
     app.include_router(ai_intent_router)
     app.include_router(wishlist_router)
@@ -460,11 +464,15 @@ try:
     app.include_router(auth_router, prefix="/api/auth")
     app.include_router(mood_to_cart_router, prefix="/api/mood")
     app.include_router(dm_router)  # Direct Messaging routes
-    print("✅ ALL-IN MICRO-SPRINT routers loaded successfully")
+    app.include_router(call_router)  # Voice/Video Calls routes
+    app.include_router(channel_router)  # Channels & Groups routes
+    app.include_router(livesale_router)  # LiveSale Commerce routes
+    app.include_router(lead_router)  # Business Leads Management routes
+    print("✅ ALL-IN MICRO-SPRINT + PHASE 2 LUXURY COMMUNICATION SUITE routers loaded successfully")
 except ImportError as e:
-    print(f"⚠️ ALL-IN MICRO-SPRINT routers not available: {e}")
+    print(f"⚠️ Routers not available: {e}")
 except Exception as e:
-    print(f"⚠️ ALL-IN MICRO-SPRINT router setup error: {e}")
+    print(f"⚠️ Router setup error: {e}")
 
 # Include the main API router
 app.include_router(api_router)
