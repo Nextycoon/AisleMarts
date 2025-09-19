@@ -1,0 +1,489 @@
+# AisleMarts Production Monitoring & Alerting Configuration
+# Track D: Ops & Resilience - Grafana Alert Rules
+
+groups:
+  - name: aislemarts_critical_alerts
+    interval: 30s
+    rules:
+      # API Health & Availability Alerts
+      - alert: AisleMarts_API_Down
+        expr: up{job="aislemarts-backend"} == 0
+        for: 1m
+        labels:
+          severity: critical
+          service: backend
+          track: d_ops_resilience
+        annotations:
+          summary: "AisleMarts Backend API is DOWN"
+          description: "The AisleMarts backend API has been unreachable for more than 1 minute. Immediate action required."
+          runbook_url: "https://docs.aislemarts.com/runbooks/api-down"
+          dashboard_url: "http://grafana.aislemarts.com/d/api-health"
+      
+      - alert: AisleMarts_Frontend_Down
+        expr: up{job="aislemarts-frontend"} == 0
+        for: 2m
+        labels:
+          severity: critical
+          service: frontend
+          track: d_ops_resilience
+        annotations:
+          summary: "AisleMarts Frontend is DOWN"
+          description: "The AisleMarts Expo frontend has been unreachable for more than 2 minutes."
+          runbook_url: "https://docs.aislemarts.com/runbooks/frontend-down"
+      
+      - alert: AisleMarts_MongoDB_Down
+        expr: up{job="mongodb"} == 0
+        for: 30s
+        labels:
+          severity: critical
+          service: database
+          track: d_ops_resilience
+        annotations:
+          summary: "MongoDB Database is DOWN"
+          description: "MongoDB database connection lost. All commerce operations halted."
+          runbook_url: "https://docs.aislemarts.com/runbooks/mongodb-down"
+
+      # Performance & Latency Alerts
+      - alert: AisleMarts_High_API_Latency
+        expr: histogram_quantile(0.95, http_request_duration_seconds_bucket{job="aislemarts-backend"}) > 2
+        for: 5m
+        labels:
+          severity: warning
+          service: backend
+          performance: latency
+        annotations:
+          summary: "High API Response Time Detected"
+          description: "95th percentile API response time is {{ $value }}s, exceeding 2s threshold for 5 minutes."
+          impact: "Poor user experience, potential customer loss"
+          action: "Scale backend replicas or investigate database performance"
+      
+      - alert: AisleMarts_Mobile_App_Slow
+        expr: histogram_quantile(0.90, http_request_duration_seconds_bucket{job="aislemarts-frontend"}) > 1.5
+        for: 10m
+        labels:
+          severity: warning
+          service: frontend
+          performance: mobile_latency
+        annotations:
+          summary: "Mobile App Performance Degraded"
+          description: "Mobile app API calls taking longer than 1.5s for 90th percentile users."
+          impact: "Mobile user experience compromised"
+          
+      # Error Rate Alerts
+      - alert: AisleMarts_High_Error_Rate
+        expr: rate(http_requests_total{status=~"5.*",job="aislemarts-backend"}[5m]) > 0.1
+        for: 3m
+        labels:
+          severity: critical
+          service: backend
+          type: error_rate
+        annotations:
+          summary: "High Backend Error Rate"
+          description: "Backend error rate is {{ $value | humanizePercentage }}, exceeding 10% threshold."
+          impact: "Customer transactions failing, revenue loss imminent"
+          action: "Immediate investigation and potential rollback required"
+      
+      - alert: AisleMarts_Authentication_Failures
+        expr: rate(auth_failures_total[5m]) > 0.2
+        for: 2m
+        labels:
+          severity: warning
+          service: authentication
+          security: auth_failures
+        annotations:
+          summary: "High Authentication Failure Rate"
+          description: "Authentication failure rate exceeding 20% - potential security issue or service problem."
+          action: "Check authentication service health and security logs"
+
+      # Payment System Alerts
+      - alert: AisleMarts_Payment_Failures
+        expr: rate(payment_failures_total[10m]) > 0.05
+        for: 5m
+        labels:
+          severity: critical
+          service: payments
+          revenue_impact: high
+        annotations:
+          summary: "Payment Processing Failures"
+          description: "Payment failure rate is {{ $value | humanizePercentage }}, exceeding 5% threshold."
+          impact: "REVENUE LOSS - Customers cannot complete purchases"
+          action: "Immediate Stripe integration check and payment service restart"
+          escalation: "Page on-call engineer immediately"
+      
+      - alert: AisleMarts_Stripe_Integration_Down
+        expr: stripe_api_health{job="aislemarts-backend"} == 0
+        for: 1m
+        labels:
+          severity: critical
+          service: payments
+          integration: stripe
+        annotations:
+          summary: "Stripe Payment Integration Failed"
+          description: "Stripe API integration is down - no payments can be processed."
+          impact: "CRITICAL REVENUE IMPACT - All transactions blocked"
+          action: "Check Stripe API keys, network connectivity, and service health"
+
+      # AI Services Alerts
+      - alert: AisleMarts_AI_Recommendations_Down
+        expr: ai_recommendations_health{job="aislemarts-backend"} == 0
+        for: 5m
+        labels:
+          severity: warning
+          service: ai_recommendations
+          feature: personalization
+        annotations:
+          summary: "AI Recommendations Service Down"
+          description: "AI-powered product recommendations unavailable for 5+ minutes."
+          impact: "Reduced conversion rates, poor personalization experience"
+          action: "Restart AI recommendation service and check model endpoints"
+      
+      - alert: AisleMarts_Voice_AI_Failures
+        expr: rate(voice_ai_errors_total[10m]) > 0.3
+        for: 5m
+        labels:
+          severity: warning
+          service: voice_ai
+          feature: multilang_voice
+        annotations:
+          summary: "Multi-Language Voice AI High Failure Rate"
+          description: "Voice AI processing failure rate exceeding 30% across all languages."
+          impact: "Core differentiating feature degraded"
+          action: "Check voice processing pipeline and language models"
+      
+      - alert: AisleMarts_Mood_to_Cart_Failures
+        expr: rate(mood_to_cart_failures_total[15m]) > 0.1
+        for: 5m
+        labels:
+          severity: warning
+          service: contextual_ai
+          feature: mood_to_cart
+        annotations:
+          summary: "Mood-to-Cart Feature Failures"
+          description: "Revolutionary mood-to-cart feature failing at {{ $value | humanizePercentage }} rate."
+          impact: "Key differentiating feature for Series A demo compromised"
+          action: "Check contextual AI service and product recommendation engine"
+
+      # Resource & Infrastructure Alerts
+      - alert: AisleMarts_High_CPU_Usage
+        expr: (100 - (avg(irate(node_cpu_seconds_total{mode="idle"}[5m])) * 100)) > 80
+        for: 10m
+        labels:
+          severity: warning
+          service: infrastructure
+          resource: cpu
+        annotations:
+          summary: "High CPU Usage Detected"
+          description: "CPU usage is {{ $value }}%, exceeding 80% threshold for 10 minutes."
+          action: "Scale up replicas or investigate CPU-intensive processes"
+      
+      - alert: AisleMarts_High_Memory_Usage
+        expr: (1 - (node_memory_MemAvailable_bytes / node_memory_MemTotal_bytes)) > 0.85
+        for: 5m
+        labels:
+          severity: critical
+          service: infrastructure
+          resource: memory
+        annotations:
+          summary: "High Memory Usage"
+          description: "Memory usage is {{ $value | humanizePercentage }}, exceeding 85% threshold."
+          action: "Immediate memory leak investigation or scale up required"
+      
+      - alert: AisleMarts_Disk_Space_Low
+        expr: (1 - (node_filesystem_avail_bytes{fstype!="tmpfs"} / node_filesystem_size_bytes{fstype!="tmpfs"})) > 0.9
+        for: 15m
+        labels:
+          severity: critical
+          service: infrastructure
+          resource: disk
+        annotations:
+          summary: "Disk Space Critically Low"
+          description: "Disk usage is {{ $value | humanizePercentage }}, exceeding 90% threshold."
+          action: "Immediate disk cleanup or storage expansion required"
+
+      # Database Performance Alerts
+      - alert: AisleMarts_MongoDB_High_Connections
+        expr: mongodb_connections{state="current"} > 80
+        for: 5m
+        labels:
+          severity: warning
+          service: database
+          resource: connections
+        annotations:
+          summary: "MongoDB High Connection Count"
+          description: "MongoDB has {{ $value }} active connections, approaching limits."
+          action: "Investigate connection leaks or scale database"
+      
+      - alert: AisleMarts_MongoDB_Slow_Queries
+        expr: mongodb_op_counters_repl_total{type="query"} > 1000
+        for: 10m
+        labels:
+          severity: warning
+          service: database
+          performance: slow_queries
+        annotations:
+          summary: "MongoDB Experiencing Slow Queries"
+          description: "High number of database queries detected, potential performance issue."
+          action: "Review query performance and database indexes"
+
+      # Business Metrics Alerts
+      - alert: AisleMarts_Revenue_Drop
+        expr: decrease(revenue_total[1h]) > 0
+        for: 30m
+        labels:
+          severity: critical
+          business: revenue
+          impact: financial
+        annotations:
+          summary: "Revenue Decline Detected"
+          description: "Hourly revenue has dropped for 30+ minutes - potential business impact."
+          impact: "FINANCIAL IMPACT - Revenue trending downward"
+          action: "Check payment processing, user experience, and marketing campaigns"
+      
+      - alert: AisleMarts_User_Registration_Drop
+        expr: rate(user_registrations_total[1h]) < 0.5
+        for: 1h
+        labels:
+          severity: warning
+          business: growth
+          metric: registrations
+        annotations:
+          summary: "User Registration Rate Below Threshold"
+          description: "New user registrations below 0.5/hour for past hour."
+          action: "Check registration flow, marketing campaigns, and user experience"
+      
+      - alert: AisleMarts_Cart_Abandonment_High
+        expr: (1 - (completed_orders_total / cart_created_total)) > 0.8
+        for: 2h
+        labels:
+          severity: warning
+          business: conversion
+          metric: cart_abandonment
+        annotations:
+          summary: "High Cart Abandonment Rate"
+          description: "Cart abandonment rate is {{ $value | humanizePercentage }}, exceeding 80%."
+          impact: "Poor conversion, potential revenue loss"
+          action: "Check checkout flow, payment issues, and user experience"
+
+      # Security Alerts
+      - alert: AisleMarts_Suspicious_Traffic
+        expr: rate(http_requests_total{status="429"}[5m]) > 10
+        for: 2m
+        labels:
+          severity: warning
+          security: rate_limiting
+          type: suspicious_activity
+        annotations:
+          summary: "High Rate Limit Violations"
+          description: "Unusual traffic patterns detected - potential DDoS or bot activity."
+          action: "Review traffic sources and consider additional rate limiting"
+      
+      - alert: AisleMarts_Failed_Login_Attempts
+        expr: rate(login_failures_total[10m]) > 5
+        for: 5m
+        labels:
+          severity: warning
+          security: authentication
+          type: brute_force
+        annotations:
+          summary: "High Failed Login Attempts"
+          description: "Potential brute force attack - {{ $value }} login failures per second."
+          action: "Review authentication logs and consider IP blocking"
+
+  - name: aislemarts_business_intelligence
+    interval: 1m
+    rules:
+      # Business Intelligence & Growth Metrics
+      - alert: AisleMarts_Daily_Active_Users_Low
+        expr: daily_active_users < 100
+        for: 4h
+        labels:
+          severity: warning
+          business: engagement
+          metric: dau
+        annotations:
+          summary: "Daily Active Users Below Target"
+          description: "DAU is {{ $value }}, below 100-user threshold for 4+ hours."
+          action: "Review user engagement strategies and app performance"
+      
+      - alert: AisleMarts_Conversion_Rate_Drop
+        expr: (completed_orders_total / unique_visitors_total) < 0.02
+        for: 6h
+        labels:
+          severity: warning
+          business: conversion
+          metric: conversion_rate
+        annotations:
+          summary: "Conversion Rate Below 2%"
+          description: "Overall conversion rate dropped below 2% threshold."
+          impact: "Poor business performance, potential product/UX issues"
+          action: "Review user journey, pricing, and product recommendations"
+      
+      - alert: AisleMarts_AI_Engagement_Low
+        expr: rate(ai_interactions_total[4h]) < 0.1
+        for: 2h
+        labels:
+          severity: warning
+          business: ai_adoption
+          feature: ai_engagement
+        annotations:
+          summary: "Low AI Feature Engagement"
+          description: "AI features (voice, recommendations, mood-to-cart) seeing low usage."
+          impact: "Core differentiating features not driving engagement"
+          action: "Review AI feature discoverability and user onboarding"
+
+  - name: aislemarts_investor_metrics
+    interval: 5m
+    rules:
+      # Investor-Critical Metrics for Series A
+      - alert: AisleMarts_Uptime_SLA_Breach
+        expr: (up{job="aislemarts-backend"} * 100) < 99.5
+        for: 1h
+        labels:
+          severity: critical
+          investor: sla_breach
+          sla: uptime
+        annotations:
+          summary: "SLA BREACH: Uptime Below 99.5%"
+          description: "System uptime is {{ $value }}%, breaching 99.5% SLA commitment."
+          impact: "INVESTOR CONFIDENCE RISK - SLA commitments not met"
+          escalation: "Notify leadership team and prepare incident report"
+      
+      - alert: AisleMarts_Scalability_Test_Failure
+        expr: max_concurrent_users < 1000
+        for: 30m
+        labels:
+          severity: critical
+          investor: scalability
+          test: load_capacity
+        annotations:
+          summary: "Scalability Below 1000 Concurrent Users"
+          description: "System cannot handle 1000+ concurrent users as projected for Series A."
+          impact: "SERIES A RISK - Scalability claims not validated"
+          action: "Immediate infrastructure scaling and optimization required"
+      
+      - alert: AisleMarts_Revenue_Projection_Miss
+        expr: revenue_growth_rate < 0.2
+        for: 24h
+        labels:
+          severity: warning
+          investor: growth
+          metric: revenue_growth
+        annotations:
+          summary: "Revenue Growth Below 20% Target"
+          description: "Monthly revenue growth rate below 20% Series A projection."
+          impact: "Growth projections for investors may need revision"
+          action: "Review growth strategies and market expansion plans"
+
+# Notification Configuration
+alerting:
+  alertmanagers:
+    - static_configs:
+        - targets:
+          - alertmanager.aislemarts.com:9093
+
+# Alert Routing Rules
+route:
+  group_by: ['alertname', 'severity', 'service']
+  group_wait: 30s
+  group_interval: 5m
+  repeat_interval: 12h
+  receiver: 'aislemarts-default'
+  routes:
+    - match:
+        severity: critical
+      receiver: 'aislemarts-critical'
+      continue: true
+    - match:
+        business: revenue
+      receiver: 'aislemarts-business'
+      continue: true
+    - match:
+        investor: sla_breach
+      receiver: 'aislemarts-leadership'
+      continue: true
+    - match:
+        security: auth_failures
+      receiver: 'aislemarts-security'
+      continue: true
+
+# Notification Receivers
+receivers:
+  - name: 'aislemarts-default'
+    slack_configs:
+      - api_url: 'https://hooks.slack.com/services/YOUR/SLACK/WEBHOOK'
+        channel: '#aislemarts-alerts'
+        title: 'AisleMarts Alert: {{ .GroupLabels.alertname }}'
+        text: '{{ range .Alerts }}{{ .Annotations.summary }}\n{{ .Annotations.description }}{{ end }}'
+        color: 'warning'
+
+  - name: 'aislemarts-critical'
+    slack_configs:
+      - api_url: 'https://hooks.slack.com/services/YOUR/SLACK/WEBHOOK'
+        channel: '#aislemarts-critical'
+        title: '🚨 CRITICAL: {{ .GroupLabels.alertname }}'
+        text: '{{ range .Alerts }}{{ .Annotations.summary }}\n{{ .Annotations.description }}\n**Action**: {{ .Annotations.action }}{{ end }}'
+        color: 'danger'
+    pagerduty_configs:
+      - service_key: 'YOUR_PAGERDUTY_SERVICE_KEY'
+        description: '{{ range .Alerts }}{{ .Annotations.summary }}{{ end }}'
+    email_configs:
+      - to: 'oncall@aislemarts.com'
+        subject: '🚨 CRITICAL ALERT: {{ .GroupLabels.alertname }}'
+        body: |
+          Critical alert triggered for AisleMarts:
+          {{ range .Alerts }}
+          Summary: {{ .Annotations.summary }}
+          Description: {{ .Annotations.description }}
+          Action Required: {{ .Annotations.action }}
+          Dashboard: {{ .Annotations.dashboard_url }}
+          Runbook: {{ .Annotations.runbook_url }}
+          {{ end }}
+
+  - name: 'aislemarts-business'
+    slack_configs:
+      - api_url: 'https://hooks.slack.com/services/YOUR/SLACK/WEBHOOK'
+        channel: '#aislemarts-business'
+        title: '📊 Business Metric Alert: {{ .GroupLabels.alertname }}'
+        text: '{{ range .Alerts }}{{ .Annotations.summary }}\n{{ .Annotations.description }}\n**Impact**: {{ .Annotations.impact }}{{ end }}'
+        color: 'warning'
+
+  - name: 'aislemarts-leadership'
+    email_configs:
+      - to: 'leadership@aislemarts.com'
+        subject: '🚨 INVESTOR SLA BREACH: {{ .GroupLabels.alertname }}'
+        body: |
+          URGENT: Investor-critical SLA breach detected
+          {{ range .Alerts }}
+          Alert: {{ .Annotations.summary }}
+          Impact: {{ .Annotations.impact }}
+          Action: {{ .Annotations.action }}
+          Escalation: {{ .Annotations.escalation }}
+          {{ end }}
+    pagerduty_configs:
+      - service_key: 'LEADERSHIP_PAGERDUTY_KEY'
+        description: 'Investor SLA breach: {{ range .Alerts }}{{ .Annotations.summary }}{{ end }}'
+
+  - name: 'aislemarts-security'
+    slack_configs:
+      - api_url: 'https://hooks.slack.com/services/YOUR/SLACK/WEBHOOK'
+        channel: '#aislemarts-security' 
+        title: '🔒 Security Alert: {{ .GroupLabels.alertname }}'
+        text: '{{ range .Alerts }}{{ .Annotations.summary }}\n{{ .Annotations.description }}{{ end }}'
+        color: 'danger'
+    email_configs:
+      - to: 'security@aislemarts.com'
+        subject: '🔒 Security Alert: {{ .GroupLabels.alertname }}'
+
+# Inhibition Rules (Prevent Alert Spam)
+inhibit_rules:
+  - source_match:
+      severity: 'critical'
+    target_match:
+      severity: 'warning'
+    equal: ['alertname', 'service']
+  
+  - source_match:
+      alertname: 'AisleMarts_API_Down'
+    target_match_re:
+      alertname: 'AisleMarts_High_.*'
+    equal: ['service']
