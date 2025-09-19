@@ -1,28 +1,43 @@
 import React from 'react';
 import { Stack } from 'expo-router';
 import { StatusBar } from 'expo-status-bar';
-import { View } from 'react-native';
+import { View, StyleSheet } from 'react-native';
 import { AuthProvider } from '@/src/context/AuthContext'; 
 import { UserRolesProvider } from '@/src/context/UserRolesContext';
 import { ErrorBoundary } from '../src/components/ErrorBoundary';
 
 export default function RootLayout() {
   return (
-    <View style={{ flex: 1, backgroundColor: '#000000' }}>
+    <View style={styles.container}>
+      <StatusBar style="light" backgroundColor="transparent" translucent={true} hidden={false} />
       <ErrorBoundary>
         <AuthProvider>
           <UserRolesProvider>
             <Stack 
               screenOptions={{ 
                 headerShown: false,
-                contentStyle: { backgroundColor: '#000000' },
+                contentStyle: styles.screen,
                 animation: 'fade',
               }} 
             />
           </UserRolesProvider>
         </AuthProvider>
-        <StatusBar style="light" backgroundColor="transparent" translucent={true} hidden={false} />
       </ErrorBoundary>
     </View>
   );
 }
+
+const styles = StyleSheet.create({
+  container: {
+    ...StyleSheet.absoluteFillObject,
+    backgroundColor: '#000000',
+    margin: 0,
+    padding: 0,
+  },
+  screen: {
+    ...StyleSheet.absoluteFillObject,
+    backgroundColor: '#000000',
+    margin: 0,
+    padding: 0,
+  },
+});
