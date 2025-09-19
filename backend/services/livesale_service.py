@@ -39,7 +39,7 @@ class LiveSaleService:
             products = []
             for product_data in request.products:
                 product = LiveSaleProduct(
-                    sku=product_data["sku"],
+                    product_id=product_data["product_id"],
                     name=product_data["name"],
                     original_price=product_data["original_price"],
                     drop_price=product_data["drop_price"],
