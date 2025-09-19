@@ -745,7 +745,7 @@ function StepPreferences({ onNext, onBack }: { onNext: (p: { styles: string[]; b
   const canContinue = styles.length > 0;
 
   return (
-    <ScreenShell title="Your preferences" subtitle="Tell Aisle what to prioritize. You can change this anytime." step={4} total={6}>
+    <ScreenShell title="Your preferences" subtitle="Tell Aisle what to prioritize. You can change this anytime." step={5} total={7}>
       <PillGrid label="Style focus" options={["Luxury", "Minimal", "Streetwear", "Classic", "Tech", "Home"]} values={styles} onToggle={toggleStyle} />
       <Segment label="Budget" options={["$", "$$", "$$$"]} value={budget} onChange={setBudget} />
       <Segment label="Language" options={["en", "tr", "ar", "fr", "sw"]} value={language} onChange={setLanguage} />
