@@ -1,5 +1,5 @@
-from fastapi import APIRouter, Depends
-from ..deps import get_db
+from fastapi import APIRouter
+from ..db import db
 from bson import ObjectId
 
 router = APIRouter(prefix="/api/wishlist", tags=["wishlist"])
