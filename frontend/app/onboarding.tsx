@@ -196,14 +196,20 @@ function ScreenShell({
   );
 }
 const ti = {
-  backgroundColor: "#121212",
+  backgroundColor: BRAND.card,
   color: BRAND.ink,
-  paddingHorizontal: 14,
-  paddingVertical: 12,
-  borderRadius: 14,
-  borderWidth: 1,
+  paddingHorizontal: 20,
+  paddingVertical: 16,
+  borderRadius: 20,
+  borderWidth: 2,
   borderColor: BRAND.line,
   fontSize: 16,
+  fontWeight: "500",
+  shadowColor: BRAND.gold,
+  shadowOffset: { width: 0, height: 2 },
+  shadowOpacity: 0.1,
+  shadowRadius: 4,
+  elevation: 2,
 } as const;
 
 /** ========= Step 1: Promo (Cinematic Full-Screen) ========= */
