@@ -21,7 +21,7 @@ class LiveSaleEventType(str, Enum):
     REWARD_EARNED = "REWARD_EARNED"
 
 class LiveSaleProduct(BaseModel):
-    sku: str
+    product_id: str
     name: str
     original_price: float
     drop_price: float
