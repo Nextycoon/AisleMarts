@@ -421,7 +421,7 @@ function StepComplete({
         <Row label="Package" value={summary.pkg} />
       </View>
       <PrimaryButton label="Enter AisleMarts" onPress={save} />
-      <Text style={{ color: "#777", fontSize: 12 }}>Tip: tap the mic and say "I feel luxurious today".</Text>
+      <Text style={{ color: "#777", fontSize: 12 }}>Tip: tap the mic and say 'I feel luxurious today'.</Text>
     </ScreenShell>
   );
 }
