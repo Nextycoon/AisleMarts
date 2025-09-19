@@ -10344,6 +10344,24 @@ SKU-CSV-002,8,15000,9876543210987,KES,red,large,new"""
         self.test_leads_kanban_move()
         self.test_leads_error_scenarios()
         
+        # ========== AWARENESS ENGINE TESTS ==========
+        print("\n" + "🧠" * 15 + " AWARENESS ENGINE TESTING " + "🧠" * 15)
+        
+        # Awareness Engine Tests
+        print("\n🧠 Awareness Engine Testing...")
+        self.test_awareness_health_check()
+        self.test_awareness_detect_context()
+        self.test_awareness_adaptive_response()
+        self.test_awareness_update_preferences()
+        self.test_awareness_currency_rates()
+        self.test_awareness_multi_language_support()
+        self.test_awareness_location_adaptations()
+        self.test_awareness_time_based_responses()
+        self.test_awareness_device_context()
+        self.test_awareness_cultural_sensitivity()
+        self.test_awareness_integration_validation()
+        self.test_awareness_error_scenarios()
+        
         # Print summary
         print("\n" + "=" * 80)
         print("📊 TEST SUMMARY")
