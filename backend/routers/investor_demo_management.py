@@ -73,15 +73,6 @@ async def get_demo_context(bundle_name: str):
         }
     }
 
-from pydantic import BaseModel
-
-class TrackingRequest(BaseModel):
-    bundle: str
-    event_type: str
-    page: str
-    utm_content: Optional[str] = None
-    session_id: Optional[str] = None
-
 @router.post("/demo/track-interaction")
 async def track_demo_interaction(request: TrackingRequest):
     """Track investor demo interactions for analytics"""
