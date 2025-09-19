@@ -11454,6 +11454,8 @@ SKU-CSV-002,8,15000,9876543210987,KES,red,large,new"""
             else:
                 self.log_test("Business LiveSale Routing Fix", False, str(data))
 
+    def print_test_summary(self):
+
         """Print comprehensive test summary"""
         print("\n" + "=" * 80)
         print("📊 COMPREHENSIVE TEST SUMMARY")
