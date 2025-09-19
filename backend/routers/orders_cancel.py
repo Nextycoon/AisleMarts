@@ -1,5 +1,8 @@
 from fastapi import APIRouter, HTTPException
-from ..db import db
+import sys
+import os
+sys.path.append(os.path.dirname(os.path.dirname(__file__)))
+from db import db
 router = APIRouter(prefix="/api/orders", tags=["orders"])
 
 @router.post("/{order_id}/cancel")
