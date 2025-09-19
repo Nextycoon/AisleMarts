@@ -458,6 +458,7 @@ try:
     from routers.lead_routes import router as lead_router
     from routers.advanced_ai_recommendations import router as advanced_ai_router
     from routers.performance_analytics import router as performance_analytics_router
+    from routers.awareness_engine import router as awareness_engine_router
     
     app.include_router(ai_intent_router)
     app.include_router(wishlist_router)
@@ -472,7 +473,8 @@ try:
     app.include_router(lead_router)  # Business Leads Management routes
     app.include_router(advanced_ai_router)  # Advanced AI Recommendations routes
     app.include_router(performance_analytics_router)  # Performance Analytics routes
-    print("✅ ALL-IN MICRO-SPRINT + PHASE 2 LUXURY COMMUNICATION SUITE + ADVANCED AI + PERFORMANCE ANALYTICS routers loaded successfully")
+    app.include_router(awareness_engine_router)  # Awareness Engine routes
+    print("✅ ALL-IN MICRO-SPRINT + PHASE 2 LUXURY COMMUNICATION SUITE + ADVANCED AI + PERFORMANCE ANALYTICS + AWARENESS ENGINE routers loaded successfully")
 except ImportError as e:
     print(f"⚠️ Routers not available: {e}")
 except Exception as e:
