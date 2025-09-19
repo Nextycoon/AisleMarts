@@ -9901,6 +9901,22 @@ SKU-CSV-002,8,15000,9876543210987,KES,red,large,new"""
         self.test_rate_limiting()
         self.test_business_kpi_monitoring()
         
+        # ========== PHASE 1: DIRECT MESSAGING SYSTEM TESTS ==========
+        print("\n" + "💬" * 15 + " PHASE 1 DIRECT MESSAGING SYSTEM TESTING " + "💬" * 15)
+        
+        # Direct Messaging System Tests
+        print("\n💬 Direct Messaging System Testing...")
+        self.test_dm_create_conversation()
+        self.test_dm_list_conversations()
+        self.test_dm_get_conversation_details()
+        self.test_dm_send_message()
+        self.test_dm_get_messages()
+        self.test_dm_typing_indicators()
+        self.test_dm_read_receipts()
+        self.test_dm_authentication_authorization()
+        self.test_dm_encryption_functionality()
+        self.test_dm_error_handling()
+        
         # Print summary
         print("\n" + "=" * 80)
         print("📊 TEST SUMMARY")
