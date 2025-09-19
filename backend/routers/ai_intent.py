@@ -1,6 +1,9 @@
 from fastapi import APIRouter
-from ..db import db
-from ..ai.intent import IntentCandidate, NLUResult
+import sys
+import os
+sys.path.append(os.path.dirname(os.path.dirname(__file__)))
+from db import db
+from ai.intent import IntentCandidate, NLUResult
 import re
 
 router = APIRouter(prefix="/api/ai", tags=["ai"])
