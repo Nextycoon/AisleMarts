@@ -49,6 +49,11 @@ export default function IndexScreen() {
     router.replace('/completion-demo');
   };
 
+  const handleGoToPermissions = () => {
+    console.log('🛡️ Navigating to working permissions');
+    router.push('/working-permissions');
+  };
+
   return (
     <View style={styles.container}>
       <LinearGradient
