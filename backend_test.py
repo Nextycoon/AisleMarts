@@ -11239,7 +11239,221 @@ SKU-CSV-002,8,15000,9876543210987,KES,red,large,new"""
         else:
             self.log_test("Leads Error (Update Invalid)", False, "Should reject update of invalid lead")
 
-    def print_test_summary(self):
+    # ========== PRIORITY: SCHEMA FIX VALIDATION TESTS ==========
+    
+    def test_calls_initiate_schema_fix(self):
+        """Test Voice/Video Calls initiate endpoint with schema fix (callee_id only)"""
+        print("\n📞 Testing Calls Initiate - Schema Fix (callee_id only)...")
+        
+        if not self.auth_token:
+            self.log_test("Calls Initiate Schema Fix", False, "No auth token available")
+            return
+        
+        # Test with callee_id only (the fix should accept this)
+        call_request = {
+            "callee_id": "user_alice_123",
+            "mode": "voice"
+        }
+        
+        success, data = self.make_request("POST", "/calls/initiate", call_request)
+        
+        if success and isinstance(data, dict) and data.get("call_id"):
+            call_id = data.get("call_id")
+            caller_id = data.get("caller_id")
+            callee_id = data.get("callee_id")
+            mode = data.get("mode")
+            status = data.get("status")
+            self.test_call_id = call_id  # Store for workflow tests
+            self.log_test("Calls Initiate Schema Fix", True, f"Call initiated: {call_id[:8]}..., caller: {caller_id}, callee: {callee_id}, mode: {mode}, status: {status}")
+        else:
+            self.log_test("Calls Initiate Schema Fix", False, str(data))
+    
+    def test_calls_workflow(self):
+        """Test complete call workflow: initiate -> answer -> end"""
+        print("\n📞 Testing Complete Call Workflow...")
+        
+        if not self.auth_token:
+            self.log_test("Call Workflow", False, "No auth token available")
+            return
+        
+        # Step 1: Initiate call
+        call_request = {
+            "callee_id": "user_bob_456",
+            "mode": "video"
+        }
+        
+        success, data = self.make_request("POST", "/calls/initiate", call_request)
+        
+        if not success or not data.get("call_id"):
+            self.log_test("Call Workflow - Initiate", False, str(data))
+            return
+        
+        call_id = data.get("call_id")
+        self.log_test("Call Workflow - Initiate", True, f"Call initiated: {call_id[:8]}...")
+        
+        # Step 2: Answer call (simulate)
+        answer_request = {
+            "call_id": call_id,
+            "sdp": "mock_sdp_answer_data_for_webrtc"
+        }
+        
+        success, data = self.make_request("POST", "/calls/answer", answer_request)
+        
+        if success and isinstance(data, dict) and data.get("status") == "answered":
+            self.log_test("Call Workflow - Answer", True, f"Call answered: {data.get('call', {}).get('status')}")
+        else:
+            self.log_test("Call Workflow - Answer", False, str(data))
+        
+        # Step 3: End call
+        end_request = {
+            "call_id": call_id,
+            "reason": "hangup"
+        }
+        
+        success, data = self.make_request("POST", "/calls/end", end_request)
+        
+        if success and isinstance(data, dict) and data.get("status") == "ended":
+            self.log_test("Call Workflow - End", True, f"Call ended: {data.get('call', {}).get('status')}")
+        else:
+            self.log_test("Call Workflow - End", False, str(data))
+    
+    def test_channels_create_schema_fix(self):
+        """Test Channels create endpoint with schema fix (channel_type field)"""
+        print("\n📺 Testing Channels Create - Schema Fix (channel_type field)...")
+        
+        if not self.auth_token:
+            self.log_test("Channels Create Schema Fix", False, "No auth token available")
+            return
+        
+        # Test with channel_type field (the fix should accept this)
+        channel_request = {
+            "channel_type": "group",
+            "title": "Test Group Channel",
+            "description": "A test group channel for schema validation",
+            "is_public": True,
+            "theme": "gold"
+        }
+        
+        success, data = self.make_request("POST", "/channels", channel_request)
+        
+        if success and isinstance(data, dict) and data.get("id"):
+            channel_id = data.get("id")
+            title = data.get("title")
+            channel_type = data.get("type")
+            owner_id = data.get("owner_id")
+            theme = data.get("theme")
+            self.test_channel_id = channel_id  # Store for workflow tests
+            self.log_test("Channels Create Schema Fix", True, f"Channel created: {channel_id[:8]}..., title: {title}, type: {channel_type}, owner: {owner_id}, theme: {theme}")
+        else:
+            self.log_test("Channels Create Schema Fix", False, str(data))
+    
+    def test_channels_workflow(self):
+        """Test complete channels workflow: create -> join -> message -> pin"""
+        print("\n📺 Testing Complete Channels Workflow...")
+        
+        if not self.auth_token:
+            self.log_test("Channels Workflow", False, "No auth token available")
+            return
+        
+        # Step 1: Create channel
+        channel_request = {
+            "channel_type": "creator",
+            "title": "Creator Channel Workflow Test",
+            "description": "Testing complete workflow",
+            "is_public": True,
+            "theme": "purple",
+            "tags": ["creator", "test", "workflow"]
+        }
+        
+        success, data = self.make_request("POST", "/channels", channel_request)
+        
+        if not success or not data.get("id"):
+            self.log_test("Channels Workflow - Create", False, str(data))
+            return
+        
+        channel_id = data.get("id")
+        self.log_test("Channels Workflow - Create", True, f"Channel created: {channel_id[:8]}...")
+        
+        # Step 2: Join channel (simulate another user joining)
+        join_request = {
+            "invite_code": None  # Public channel, no invite code needed
+        }
+        
+        success, data = self.make_request("POST", f"/channels/{channel_id}/join", join_request)
+        
+        if success and isinstance(data, dict):
+            self.log_test("Channels Workflow - Join", True, f"Joined channel: {data.get('title')}")
+        else:
+            self.log_test("Channels Workflow - Join", False, str(data))
+        
+        # Step 3: Post message
+        message_request = {
+            "content": "Hello from the workflow test!",
+            "message_type": "text"
+        }
+        
+        success, data = self.make_request("POST", f"/channels/{channel_id}/messages", message_request)
+        
+        if success and isinstance(data, dict) and data.get("id"):
+            message_id = data.get("id")
+            content = data.get("content")
+            self.log_test("Channels Workflow - Message", True, f"Message posted: {message_id[:8]}..., content: {content}")
+            
+            # Step 4: Pin message
+            pin_request = {
+                "message_id": message_id
+            }
+            
+            success, data = self.make_request("POST", f"/channels/{channel_id}/pin", pin_request)
+            
+            if success and isinstance(data, dict) and data.get("pinned"):
+                self.log_test("Channels Workflow - Pin", True, f"Message pinned: {data.get('pinned')}")
+            else:
+                self.log_test("Channels Workflow - Pin", False, str(data))
+        else:
+            self.log_test("Channels Workflow - Message", False, str(data))
+    
+    def test_business_livesale_routing_fix(self):
+        """Test Business LiveSale Management routing fix (POST /api/biz/livesales)"""
+        print("\n🏢 Testing Business LiveSale Management - Routing Fix...")
+        
+        if not self.auth_token:
+            self.log_test("Business LiveSale Routing Fix", False, "No auth token available")
+            return
+        
+        # Test creating a business LiveSale
+        livesale_request = {
+            "title": "Test Business LiveSale",
+            "description": "Testing the routing fix for business LiveSale creation",
+            "starts_at": "2024-12-20T15:00:00Z",
+            "duration_minutes": 60,
+            "products": [
+                {
+                    "product_id": "prod_test_123",
+                    "special_price": 99.99,
+                    "quantity_available": 50
+                }
+            ],
+            "thumbnail_url": "https://example.com/thumbnail.jpg"
+        }
+        
+        success, data = self.make_request("POST", "/biz/livesales", livesale_request)
+        
+        if success and isinstance(data, dict) and data.get("id"):
+            livesale_id = data.get("id")
+            title = data.get("title")
+            vendor_id = data.get("vendor_id")
+            status = data.get("status")
+            starts_at = data.get("starts_at")
+            self.test_biz_livesale_id = livesale_id  # Store for further tests
+            self.log_test("Business LiveSale Routing Fix", True, f"LiveSale created: {livesale_id[:8]}..., title: {title}, vendor: {vendor_id}, status: {status}, starts: {starts_at}")
+        else:
+            # Check if it's a 404 (routing issue) or other error
+            if "404" in str(data):
+                self.log_test("Business LiveSale Routing Fix", False, f"ROUTING ISSUE: {data} - business_router not properly included")
+            else:
+                self.log_test("Business LiveSale Routing Fix", False, str(data))
+
         """Print comprehensive test summary"""
         print("\n" + "=" * 80)
         print("📊 COMPREHENSIVE TEST SUMMARY")
