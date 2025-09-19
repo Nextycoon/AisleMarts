@@ -10362,6 +10362,21 @@ SKU-CSV-002,8,15000,9876543210987,KES,red,large,new"""
         self.test_awareness_integration_validation()
         self.test_awareness_error_scenarios()
         
+        # ========== INVESTOR DEMO MANAGEMENT SYSTEM TESTS ==========
+        print("\n" + "💎" * 15 + " INVESTOR DEMO MANAGEMENT SYSTEM TESTING " + "💎" * 15)
+        
+        # Investor Demo Management System Tests
+        print("\n💎 Investor Demo Management System Testing...")
+        self.test_investor_demo_health()
+        self.test_investor_demo_context_retrieval()
+        self.test_investor_demo_interaction_tracking()
+        self.test_investor_demo_analytics()
+        self.test_investor_demo_kpis()
+        self.test_investor_demo_smoke_test()
+        self.test_investor_demo_bundle_management()
+        self.test_investor_demo_reset()
+        self.test_investor_demo_error_scenarios()
+        
         # Print summary
         print("\n" + "=" * 80)
         print("📊 TEST SUMMARY")
