@@ -253,10 +253,12 @@ function PermRow({ label, value, onPress }: { label: string; value: boolean; onP
 
 /** ========= Step 4: AI Welcome ========= */
 function StepAIWelcome({ onNext }: { onNext: () => void }) {
+  const subtitle = "Say 'I feel luxurious today' and we'll curate a cart in seconds. Ask in English, Turkish, Arabic, French, or Swahili.";
+  
   return (
     <ScreenShell
       title="Meet Aisle — your AI"
-      subtitle={"Say 'I feel luxurious today' and we'll curate a cart in seconds. Ask in English, Turkish, Arabic, French, or Swahili."}
+      subtitle={subtitle}
       step={3}
       total={6}
     >
