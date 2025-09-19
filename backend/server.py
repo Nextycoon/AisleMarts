@@ -429,6 +429,20 @@ try:
 except ImportError as e:
     print(f"⚠️ Track C AI Supercharge routers not available: {e}")
 
+# Include ALL-IN MICRO-SPRINT routers
+try:
+    from routers.ai_intent import router as ai_intent_router
+    from routers.wishlist import router as wishlist_router
+    from routers.orders_cancel import router as orders_cancel_router
+    from routers.products_cached import router as products_cached_router
+    app.include_router(ai_intent_router)
+    app.include_router(wishlist_router)
+    app.include_router(orders_cancel_router)
+    app.include_router(products_cached_router)
+    print("✅ ALL-IN MICRO-SPRINT routers loaded successfully")
+except ImportError as e:
+    print(f"⚠️ ALL-IN MICRO-SPRINT routers not available: {e}")
+
 # Include the main API router
 app.include_router(api_router)
 
