@@ -85,7 +85,7 @@ class ChannelInvite(BaseModel):
 
 # Request Models
 class CreateChannelRequest(BaseModel):
-    type: ChannelType
+    channel_type: ChannelType = Field(..., alias="type")
     title: str
     description: Optional[str] = None
     is_public: bool = True
