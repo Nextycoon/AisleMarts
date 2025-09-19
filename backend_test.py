@@ -8479,6 +8479,18 @@ SKU-CSV-002,8,15000,9876543210987,KES,red,large,new"""
         print("\n🚚 Week 3 Pickup Windows & Advanced Reservations Testing...")
         self.test_week3_pickup_windows_advanced_reservations()
         
+        # ========== ALL-IN MICRO-SPRINT TESTS ==========
+        print("\n" + "🚀💎" * 15 + " ALL-IN MICRO-SPRINT BACKEND TESTING " + "🚀💎" * 15)
+        
+        # ALL-IN MICRO-SPRINT Tests
+        print("\n🚀💎 ALL-IN MICRO-SPRINT Testing...")
+        self.test_ai_intent_parser()
+        self.test_wishlist_apis()
+        self.test_order_cancellation_api()
+        self.test_cached_products_collections()
+        self.test_rate_limiting()
+        self.test_business_kpi_monitoring()
+        
         # Print summary
         print("\n" + "=" * 80)
         print("📊 TEST SUMMARY")
