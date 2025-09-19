@@ -418,20 +418,16 @@ app.include_router(pickup_windows_router)
 # Include the commerce (federated search) router
 app.include_router(commerce_router)
 
-# Include the v1 API router (temporarily disabled due to import issues)
-# TODO: Fix import paths and re-enable
-# from api.v1.main import v1_router
-# app.include_router(v1_router)
-
-# Include Track B Business Ops routers
+# Include the v1 API router (Track C AI Supercharge endpoints)
 try:
-    from routers.vendor_management import router as vendor_router
-    from routers.analytics_api import router as analytics_router
-    app.include_router(vendor_router)
-    app.include_router(analytics_router)
-    print("✅ Track B Business Ops routers loaded successfully")
+    from v1_main import app as v1_app
+    from routers.multilang_voice_ai import router as multilang_voice_router
+    from routers.contextual_ai_recommendations import router as contextual_ai_router
+    app.include_router(multilang_voice_router)
+    app.include_router(contextual_ai_router)
+    print("✅ Track C AI Supercharge routers loaded successfully")
 except ImportError as e:
-    print(f"⚠️ Track B Business Ops routers not available: {e}")
+    print(f"⚠️ Track C AI Supercharge routers not available: {e}")
 
 # Include the main API router
 app.include_router(api_router)
