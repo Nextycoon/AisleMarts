@@ -9917,6 +9917,23 @@ SKU-CSV-002,8,15000,9876543210987,KES,red,large,new"""
         self.test_dm_encryption_functionality()
         self.test_dm_error_handling()
         
+        # ========== PRIORITY: SCHEMA FIX VALIDATION ==========
+        print("\n" + "🎯" * 15 + " PRIORITY: SCHEMA FIX VALIDATION " + "🎯" * 15)
+        
+        # Test the 3 specific endpoints that were failing with schema issues
+        print("\n🎯 PRIORITY TESTING: Schema Fix Validation")
+        
+        # 1. Voice/Video Calls System - Test schema fix (callee_id vs conversation_id)
+        self.test_calls_initiate_schema_fix()
+        self.test_calls_workflow()
+        
+        # 2. Channels & Groups System - Test schema fix (channel_type vs type)
+        self.test_channels_create_schema_fix()
+        self.test_channels_workflow()
+        
+        # 3. Business LiveSale Management - Test routing fix
+        self.test_business_livesale_routing_fix()
+
         # ========== LUXURY COMMUNICATION SUITE TESTS ==========
         print("\n" + "📞" * 15 + " LUXURY COMMUNICATION SUITE TESTING " + "📞" * 15)
         
