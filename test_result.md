@@ -267,11 +267,11 @@ agent_communication:
 
   - task: "Voice/Video Calls System Implementation"
     implemented: true
-    working: false
+    working: true
     file: "/app/backend/routers/call_routes.py"
     stuck_count: 0
     priority: "critical"
-    needs_retesting: true
+    needs_retesting: false
     status_history:
         - working: "NA"
           agent: "main"
@@ -279,6 +279,9 @@ agent_communication:
         - working: false
           agent: "testing"
           comment: "❌ CRITICAL ISSUE: Voice/Video Calls API schema validation error. Call initiation endpoint requires 'conversation_id' field but implementation expects 'callee_id'. API contract mismatch between router definition and service implementation. Error: HTTP 422 - Field 'conversation_id' required. This indicates the Pydantic model expects different fields than what the router is designed to handle."
+        - working: true
+          agent: "testing"
+          comment: "✅ FIXED: Voice/Video Calls System schema issue resolved. Call initiation endpoint now accepts 'callee_id' field correctly. Successfully tested complete call workflow: initiate -> answer -> end. Call initiated with caller/callee IDs, mode (voice/video), and proper status tracking. WebSocket signaling endpoints accessible. Schema validation now working correctly with InitiateCallRequest model accepting callee_id parameter."
 
   - task: "Channels & Groups System Implementation"
     implemented: true
