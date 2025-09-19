@@ -55,6 +55,7 @@ app.include_router(orders.router)
 app.include_router(vendor_management.router)
 app.include_router(analytics_api.router)
 app.include_router(multilang_voice_ai.router)
+app.include_router(contextual_ai_recommendations.router)
 
 @app.get("/metrics")
 def metrics():
