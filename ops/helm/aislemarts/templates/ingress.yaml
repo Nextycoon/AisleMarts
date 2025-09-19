@@ -1,0 +1,49 @@
+{{- if .Values.ingress.enabled -}}
+apiVersion: networking.k8s.io/v1
+kind: Ingress
+metadata:
+  name: {{ include "aislemarts.fullname" . }}
+  labels:
+    {{- include "aislemarts.labels" . | nindent 4 }}
+  {{- with .Values.ingress.annotations }}
+  annotations:
+    {{- toYaml . | nindent 4 }}
+  {{- end }}
+spec:
+  {{- if .Values.ingress.className }}
+  ingressClassName: {{ .Values.ingress.className }}
+  {{- end }}
+  {{- if .Values.ingress.tls }}
+  tls:
+    {{- range .Values.ingress.tls }}
+    - hosts:
+        {{- range .hosts }}
+        - {{ . | quote }}
+        {{- end }}
+      secretName: {{ .secretName }}
+    {{- end }}
+  {{- end }}
+  rules:
+    - host: {{ .Values.ingress.host | quote }}
+      http:
+        paths:
+          - path: /
+            pathType: Prefix
+            backend:
+              service:
+                name: {{ include "aislemarts.fullname" . }}
+                port:
+                  number: {{ .Values.service.port }}
+---
+{{- if .Values.ingress.managedCertificate }}
+apiVersion: networking.gke.io/v1
+kind: ManagedCertificate
+metadata:
+  name: {{ include "aislemarts.fullname" . }}-cert
+  labels:
+    {{- include "aislemarts.labels" . | nindent 4 }}
+spec:
+  domains:
+    - {{ .Values.ingress.host }}
+{{- end }}
+{{- end }}
