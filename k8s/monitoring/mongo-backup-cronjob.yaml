@@ -1,0 +1,176 @@
+# MongoDB Backup CronJob for 24/7 Operation
+apiVersion: batch/v1
+kind: CronJob
+metadata:
+  name: mongodb-backup
+  namespace: aislemarts-prod
+spec:
+  schedule: "0 2 * * *"  # Daily at 2 AM UTC
+  concurrencyPolicy: Forbid
+  successfulJobsHistoryLimit: 3
+  failedJobsHistoryLimit: 3
+  jobTemplate:
+    spec:
+      backoffLimit: 2
+      template:
+        spec:
+          containers:
+          - name: mongodb-backup
+            image: mongo:7.0
+            env:
+            - name: MONGO_URI
+              valueFrom:
+                secretKeyRef:
+                  name: aislemarts-secrets
+                  key: mongo-url
+            - name: AWS_ACCESS_KEY_ID
+              valueFrom:
+                secretKeyRef:
+                  name: s3-backup-credentials
+                  key: aws-access-key-id
+            - name: AWS_SECRET_ACCESS_KEY
+              valueFrom:
+                secretKeyRef:
+                  name: s3-backup-credentials
+                  key: aws-secret-access-key
+            - name: AWS_DEFAULT_REGION
+              valueFrom:
+                secretKeyRef:
+                  name: s3-backup-credentials
+                  key: aws-region
+            - name: S3_BUCKET
+              valueFrom:
+                secretKeyRef:
+                  name: s3-backup-credentials
+                  key: s3-bucket
+            command:
+            - /bin/bash
+            - -c
+            args:
+            - |
+              set -e
+              BACKUP_DATE=$(date +%Y-%m-%d_%H-%M-%S)
+              BACKUP_FILE="aislemarts-backup-${BACKUP_DATE}.archive"
+              
+              echo "Starting MongoDB backup: ${BACKUP_FILE}"
+              
+              # Create backup
+              mongodump --uri="${MONGO_URI}" --archive="/tmp/${BACKUP_FILE}" --gzip
+              
+              # Install AWS CLI
+              apt-get update && apt-get install -y awscli
+              
+              # Upload to S3
+              aws s3 cp "/tmp/${BACKUP_FILE}" "s3://${S3_BUCKET}/daily-backups/${BACKUP_FILE}"
+              
+              # Verify upload
+              aws s3 ls "s3://${S3_BUCKET}/daily-backups/${BACKUP_FILE}"
+              
+              # Create metadata file
+              cat > "/tmp/backup-metadata-${BACKUP_DATE}.json" << EOF
+              {
+                "backup_date": "${BACKUP_DATE}",
+                "backup_file": "${BACKUP_FILE}",
+                "backup_size": "$(stat -c%s /tmp/${BACKUP_FILE})",
+                "database": "aislemarts",
+                "compression": "gzip",
+                "status": "completed"
+              }
+              EOF
+              
+              aws s3 cp "/tmp/backup-metadata-${BACKUP_DATE}.json" "s3://${S3_BUCKET}/metadata/"
+              
+              echo "Backup completed successfully: ${BACKUP_FILE}"
+              
+              # Cleanup old backups (keep 90 days)
+              aws s3 ls "s3://${S3_BUCKET}/daily-backups/" | while read -r line; do
+                backup_date=$(echo $line | awk '{print $1}')
+                if [[ $(date -d "$backup_date" +%s) -lt $(date -d '90 days ago' +%s) ]]; then
+                  backup_file=$(echo $line | awk '{print $4}')
+                  aws s3 rm "s3://${S3_BUCKET}/daily-backups/${backup_file}"
+                  echo "Removed old backup: ${backup_file}"
+                fi
+              done
+            resources:
+              requests:
+                memory: "512Mi"
+                cpu: "200m"
+              limits:
+                memory: "2Gi"
+                cpu: "1000m"
+          restartPolicy: OnFailure
+
+---
+# MongoDB Restore Job Template (manual execution)
+apiVersion: batch/v1
+kind: Job
+metadata:
+  name: mongodb-restore-template
+  namespace: aislemarts-prod
+spec:
+  backoffLimit: 1
+  template:
+    spec:
+      containers:
+      - name: mongodb-restore
+        image: mongo:7.0
+        env:
+        - name: MONGO_URI
+          valueFrom:
+            secretKeyRef:
+              name: aislemarts-secrets
+              key: mongo-url
+        - name: AWS_ACCESS_KEY_ID
+          valueFrom:
+            secretKeyRef:
+              name: s3-backup-credentials
+              key: aws-access-key-id
+        - name: AWS_SECRET_ACCESS_KEY
+          valueFrom:
+            secretKeyRef:
+              name: s3-backup-credentials
+              key: aws-secret-access-key
+        - name: AWS_DEFAULT_REGION
+          valueFrom:
+            secretKeyRef:
+              name: s3-backup-credentials
+              key: aws-region
+        - name: S3_BUCKET
+          valueFrom:
+            secretKeyRef:
+              name: s3-backup-credentials
+              key: s3-bucket
+        - name: BACKUP_FILE
+          value: "REPLACE_WITH_BACKUP_FILENAME"
+        command:
+        - /bin/bash
+        - -c
+        args:
+        - |
+          set -e
+          echo "Starting MongoDB restore from: ${BACKUP_FILE}"
+          
+          # Install AWS CLI
+          apt-get update && apt-get install -y awscli
+          
+          # Download backup from S3
+          aws s3 cp "s3://${S3_BUCKET}/daily-backups/${BACKUP_FILE}" "/tmp/${BACKUP_FILE}"
+          
+          # Verify download
+          if [ ! -f "/tmp/${BACKUP_FILE}" ]; then
+            echo "Error: Backup file not found"
+            exit 1
+          fi
+          
+          # Restore database
+          mongorestore --uri="${MONGO_URI}" --archive="/tmp/${BACKUP_FILE}" --gzip --drop
+          
+          echo "Restore completed successfully from: ${BACKUP_FILE}"
+        resources:
+          requests:
+            memory: "1Gi"
+            cpu: "500m"
+          limits:
+            memory: "4Gi"
+            cpu: "2000m"
+      restartPolicy: Never

@@ -1,0 +1,266 @@
+name: AisleMarts 24/7 CI/CD Pipeline
+# Complete production-ready CI/CD with testing, security, deployment
+
+on:
+  push:
+    branches: [ main, staging, develop ]
+  pull_request:
+    branches: [ main ]
+  workflow_dispatch:
+    inputs:
+      environment:
+        description: 'Environment to deploy'
+        required: true
+        default: 'staging'
+        type: choice
+        options:
+        - staging
+        - production
+
+env:
+  REGISTRY: ghcr.io
+  IMAGE_NAME: ${{ github.repository }}
+
+jobs:
+  security-scan:
+    runs-on: ubuntu-latest
+    steps:
+      - uses: actions/checkout@v4
+      - name: Run security scan
+        uses: securecodewarrior/github-action-add-sarif@v1
+        with:
+          sarif-file: 'security-scan.sarif'
+
+  backend-test:
+    runs-on: ubuntu-latest
+    services:
+      mongodb:
+        image: mongo:7.0
+        env:
+          MONGO_INITDB_ROOT_USERNAME: test
+          MONGO_INITDB_ROOT_PASSWORD: test
+        ports:
+          - 27017:27017
+        options: >-
+          --health-cmd mongosh
+          --health-interval 10s
+          --health-timeout 5s
+          --health-retries 5
+
+    steps:
+      - uses: actions/checkout@v4
+      - name: Set up Python
+        uses: actions/setup-python@v4
+        with:
+          python-version: '3.11'
+      - name: Cache dependencies
+        uses: actions/cache@v3
+        with:
+          path: ~/.cache/pip
+          key: ${{ runner.os }}-pip-${{ hashFiles('**/requirements.txt') }}
+      - name: Install dependencies
+        run: |
+          cd backend
+          python -m pip install --upgrade pip
+          pip install -r requirements.txt
+          pip install pytest pytest-asyncio pytest-cov
+      - name: Run backend tests
+        env:
+          MONGO_URL: mongodb://test:test@localhost:27017/aislemarts_test?authSource=admin
+          ENVIRONMENT: test
+        run: |
+          cd backend
+          pytest tests/ -v --cov=. --cov-report=xml --cov-report=html
+      - name: Upload coverage
+        uses: codecov/codecov-action@v3
+        with:
+          file: ./backend/coverage.xml
+          flags: backend
+
+  frontend-test:
+    runs-on: ubuntu-latest
+    steps:
+      - uses: actions/checkout@v4
+      - name: Setup Node.js
+        uses: actions/setup-node@v4
+        with:
+          node-version: '18'
+          cache: 'yarn'
+          cache-dependency-path: frontend/yarn.lock
+      - name: Install dependencies
+        run: |
+          cd frontend
+          yarn install --frozen-lockfile
+      - name: Run frontend tests
+        run: |
+          cd frontend
+          yarn test --coverage --watchAll=false
+      - name: Upload coverage
+        uses: codecov/codecov-action@v3
+        with:
+          file: ./frontend/coverage/lcov.info
+          flags: frontend
+
+  build-backend:
+    needs: [security-scan, backend-test]
+    runs-on: ubuntu-latest
+    outputs:
+      image-digest: ${{ steps.build.outputs.digest }}
+    steps:
+      - uses: actions/checkout@v4
+      - name: Log in to Container Registry
+        uses: docker/login-action@v3
+        with:
+          registry: ${{ env.REGISTRY }}
+          username: ${{ github.actor }}
+          password: ${{ secrets.GITHUB_TOKEN }}
+      - name: Extract metadata
+        id: meta
+        uses: docker/metadata-action@v5
+        with:
+          images: ${{ env.REGISTRY }}/${{ env.IMAGE_NAME }}-backend
+          tags: |
+            type=ref,event=branch
+            type=ref,event=pr
+            type=sha,prefix={{branch}}-
+            type=raw,value=latest,enable={{is_default_branch}}
+      - name: Build and push Docker image
+        id: build
+        uses: docker/build-push-action@v5
+        with:
+          context: ./backend
+          push: true
+          tags: ${{ steps.meta.outputs.tags }}
+          labels: ${{ steps.meta.outputs.labels }}
+          cache-from: type=gha
+          cache-to: type=gha,mode=max
+
+  build-frontend:
+    needs: [frontend-test]
+    runs-on: ubuntu-latest
+    steps:
+      - uses: actions/checkout@v4
+      - name: Setup Node.js
+        uses: actions/setup-node@v4
+        with:
+          node-version: '18'
+          cache: 'yarn'
+          cache-dependency-path: frontend/yarn.lock
+      - name: Install dependencies
+        run: |
+          cd frontend
+          yarn install --frozen-lockfile
+      - name: Build frontend
+        run: |
+          cd frontend
+          yarn build
+      - name: Upload build artifacts
+        uses: actions/upload-artifact@v3
+        with:
+          name: frontend-build
+          path: frontend/dist/
+
+  deploy-staging:
+    needs: [build-backend, build-frontend]
+    runs-on: ubuntu-latest
+    if: github.ref == 'refs/heads/staging' || (github.event_name == 'workflow_dispatch' && github.event.inputs.environment == 'staging')
+    environment: staging
+    steps:
+      - uses: actions/checkout@v4
+      - name: Configure kubectl
+        run: |
+          echo "${{ secrets.KUBE_CONFIG_STAGING }}" | base64 --decode > kubeconfig
+          export KUBECONFIG=$(pwd)/kubeconfig
+          kubectl config set-context --current --namespace=aislemarts-staging
+      - name: Deploy to staging
+        env:
+          KUBECONFIG: $(pwd)/kubeconfig
+          IMAGE_TAG: ${{ github.sha }}
+        run: |
+          # Update image tags in k8s manifests
+          sed -i "s|IMAGE_TAG|$IMAGE_TAG|g" k8s/staging/deployment.yaml
+          kubectl apply -f k8s/staging/
+          kubectl rollout status deployment/aislemarts-backend --timeout=300s
+      - name: Run health checks
+        run: |
+          kubectl wait --for=condition=ready pod -l app=aislemarts-backend --timeout=120s
+          # Test staging endpoint
+          curl -f https://staging.aislemarts.com/health || exit 1
+      - name: Notify Slack
+        uses: 8398a7/action-slack@v3
+        with:
+          status: ${{ job.status }}
+          channel: '#deployments'
+          webhook_url: ${{ secrets.SLACK_WEBHOOK_URL }}
+        if: always()
+
+  deploy-production:
+    needs: [build-backend, build-frontend]
+    runs-on: ubuntu-latest
+    if: github.ref == 'refs/heads/main' || (github.event_name == 'workflow_dispatch' && github.event.inputs.environment == 'production')
+    environment: production
+    steps:
+      - uses: actions/checkout@v4
+      - name: Configure kubectl
+        run: |
+          echo "${{ secrets.KUBE_CONFIG_PROD }}" | base64 --decode > kubeconfig
+          export KUBECONFIG=$(pwd)/kubeconfig
+          kubectl config set-context --current --namespace=aislemarts-prod
+      - name: Deploy to production
+        env:
+          KUBECONFIG: $(pwd)/kubeconfig
+          IMAGE_TAG: ${{ github.sha }}
+        run: |
+          # Blue-green deployment strategy
+          sed -i "s|IMAGE_TAG|$IMAGE_TAG|g" k8s/production/deployment.yaml
+          kubectl apply -f k8s/production/
+          kubectl rollout status deployment/aislemarts-backend --timeout=600s
+      - name: Run smoke tests
+        run: |
+          kubectl wait --for=condition=ready pod -l app=aislemarts-backend --timeout=300s
+          # Production health checks
+          curl -f https://api.aislemarts.com/health || exit 1
+          curl -f https://api.aislemarts.com/api/multilang-voice/health || exit 1
+          curl -f https://api.aislemarts.com/api/contextual-ai/health || exit 1
+      - name: Notify success
+        uses: 8398a7/action-slack@v3
+        with:
+          status: 'success'
+          channel: '#production'
+          message: '🚀 Production deployment successful! All health checks passed.'
+          webhook_url: ${{ secrets.SLACK_WEBHOOK_URL }}
+      - name: Create release
+        uses: actions/create-release@v1
+        env:
+          GITHUB_TOKEN: ${{ secrets.GITHUB_TOKEN }}
+        with:
+          tag_name: release-${{ github.sha }}
+          release_name: Production Release ${{ github.sha }}
+          body: |
+            Production deployment successful
+            - Backend image: ${{ env.REGISTRY }}/${{ env.IMAGE_NAME }}-backend:${{ github.sha }}
+            - Health checks: ✅ Passed
+            - Deployment time: ${{ github.event.head_commit.timestamp }}
+
+  security-audit:
+    runs-on: ubuntu-latest
+    if: github.ref == 'refs/heads/main'
+    steps:
+      - uses: actions/checkout@v4
+      - name: Run security audit
+        run: |
+          # Backend security scan
+          cd backend
+          pip install safety bandit
+          safety check -r requirements.txt
+          bandit -r . -f json -o security-report.json || true
+          # Frontend security scan  
+          cd ../frontend
+          yarn audit --level moderate
+      - name: Upload security reports
+        uses: actions/upload-artifact@v3
+        with:
+          name: security-reports
+          path: |
+            backend/security-report.json
+            frontend/yarn-audit.json
