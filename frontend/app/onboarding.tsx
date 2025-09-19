@@ -212,17 +212,31 @@ const ti = {
   elevation: 2,
 } as const;
 
-/** ========= Step 1: Promo (Epic Full-Screen Video Background - Absolute Coverage) ========= */
+/** ========= Step 1: Promo (Epic Full-Screen Video Background - TRUE EDGE TO EDGE) ========= */
 function StepPromo({ onSignIn, onSignUp }: { onSignIn: () => void; onSignUp: () => void }) {
   const videoRef = useRef<Video | null>(null);
   
   return (
-    <View style={StyleSheet.absoluteFill}>
-      {/* FULL SCREEN VIDEO BACKGROUND - COVERS ABSOLUTE EVERYTHING INCLUDING STATUS BAR */}
+    <View style={{
+      ...StyleSheet.absoluteFillObject,
+      margin: -50, // Negative margins to extend beyond any container
+      padding: 0,
+      top: -50,
+      left: -50,
+      right: -50,
+      bottom: -50,
+      width: '120%',
+      height: '120%',
+    }}>
+      {/* FULL SCREEN VIDEO BACKGROUND - COVERS ABSOLUTE EVERYTHING */}
       <Video
         ref={videoRef}
         source={{ uri: "https://cdn.coverr.co/videos/coverr-shopping-aisles-8515/1080p.mp4" }}
-        style={StyleSheet.absoluteFill}
+        style={{
+          ...StyleSheet.absoluteFillObject,
+          width: '100%',
+          height: '100%',
+        }}
         resizeMode="cover"
         isLooping
         shouldPlay
@@ -238,16 +252,16 @@ function StepPromo({ onSignIn, onSignUp }: { onSignIn: () => void; onSignUp: () 
           'rgba(0,0,0,0.7)'
         ]}
         locations={[0, 0.3, 0.7, 1]}
-        style={StyleSheet.absoluteFill}
+        style={StyleSheet.absoluteFillObject}
       />
       
-      {/* CONTENT OVERLAY - ABSOLUTE POSITIONING */}
+      {/* CONTENT OVERLAY - ABSOLUTE POSITIONING WITH SAFE SPACING */}
       <View style={{
-        ...StyleSheet.absoluteFill,
+        ...StyleSheet.absoluteFillObject,
         justifyContent: 'space-between',
-        paddingTop: 120,  // Account for status bar and notch
-        paddingBottom: 60,
-        paddingHorizontal: 24,
+        paddingTop: 150,  // Account for any potential header areas
+        paddingBottom: 100, // Account for any potential footer areas  
+        paddingHorizontal: 74, // Account for negative margins
       }}>
         
         {/* TOP CONTENT */}
@@ -429,7 +443,7 @@ function StepPromo({ onSignIn, onSignUp }: { onSignIn: () => void; onSignUp: () 
             textShadowColor: "rgba(0,0,0,0.8)",
             textShadowOffset: { width: 0, height: 1 },
             textShadowRadius: 2,
-            marginBottom: 40, // Extra margin for absolute bottom edge
+            marginBottom: 0,
           }}>
             By continuing you agree to our Terms & Privacy Policy.
           </Text>
