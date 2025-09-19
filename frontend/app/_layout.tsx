@@ -4,12 +4,7 @@ import { StatusBar } from 'expo-status-bar';
 import { SafeAreaProvider } from 'react-native-safe-area-context';
 import { AuthProvider } from '@/src/context/AuthContext'; 
 import { UserRolesProvider } from '@/src/context/UserRolesContext';
-// import { OfflineProvider } from '@/src/utils/OfflineManager';
-// import { ThemeProvider } from '@/src/theme/ThemeProvider';
-// import { ToastProvider, ToastHost } from '@/src/components/ToastHost';
 import { ErrorBoundary } from '../src/components/ErrorBoundary';
-// Temporarily disabled permissions manager to fix the error
-// import PermissionsManager from '../src/components/PermissionsManager';
 
 export default function RootLayout() {
   return (
@@ -17,10 +12,16 @@ export default function RootLayout() {
       <ErrorBoundary>
         <AuthProvider>
           <UserRolesProvider>
-            <Stack screenOptions={{ headerShown: false }} />
+            <Stack 
+              screenOptions={{ 
+                headerShown: false,
+                contentStyle: { backgroundColor: '#000000' }, // Ensure full black background
+                animation: 'fade',
+              }} 
+            />
           </UserRolesProvider>
         </AuthProvider>
-        <StatusBar style="light" />
+        <StatusBar style="light" backgroundColor="#000000" translucent={true} />
       </ErrorBoundary>
     </SafeAreaProvider>
   );
