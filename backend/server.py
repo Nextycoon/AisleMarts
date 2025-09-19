@@ -29,6 +29,10 @@ app.add_middleware(
     allow_headers=["*"],
 )
 
+# Add ALL-IN MICRO-SPRINT rate limiting middleware
+from middleware.rate_limit import SimpleRatelimit
+app.add_middleware(SimpleRatelimit, requests=120, window=60)
+
 stripe.api_key = settings.STRIPE_SECRET_KEY
 
 # Create a router with the /api prefix
