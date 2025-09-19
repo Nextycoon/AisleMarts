@@ -475,8 +475,12 @@ async def startup_event():
         await init_nearby_cache()
         
         # Initialize ALL-IN MICRO-SPRINT indexes
-        from db.indexes import ensure_indexes
-        await ensure_indexes(db())
+        try:
+            from db.indexes import ensure_indexes
+            await ensure_indexes(db())
+            print("✅ ALL-IN MICRO-SPRINT indexes initialized")
+        except ImportError:
+            print("⚠️ ALL-IN MICRO-SPRINT indexes module not found")
         
         print("✅ AisleMarts API startup complete")
     except Exception as e:
