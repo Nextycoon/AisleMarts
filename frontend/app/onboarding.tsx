@@ -212,28 +212,32 @@ const ti = {
   elevation: 2,
 } as const;
 
-/** ========= Step 1: Promo (Epic Full-Screen Video Background - TRUE EDGE TO EDGE) ========= */
+/** ========= Step 1: Promo (Epic Full-Screen Video Background - ABSOLUTE ZERO WHITE SPACES) ========= */
 function StepPromo({ onSignIn, onSignUp }: { onSignIn: () => void; onSignUp: () => void }) {
   const videoRef = useRef<Video | null>(null);
   
   return (
     <View style={{
-      ...StyleSheet.absoluteFillObject,
-      margin: -50, // Negative margins to extend beyond any container
+      position: 'absolute',
+      top: -100,
+      left: -100,
+      right: -100,
+      bottom: -100,
+      width: '130%',
+      height: '130%',
+      margin: 0,
       padding: 0,
-      top: -50,
-      left: -50,
-      right: -50,
-      bottom: -50,
-      width: '120%',
-      height: '120%',
     }}>
-      {/* FULL SCREEN VIDEO BACKGROUND - COVERS ABSOLUTE EVERYTHING */}
+      {/* FULL SCREEN VIDEO BACKGROUND - EXTENDS BEYOND ALL BOUNDARIES */}
       <Video
         ref={videoRef}
         source={{ uri: "https://cdn.coverr.co/videos/coverr-shopping-aisles-8515/1080p.mp4" }}
         style={{
-          ...StyleSheet.absoluteFillObject,
+          position: 'absolute',
+          top: 0,
+          left: 0,
+          right: 0,
+          bottom: 0,
           width: '100%',
           height: '100%',
         }}
@@ -249,19 +253,28 @@ function StepPromo({ onSignIn, onSignUp }: { onSignIn: () => void; onSignUp: () 
           'rgba(0,0,0,0.3)', 
           'rgba(0,0,0,0.1)', 
           'rgba(0,0,0,0.2)',
-          'rgba(0,0,0,0.7)'
+          'rgba(0,0,0,0.8)'
         ]}
         locations={[0, 0.3, 0.7, 1]}
-        style={StyleSheet.absoluteFillObject}
+        style={{
+          position: 'absolute',
+          top: 0,
+          left: 0,
+          right: 0,
+          bottom: 0,
+          width: '100%',
+          height: '100%',
+        }}
       />
       
-      {/* CONTENT OVERLAY - ABSOLUTE POSITIONING WITH SAFE SPACING */}
+      {/* CONTENT OVERLAY - POSITIONED TO AVOID WHITE AREAS */}
       <View style={{
-        ...StyleSheet.absoluteFillObject,
+        position: 'absolute',
+        top: 150,
+        left: 100,
+        right: 100,
+        bottom: 150,
         justifyContent: 'space-between',
-        paddingTop: 150,  // Account for any potential header areas
-        paddingBottom: 100, // Account for any potential footer areas  
-        paddingHorizontal: 74, // Account for negative margins
       }}>
         
         {/* TOP CONTENT */}
@@ -294,7 +307,7 @@ function StepPromo({ onSignIn, onSignUp }: { onSignIn: () => void; onSignUp: () 
             textShadowRadius: 8,
           }}>AisleMarts</Text>
           
-          {/* Epic subtitle */}
+          {/* Epic subtitle with vision */}
           <Text style={{ 
             color: BRAND.ink, 
             fontSize: 18, 
@@ -308,7 +321,8 @@ function StepPromo({ onSignIn, onSignUp }: { onSignIn: () => void; onSignUp: () 
             textShadowOffset: { width: 0, height: 2 },
             textShadowRadius: 4,
           }}>
-            Smarter. Faster. Everywhere.{'\n'}
+            Modern Lifestyle Commerce Platform{'\n'}
+            Shop. Socialise. Live Modern.{'\n'}
             Experience Mood-to-Cart™ across luxury,{'\n'}
             trending and the best deals.
           </Text>
@@ -443,7 +457,6 @@ function StepPromo({ onSignIn, onSignUp }: { onSignIn: () => void; onSignUp: () 
             textShadowColor: "rgba(0,0,0,0.8)",
             textShadowOffset: { width: 0, height: 1 },
             textShadowRadius: 2,
-            marginBottom: 0,
           }}>
             By continuing you agree to our Terms & Privacy Policy.
           </Text>
