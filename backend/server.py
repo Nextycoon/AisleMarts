@@ -451,6 +451,7 @@ try:
     from routers.products_cached import router as products_cached_router
     from routers.auth import router as auth_router
     from routers.mood_to_cart import router as mood_to_cart_router
+    from routers.dm_routes import router as dm_router
     
     app.include_router(ai_intent_router)
     app.include_router(wishlist_router)
@@ -458,6 +459,7 @@ try:
     app.include_router(products_cached_router)
     app.include_router(auth_router, prefix="/api/auth")
     app.include_router(mood_to_cart_router, prefix="/api/mood")
+    app.include_router(dm_router)  # Direct Messaging routes
     print("✅ ALL-IN MICRO-SPRINT routers loaded successfully")
 except ImportError as e:
     print(f"⚠️ ALL-IN MICRO-SPRINT routers not available: {e}")
