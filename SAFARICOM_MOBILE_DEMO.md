@@ -8,7 +8,7 @@ Experience AisleMarts' AI-powered marketplace instantly on your mobile device:
 
 ### **📱 Instant Access**
 ```
-🔗 Mobile Demo: https://mood-to-cart.preview.emergentagent.com
+🔗 Mobile Demo: https://luxury-social-suite.preview.emergentagent.com
 📱 Expo App: exp://cinematic-aisle.preview.emergentagent.com
 ```
 
