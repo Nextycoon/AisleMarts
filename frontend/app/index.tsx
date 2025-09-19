@@ -74,16 +74,20 @@ export default function IndexScreen() {
           </Text>
         </View>
 
+        {/* Always show permissions test button */}
+        <View style={styles.debugContainer}>
+          <TouchableOpacity style={[styles.debugButton, { borderColor: '#EBD6A0', backgroundColor: 'rgba(235, 214, 160, 0.2)' }]} onPress={handleGoToPermissions}>
+            <Text style={[styles.debugButtonText, { color: '#EBD6A0' }]}>🛡️ Test Permissions System</Text>
+          </TouchableOpacity>
+        </View>
+
         {showDebug && (
-          <View style={styles.debugContainer}>
+          <View style={[styles.debugContainer, { bottom: 160 }]}>
             <TouchableOpacity style={styles.debugButton} onPress={handleClearStorage}>
               <Text style={styles.debugButtonText}>Clear Storage & Reset</Text>
             </TouchableOpacity>
             <TouchableOpacity style={styles.debugButton} onPress={handleGoToCompletion}>
               <Text style={styles.debugButtonText}>View Completion Demo</Text>
-            </TouchableOpacity>
-            <TouchableOpacity style={[styles.debugButton, { borderColor: '#EBD6A0', backgroundColor: 'rgba(235, 214, 160, 0.2)' }]} onPress={handleGoToPermissions}>
-              <Text style={[styles.debugButtonText, { color: '#EBD6A0' }]}>🛡️ Test Permissions System</Text>
             </TouchableOpacity>
           </View>
         )}
