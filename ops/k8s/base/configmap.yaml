@@ -1,0 +1,19 @@
+apiVersion: v1
+kind: ConfigMap
+metadata:
+  name: aislemarts-config
+  namespace: staging
+data:
+  APP_NAME: "AisleMarts"
+  LOG_LEVEL: "INFO"
+  ENVIRONMENT: "staging"
+---
+apiVersion: v1
+kind: ConfigMap
+metadata:
+  name: aislemarts-config
+  namespace: prod
+data:
+  APP_NAME: "AisleMarts"
+  LOG_LEVEL: "INFO"
+  ENVIRONMENT: "production"

@@ -4,7 +4,7 @@
 
 ### Web Preview (Desktop/Mobile Browser)
 ```
-🌐 Live Preview: https://aislemarts-staging.preview.emergentagent.com
+🌐 Live Preview: https://voice-commerce.preview.emergentagent.com
 ```
 
 ### Mobile App Testing (Expo Go)

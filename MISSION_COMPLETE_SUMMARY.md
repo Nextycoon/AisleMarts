@@ -35,7 +35,7 @@
 
 ### **📱 3. LIVE DEMO ALIGNMENT - DEPLOYED**
 **Status**: ✅ FULLY OPERATIONAL
-**URL**: https://aislemarts-staging.preview.emergentagent.com
+**URL**: https://voice-commerce.preview.emergentagent.com
 
 **New Features Implemented:**
 - **UserTypeSelector Component**: Cinematic 3-tier selection interface
@@ -106,7 +106,7 @@
 ## 📱 **MOBILE QR CODE ARSENAL - READY**
 
 ### **Instant Demo Access**
-**Mobile URL**: https://aislemarts-staging.preview.emergentagent.com  
+**Mobile URL**: https://voice-commerce.preview.emergentagent.com  
 **Expo App**: exp://cinematic-aisle.preview.emergentagent.com
 
 ### **Demo Packages Created**
