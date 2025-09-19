@@ -722,7 +722,7 @@ function StepAIWelcome({ onNext }: { onNext: () => void }) {
       title="Meet Aisle — your AI"
       subtitle={subtitle}
       step={4}
-      total={6}
+      total={7}
     >
       <View style={{ padding: 16, borderRadius: 20, borderWidth: 1, borderColor: BRAND.line, backgroundColor: BRAND.card, gap: 12 }}>
         <Image
