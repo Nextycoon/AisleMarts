@@ -541,33 +541,6 @@ const styles = StyleSheet.create({
     paddingLeft: 20,
   },
 });
-              </View>
-            </LinearGradient>
-          </View>
-          
-          <TouchableOpacity
-            style={styles.voiceButton}
-            onPress={handleVoicePress}
-            activeOpacity={0.8}
-          >
-            <LinearGradient
-              colors={isListening ? ['#f59e0b', '#d97706'] : ['rgba(255, 255, 255, 0.1)', 'rgba(255, 255, 255, 0.05)']}
-              style={styles.voiceButtonGradient}
-            >
-              <Text style={[styles.voiceButtonText, isListening && styles.voiceButtonTextActive]}>
-                {isListening ? "Listening..." : "Tap to talk with me!"}
-              </Text>
-            </LinearGradient>
-          </TouchableOpacity>
-          
-          <View style={styles.statusContainer}>
-            <View style={styles.statusBadge}>
-              <Text style={styles.statusBadgeText}>• {isListening ? 'Listening' : 'Ready'}</Text>
-            </View>
-          </View>
-        </View>
-
-        {/* Conversation Section */}
         <View style={styles.conversationSection}>
           <View style={styles.conversationCard}>
             <Text style={styles.conversationTitle}>Meet Aisle - Your AI Shopping Expert</Text>
