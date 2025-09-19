@@ -1,0 +1,708 @@
+# AisleMarts Kubernetes Production Deployment Manifests
+# Track D: Ops & Resilience - Full Production Scalability
+
+apiVersion: v1
+kind: Namespace
+metadata:
+  name: aislemarts-prod
+  labels:
+    app: aislemarts
+    env: production
+    track: d-ops-resilience
+
+---
+# MongoDB StatefulSet for Data Persistence
+apiVersion: apps/v1
+kind: StatefulSet
+metadata:
+  name: mongodb
+  namespace: aislemarts-prod
+  labels:
+    app: mongodb
+    component: database
+spec:
+  serviceName: mongodb
+  replicas: 3
+  selector:
+    matchLabels:
+      app: mongodb
+  template:
+    metadata:
+      labels:
+        app: mongodb
+        component: database
+    spec:
+      containers:
+      - name: mongodb
+        image: mongo:7.0
+        ports:
+        - containerPort: 27017
+        env:
+        - name: MONGO_INITDB_ROOT_USERNAME
+          valueFrom:
+            secretKeyRef:
+              name: mongodb-secret
+              key: username
+        - name: MONGO_INITDB_ROOT_PASSWORD
+          valueFrom:
+            secretKeyRef:
+              name: mongodb-secret
+              key: password
+        volumeMounts:
+        - name: mongodb-storage
+          mountPath: /data/db
+        - name: mongodb-config
+          mountPath: /data/configdb
+        resources:
+          requests:
+            memory: "512Mi"
+            cpu: "250m"
+          limits:
+            memory: "2Gi"
+            cpu: "1000m"
+        livenessProbe:
+          exec:
+            command:
+            - mongosh
+            - --eval
+            - "db.adminCommand('ping')"
+          initialDelaySeconds: 30
+          periodSeconds: 10
+        readinessProbe:
+          exec:
+            command:
+            - mongosh
+            - --eval
+            - "db.adminCommand('ping')"
+          initialDelaySeconds: 5
+          periodSeconds: 5
+      volumes:
+      - name: mongodb-config
+        emptyDir: {}
+  volumeClaimTemplates:
+  - metadata:
+      name: mongodb-storage
+    spec:
+      accessModes: ["ReadWriteOnce"]
+      resources:
+        requests:
+          storage: 20Gi
+      storageClassName: ssd-retain
+
+---
+# MongoDB Service
+apiVersion: v1
+kind: Service
+metadata:
+  name: mongodb
+  namespace: aislemarts-prod
+  labels:
+    app: mongodb
+spec:
+  ports:
+  - port: 27017
+    targetPort: 27017
+  clusterIP: None
+  selector:
+    app: mongodb
+
+---
+# Backend API Deployment
+apiVersion: apps/v1
+kind: Deployment
+metadata:
+  name: aislemarts-backend
+  namespace: aislemarts-prod
+  labels:
+    app: aislemarts-backend
+    component: api
+    track: series-a-ready
+spec:
+  replicas: 5
+  strategy:
+    type: RollingUpdate
+    rollingUpdate:
+      maxSurge: 2
+      maxUnavailable: 1
+  selector:
+    matchLabels:
+      app: aislemarts-backend
+  template:
+    metadata:
+      labels:
+        app: aislemarts-backend
+        component: api
+        version: v1
+      annotations:
+        prometheus.io/scrape: "true"
+        prometheus.io/port: "8001"
+        prometheus.io/path: "/metrics"
+    spec:
+      containers:
+      - name: backend
+        image: aislemarts/backend:latest
+        ports:
+        - containerPort: 8001
+          name: http
+        env:
+        - name: MONGO_URL
+          valueFrom:
+            secretKeyRef:
+              name: aislemarts-secrets
+              key: mongo-url
+        - name: OPENAI_API_KEY
+          valueFrom:
+            secretKeyRef:
+              name: aislemarts-secrets
+              key: openai-api-key
+        - name: STRIPE_SECRET_KEY
+          valueFrom:
+            secretKeyRef:
+              name: aislemarts-secrets
+              key: stripe-secret-key
+        - name: STRIPE_WEBHOOK_SECRET
+          valueFrom:
+            secretKeyRef:
+              name: aislemarts-secrets
+              key: stripe-webhook-secret
+        - name: JWT_SECRET
+          valueFrom:
+            secretKeyRef:
+              name: aislemarts-secrets
+              key: jwt-secret
+        - name: ENVIRONMENT
+          value: "production"
+        - name: LOG_LEVEL
+          value: "INFO"
+        - name: REDIS_URL
+          value: "redis://redis:6379"
+        resources:
+          requests:
+            memory: "256Mi"
+            cpu: "200m"
+          limits:
+            memory: "1Gi"
+            cpu: "800m"
+        livenessProbe:
+          httpGet:
+            path: /health
+            port: 8001
+          initialDelaySeconds: 30
+          periodSeconds: 10
+          timeoutSeconds: 5
+          failureThreshold: 3
+        readinessProbe:
+          httpGet:
+            path: /health
+            port: 8001
+          initialDelaySeconds: 5
+          periodSeconds: 5
+          timeoutSeconds: 3
+          successThreshold: 1
+          failureThreshold: 3
+        securityContext:
+          allowPrivilegeEscalation: false
+          runAsNonRoot: true
+          runAsUser: 1000
+          capabilities:
+            drop:
+            - ALL
+
+---
+# Backend Service
+apiVersion: v1
+kind: Service
+metadata:
+  name: aislemarts-backend
+  namespace: aislemarts-prod
+  labels:
+    app: aislemarts-backend
+    component: api
+  annotations:
+    service.beta.kubernetes.io/aws-load-balancer-type: nlb
+    service.beta.kubernetes.io/aws-load-balancer-cross-zone-load-balancing-enabled: "true"
+spec:
+  type: LoadBalancer
+  ports:
+  - port: 80
+    targetPort: 8001
+    protocol: TCP
+    name: http
+  - port: 443
+    targetPort: 8001
+    protocol: TCP  
+    name: https
+  selector:
+    app: aislemarts-backend
+  sessionAffinity: None
+
+---
+# Frontend Deployment
+apiVersion: apps/v1
+kind: Deployment
+metadata:
+  name: aislemarts-frontend
+  namespace: aislemarts-prod
+  labels:
+    app: aislemarts-frontend
+    component: web
+spec:
+  replicas: 3
+  strategy:
+    type: RollingUpdate
+    rollingUpdate:
+      maxSurge: 1
+      maxUnavailable: 0
+  selector:
+    matchLabels:
+      app: aislemarts-frontend
+  template:
+    metadata:
+      labels:
+        app: aislemarts-frontend
+        component: web
+    spec:
+      containers:
+      - name: frontend
+        image: aislemarts/frontend:latest
+        ports:
+        - containerPort: 3000
+          name: http
+        env:
+        - name: EXPO_PUBLIC_API_URL
+          value: "https://api.aislemarts.com"
+        - name: NODE_ENV
+          value: "production"
+        - name: EXPO_PUBLIC_BACKEND_URL
+          value: "https://api.aislemarts.com"
+        resources:
+          requests:
+            memory: "128Mi"
+            cpu: "100m"
+          limits:
+            memory: "512Mi"
+            cpu: "500m"
+        livenessProbe:
+          httpGet:
+            path: /
+            port: 3000
+          initialDelaySeconds: 30
+          periodSeconds: 10
+        readinessProbe:
+          httpGet:
+            path: /
+            port: 3000
+          initialDelaySeconds: 5
+          periodSeconds: 5
+
+---
+# Frontend Service
+apiVersion: v1
+kind: Service
+metadata:
+  name: aislemarts-frontend
+  namespace: aislemarts-prod
+  labels:
+    app: aislemarts-frontend
+spec:
+  type: LoadBalancer
+  ports:
+  - port: 80
+    targetPort: 3000
+    protocol: TCP
+    name: http
+  - port: 443
+    targetPort: 3000
+    protocol: TCP
+    name: https
+  selector:
+    app: aislemarts-frontend
+
+---
+# Redis Cache Deployment
+apiVersion: apps/v1
+kind: Deployment
+metadata:
+  name: redis
+  namespace: aislemarts-prod
+  labels:
+    app: redis
+    component: cache
+spec:
+  replicas: 2
+  selector:
+    matchLabels:
+      app: redis
+  template:
+    metadata:
+      labels:
+        app: redis
+        component: cache
+    spec:
+      containers:
+      - name: redis
+        image: redis:7.0-alpine
+        ports:
+        - containerPort: 6379
+        command:
+        - redis-server
+        - "--appendonly"
+        - "yes"
+        - "--save"
+        - "900 1"
+        - "--save"
+        - "300 10"
+        - "--save"
+        - "60 10000"
+        resources:
+          requests:
+            memory: "128Mi"
+            cpu: "100m"
+          limits:
+            memory: "512Mi"
+            cpu: "300m"
+        volumeMounts:
+        - name: redis-data
+          mountPath: /data
+        livenessProbe:
+          exec:
+            command:
+            - redis-cli
+            - ping
+          initialDelaySeconds: 30
+          periodSeconds: 10
+        readinessProbe:
+          exec:
+            command:
+            - redis-cli
+            - ping
+          initialDelaySeconds: 5
+          periodSeconds: 5
+      volumes:
+      - name: redis-data
+        emptyDir: {}
+
+---
+# Redis Service
+apiVersion: v1
+kind: Service
+metadata:
+  name: redis
+  namespace: aislemarts-prod
+  labels:
+    app: redis
+spec:
+  ports:
+  - port: 6379
+    targetPort: 6379
+  selector:
+    app: redis
+
+---
+# Horizontal Pod Autoscaler for Backend
+apiVersion: autoscaling/v2
+kind: HorizontalPodAutoscaler
+metadata:
+  name: aislemarts-backend-hpa
+  namespace: aislemarts-prod
+spec:
+  scaleTargetRef:
+    apiVersion: apps/v1
+    kind: Deployment
+    name: aislemarts-backend
+  minReplicas: 5
+  maxReplicas: 50
+  metrics:
+  - type: Resource
+    resource:
+      name: cpu
+      target:
+        type: Utilization
+        averageUtilization: 70
+  - type: Resource
+    resource:
+      name: memory
+      target:
+        type: Utilization
+        averageUtilization: 80
+  behavior:
+    scaleUp:
+      stabilizationWindowSeconds: 60
+      policies:
+      - type: Percent
+        value: 100
+        periodSeconds: 15
+      - type: Pods
+        value: 10
+        periodSeconds: 60
+    scaleDown:
+      stabilizationWindowSeconds: 300
+      policies:
+      - type: Percent
+        value: 50
+        periodSeconds: 60
+
+---
+# Horizontal Pod Autoscaler for Frontend
+apiVersion: autoscaling/v2
+kind: HorizontalPodAutoscaler
+metadata:
+  name: aislemarts-frontend-hpa
+  namespace: aislemarts-prod
+spec:
+  scaleTargetRef:
+    apiVersion: apps/v1
+    kind: Deployment
+    name: aislemarts-frontend
+  minReplicas: 3
+  maxReplicas: 20
+  metrics:
+  - type: Resource
+    resource:
+      name: cpu
+      target:
+        type: Utilization
+        averageUtilization: 70
+
+---
+# Pod Disruption Budget for Backend
+apiVersion: policy/v1
+kind: PodDisruptionBudget
+metadata:
+  name: aislemarts-backend-pdb
+  namespace: aislemarts-prod
+spec:
+  minAvailable: 3
+  selector:
+    matchLabels:
+      app: aislemarts-backend
+
+---
+# Pod Disruption Budget for Frontend  
+apiVersion: policy/v1
+kind: PodDisruptionBudget
+metadata:
+  name: aislemarts-frontend-pdb
+  namespace: aislemarts-prod
+spec:
+  minAvailable: 2
+  selector:
+    matchLabels:
+      app: aislemarts-frontend
+
+---
+# Network Policy for Security
+apiVersion: networking.k8s.io/v1
+kind: NetworkPolicy
+metadata:
+  name: aislemarts-network-policy
+  namespace: aislemarts-prod
+spec:
+  podSelector: {}
+  policyTypes:
+  - Ingress
+  - Egress
+  ingress:
+  - from:
+    - namespaceSelector:
+        matchLabels:
+          name: aislemarts-prod
+    - namespaceSelector:
+        matchLabels:
+          name: ingress-nginx
+  egress:
+  - to: []
+    ports:
+    - protocol: TCP
+      port: 53
+    - protocol: UDP
+      port: 53
+  - to:
+    - namespaceSelector:
+        matchLabels:
+          name: aislemarts-prod
+  - to: []
+    ports:
+    - protocol: TCP
+      port: 443
+    - protocol: TCP
+      port: 80
+
+---
+# Secrets Template (Values to be replaced in CI/CD)
+apiVersion: v1
+kind: Secret
+metadata:
+  name: aislemarts-secrets
+  namespace: aislemarts-prod
+type: Opaque
+stringData:
+  mongo-url: "mongodb://mongodb-0.mongodb.aislemarts-prod.svc.cluster.local:27017,mongodb-1.mongodb.aislemarts-prod.svc.cluster.local:27017,mongodb-2.mongodb.aislemarts-prod.svc.cluster.local:27017/aislemarts?replicaSet=rs0"
+  openai-api-key: "${OPENAI_API_KEY}"
+  stripe-secret-key: "${STRIPE_SECRET_KEY}" 
+  stripe-webhook-secret: "${STRIPE_WEBHOOK_SECRET}"
+  jwt-secret: "${JWT_SECRET}"
+
+---
+apiVersion: v1
+kind: Secret
+metadata:
+  name: mongodb-secret
+  namespace: aislemarts-prod
+type: Opaque
+stringData:
+  username: "${MONGODB_USERNAME}"
+  password: "${MONGODB_PASSWORD}"
+
+---
+# ConfigMap for Application Configuration
+apiVersion: v1
+kind: ConfigMap
+metadata:
+  name: aislemarts-config
+  namespace: aislemarts-prod
+data:
+  # Backend Configuration
+  LOG_LEVEL: "INFO"
+  ENVIRONMENT: "production"
+  MAX_WORKERS: "4"
+  DB_POOL_SIZE: "20"
+  CACHE_TTL: "3600"
+  RATE_LIMIT_RPM: "1000"
+  
+  # Frontend Configuration
+  API_TIMEOUT: "30000"
+  CACHE_ENABLED: "true"
+  ANALYTICS_ENABLED: "true"
+  
+  # AI Configuration
+  AI_MODEL_TIMEOUT: "10000"
+  VOICE_PROCESSING_TIMEOUT: "5000"
+  RECOMMENDATION_CACHE_TTL: "1800"
+
+---
+# Ingress for External Access
+apiVersion: networking.k8s.io/v1
+kind: Ingress
+metadata:
+  name: aislemarts-ingress
+  namespace: aislemarts-prod
+  annotations:
+    kubernetes.io/ingress.class: "nginx"
+    cert-manager.io/cluster-issuer: "letsencrypt-prod"
+    nginx.ingress.kubernetes.io/ssl-redirect: "true"
+    nginx.ingress.kubernetes.io/proxy-body-size: "50m"
+    nginx.ingress.kubernetes.io/rate-limit: "1000"
+    nginx.ingress.kubernetes.io/limit-connections: "100"
+    nginx.ingress.kubernetes.io/enable-cors: "true"
+    nginx.ingress.kubernetes.io/cors-allow-origin: "https://aislemarts.com, https://app.aislemarts.com"
+spec:
+  tls:
+  - hosts:
+    - api.aislemarts.com
+    - app.aislemarts.com
+    secretName: aislemarts-tls
+  rules:
+  - host: api.aislemarts.com
+    http:
+      paths:
+      - path: /
+        pathType: Prefix
+        backend:
+          service:
+            name: aislemarts-backend
+            port:
+              number: 80
+  - host: app.aislemarts.com
+    http:
+      paths:
+      - path: /
+        pathType: Prefix
+        backend:
+          service:
+            name: aislemarts-frontend
+            port:
+              number: 80
+
+---
+# Service Monitor for Prometheus
+apiVersion: monitoring.coreos.com/v1
+kind: ServiceMonitor
+metadata:
+  name: aislemarts-backend-monitor
+  namespace: aislemarts-prod
+  labels:
+    app: aislemarts-backend
+    release: prometheus
+spec:
+  selector:
+    matchLabels:
+      app: aislemarts-backend
+  endpoints:
+  - port: http
+    path: /metrics
+    interval: 30s
+    scrapeTimeout: 10s
+
+---
+# Resource Quotas for Namespace
+apiVersion: v1
+kind: ResourceQuota
+metadata:
+  name: aislemarts-quota
+  namespace: aislemarts-prod
+spec:
+  hard:
+    requests.cpu: "20"
+    requests.memory: "40Gi"
+    limits.cpu: "50"
+    limits.memory: "100Gi"
+    persistentvolumeclaims: "10"
+    services.loadbalancers: "5"
+    count/deployments.apps: "20"
+
+---
+# Limit Range for Pod Resources
+apiVersion: v1
+kind: LimitRange
+metadata:
+  name: aislemarts-limits
+  namespace: aislemarts-prod
+spec:
+  limits:
+  - default:
+      cpu: "500m"
+      memory: "512Mi"
+    defaultRequest:
+      cpu: "100m"
+      memory: "128Mi"
+    type: Container
+  - max:
+      cpu: "2"
+      memory: "4Gi"
+    min:
+      cpu: "50m"
+      memory: "64Mi"
+    type: Container
+
+---
+# Priority Class for Critical Pods
+apiVersion: scheduling.k8s.io/v1
+kind: PriorityClass
+metadata:
+  name: aislemarts-critical
+value: 1000
+globalDefault: false
+description: "Priority class for critical AisleMarts components"
+
+---
+# Update Priority for Backend Pods
+apiVersion: apps/v1
+kind: Deployment
+metadata:
+  name: aislemarts-backend-priority-patch
+  namespace: aislemarts-prod
+spec:
+  template:
+    spec:
+      priorityClassName: aislemarts-critical
