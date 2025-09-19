@@ -264,8 +264,12 @@ export default function PermissionsOnboarding({
               {!currentPermission.granted ? (
                 <TouchableOpacity
                   style={[styles.primaryButton, isRequesting && styles.buttonDisabled]}
-                  onPress={() => requestPermission(currentPermission)}
+                  onPress={() => {
+                    console.log('🔥 BUTTON PRESSED! Permission:', currentPermission.title);
+                    requestPermission(currentPermission);
+                  }}
                   disabled={isRequesting}
+                  activeOpacity={0.7}
                 >
                   <Text style={styles.primaryButtonText}>
                     {isRequesting ? 'Requesting...' : `Allow ${currentPermission.title}`}
@@ -274,7 +278,11 @@ export default function PermissionsOnboarding({
               ) : (
                 <TouchableOpacity
                   style={styles.primaryButton}
-                  onPress={handleNext}
+                  onPress={() => {
+                    console.log('🔥 NEXT BUTTON PRESSED!');
+                    handleNext();
+                  }}
+                  activeOpacity={0.7}
                 >
                   <Text style={styles.primaryButtonText}>
                     {currentStep < permissions.length - 1 ? 'Next' : 'Complete Setup'}
