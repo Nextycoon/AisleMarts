@@ -18,13 +18,19 @@ export default function PermissionsManager({ children }: PermissionsManagerProps
     try {
       const hasCompletedOnboarding = await AsyncStorage.getItem('permissions_onboarding_completed');
       
+      console.log('Permissions onboarding check:', hasCompletedOnboarding);
+      
       if (!hasCompletedOnboarding) {
         // Show onboarding for first-time users
+        console.log('Showing permissions onboarding for first-time user');
         setShowOnboarding(true);
+      } else {
+        console.log('Permissions onboarding already completed');
       }
     } catch (error) {
       console.error('Error checking onboarding status:', error);
       // Show onboarding on error to be safe
+      console.log('Showing permissions onboarding due to error');
       setShowOnboarding(true);
     } finally {
       setIsLoading(false);
