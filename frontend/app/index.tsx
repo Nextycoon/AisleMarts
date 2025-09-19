@@ -10,26 +10,42 @@ export default function IndexScreen() {
   const [showDebug, setShowDebug] = React.useState(false);
 
   React.useEffect(() => {
-    // Force navigation after maximum 5 seconds to prevent infinite loading
-    const forceNavTimer = setTimeout(() => {
-      console.log('🚨 Force navigation after 5 seconds');
-      router.replace('/aisle-avatar');
-    }, 5000);
+    // Check if user has completed onboarding
+    const checkOnboarding = async () => {
+      try {
+        const hasCompletedOnboarding = await AsyncStorage.getItem('hasCompletedOnboarding');
+        
+        // Force navigation after maximum 3 seconds to prevent infinite loading
+        const forceNavTimer = setTimeout(() => {
+          console.log('🚨 Force navigation after 3 seconds');
+          if (hasCompletedOnboarding === 'true') {
+            router.replace('/aisle-agent');
+          } else {
+            router.replace('/onboarding');
+          }
+        }, 3000);
 
-    if (!loading) {
-      clearTimeout(forceNavTimer);
-      // Navigate based on auth state after loading is complete
-      setTimeout(() => {
-        if (hasCompletedAvatarSetup) {
-          router.replace('/aisle-agent');
-        } else {
-          router.replace('/aisle-avatar');
+        if (!loading) {
+          clearTimeout(forceNavTimer);
+          // Navigate based on onboarding state after loading is complete
+          setTimeout(() => {
+            if (hasCompletedOnboarding === 'true') {
+              router.replace('/aisle-agent');
+            } else {
+              router.replace('/onboarding');
+            }
+          }, 1000); // Small delay to show loading screen
         }
-      }, 1000); // Small delay to show loading screen
-    }
 
-    return () => clearTimeout(forceNavTimer);
-  }, [loading, hasCompletedAvatarSetup]);
+        return () => clearTimeout(forceNavTimer);
+      } catch (error) {
+        console.error('Error checking onboarding status:', error);
+        router.replace('/onboarding');
+      }
+    };
+
+    checkOnboarding();
+  }, [loading]);
 
   const handleDebugTap = () => {
     setShowDebug(true);
