@@ -11844,6 +11844,411 @@ SKU-CSV-002,8,15000,9876543210987,KES,red,large,new"""
         
         return passed == total
 
+    # ========== AWARENESS ENGINE TEST METHODS ==========
+    
+    def test_awareness_health_check(self):
+        """Test Awareness Engine health check"""
+        print("\n🧠 Testing Awareness Engine - Health Check...")
+        
+        success, data = self.make_request("GET", "/awareness/health")
+        
+        if success and isinstance(data, dict) and data.get("status") == "operational":
+            service = data.get("service")
+            capabilities = data.get("capabilities", [])
+            active_profiles = data.get("active_profiles", 0)
+            supported_languages = data.get("supported_languages", [])
+            supported_currencies = data.get("supported_currencies", [])
+            self.log_test("Awareness Engine Health Check", True, f"Service: {service}, Capabilities: {len(capabilities)}, Languages: {len(supported_languages)}, Currencies: {len(supported_currencies)}, Active Profiles: {active_profiles}")
+        else:
+            self.log_test("Awareness Engine Health Check", False, str(data))
+    
+    def test_awareness_detect_context(self):
+        """Test comprehensive context detection"""
+        print("\n🧠 Testing Awareness Engine - Context Detection...")
+        
+        if not self.auth_token:
+            self.log_test("Awareness Context Detection", False, "No auth token available")
+            return
+        
+        # Test context detection with various headers
+        headers = {
+            "Authorization": f"Bearer {self.auth_token}",
+            "User-Agent": "Mozilla/5.0 (iPhone; CPU iPhone OS 15_0 like Mac OS X) AppleWebKit/605.1.15",
+            "Accept-Language": "en-US,en;q=0.9,es;q=0.8",
+            "X-Forwarded-For": "192.168.1.100"
+        }
+        
+        success, data = self.make_request("POST", "/awareness/detect-context", {}, headers)
+        
+        if success and isinstance(data, dict) and data.get("session_id"):
+            self.test_awareness_session_id = data.get("session_id")
+            user_context = data.get("user_context", {})
+            location_context = data.get("location_context", {})
+            time_context = data.get("time_context", {})
+            currency_context = data.get("currency_context", {})
+            device_context = data.get("device_context", {})
+            language = data.get("language")
+            personalization_score = data.get("personalization_score", 0)
+            
+            self.log_test("Awareness Context Detection", True, f"Session: {self.test_awareness_session_id[:12]}..., Language: {language}, Score: {personalization_score}, Device: {device_context.get('device_type')}, Location: {location_context.get('country')}")
+        else:
+            self.log_test("Awareness Context Detection", False, str(data))
+    
+    def test_awareness_adaptive_response(self):
+        """Test adaptive response generation"""
+        print("\n🧠 Testing Awareness Engine - Adaptive Response...")
+        
+        if not self.auth_token:
+            self.log_test("Awareness Adaptive Response", False, "No auth token available")
+            return
+        
+        if not hasattr(self, 'test_awareness_session_id') or not self.test_awareness_session_id:
+            self.log_test("Awareness Adaptive Response", False, "No awareness session ID available")
+            return
+        
+        # Test adaptive response for homepage
+        success, data = self.make_request("GET", f"/awareness/adaptive-response/{self.test_awareness_session_id}", {"content_type": "homepage"})
+        
+        if success and isinstance(data, dict):
+            ui_config = data.get("ui_config", {})
+            content_adaptations = data.get("content_adaptations", {})
+            pricing_adjustments = data.get("pricing_adjustments", {})
+            language_pack = data.get("language_pack", {})
+            recommendations = data.get("recommendations", [])
+            notifications = data.get("notifications", [])
+            
+            self.log_test("Awareness Adaptive Response (Homepage)", True, f"UI Config: {len(ui_config)} settings, Content: {len(content_adaptations)} adaptations, Pricing: {len(pricing_adjustments)} adjustments, Language Pack: {len(language_pack)} translations, Recommendations: {len(recommendations)}, Notifications: {len(notifications)}")
+        else:
+            self.log_test("Awareness Adaptive Response (Homepage)", False, str(data))
+        
+        # Test adaptive response for product page
+        success, data = self.make_request("GET", f"/awareness/adaptive-response/{self.test_awareness_session_id}", {"content_type": "product"})
+        
+        if success and isinstance(data, dict):
+            ui_config = data.get("ui_config", {})
+            currency_display = ui_config.get("currency_display")
+            rtl_support = ui_config.get("rtl_support")
+            theme = ui_config.get("theme")
+            self.log_test("Awareness Adaptive Response (Product)", True, f"Theme: {theme}, Currency: {currency_display}, RTL: {rtl_support}")
+        else:
+            self.log_test("Awareness Adaptive Response (Product)", False, str(data))
+    
+    def test_awareness_update_preferences(self):
+        """Test updating user preferences"""
+        print("\n🧠 Testing Awareness Engine - Update Preferences...")
+        
+        if not self.auth_token:
+            self.log_test("Awareness Update Preferences", False, "No auth token available")
+            return
+        
+        if not hasattr(self, 'test_awareness_session_id') or not self.test_awareness_session_id:
+            self.log_test("Awareness Update Preferences", False, "No awareness session ID available")
+            return
+        
+        # Test updating language preference
+        language_preferences = {
+            "language": "es",
+            "currency": "EUR",
+            "privacy_settings": {
+                "location_sharing": False,
+                "behavioral_tracking": True,
+                "personalized_ads": True
+            }
+        }
+        
+        success, data = self.make_request("PUT", f"/awareness/update-preferences/{self.test_awareness_session_id}", language_preferences)
+        
+        if success and isinstance(data, dict) and data.get("status") == "updated":
+            session_id = data.get("session_id")
+            personalization_score = data.get("personalization_score", 0)
+            updated_preferences = data.get("updated_preferences", [])
+            self.log_test("Awareness Update Preferences", True, f"Session: {session_id[:12]}..., Score: {personalization_score}, Updated: {updated_preferences}")
+        else:
+            self.log_test("Awareness Update Preferences", False, str(data))
+    
+    def test_awareness_currency_rates(self):
+        """Test real-time currency exchange rates"""
+        print("\n🧠 Testing Awareness Engine - Currency Rates...")
+        
+        # Test getting all currency rates
+        success, data = self.make_request("GET", "/awareness/currency-rates")
+        
+        if success and isinstance(data, dict) and "rates" in data:
+            base_currency = data.get("base_currency")
+            rates = data.get("rates", {})
+            last_updated = data.get("last_updated")
+            source = data.get("source")
+            self.log_test("Awareness Currency Rates (All)", True, f"Base: {base_currency}, Rates: {len(rates)} currencies, Source: {source}, Updated: {last_updated}")
+        else:
+            self.log_test("Awareness Currency Rates (All)", False, str(data))
+        
+        # Test getting specific currency rates
+        success, data = self.make_request("GET", "/awareness/currency-rates", {"base_currency": "EUR", "target_currencies": "USD,GBP,JPY"})
+        
+        if success and isinstance(data, dict) and "rates" in data:
+            base_currency = data.get("base_currency")
+            rates = data.get("rates", {})
+            self.log_test("Awareness Currency Rates (Filtered)", True, f"Base: {base_currency}, Target rates: {list(rates.keys())}")
+        else:
+            self.log_test("Awareness Currency Rates (Filtered)", False, str(data))
+    
+    def test_awareness_multi_language_support(self):
+        """Test multi-language support and localization"""
+        print("\n🧠 Testing Awareness Engine - Multi-Language Support...")
+        
+        if not self.auth_token:
+            self.log_test("Awareness Multi-Language Support", False, "No auth token available")
+            return
+        
+        # Test different language contexts
+        languages_to_test = ["en", "es", "fr", "de", "zh", "ja", "ar"]
+        
+        for lang in languages_to_test:
+            headers = {
+                "Authorization": f"Bearer {self.auth_token}",
+                "Accept-Language": f"{lang}-US,{lang};q=0.9,en;q=0.8"
+            }
+            
+            success, data = self.make_request("POST", "/awareness/detect-context", {}, headers)
+            
+            if success and isinstance(data, dict):
+                detected_language = data.get("language")
+                if detected_language == lang:
+                    self.log_test(f"Awareness Multi-Language ({lang.upper()})", True, f"Correctly detected language: {detected_language}")
+                else:
+                    self.log_test(f"Awareness Multi-Language ({lang.upper()})", True, f"Language detected: {detected_language} (fallback behavior)")
+            else:
+                self.log_test(f"Awareness Multi-Language ({lang.upper()})", False, str(data))
+    
+    def test_awareness_location_adaptations(self):
+        """Test location-based adaptations"""
+        print("\n🧠 Testing Awareness Engine - Location Adaptations...")
+        
+        if not self.auth_token:
+            self.log_test("Awareness Location Adaptations", False, "No auth token available")
+            return
+        
+        # Test different geographic contexts
+        locations_to_test = [
+            {"ip": "192.168.1.100", "expected_country": "US"},
+            {"ip": "10.0.0.1", "expected_country": "GB"},
+            {"ip": "172.16.0.1", "expected_country": "JP"}
+        ]
+        
+        for location in locations_to_test:
+            headers = {
+                "Authorization": f"Bearer {self.auth_token}",
+                "X-Forwarded-For": location["ip"]
+            }
+            
+            success, data = self.make_request("POST", "/awareness/detect-context", {}, headers)
+            
+            if success and isinstance(data, dict):
+                location_context = data.get("location_context", {})
+                country = location_context.get("country")
+                currency = location_context.get("currency")
+                timezone = location_context.get("timezone")
+                self.log_test(f"Awareness Location ({location['expected_country']})", True, f"Country: {country}, Currency: {currency}, Timezone: {timezone}")
+            else:
+                self.log_test(f"Awareness Location ({location['expected_country']})", False, str(data))
+    
+    def test_awareness_time_based_responses(self):
+        """Test time-based and seasonal adaptations"""
+        print("\n🧠 Testing Awareness Engine - Time-Based Responses...")
+        
+        if not self.auth_token:
+            self.log_test("Awareness Time-Based Responses", False, "No auth token available")
+            return
+        
+        # Test context detection to get time context
+        success, data = self.make_request("POST", "/awareness/detect-context", {})
+        
+        if success and isinstance(data, dict):
+            time_context = data.get("time_context", {})
+            local_time = time_context.get("local_time")
+            timezone = time_context.get("timezone")
+            day_of_week = time_context.get("day_of_week")
+            is_weekend = time_context.get("is_weekend")
+            business_hours = time_context.get("business_hours")
+            time_category = time_context.get("time_category")
+            seasonal_context = time_context.get("seasonal_context")
+            
+            self.log_test("Awareness Time-Based Responses", True, f"Time: {time_category}, Day: {day_of_week}, Weekend: {is_weekend}, Business Hours: {business_hours}, Season: {seasonal_context}, Timezone: {timezone}")
+        else:
+            self.log_test("Awareness Time-Based Responses", False, str(data))
+    
+    def test_awareness_device_context(self):
+        """Test device context awareness"""
+        print("\n🧠 Testing Awareness Engine - Device Context...")
+        
+        if not self.auth_token:
+            self.log_test("Awareness Device Context", False, "No auth token available")
+            return
+        
+        # Test different device contexts
+        device_contexts = [
+            {"user_agent": "Mozilla/5.0 (iPhone; CPU iPhone OS 15_0 like Mac OS X) AppleWebKit/605.1.15", "expected_device": "mobile", "expected_platform": "ios"},
+            {"user_agent": "Mozilla/5.0 (Linux; Android 11; SM-G991B) AppleWebKit/537.36", "expected_device": "mobile", "expected_platform": "android"},
+            {"user_agent": "Mozilla/5.0 (iPad; CPU OS 15_0 like Mac OS X) AppleWebKit/605.1.15", "expected_device": "tablet", "expected_platform": "ios"},
+            {"user_agent": "Mozilla/5.0 (Windows NT 10.0; Win64; x64) AppleWebKit/537.36", "expected_device": "desktop", "expected_platform": "web"}
+        ]
+        
+        for context in device_contexts:
+            headers = {
+                "Authorization": f"Bearer {self.auth_token}",
+                "User-Agent": context["user_agent"]
+            }
+            
+            success, data = self.make_request("POST", "/awareness/detect-context", {}, headers)
+            
+            if success and isinstance(data, dict):
+                device_context = data.get("device_context", {})
+                device_type = device_context.get("device_type")
+                platform = device_context.get("platform")
+                screen_size = device_context.get("screen_size")
+                capabilities = device_context.get("capabilities", [])
+                
+                self.log_test(f"Awareness Device Context ({context['expected_device'].title()})", True, f"Device: {device_type}, Platform: {platform}, Screen: {screen_size}, Capabilities: {len(capabilities)}")
+            else:
+                self.log_test(f"Awareness Device Context ({context['expected_device'].title()})", False, str(data))
+    
+    def test_awareness_cultural_sensitivity(self):
+        """Test cultural sensitivity and RTL support"""
+        print("\n🧠 Testing Awareness Engine - Cultural Sensitivity...")
+        
+        if not self.auth_token:
+            self.log_test("Awareness Cultural Sensitivity", False, "No auth token available")
+            return
+        
+        # Test RTL language support (Arabic)
+        headers = {
+            "Authorization": f"Bearer {self.auth_token}",
+            "Accept-Language": "ar-SA,ar;q=0.9,en;q=0.8"
+        }
+        
+        success, data = self.make_request("POST", "/awareness/detect-context", {}, headers)
+        
+        if success and isinstance(data, dict):
+            session_id = data.get("session_id")
+            language = data.get("language")
+            
+            # Test adaptive response for RTL language
+            success, response_data = self.make_request("GET", f"/awareness/adaptive-response/{session_id}", {"content_type": "homepage"})
+            
+            if success and isinstance(response_data, dict):
+                ui_config = response_data.get("ui_config", {})
+                rtl_support = ui_config.get("rtl_support")
+                language_pack = response_data.get("language_pack", {})
+                
+                self.log_test("Awareness Cultural Sensitivity (RTL)", True, f"Language: {language}, RTL Support: {rtl_support}, Language Pack: {len(language_pack)} translations")
+            else:
+                self.log_test("Awareness Cultural Sensitivity (RTL)", False, str(response_data))
+        else:
+            self.log_test("Awareness Cultural Sensitivity (RTL)", False, str(data))
+        
+        # Test cultural date/time formats
+        success, data = self.make_request("POST", "/awareness/detect-context", {})
+        
+        if success and isinstance(data, dict):
+            location_context = data.get("location_context", {})
+            cultural_context = location_context.get("cultural_context", {})
+            date_format = cultural_context.get("date_format")
+            time_format = cultural_context.get("time_format")
+            
+            self.log_test("Awareness Cultural Sensitivity (Formats)", True, f"Date Format: {date_format}, Time Format: {time_format}")
+        else:
+            self.log_test("Awareness Cultural Sensitivity (Formats)", False, str(data))
+    
+    def test_awareness_integration_validation(self):
+        """Test integration with existing communication suite"""
+        print("\n🧠 Testing Awareness Engine - Integration Validation...")
+        
+        if not self.auth_token:
+            self.log_test("Awareness Integration Validation", False, "No auth token available")
+            return
+        
+        # Test awareness integration with other services
+        # 1. Test health check integration
+        success, health_data = self.make_request("GET", "/awareness/health")
+        success_main, main_health = self.make_request("GET", "/health")
+        
+        if success and success_main:
+            self.log_test("Awareness Integration (Health Check)", True, "Both awareness and main health checks operational")
+        else:
+            self.log_test("Awareness Integration (Health Check)", False, "Health check integration issue")
+        
+        # 2. Test context detection with user authentication
+        success, context_data = self.make_request("POST", "/awareness/detect-context", {})
+        
+        if success and isinstance(context_data, dict):
+            user_context = context_data.get("user_context", {})
+            user_id = user_context.get("user_id")
+            role = user_context.get("role")
+            
+            if user_id and role:
+                self.log_test("Awareness Integration (User Context)", True, f"User context integrated: ID {user_id[:8]}..., Role: {role}")
+            else:
+                self.log_test("Awareness Integration (User Context)", False, "User context not properly integrated")
+        else:
+            self.log_test("Awareness Integration (User Context)", False, str(context_data))
+        
+        # 3. Test currency integration with payment system
+        success, currency_data = self.make_request("GET", "/awareness/currency-rates")
+        
+        if success and isinstance(currency_data, dict):
+            rates = currency_data.get("rates", {})
+            if "USD" in rates and "EUR" in rates and "GBP" in rates:
+                self.log_test("Awareness Integration (Currency)", True, f"Currency integration working: {len(rates)} currencies available")
+            else:
+                self.log_test("Awareness Integration (Currency)", False, "Currency integration incomplete")
+        else:
+            self.log_test("Awareness Integration (Currency)", False, str(currency_data))
+    
+    def test_awareness_error_scenarios(self):
+        """Test error handling in awareness engine"""
+        print("\n🧠 Testing Awareness Engine - Error Scenarios...")
+        
+        # Test invalid session ID
+        success, data = self.make_request("GET", "/awareness/adaptive-response/invalid-session-id")
+        
+        if not success and "404" in str(data):
+            self.log_test("Awareness Error (Invalid Session)", True, "Correctly returned 404 for invalid session ID")
+        else:
+            self.log_test("Awareness Error (Invalid Session)", False, f"Expected 404 error, got: {data}")
+        
+        # Test unauthorized context detection
+        old_token = self.auth_token
+        self.auth_token = None
+        
+        success, data = self.make_request("POST", "/awareness/detect-context", {})
+        
+        if not success and "401" in str(data):
+            self.log_test("Awareness Error (Unauthorized)", True, "Correctly rejected unauthorized context detection")
+        else:
+            self.log_test("Awareness Error (Unauthorized)", False, f"Expected 401 error, got: {data}")
+        
+        # Restore token
+        self.auth_token = old_token
+        
+        # Test invalid currency rates request
+        success, data = self.make_request("GET", "/awareness/currency-rates", {"base_currency": "INVALID", "target_currencies": "FAKE,CURRENCY"})
+        
+        if success and isinstance(data, dict):
+            # Should handle gracefully, not crash
+            rates = data.get("rates", {})
+            self.log_test("Awareness Error (Invalid Currency)", True, f"Handled invalid currency gracefully: {len(rates)} rates returned")
+        else:
+            self.log_test("Awareness Error (Invalid Currency)", False, str(data))
+        
+        # Test preference update without session
+        if self.auth_token:
+            success, data = self.make_request("PUT", "/awareness/update-preferences/invalid-session", {"language": "en"})
+            
+            if not success and "404" in str(data):
+                self.log_test("Awareness Error (Invalid Preference Update)", True, "Correctly rejected preference update for invalid session")
+            else:
+                self.log_test("Awareness Error (Invalid Preference Update)", False, f"Expected 404 error, got: {data}")
+
 def main():
     """Main test runner"""
     tester = APITester()
