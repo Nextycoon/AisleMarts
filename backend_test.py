@@ -9468,6 +9468,355 @@ SKU-CSV-002,8,15000,9876543210987,KES,red,large,new"""
         else:
             self.log_test("Budget Constraint (High Budget)", False, str(data))
 
+    # ========== NEWLY IMPLEMENTED FEATURES TESTS ==========
+    
+    def test_advanced_ai_recommendations_health(self):
+        """Test Advanced AI Recommendations System health check"""
+        print("\n🤖 Testing Advanced AI Recommendations - Health Check...")
+        
+        success, data = self.make_request("GET", "/ai/advanced/health")
+        
+        if success and isinstance(data, dict) and data.get("status") == "operational":
+            service = data.get("service", "unknown")
+            features = data.get("features", {})
+            self.log_test("Advanced AI Recommendations Health", True, f"Service: {service}, Features: {len(features)}")
+        else:
+            self.log_test("Advanced AI Recommendations Health", False, str(data))
+    
+    def test_advanced_ai_recommendations_generate(self):
+        """Test Advanced AI Recommendations generation"""
+        print("\n🤖 Testing Advanced AI Recommendations - Generate...")
+        
+        if not self.auth_token:
+            self.log_test("Advanced AI Recommendations Generate", False, "No auth token available")
+            return
+        
+        recommendations_request = {
+            "user_preferences": {
+                "categories": ["electronics", "fashion"],
+                "budget_range": {"min": 50, "max": 500},
+                "style": "luxury"
+            },
+            "context": {
+                "occasion": "work",
+                "season": "winter"
+            },
+            "max_results": 5
+        }
+        
+        success, data = self.make_request("POST", "/ai/advanced/recommendations", recommendations_request)
+        
+        if success and isinstance(data, dict) and "recommendations" in data:
+            recommendations = data.get("recommendations", [])
+            ai_reasoning = data.get("ai_reasoning", "")
+            confidence_score = data.get("confidence_score", 0)
+            self.log_test("Advanced AI Recommendations Generate", True, f"Generated {len(recommendations)} recommendations, confidence: {confidence_score}")
+        else:
+            self.log_test("Advanced AI Recommendations Generate", False, str(data))
+    
+    def test_advanced_ai_trending_insights(self):
+        """Test Advanced AI Trending Insights"""
+        print("\n🤖 Testing Advanced AI Recommendations - Trending Insights...")
+        
+        success, data = self.make_request("GET", "/ai/advanced/trending-insights")
+        
+        if success and isinstance(data, dict) and "insights" in data:
+            insights = data.get("insights", [])
+            categories = data.get("trending_categories", [])
+            self.log_test("Advanced AI Trending Insights", True, f"Found {len(insights)} insights, {len(categories)} trending categories")
+        else:
+            self.log_test("Advanced AI Trending Insights", False, str(data))
+    
+    def test_advanced_ai_smart_search(self):
+        """Test Advanced AI Smart Search"""
+        print("\n🤖 Testing Advanced AI Recommendations - Smart Search...")
+        
+        smart_search_request = {
+            "query": "luxury headphones for work",
+            "filters": {
+                "price_range": {"min": 100, "max": 300},
+                "brand_preference": "premium"
+            },
+            "user_context": {
+                "previous_purchases": ["electronics"],
+                "browsing_history": ["audio", "tech"]
+            }
+        }
+        
+        success, data = self.make_request("POST", "/ai/advanced/smart-search", smart_search_request)
+        
+        if success and isinstance(data, dict) and "results" in data:
+            results = data.get("results", [])
+            search_insights = data.get("search_insights", {})
+            self.log_test("Advanced AI Smart Search", True, f"Found {len(results)} results with AI insights")
+        else:
+            self.log_test("Advanced AI Smart Search", False, str(data))
+    
+    def test_performance_analytics_health(self):
+        """Test Performance Analytics System health check"""
+        print("\n📊 Testing Performance Analytics - Health Check...")
+        
+        success, data = self.make_request("GET", "/analytics/performance/health")
+        
+        if success and isinstance(data, dict) and data.get("status") == "operational":
+            service = data.get("service", "unknown")
+            metrics_count = data.get("metrics_available", 0)
+            self.log_test("Performance Analytics Health", True, f"Service: {service}, Metrics: {metrics_count}")
+        else:
+            self.log_test("Performance Analytics Health", False, str(data))
+    
+    def test_performance_analytics_realtime(self):
+        """Test Performance Analytics real-time metrics"""
+        print("\n📊 Testing Performance Analytics - Real-time Metrics...")
+        
+        success, data = self.make_request("GET", "/analytics/performance/realtime")
+        
+        if success and isinstance(data, dict) and "metrics" in data:
+            metrics = data.get("metrics", {})
+            active_users = metrics.get("active_users", 0)
+            requests_per_minute = metrics.get("requests_per_minute", 0)
+            self.log_test("Performance Analytics Real-time", True, f"Active users: {active_users}, RPM: {requests_per_minute}")
+        else:
+            self.log_test("Performance Analytics Real-time", False, str(data))
+    
+    def test_performance_analytics_analytics(self):
+        """Test Performance Analytics comprehensive analytics"""
+        print("\n📊 Testing Performance Analytics - Analytics...")
+        
+        success, data = self.make_request("GET", "/analytics/performance/analytics")
+        
+        if success and isinstance(data, dict) and "analytics" in data:
+            analytics = data.get("analytics", {})
+            performance_score = analytics.get("performance_score", 0)
+            bottlenecks = analytics.get("bottlenecks", [])
+            self.log_test("Performance Analytics Analytics", True, f"Performance score: {performance_score}, Bottlenecks: {len(bottlenecks)}")
+        else:
+            self.log_test("Performance Analytics Analytics", False, str(data))
+    
+    def test_performance_analytics_system_health(self):
+        """Test Performance Analytics system health"""
+        print("\n📊 Testing Performance Analytics - System Health...")
+        
+        success, data = self.make_request("GET", "/analytics/performance/system-health")
+        
+        if success and isinstance(data, dict) and "health" in data:
+            health = data.get("health", {})
+            cpu_usage = health.get("cpu_usage", 0)
+            memory_usage = health.get("memory_usage", 0)
+            disk_usage = health.get("disk_usage", 0)
+            self.log_test("Performance Analytics System Health", True, f"CPU: {cpu_usage}%, Memory: {memory_usage}%, Disk: {disk_usage}%")
+        else:
+            self.log_test("Performance Analytics System Health", False, str(data))
+    
+    def test_performance_analytics_feature_usage(self):
+        """Test Performance Analytics feature usage"""
+        print("\n📊 Testing Performance Analytics - Feature Usage...")
+        
+        success, data = self.make_request("GET", "/analytics/performance/feature-usage")
+        
+        if success and isinstance(data, dict) and "features" in data:
+            features = data.get("features", {})
+            most_used = data.get("most_used_feature", "unknown")
+            self.log_test("Performance Analytics Feature Usage", True, f"Tracking {len(features)} features, most used: {most_used}")
+        else:
+            self.log_test("Performance Analytics Feature Usage", False, str(data))
+    
+    def test_performance_analytics_alerts(self):
+        """Test Performance Analytics alerts"""
+        print("\n📊 Testing Performance Analytics - Alerts...")
+        
+        success, data = self.make_request("GET", "/analytics/performance/alerts")
+        
+        if success and isinstance(data, dict) and "alerts" in data:
+            alerts = data.get("alerts", [])
+            active_alerts = [alert for alert in alerts if alert.get("status") == "active"]
+            self.log_test("Performance Analytics Alerts", True, f"Total alerts: {len(alerts)}, Active: {len(active_alerts)}")
+        else:
+            self.log_test("Performance Analytics Alerts", False, str(data))
+    
+    def test_business_livesale_fixed_schema(self):
+        """Test Fixed Business LiveSale System with correct product_id structure"""
+        print("\n🛍️ Testing Business LiveSale - Fixed Schema...")
+        
+        if not self.auth_token:
+            self.log_test("Business LiveSale Fixed Schema", False, "No auth token available")
+            return
+        
+        # Test with correct product_id structure (should be string, not object)
+        livesale_data = {
+            "title": "Luxury Electronics Sale",
+            "description": "Premium headphones and accessories",
+            "product_id": "prod_headphones_001",  # Fixed: string instead of object
+            "start_time": "2024-01-15T10:00:00Z",
+            "duration_minutes": 60,
+            "max_participants": 100,
+            "starting_price": 299.99,
+            "reserve_price": 250.00
+        }
+        
+        success, data = self.make_request("POST", "/livesale/biz/livesales", livesale_data)
+        
+        if success and isinstance(data, dict) and data.get("id"):
+            livesale_id = data.get("id")
+            title = data.get("title")
+            product_id = data.get("product_id")
+            self.log_test("Business LiveSale Fixed Schema", True, f"Created LiveSale '{title}' with product_id: {product_id}")
+            self.test_livesale_id = livesale_id
+        else:
+            self.log_test("Business LiveSale Fixed Schema", False, str(data))
+    
+    def test_voice_video_calls_validation(self):
+        """Test Voice/Video Calls System with schema validation"""
+        print("\n📞 Testing Voice/Video Calls - Schema Validation...")
+        
+        if not self.auth_token:
+            self.log_test("Voice/Video Calls Schema Validation", False, "No auth token available")
+            return
+        
+        # Test call initiation with correct schema (callee_id field)
+        call_data = {
+            "callee_id": "user_alice_123",  # Correct field name
+            "call_type": "video",
+            "metadata": {
+                "quality": "hd",
+                "encryption": True
+            }
+        }
+        
+        success, data = self.make_request("POST", "/calls/initiate", call_data)
+        
+        if success and isinstance(data, dict) and data.get("call_id"):
+            call_id = data.get("call_id")
+            caller_id = data.get("caller_id")
+            callee_id = data.get("callee_id")
+            call_type = data.get("call_type")
+            self.log_test("Voice/Video Calls Schema Validation", True, f"Call initiated: {call_id}, {caller_id} -> {callee_id}, type: {call_type}")
+            self.test_call_id = call_id
+        else:
+            self.log_test("Voice/Video Calls Schema Validation", False, str(data))
+    
+    def test_channels_groups_validation(self):
+        """Test Channels & Groups System with schema validation"""
+        print("\n📢 Testing Channels & Groups - Schema Validation...")
+        
+        if not self.auth_token:
+            self.log_test("Channels & Groups Schema Validation", False, "No auth token available")
+            return
+        
+        # Test channel creation with correct schema (type field)
+        channel_data = {
+            "type": "group",  # Correct field name
+            "title": "Tech Enthusiasts",
+            "description": "Discussion about latest technology trends",
+            "privacy": "public",
+            "theme": "gold"
+        }
+        
+        success, data = self.make_request("POST", "/channels", channel_data)
+        
+        if success and isinstance(data, dict) and data.get("id"):
+            channel_id = data.get("id")
+            title = data.get("title")
+            channel_type = data.get("type")
+            owner_id = data.get("owner_id")
+            self.log_test("Channels & Groups Schema Validation", True, f"Created {channel_type} channel '{title}', owner: {owner_id}")
+            self.test_channel_id = channel_id
+        else:
+            self.log_test("Channels & Groups Schema Validation", False, str(data))
+    
+    def test_mood_to_cart_comprehensive(self):
+        """Test AI Mood-to-Cart System comprehensive validation"""
+        print("\n🎭 Testing AI Mood-to-Cart - Comprehensive Validation...")
+        
+        # Test health check
+        success, data = self.make_request("GET", "/mood/health")
+        
+        if success and isinstance(data, dict) and data.get("status") == "operational":
+            service = data.get("service", "unknown")
+            moods_count = data.get("moods_available", 0)
+            llm_integration = data.get("llm_integration", "unknown")
+            self.log_test("Mood-to-Cart Health Check", True, f"Service: {service}, Moods: {moods_count}, LLM: {llm_integration}")
+        else:
+            self.log_test("Mood-to-Cart Health Check", False, str(data))
+        
+        # Test mood profiles
+        success, data = self.make_request("GET", "/mood/moods")
+        
+        if success and isinstance(data, list) and len(data) > 0:
+            moods = [mood.get("name", "unknown") for mood in data]
+            self.log_test("Mood-to-Cart Profiles", True, f"Available moods: {', '.join(moods[:5])}")
+        else:
+            self.log_test("Mood-to-Cart Profiles", False, str(data))
+        
+        # Test cart generation for luxurious mood
+        cart_request = {
+            "mood": "luxurious",
+            "budget": {"min": 100, "max": 1000},
+            "preferences": {
+                "categories": ["electronics", "fashion"],
+                "style": "premium"
+            }
+        }
+        
+        success, data = self.make_request("POST", "/mood/generate-cart", cart_request)
+        
+        if success and isinstance(data, dict) and "items" in data:
+            items = data.get("items", [])
+            total = data.get("total", 0)
+            ai_reasoning = data.get("ai_reasoning", "")
+            mood_match = data.get("mood_match_score", 0)
+            self.log_test("Mood-to-Cart Generation", True, f"Generated {len(items)} items, total: ${total}, mood match: {mood_match}")
+        else:
+            self.log_test("Mood-to-Cart Generation", False, str(data))
+        
+        # Test mood preview
+        success, data = self.make_request("GET", "/mood/mood/luxurious/preview")
+        
+        if success and isinstance(data, dict) and "preview_items" in data:
+            preview_items = data.get("preview_items", [])
+            avg_price = data.get("average_price", 0)
+            self.log_test("Mood-to-Cart Preview", True, f"Preview: {len(preview_items)} items, avg price: ${avg_price}")
+        else:
+            self.log_test("Mood-to-Cart Preview", False, str(data))
+    
+    def test_business_leads_kanban_validation(self):
+        """Test Business Leads Kanban System validation"""
+        print("\n📋 Testing Business Leads Kanban - Validation...")
+        
+        if not self.auth_token:
+            self.log_test("Business Leads Kanban Validation", False, "No auth token available")
+            return
+        
+        # Test leads listing
+        success, data = self.make_request("GET", "/biz/leads")
+        
+        if success and isinstance(data, list):
+            leads_count = len(data)
+            self.log_test("Business Leads List", True, f"Found {leads_count} leads")
+        else:
+            self.log_test("Business Leads List", False, str(data))
+        
+        # Test leads analytics
+        success, data = self.make_request("GET", "/biz/leads/analytics")
+        
+        if success and isinstance(data, dict) and "analytics" in data:
+            analytics = data.get("analytics", {})
+            total_leads = analytics.get("total_leads", 0)
+            conversion_rate = analytics.get("conversion_rate", 0)
+            self.log_test("Business Leads Analytics", True, f"Total leads: {total_leads}, conversion: {conversion_rate}%")
+        else:
+            self.log_test("Business Leads Analytics", False, str(data))
+        
+        # Test Kanban summary
+        success, data = self.make_request("GET", "/biz/leads/kanban/summary")
+        
+        if success and isinstance(data, dict) and "columns" in data:
+            columns = data.get("columns", [])
+            column_names = [col.get("name", "unknown") for col in columns]
+            self.log_test("Business Leads Kanban Summary", True, f"Kanban columns: {', '.join(column_names)}")
+        else:
+            self.log_test("Business Leads Kanban Summary", False, str(data))
+
     def run_all_tests(self):
         """Run all tests in sequence - PHASE 2 CRITICAL INTEGRATION FOCUS"""
         print(f"🚀 Starting AisleMarts Backend API Tests - TRACK C AI SUPERCHARGE VALIDATION")
