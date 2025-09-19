@@ -17,12 +17,19 @@ class WebRTCManager {
   private remoteStream: MediaStream | null = null;
   private onRemoteStreamCallback?: (stream: MediaStream) => void;
   private onICECandidateCallback?: (candidate: ICECandidate) => void;
+  private onConnectionStateChangeCallback?: (state: RTCPeerConnectionState) => void;
+  private onDataChannelCallback?: (channel: RTCDataChannel) => void;
+  private dataChannel: RTCDataChannel | null = null;
+  private callQuality: 'excellent' | 'good' | 'fair' | 'poor' = 'excellent';
+  private networkStats: { bitrate: number; packetLoss: number; latency: number } = { bitrate: 0, packetLoss: 0, latency: 0 };
 
-  // ICE server configuration
+  // ICE server configuration with multiple STUN servers for better connectivity
   private iceServers = [
     { urls: 'stun:stun.l.google.com:19302' },
     { urls: 'stun:stun1.l.google.com:19302' },
-    // Add TURN servers for production
+    { urls: 'stun:stun.voip.blackberry.com:3478' },
+    { urls: 'stun:openrelay.metered.ca:80' },
+    // TURN servers for production (when available)
     // {
     //   urls: 'turn:your-turn-server.com:3478',
     //   username: 'your-username',
