@@ -8641,6 +8641,338 @@ SKU-CSV-002,8,15000,9876543210987,KES,red,large,new"""
         else:
             self.log_test("Business KPI Monitoring Integration", False, f"Only tracked {successful_intent_tracking}/{len(test_queries)} intent metrics")
 
+    # ========== AI MOOD-TO-CART™ SYSTEM TESTS ==========
+    
+    def test_mood_health_check(self):
+        """Test Mood-to-Cart system health check"""
+        print("\n🎭 Testing AI Mood-to-Cart™ Health Check...")
+        
+        success, data = self.make_request("GET", "/mood/health")
+        
+        if success and isinstance(data, dict) and data.get("status") == "operational":
+            service = data.get("service")
+            available_moods = data.get("available_moods", 0)
+            product_categories = data.get("product_categories", 0)
+            ai_integration = data.get("ai_integration")
+            self.log_test("Mood-to-Cart Health Check", True, f"Service: {service}, Moods: {available_moods}, Categories: {product_categories}, AI: {ai_integration}")
+        else:
+            self.log_test("Mood-to-Cart Health Check", False, str(data))
+    
+    def test_mood_profiles_listing(self):
+        """Test getting all available mood profiles"""
+        print("\n🎭 Testing Available Mood Profiles...")
+        
+        success, data = self.make_request("GET", "/mood/moods")
+        
+        if success and isinstance(data, dict) and data.get("success") is True:
+            moods = data.get("moods", [])
+            mood_count = len(moods)
+            
+            # Verify mood structure
+            if moods:
+                first_mood = moods[0]
+                required_fields = ["id", "name", "description", "color", "categories"]
+                has_all_fields = all(field in first_mood for field in required_fields)
+                
+                if has_all_fields:
+                    mood_names = [mood.get("name") for mood in moods]
+                    self.log_test("Available Mood Profiles", True, f"Found {mood_count} moods: {', '.join(mood_names[:3])}...")
+                else:
+                    missing_fields = [field for field in required_fields if field not in first_mood]
+                    self.log_test("Available Mood Profiles", False, f"Missing fields in mood data: {missing_fields}")
+            else:
+                self.log_test("Available Mood Profiles", False, "No moods returned")
+        else:
+            self.log_test("Available Mood Profiles", False, str(data))
+    
+    def test_mood_cart_generation_luxurious(self):
+        """Test AI-powered cart generation for luxurious mood"""
+        print("\n🎭 Testing AI Cart Generation (Luxurious Mood)...")
+        
+        cart_request = {
+            "mood": "luxurious",
+            "budget_max": 1000.0,
+            "categories": ["fashion", "home", "tech"],
+            "user_preferences": {
+                "style": "sophisticated",
+                "quality": "premium"
+            }
+        }
+        
+        success, data = self.make_request("POST", "/mood/generate-cart", cart_request)
+        
+        if success and isinstance(data, dict):
+            # Check response structure
+            required_fields = ["mood", "recommendations", "cart_total", "ai_insight", "personalization_note"]
+            has_all_fields = all(field in data for field in required_fields)
+            
+            if has_all_fields:
+                mood_info = data.get("mood", {})
+                recommendations = data.get("recommendations", [])
+                cart_total = data.get("cart_total", 0)
+                ai_insight = data.get("ai_insight", "")
+                
+                # Verify mood info
+                mood_name = mood_info.get("name")
+                mood_color = mood_info.get("color")
+                
+                # Verify recommendations structure
+                if recommendations:
+                    first_rec = recommendations[0]
+                    rec_fields = ["id", "name", "brand", "price", "image", "tags", "ai_reasoning", "mood_match_score"]
+                    has_rec_fields = all(field in first_rec for field in rec_fields)
+                    
+                    if has_rec_fields:
+                        rec_count = len(recommendations)
+                        avg_price = cart_total / rec_count if rec_count > 0 else 0
+                        ai_reasoning_length = len(first_rec.get("ai_reasoning", ""))
+                        
+                        self.log_test("AI Cart Generation (Luxurious)", True, 
+                                    f"Generated {rec_count} items, Total: ${cart_total:.2f}, Avg: ${avg_price:.2f}, AI reasoning: {ai_reasoning_length} chars, Insight provided: {len(ai_insight) > 0}")
+                    else:
+                        missing_rec_fields = [field for field in rec_fields if field not in first_rec]
+                        self.log_test("AI Cart Generation (Luxurious)", False, f"Missing recommendation fields: {missing_rec_fields}")
+                else:
+                    self.log_test("AI Cart Generation (Luxurious)", False, "No recommendations generated")
+            else:
+                missing_fields = [field for field in required_fields if field not in data]
+                self.log_test("AI Cart Generation (Luxurious)", False, f"Missing response fields: {missing_fields}")
+        else:
+            self.log_test("AI Cart Generation (Luxurious)", False, str(data))
+    
+    def test_mood_cart_generation_deals(self):
+        """Test AI-powered cart generation for deal hunter mood"""
+        print("\n🎭 Testing AI Cart Generation (Deal Hunter Mood)...")
+        
+        cart_request = {
+            "mood": "deals",
+            "budget_max": 300.0,
+            "categories": ["tech", "home"],
+            "user_preferences": {
+                "value": "high",
+                "budget_conscious": True
+            }
+        }
+        
+        success, data = self.make_request("POST", "/mood/generate-cart", cart_request)
+        
+        if success and isinstance(data, dict) and "recommendations" in data:
+            recommendations = data.get("recommendations", [])
+            cart_total = data.get("cart_total", 0)
+            mood_info = data.get("mood", {})
+            
+            # Verify budget adherence
+            within_budget = cart_total <= 300.0
+            
+            # Check if it's actually deal-focused (lower prices)
+            if recommendations:
+                avg_price = cart_total / len(recommendations)
+                deal_focused = avg_price < 200  # Should be lower for deal hunter mood
+                
+                self.log_test("AI Cart Generation (Deal Hunter)", True, 
+                            f"Generated {len(recommendations)} items, Total: ${cart_total:.2f}, Within budget: {within_budget}, Deal-focused: {deal_focused}")
+            else:
+                self.log_test("AI Cart Generation (Deal Hunter)", False, "No recommendations generated for deal hunter mood")
+        else:
+            self.log_test("AI Cart Generation (Deal Hunter)", False, str(data))
+    
+    def test_mood_cart_generation_minimalist(self):
+        """Test AI-powered cart generation for minimalist mood"""
+        print("\n🎭 Testing AI Cart Generation (Minimalist Mood)...")
+        
+        cart_request = {
+            "mood": "minimalist",
+            "budget_max": 500.0,
+            "categories": ["home", "fashion"],
+            "user_preferences": {
+                "style": "clean",
+                "functionality": "high"
+            }
+        }
+        
+        success, data = self.make_request("POST", "/mood/generate-cart", cart_request)
+        
+        if success and isinstance(data, dict) and "recommendations" in data:
+            recommendations = data.get("recommendations", [])
+            cart_total = data.get("cart_total", 0)
+            ai_insight = data.get("ai_insight", "")
+            personalization_note = data.get("personalization_note", "")
+            
+            # Check AI reasoning quality
+            if recommendations:
+                first_rec = recommendations[0]
+                ai_reasoning = first_rec.get("ai_reasoning", "")
+                mood_match_score = first_rec.get("mood_match_score", 0)
+                
+                # Verify AI reasoning mentions minimalist concepts
+                minimalist_keywords = ["clean", "simple", "minimal", "functional", "timeless"]
+                has_minimalist_context = any(keyword in ai_reasoning.lower() for keyword in minimalist_keywords)
+                
+                self.log_test("AI Cart Generation (Minimalist)", True, 
+                            f"Generated {len(recommendations)} items, Total: ${cart_total:.2f}, Match score: {mood_match_score:.1f}%, AI context: {has_minimalist_context}")
+            else:
+                self.log_test("AI Cart Generation (Minimalist)", False, "No recommendations generated for minimalist mood")
+        else:
+            self.log_test("AI Cart Generation (Minimalist)", False, str(data))
+    
+    def test_mood_preview_luxurious(self):
+        """Test mood preview for luxurious mood"""
+        print("\n🎭 Testing Mood Preview (Luxurious)...")
+        
+        success, data = self.make_request("GET", "/mood/mood/luxurious/preview", {"limit": 3})
+        
+        if success and isinstance(data, dict) and data.get("success") is True:
+            mood_info = data.get("mood", {})
+            preview_products = data.get("preview_products", [])
+            total_available = data.get("total_available", 0)
+            
+            # Verify mood info
+            mood_name = mood_info.get("name")
+            mood_description = mood_info.get("description")
+            
+            # Verify preview products
+            if preview_products:
+                first_product = preview_products[0]
+                product_fields = ["id", "name", "brand", "price", "image", "tags", "category"]
+                has_product_fields = all(field in first_product for field in product_fields)
+                
+                if has_product_fields:
+                    preview_count = len(preview_products)
+                    avg_price = sum(p.get("price", 0) for p in preview_products) / preview_count
+                    
+                    self.log_test("Mood Preview (Luxurious)", True, 
+                                f"Mood: {mood_name}, Preview: {preview_count} items, Avg price: ${avg_price:.2f}, Total available: {total_available}")
+                else:
+                    missing_fields = [field for field in product_fields if field not in first_product]
+                    self.log_test("Mood Preview (Luxurious)", False, f"Missing product fields: {missing_fields}")
+            else:
+                self.log_test("Mood Preview (Luxurious)", False, "No preview products returned")
+        else:
+            self.log_test("Mood Preview (Luxurious)", False, str(data))
+    
+    def test_mood_cart_invalid_mood(self):
+        """Test cart generation with invalid mood"""
+        print("\n🎭 Testing Invalid Mood Handling...")
+        
+        invalid_request = {
+            "mood": "invalid_mood",
+            "budget_max": 500.0
+        }
+        
+        success, data = self.make_request("POST", "/mood/generate-cart", invalid_request)
+        
+        if not success and "400" in str(data):
+            self.log_test("Invalid Mood Handling", True, "Correctly rejected invalid mood with 400 error")
+        else:
+            self.log_test("Invalid Mood Handling", False, f"Expected 400 error for invalid mood, got: {data}")
+    
+    def test_mood_preview_invalid_mood(self):
+        """Test mood preview with invalid mood ID"""
+        print("\n🎭 Testing Invalid Mood Preview...")
+        
+        success, data = self.make_request("GET", "/mood/mood/invalid_mood/preview")
+        
+        if not success and "400" in str(data):
+            self.log_test("Invalid Mood Preview", True, "Correctly rejected invalid mood ID with 400 error")
+        else:
+            self.log_test("Invalid Mood Preview", False, f"Expected 400 error for invalid mood ID, got: {data}")
+    
+    def test_mood_ai_integration(self):
+        """Test AI integration quality and response times"""
+        print("\n🎭 Testing AI Integration Quality...")
+        
+        import time
+        
+        # Test with innovative mood for tech focus
+        cart_request = {
+            "mood": "innovative",
+            "budget_max": 800.0,
+            "categories": ["tech"],
+            "user_preferences": {
+                "tech_level": "advanced",
+                "innovation": "cutting_edge"
+            }
+        }
+        
+        start_time = time.time()
+        success, data = self.make_request("POST", "/mood/generate-cart", cart_request)
+        response_time = time.time() - start_time
+        
+        if success and isinstance(data, dict) and "recommendations" in data:
+            recommendations = data.get("recommendations", [])
+            ai_insight = data.get("ai_insight", "")
+            
+            # Check AI quality metrics
+            if recommendations:
+                # Check AI reasoning quality
+                ai_reasoning_lengths = [len(rec.get("ai_reasoning", "")) for rec in recommendations]
+                avg_reasoning_length = sum(ai_reasoning_lengths) / len(ai_reasoning_lengths)
+                
+                # Check mood match scores
+                mood_scores = [rec.get("mood_match_score", 0) for rec in recommendations]
+                avg_mood_score = sum(mood_scores) / len(mood_scores)
+                
+                # Check if AI insight is substantial
+                insight_quality = len(ai_insight) > 100  # Should be substantial
+                
+                self.log_test("AI Integration Quality", True, 
+                            f"Response time: {response_time:.2f}s, Avg reasoning: {avg_reasoning_length:.0f} chars, Avg mood score: {avg_mood_score:.1f}%, Insight quality: {insight_quality}")
+            else:
+                self.log_test("AI Integration Quality", False, "No recommendations to analyze AI quality")
+        else:
+            self.log_test("AI Integration Quality", False, str(data))
+    
+    def test_mood_budget_constraints(self):
+        """Test budget constraint handling"""
+        print("\n🎭 Testing Budget Constraint Handling...")
+        
+        # Test with very low budget
+        low_budget_request = {
+            "mood": "luxurious",
+            "budget_max": 50.0,  # Very low budget for luxury items
+            "categories": ["fashion", "home"]
+        }
+        
+        success, data = self.make_request("POST", "/mood/generate-cart", low_budget_request)
+        
+        if success and isinstance(data, dict):
+            recommendations = data.get("recommendations", [])
+            cart_total = data.get("cart_total", 0)
+            
+            # Should either have no recommendations or very few within budget
+            within_budget = cart_total <= 50.0
+            
+            if recommendations:
+                self.log_test("Budget Constraint (Low Budget)", True, 
+                            f"Generated {len(recommendations)} items within ${cart_total:.2f} budget, Within limit: {within_budget}")
+            else:
+                self.log_test("Budget Constraint (Low Budget)", True, "Correctly handled low budget with no recommendations")
+        else:
+            self.log_test("Budget Constraint (Low Budget)", False, str(data))
+        
+        # Test with high budget
+        high_budget_request = {
+            "mood": "luxurious",
+            "budget_max": 5000.0,  # High budget
+            "categories": ["fashion", "home", "tech"]
+        }
+        
+        success, data = self.make_request("POST", "/mood/generate-cart", high_budget_request)
+        
+        if success and isinstance(data, dict):
+            recommendations = data.get("recommendations", [])
+            cart_total = data.get("cart_total", 0)
+            
+            # Should have more recommendations with higher budget
+            if recommendations:
+                avg_price = cart_total / len(recommendations)
+                self.log_test("Budget Constraint (High Budget)", True, 
+                            f"Generated {len(recommendations)} items, Total: ${cart_total:.2f}, Avg: ${avg_price:.2f}")
+            else:
+                self.log_test("Budget Constraint (High Budget)", False, "No recommendations generated with high budget")
+        else:
+            self.log_test("Budget Constraint (High Budget)", False, str(data))
+
     def run_all_tests(self):
         """Run all tests in sequence - PHASE 2 CRITICAL INTEGRATION FOCUS"""
         print(f"🚀 Starting AisleMarts Backend API Tests - TRACK C AI SUPERCHARGE VALIDATION")
