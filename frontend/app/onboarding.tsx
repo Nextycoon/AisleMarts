@@ -508,7 +508,7 @@ function StepAuth({
       title={mode === "signin" ? "Welcome back" : "Create your account"}
       subtitle="Use email or continue with Apple / Google."
       step={1}
-      total={6}
+      total={7}
     >
       <View style={{ gap: 10 }}>
         <TextInput placeholder="Email" placeholderTextColor="#777" style={ti} autoCapitalize="none" keyboardType="email-address" onChangeText={setEmail} value={email} />
