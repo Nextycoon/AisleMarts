@@ -1,6 +1,9 @@
 import json, asyncio
 from fastapi import APIRouter
-from ..db import db
+import sys
+import os
+sys.path.append(os.path.dirname(os.path.dirname(__file__)))
+from db import db
 
 router = APIRouter(prefix="/api/products", tags=["products"])
 
