@@ -6,27 +6,23 @@ import json
 import logging
 import asyncio
 from collections import defaultdict
+import sys
+import os
 
-# Fix imports to work with the current structure
-try:
-    from routers.deps import get_db
-    from security import get_current_user
-    from models.conversation import (
-        ConversationModel, MessageModel, CreateConversationRequest, 
-        SendMessageRequest, TypingIndicatorRequest, ReadReceiptRequest,
-        WSMessage, WSMessageType
-    )
-    from services.dm_service import DMService
-except ImportError:
-    # Fallback imports
-    from .deps import get_db
-    from ..security import get_current_user
-    from ..models.conversation import (
-        ConversationModel, MessageModel, CreateConversationRequest, 
-        SendMessageRequest, TypingIndicatorRequest, ReadReceiptRequest,
-        WSMessage, WSMessageType
-    )
-    from ..services.dm_service import DMService
+# Add the backend directory to the Python path
+backend_dir = os.path.dirname(os.path.dirname(os.path.abspath(__file__)))
+if backend_dir not in sys.path:
+    sys.path.insert(0, backend_dir)
+
+# Import dependencies
+from routers.deps import get_db
+from security import get_current_user
+from models.conversation import (
+    ConversationModel, MessageModel, CreateConversationRequest, 
+    SendMessageRequest, TypingIndicatorRequest, ReadReceiptRequest,
+    WSMessage, WSMessageType
+)
+from services.dm_service import DMService
 
 logger = logging.getLogger(__name__)
 router = APIRouter(prefix="/api/dm", tags=["Direct Messaging"])
