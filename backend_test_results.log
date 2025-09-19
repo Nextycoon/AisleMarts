@@ -1,0 +1,1545 @@
+🚀 Starting AisleMarts Backend API Tests - PHASE 2 CRITICAL INTEGRATION
+📍 Testing against: https://ai-marketplace-12.preview.emergentagent.com/api
+================================================================================
+
+🎯 PHASE 2 PRIORITY 1: Health Check Validation
+
+🔍 Testing Health Check...
+✅ PASS: Health Check
+   Details: Service: AisleMarts API
+
+🎯 PHASE 2 PRIORITY 2: Authentication System
+
+🔍 Testing User Registration...
+✅ PASS: User Registration
+   Details: User may already exist: HTTP 400: {'detail': 'Email already in use'}
+
+🔍 Testing User Login...
+✅ PASS: User Login
+   Details: Successfully logged in and got token
+
+🔍 Testing Protected Route (/auth/me)...
+✅ PASS: Protected Route Access
+   Details: User: buyer@aislemarts.com, ID: 14d33012-07ee-4ac1-9069-4a9a8807738c
+
+👤 AVATAR ENDPOINT TESTING (CRITICAL - NEW IMPLEMENTATION)
+
+👤 Testing Avatar Endpoint - Valid Roles...
+✅ PASS: Avatar Update (Buyer Role)
+   Details: Role: buyer, Setup: True, Updated: True
+✅ PASS: Avatar Update (Seller Role)
+   Details: Role: seller, Setup: True
+✅ PASS: Avatar Update (Hybrid Role)
+   Details: Role: hybrid, Setup: True
+
+👤 Testing Avatar Endpoint - Invalid Role...
+✅ PASS: Avatar Update (Invalid Role)
+   Details: Correctly rejected invalid role with 422 validation error
+
+👤 Testing Avatar Endpoint - Missing User...
+✅ PASS: Avatar Update (Missing User)
+   Details: Correctly returned 403 for permission denied (expected behavior)
+
+👤 Testing Avatar Endpoint - Unauthorized...
+✅ PASS: Avatar Update (Unauthorized)
+   Details: Correctly rejected request without authentication
+
+👤 Testing Avatar Endpoint - Permission Denied...
+✅ PASS: Avatar Update (Permission Denied)
+   Details: Correctly rejected request to update another user's avatar
+
+👤 Testing Avatar Endpoint - Response Format...
+✅ PASS: Avatar Response Format
+   Details: Response contains all required fields: ['id', 'role', 'isAvatarSetup', 'updatedAt']
+
+🎯 PHASE 2 PRIORITY 3: Pickup Windows System (STUCK TASK - HIGH PRIORITY)
+
+🚚 COMPREHENSIVE PICKUP WINDOWS SYSTEM TESTING - STUCK TASK VALIDATION
+================================================================================
+
+🔍 Testing Pickup System Health Check...
+✅ PASS: Pickup System Health Check
+   Details: Status: healthy, Features enabled: 6/6
+
+🔍 Testing Window Creation API...
+❌ FAIL: Window Creation API
+   Details: CRITICAL ISSUE: [] - Still returning empty arrays or errors
+
+🔍 Testing Window Availability API...
+✅ PASS: Window Availability API
+   Details: Found 2 windows, Total capacity: 10, Available: 10
+
+🔍 Creating Test Reservation for Scheduling...
+❌ FAIL: Test Reservation Creation
+   Details: Could not create test reservation: No module named 'db'
+
+🔍 Testing Reservation Scheduling...
+❌ FAIL: Reservation Scheduling
+   Details: No pickup window IDs available for scheduling test
+
+🔍 Testing Reservation Extension...
+❌ FAIL: Reservation Extension
+   Details: STILL BROKEN: HTTP 404: {'detail': 'Reservation not found or access denied'}
+
+🔍 Testing Reservation Modification...
+❌ FAIL: Reservation Modification
+   Details: STILL BROKEN: HTTP 404: {'detail': 'Reservation not found or access denied'}
+
+🔍 Testing Partial Pickup Processing...
+❌ FAIL: Partial Pickup Processing
+   Details: STILL BROKEN: HTTP 404: {'detail': 'Reservation not found'}
+
+🔍 Testing Reservation Status Retrieval...
+❌ FAIL: Reservation Status Retrieval
+   Details: HTTP 404: {'detail': 'Reservation not found'}
+
+🔍 Testing Analytics APIs...
+✅ PASS: Window Analytics API
+   Details: Windows: 2, Utilization: 0.0%
+✅ PASS: Reservation Analytics API
+   Details: Reservations: 0, Success rate: 0%
+
+🔍 Testing Admin Cleanup Operations...
+✅ PASS: Expired Reservations Cleanup
+   Details: Correctly requires admin access
+
+🚚 PICKUP WINDOWS SYSTEM COMPREHENSIVE TEST COMPLETED
+================================================================================
+
+🎯 PHASE 2 PRIORITY 4: Core Marketplace APIs
+
+🔍 Testing Categories List...
+✅ PASS: Categories List
+   Details: Found 3 categories
+
+🔍 Testing Products List...
+❌ FAIL: Products List
+   Details: []
+
+🔍 Testing Product Search...
+❌ FAIL: Product Search (title)
+   Details: No headphones found in search results
+❌ FAIL: Product Search (brand)
+   Details: No AudioTech products found
+
+🔍 Testing User Orders...
+✅ PASS: User Orders
+   Details: Found 0 orders
+
+🎯 PHASE 2 PRIORITY 5: AI Services
+
+🔍 Testing AI Chat (Authenticated)...
+✅ PASS: AI Chat (Authenticated)
+   Details: Agent ID: aislemarts_agent_anonymous
+
+🔍 Testing AI Product Recommendations (Authenticated)...
+✅ PASS: AI Product Recommendations (Authenticated)
+   Details: Found 0 recommendations with AI explanation
+
+🔍 Testing AI Locale Detection...
+✅ PASS: AI Locale Detection
+   Details: Country: US, Currency: USD
+
+🎯 PHASE 2 PRIORITY 6: Payment & Tax Services
+
+💳 Testing Payment Method Suggestions...
+✅ PASS: Payment Method Suggestions (US B2C)
+   Details: Found 3 payment methods with AI insights
+✅ PASS: Payment Method Suggestions (TR High-Value)
+   Details: Found 1 payment methods for Turkey
+✅ PASS: Payment Method Suggestions (DE B2B)
+   Details: Found 1 payment methods for German B2B
+
+💳 Testing Tax Computation Engine...
+✅ PASS: Tax Computation (US B2C)
+   Details: Tax calculated: $16.5, 2 tax lines
+✅ PASS: Tax Computation (UK B2B Reverse Charge)
+   Details: B2B tax calculated: £0.0 (should be 0 for reverse charge)
+✅ PASS: Tax Computation (TR VAT)
+   Details: Turkey VAT calculated: ₺200.0
+
+🎯 ERROR HANDLING VALIDATION
+
+🔍 Testing Error Scenarios...
+✅ PASS: Invalid Login Error
+   Details: Correctly rejected invalid credentials
+✅ PASS: Unauthorized Access Error
+   Details: Correctly rejected request without token
+✅ PASS: Invalid Product ID Error
+   Details: Correctly returned 404 for invalid product
+
+🤖🤖🤖🤖🤖🤖🤖🤖🤖🤖🤖🤖🤖🤖🤖🤖🤖🤖🤖🤖 AI ENDPOINTS TESTING 🤖🤖🤖🤖🤖🤖🤖🤖🤖🤖🤖🤖🤖🤖🤖🤖🤖🤖🤖🤖
+
+🔍 Testing AI Chat (Anonymous)...
+✅ PASS: AI Chat (Anonymous)
+   Details: Response received: Here are some excellent headphone options ideal for work:
+
+1. **Sony WH-CH510**:
+   - Type: On-ear
+ ...
+
+🔍 Testing AI Chat (Authenticated)...
+✅ PASS: AI Chat (Authenticated)
+   Details: Agent ID: aislemarts_agent_anonymous
+
+🔍 Testing AI Locale Detection...
+✅ PASS: AI Locale Detection
+   Details: Country: US, Currency: USD
+
+🔍 Testing AI Product Recommendations (Anonymous)...
+✅ PASS: AI Product Recommendations (Anonymous)
+   Details: Found 0 recommendations
+
+🔍 Testing AI Product Recommendations (Authenticated)...
+✅ PASS: AI Product Recommendations (Authenticated)
+   Details: Found 0 recommendations with AI explanation
+
+🔍 Testing AI Search Enhancement...
+✅ PASS: AI Search Enhancement
+   Details: Enhanced query processed
+
+🔍 Testing AI Intent Analysis (Anonymous)...
+✅ PASS: AI Intent Analysis (Anonymous)
+   Details: Intent analyzed: product_search
+
+🔍 Testing AI Intent Analysis (Authenticated)...
+✅ PASS: AI Intent Analysis (Authenticated)
+   Details: Intent: product_search
+
+🔍 Testing AI Onboarding (Anonymous)...
+✅ PASS: AI Onboarding (Anonymous)
+   Details: Guidance provided for buyer role
+
+🔍 Testing AI Onboarding (Authenticated)...
+✅ PASS: AI Onboarding (Authenticated)
+   Details: Personalized guidance for buyer
+
+🔍 Testing AI Error Scenarios...
+✅ PASS: AI Chat Empty Message
+   Details: Handled empty message appropriately
+✅ PASS: AI Recommendations Invalid Query
+   Details: Handled invalid query
+
+💙💙💙💙💙💙💙💙💙💙💙💙💙💙💙 BLUE ERA DASHBOARD BACKEND INTEGRATION TESTING 💙💙💙💙💙💙💙💙💙💙💙💙💙💙💙
+
+💙 Testing Blue Era Trust Score API...
+❌ FAIL: Blue Era Trust Score API
+   Details: HTTP 404: {'detail': 'User not found'}
+
+💙 Testing Blue Era AI Chat Service...
+✅ PASS: Blue Era AI Chat Service (Brand Insights)
+   Details: Generated brand insights: Here are your daily insights for your brand on the AisleMarts marketplace:
+
+### Daily Marketplace In... (Agent: aislemarts_agent_anonymous)
+✅ PASS: Blue Era AI Chat Service (Shopper Insights)
+   Details: Generated shopper insights: Here are your daily insights as a shopper on the AisleMarts marketplace:
+
+### Daily Shopper Insights...
+
+💙 Testing Blue Era Products API for Product Reels...
+❌ FAIL: Blue Era Products API for Reels
+   Details: []
+
+💙 Testing Blue Era AI Recommendations...
+❌ FAIL: Blue Era AI Recommendations
+   Details: Insufficient recommendation data: 0 recs, 0 chars explanation
+❌ FAIL: Blue Era AI Recommendations (Authenticated)
+   Details: No personalized recommendations generated
+
+💙 Testing Blue Era Auth Identity Profile API...
+❌ FAIL: Blue Era Auth Identity Profile API
+   Details: HTTP 404: {'detail': 'User identity not found'}
+
+💙 Testing Blue Era Role-Based Responses...
+✅ PASS: Blue Era Role-Based Responses (Brand)
+   Details: Brand-focused response generated with 7 relevant terms
+✅ PASS: Blue Era Role-Based Responses (Shopper)
+   Details: Shopper-focused response generated with 6 relevant terms
+
+💙 Testing Blue Era Authentication Context...
+✅ PASS: Blue Era Authentication Context (Authenticated)
+   Details: Personalized response with agent ID: aislemarts_agent_anonymous
+✅ PASS: Blue Era Authentication Context (Anonymous)
+   Details: Generic response for anonymous user
+
+🌍🌍🌍🌍🌍🌍🌍🌍🌍🌍🌍🌍🌍🌍🌍 GEOGRAPHIC TARGETING SYSTEM TESTING 🌍🌍🌍🌍🌍🌍🌍🌍🌍🌍🌍🌍🌍🌍🌍
+
+🌍 Testing Geographic Data Initialization...
+✅ PASS: Geographic Data Initialization
+   Details: World cities and countries initialized successfully
+
+🌍 Testing Countries List...
+✅ PASS: Countries List
+   Details: Found 13 countries
+
+🌍 Testing Cities List...
+✅ PASS: Cities List (All)
+   Details: Found 8 cities
+✅ PASS: Cities List (Filtered by Country)
+   Details: Found 1 cities in US
+✅ PASS: Cities List (Major Cities Only)
+   Details: Found 8 major cities
+
+🌍 Testing Cities in Radius...
+✅ PASS: Cities in Radius
+   Details: Found 1 cities within 100km radius
+
+🌍 Testing Seller Visibility Creation...
+❌ FAIL: Seller Visibility Creation
+   Details: No vendor auth token available
+
+🌍 Testing Seller Visibility Retrieval...
+❌ FAIL: Seller Visibility Retrieval
+   Details: No vendor auth token available
+
+🌍 Testing AI Market Analysis...
+✅ PASS: AI Market Analysis
+   Details: Market analysis completed - Opportunity Score: 50, Insights: 0
+
+🌍 Testing AI Targeting Recommendations...
+❌ FAIL: AI Targeting Recommendations
+   Details: HTTP 500: {'detail': 'Error getting recommendations: 403: Access denied'}
+
+🌍 Testing Performance Tracking...
+✅ PASS: Performance Tracking (View)
+   Details: View event tracked successfully
+✅ PASS: Performance Tracking (Click)
+   Details: Click event tracked successfully
+✅ PASS: Performance Tracking (Conversion)
+   Details: Conversion event with revenue tracked successfully
+
+🌍 Testing Vendor Analytics...
+❌ FAIL: Vendor Analytics
+   Details: HTTP 500: {'detail': 'Analytics error: 403: Access denied'}
+
+🌍 Testing Geographic Product Filtering...
+✅ PASS: Geographic Product Filtering
+   Details: Found 0 products with geographic filtering applied
+
+🌍 Testing Seller Geographic Insights...
+❌ FAIL: Seller Geographic Insights
+   Details: HTTP 500: {'detail': 'Insights error: 403: Access denied'}
+
+🌍 Testing Geographic Authentication Controls...
+✅ PASS: Geographic Auth Control (No Token)
+   Details: Correctly rejected request without authentication
+✅ PASS: Geographic Auth Control (Valid Token)
+   Details: Authentication working correctly for vendor endpoints
+
+🔍🔍🔍🔍🔍🔍🔍🔍🔍🔍🔍🔍🔍🔍🔍 AI SEARCH HUB TESTING 🔍🔍🔍🔍🔍🔍🔍🔍🔍🔍🔍🔍🔍🔍🔍
+
+🔍 Testing AI Search Hub Health Check...
+✅ PASS: AI Search Hub Health Check
+   Details: Services: 4, Tools: 6
+
+🔍 Testing Quick Search (Anonymous)...
+✅ PASS: Quick Search (Hazelnuts)
+   Details: Found 1 results in 0ms
+✅ PASS: Quick Search (Cotton T-shirts with filters)
+   Details: Found 1 results with filters: {'price_max': 5.0}
+✅ PASS: Quick Search (Bamboo Towels)
+   Details: Found 1 eco-friendly products
+
+🔍 Testing Quick Search (Authenticated)...
+✅ PASS: Quick Search (Turkish Coffee - Authenticated)
+   Details: Found 3 Turkish products
+
+🔍 Testing Deep Search (Market Analysis)...
+✅ PASS: Deep Search (Bamboo Towels Market)
+   Details: Generated 4 insights with 0.85 confidence, 3 sources
+✅ PASS: Deep Search (Turkish Hazelnut Trends)
+   Details: Market analysis completed with 3 insights
+
+🔍 Testing Image Read (OCR)...
+✅ PASS: Image Read (OCR)
+   Details: Extracted 6 text blocks, 4 entities
+✅ PASS: Image Read (OCR + Translation)
+   Details: Translation included
+
+🔍 Testing QR Code Scanning...
+✅ PASS: QR Code Scanning (Product)
+   Details: Intent: product_lookup, Action: Open product page for Organic Turkish Hazelnuts
+✅ PASS: QR Code Scanning (Contact)
+   Details: Detected intent: contact
+
+🔍 Testing Barcode Scanning...
+✅ PASS: Barcode Scanning (EAN13)
+   Details: Value: 8690123456789, Type: EAN13, Key: turkish_product_001
+✅ PASS: Barcode Scanning (UPC)
+   Details: Detected symbology: UPC
+✅ PASS: Barcode Scanning (CODE128)
+   Details: CODE128 barcode processed successfully
+
+🔍 Testing Voice Input Processing...
+✅ PASS: Voice Input (English)
+   Details: Transcript: 'Find vegan leather manufacturers near Istanbul...', Language: en, Confidence: 0.92
+✅ PASS: Voice Input (Turkish)
+   Details: Language: tr, Confidence: 0.92
+✅ PASS: Voice Input (Arabic)
+   Details: Arabic processing completed with confidence: 0.92
+
+🔍 Testing Intent Analysis...
+✅ PASS: Intent Analysis (Product Search)
+   Details: Intent: buyer_find_products, Tool: quick_search, Confidence: 0.85
+✅ PASS: Intent Analysis (QR Scan)
+   Details: Suggested tool: qr_scan
+✅ PASS: Intent Analysis (Image Reading)
+   Details: Action: Use image_read to process this query
+
+🔍 Testing User Preferences (Anonymous)...
+✅ PASS: User Preferences (Anonymous GET)
+   Details: Correctly rejected unauthenticated request
+✅ PASS: User Preferences (Anonymous POST)
+   Details: Correctly rejected unauthenticated request
+
+🔍 Testing User Preferences (Authenticated)...
+✅ PASS: User Preferences (GET Default)
+   Details: Tools: ['quick_search', 'deep_search', 'image_read'], Currency: EUR, Privacy settings: 4 items
+✅ PASS: User Preferences (UPDATE)
+   Details: Preferences updated successfully
+✅ PASS: User Preferences (GET Updated)
+   Details: Updated preferences retrieved correctly
+
+🔍 Testing Search Analytics (User)...
+✅ PASS: Search Analytics (User)
+   Details: Total searches: 24, Success rate: 1.0, Tools used: 1, Recent: 10
+✅ PASS: Search Analytics (30 days)
+   Details: Analytics for 30 days retrieved
+
+🔍 Testing Search Hub Edge Cases...
+✅ PASS: Quick Search (Empty Query)
+   Details: Handled empty query, returned 0 results
+✅ PASS: Deep Search (Malformed Request)
+   Details: Handled malformed request appropriately
+✅ PASS: Image Read (Invalid Base64)
+   Details: Handled invalid image data gracefully
+✅ PASS: Intent Analysis (Long Query)
+   Details: Handled very long query successfully
+
+🔍 Testing Search Hub Multi-Language Support...
+✅ PASS: Quick Search (Turkish)
+   Details: Turkish search returned 3 results
+✅ PASS: Quick Search (Arabic)
+   Details: Arabic search processed, 1 results
+✅ PASS: Deep Search (German)
+   Details: German market analysis generated 3 insights
+
+💳💳💳💳💳💳💳💳💳💳💳💳💳💳💳 GLOBAL PAYMENTS & TAX ENGINE TESTING 💳💳💳💳💳💳💳💳💳💳💳💳💳💳💳
+
+💳 Testing Payments & Tax Data Initialization...
+✅ PASS: Payments & Tax Data Initialization
+   Details: Global payment methods, tax rules, and currencies initialized successfully
+
+💳 Testing Payment Method Suggestions...
+✅ PASS: Payment Method Suggestions (US B2C)
+   Details: Found 3 payment methods with AI insights
+✅ PASS: Payment Method Suggestions (TR High-Value)
+   Details: Found 1 payment methods for Turkey
+✅ PASS: Payment Method Suggestions (DE B2B)
+   Details: Found 1 payment methods for German B2B
+
+💳 Testing Tax Computation Engine...
+✅ PASS: Tax Computation (US B2C)
+   Details: Tax calculated: $16.5, 2 tax lines
+✅ PASS: Tax Computation (UK B2B Reverse Charge)
+   Details: B2B tax calculated: £0.0 (should be 0 for reverse charge)
+✅ PASS: Tax Computation (TR VAT)
+   Details: Turkey VAT calculated: ₺200.0
+
+💳 Testing Currency Conversion...
+✅ PASS: Currency Conversion (USD to EUR)
+   Details: $100 = €108.0 (rate: 1.08)
+✅ PASS: Currency Conversion (Same Currency)
+   Details: Same currency conversion handled correctly
+
+💳 Testing Fraud Risk Assessment...
+✅ PASS: Fraud Risk Assessment (Low Risk)
+   Details: Risk: 10/100 (low) - Action: allow
+✅ PASS: Fraud Risk Assessment (High Risk)
+   Details: Risk: 100/100 (very_high) - Action: block
+
+💳 Testing Enhanced Payment Intent...
+✅ PASS: Enhanced Payment Intent
+   Details: Subtotal: €1300.0, Total: €1547.0, Methods: 2, Risk: high
+
+💳 Testing Payment Analytics (Admin)...
+✅ PASS: Payment Analytics (Admin)
+   Details: Analytics retrieved: 1250 transactions
+
+💳 Testing Tax Analytics (Admin)...
+✅ PASS: Tax Analytics (Admin)
+   Details: Tax analytics retrieved: $97500.0 total tax calculated
+
+💳 Testing Payments & Tax Health Check...
+✅ PASS: Payments & Tax Health Check
+   Details: Service healthy - Methods: 5, Tax Rules: 5, Currencies: 5
+
+💳 Testing Payment Methods Listing...
+✅ PASS: Payment Methods Listing (All)
+   Details: Found 5 payment methods
+✅ PASS: Payment Methods Listing (Filtered)
+   Details: Found 3 methods for US/USD
+
+💳 Testing Tax Rules Listing...
+✅ PASS: Tax Rules Listing (All)
+   Details: Found 5 tax rules
+✅ PASS: Tax Rules Listing (Filtered)
+   Details: Found 1 VAT rules for GB
+
+💳 Testing Currencies Listing...
+✅ PASS: Currencies Listing
+   Details: Found 5 supported currencies
+
+💳 Testing Payments & Tax Error Scenarios...
+✅ PASS: Invalid Country Code
+   Details: Handled invalid country gracefully - 0 methods
+✅ PASS: Invalid Currency Conversion
+   Details: Invalid currency properly rejected
+✅ PASS: Fraud Assessment Without Auth
+   Details: Properly requires authentication
+
+🏢🏢🏢🏢🏢🏢🏢🏢🏢🏢🏢🏢🏢🏢🏢 ENTERPRISE FEATURES TESTING 🏢🏢🏢🏢🏢🏢🏢🏢🏢🏢🏢🏢🏢🏢🏢
+
+🌐 AI Trade Intelligence Testing...
+
+🌐 Testing Trade Intelligence Health Check...
+✅ PASS: Trade Intelligence Health Check
+   Details: Capabilities: 7, Domains: 8
+
+🌐 Testing HS Code Suggestion...
+❌ FAIL: HS Code Suggestion
+   Details: {'candidates': [{'hs': '8517.12', 'desc': 'Telephones for cellular networks', 'confidence': 0.95}], 'notes': ['AI-enhanced classification analysis', '### HS Code Classification Analysis for Wireless Bluetooth Headphones\n\n#### Current Suggestions:\n1. **HS Code: 8517.12**\n   - **Description:** Telephones for cellular networks\n   - **Confidence Score:...', 'Estimates only - confirm with customs broker for binding classification']}
+
+🌐 Testing Landed Cost Calculation...
+✅ PASS: Landed Cost Calculation
+   Details: Total cost: $1135.0, Components: 0
+
+🌐 Testing Freight Quote...
+❌ FAIL: Freight Quote
+   Details: {'options': [{'carrier': 'Turkish Airlines Cargo', 'eta_days': 4, 'cost': 48.0, 'notes': 'Standard air freight, good reliability | AI Insight: ### Freight Shipping Scenario Analysis\n\n#### Shipp...'}, {'carrier': 'Lufthansa Cargo', 'eta_days': 5, 'cost': 45.599999999999994, 'notes': 'Reliable European network'}], 'volumetric_weight_kg': 9.0}
+
+🌐 Testing Compliance Screening...
+❌ FAIL: Compliance Screening
+   Details: {'hits': [], 'notes': ['AI Risk Analysis: ### Compliance Screening Results Analysis for International Trade\n\n#### Overview:\n- **Parties Screen...', 'This is a simplified screening - use professional compliance services for actual transactions']}
+
+🌐 Testing Trade Payment Methods Suggestion...
+✅ PASS: Trade Payment Methods Suggestion
+   Details: Found 1 methods with AI insights
+
+🌐 Testing Trade Tax Computation...
+❌ FAIL: Trade Tax Computation
+   Details: HTTP 502: 
+
+🌐 Testing Trade Insights...
+❌ FAIL: Trade Insights
+   Details: HTTP 502: 
+
+🌐 Testing Trade Reference Data...
+❌ FAIL: Trade Incoterms Reference
+   Details: HTTP 502: 
+❌ FAIL: Trade Transport Modes Reference
+   Details: HTTP 502: 
+❌ FAIL: Trade Sample HS Codes Reference
+   Details: HTTP 502: 
+
+🔐 Auth Identity & Verification Testing...
+
+🔐 Testing Identity Service Health Check...
+❌ FAIL: Identity Service Health Check
+   Details: HTTP 502: 
+
+🔐 Testing User Identity Creation...
+❌ FAIL: User Identity Creation
+   Details: HTTP 502: 
+
+🔐 Testing Identity Verification Requirements...
+❌ FAIL: Identity Verification Requirements
+   Details: HTTP 502: 
+
+🔐 Testing Username Validation...
+❌ FAIL: Username Validation
+   Details: HTTP 502: 
+
+🔐 Testing Avatar Validation...
+❌ FAIL: Avatar Validation
+   Details: HTTP 502: 
+
+🔐 Testing Identity Policies...
+❌ FAIL: Username Policy
+   Details: HTTP 502: 
+❌ FAIL: Avatar Policy
+   Details: HTTP 502: 
+
+🔐 Testing Verification Levels...
+❌ FAIL: Verification Levels
+   Details: HTTP 502: 
+
+🤖 AI User Agents Framework Testing...
+
+🤖 Testing AI Agents Health Check...
+❌ FAIL: AI Agents Health Check
+   Details: HTTP 502: 
+
+🤖 Testing Agent Configuration Creation...
+❌ FAIL: Agent Configuration Creation
+   Details: HTTP 502: 
+
+🤖 Testing Get Agent Configuration...
+❌ FAIL: Get Agent Configuration
+   Details: HTTP 502: 
+
+🤖 Testing Agent Task Creation...
+❌ FAIL: Agent Task Creation
+   Details: HTTP 502: 
+
+🤖 Testing Get Agent Tasks...
+❌ FAIL: Get Agent Tasks
+   Details: HTTP 502: 
+
+🤖 Testing Agent Capabilities...
+❌ FAIL: Agent Capabilities
+   Details: HTTP 502: 
+
+🤖 Testing Agent Analytics...
+❌ FAIL: Agent Analytics
+   Details: HTTP 502: 
+
+👤 Profile Card System Testing...
+
+👤 Testing Profile Cards Health Check...
+❌ FAIL: Profile Cards Health Check
+   Details: HTTP 502: 
+
+👤 Testing Profile Card Creation...
+❌ FAIL: Profile Card Creation
+   Details: HTTP 502: 
+
+👤 Testing Get My Profile Card...
+❌ FAIL: Get My Profile Card
+   Details: HTTP 502: 
+
+👤 Testing Profile Completeness...
+❌ FAIL: Profile Completeness
+   Details: HTTP 502: 
+
+👤 Testing Profile Search...
+❌ FAIL: Profile Search
+   Details: HTTP 502: 
+
+👤 Testing Profile Reference Data...
+❌ FAIL: Profile Social Platforms
+   Details: HTTP 502: 
+❌ FAIL: Profile Contact Methods
+   Details: HTTP 502: 
+❌ FAIL: Profile Templates
+   Details: HTTP 502: 
+
+📋📋📋📋📋📋📋📋📋📋📋📋📋📋📋 DOCUMENTATION SUITE TESTING 📋📋📋📋📋📋📋📋📋📋📋📋📋📋📋
+
+📄 Documentation Compliance Testing...
+
+📄 Testing Documentation Compliance Health Check...
+❌ FAIL: Documentation Compliance Health Check
+   Details: HTTP 502: 
+
+📄 Testing Document Creation...
+❌ FAIL: Document Creation
+   Details: HTTP 502: 
+
+📄 Testing List User Documents...
+❌ FAIL: List User Documents
+   Details: HTTP 502: 
+
+📄 Testing Get Document...
+❌ FAIL: Get Document
+   Details: No document ID available
+
+📄 Testing Submit Document...
+❌ FAIL: Submit Document
+   Details: No document ID available
+
+📄 Testing Amend Document...
+❌ FAIL: Amend Document
+   Details: No document ID available
+
+📄 Testing AI Generate Document...
+❌ FAIL: AI Generate Document
+   Details: HTTP 502: 
+
+📄 Testing Document Templates...
+❌ FAIL: Document Templates
+   Details: HTTP 502: 
+
+📄 Testing Compliance Standards...
+❌ FAIL: Compliance Standards
+   Details: HTTP 502: 
+
+📄 Testing Document Types...
+❌ FAIL: Document Types
+   Details: HTTP 502: 
+
+👥 Procedures by Category Testing...
+
+👥 Testing Procedures by Category Health Check...
+❌ FAIL: Procedures by Category Health Check
+   Details: HTTP 502: 
+
+👥 Testing Create User Procedure...
+❌ FAIL: Create User Procedure
+   Details: HTTP 502: 
+
+👥 Testing Get My Procedure...
+❌ FAIL: Get My Procedure
+   Details: HTTP 502: 
+
+👥 Testing Onboarding Progress...
+❌ FAIL: Onboarding Progress
+   Details: HTTP 502: 
+
+👥 Testing Complete Onboarding Step...
+❌ FAIL: Complete Onboarding Step
+   Details: HTTP 502: 
+
+👥 Testing User Permissions...
+❌ FAIL: User Permissions
+   Details: HTTP 502: 
+
+👥 Testing Check User Permission...
+❌ FAIL: Check User Permission
+   Details: HTTP 502: 
+
+👥 Testing User Badge...
+❌ FAIL: User Badge
+   Details: HTTP 502: 
+
+👥 Testing Request Reverification...
+❌ FAIL: Request Reverification
+   Details: HTTP 502: 
+
+👥 Testing Generate Onboarding Guidance...
+❌ FAIL: Generate Onboarding Guidance
+   Details: HTTP 502: 
+
+👥 Testing User Analytics...
+❌ FAIL: User Analytics
+   Details: HTTP 502: 
+
+👥 Testing Category Configurations...
+❌ FAIL: Category Configurations
+   Details: HTTP 502: 
+
+👥 Testing Procedures Reference Data...
+❌ FAIL: Procedures Reference Data
+   Details: HTTP 502: 
+
+🔄 Documentation Procedures Testing...
+
+🔄 Testing Documentation Procedures Health Check...
+❌ FAIL: Documentation Procedures Health Check
+   Details: HTTP 502: 
+
+🔄 Testing Create Document Procedure...
+❌ FAIL: Create Document Procedure
+   Details: HTTP 502: 
+
+🔄 Testing Get Document Procedure...
+❌ FAIL: Get Document Procedure
+   Details: No procedure ID available
+
+🔄 Testing Submit for Review...
+❌ FAIL: Submit for Review
+   Details: No procedure ID available
+
+🔄 Testing Approve Document...
+❌ FAIL: Approve Document
+   Details: No procedure ID available
+
+🔄 Testing Reject Document...
+❌ FAIL: Reject Document
+   Details: Could not create procedure for rejection test
+
+🔄 Testing Request Revision...
+❌ FAIL: Request Revision
+   Details: No procedure ID available
+
+🔄 Testing Add Comment...
+❌ FAIL: Add Comment
+   Details: No procedure ID available
+
+🔄 Testing Escalate Procedure...
+❌ FAIL: Escalate Procedure
+   Details: No procedure ID available
+
+🔄 Testing Get My Procedures...
+❌ FAIL: Get My Procedures
+   Details: HTTP 502: 
+
+🔄 Testing Get Pending Reviews...
+❌ FAIL: Get Pending Reviews
+   Details: HTTP 502: 
+
+🔄 Testing Generate Workflow Insights...
+❌ FAIL: Generate Workflow Insights
+   Details: HTTP 502: 
+
+🔄 Testing Get Workflow Analytics...
+❌ FAIL: Get Workflow Analytics
+   Details: HTTP 502: 
+
+🔄 Testing Workflow Templates...
+❌ FAIL: Workflow Templates
+   Details: HTTP 502: 
+
+🔄 Testing Documentation Procedures Reference Data...
+❌ FAIL: Documentation Procedures Reference Data
+   Details: HTTP 502: 
+
+🇰🇪🇰🇪🇰🇪🇰🇪🇰🇪🇰🇪🇰🇪🇰🇪🇰🇪🇰🇪🇰🇪🇰🇪🇰🇪🇰🇪🇰🇪 KENYA PILOT WEEK 2 TESTING 🇰🇪🇰🇪🇰🇪🇰🇪🇰🇪🇰🇪🇰🇪🇰🇪🇰🇪🇰🇪🇰🇪🇰🇪🇰🇪🇰🇪🇰🇪
+
+🏪 Seller Onboarding & Commission Engine Testing...
+
+🏪 Testing Seller Health Check...
+❌ FAIL: Seller Health Check
+   Details: HTTP 502: 
+
+🏪 Testing Seller Registration...
+❌ FAIL: Seller Registration
+   Details: HTTP 502: 
+
+🏪 Testing Seller Profile...
+❌ FAIL: Seller Profile
+   Details: HTTP 502: 
+
+🏪 Testing Seller Demo Sale Simulation...
+❌ FAIL: Seller Demo Sale Simulation
+   Details: HTTP 502: 
+
+🏪 Testing Seller Earnings (Current Month)...
+❌ FAIL: Seller Earnings Current Month
+   Details: HTTP 502: 
+
+🏪 Testing Seller Commissions...
+❌ FAIL: Seller Commissions
+   Details: HTTP 502: 
+
+💰 M-Pesa Integration Testing...
+
+💰 Testing M-Pesa Health Check...
+❌ FAIL: M-Pesa Health Check
+   Details: HTTP 502: 
+
+💰 Testing M-Pesa Phone Validation...
+❌ FAIL: M-Pesa Phone Validation (Valid)
+   Details: HTTP 502: 
+❌ FAIL: M-Pesa Phone Validation (Invalid)
+   Details: Should reject invalid phone numbers
+
+💰 Testing M-Pesa Demo Payment Simulation...
+❌ FAIL: M-Pesa Demo Payment Simulation
+   Details: HTTP 502: 
+
+💰 Testing M-Pesa Integration Status...
+❌ FAIL: M-Pesa Integration Test
+   Details: HTTP 502: 
+
+🌍 Multi-Language AI Testing...
+
+🌍 Testing Multi-Language AI Health Check...
+❌ FAIL: Multi-Language AI Health Check
+   Details: HTTP 502: 
+
+🌍 Testing Multi-Language Supported Languages...
+❌ FAIL: Multi-Language Supported Languages
+   Details: HTTP 502: 
+
+🌍 Testing Multi-Language Swahili Greeting...
+❌ FAIL: Multi-Language Swahili Greeting
+   Details: HTTP 502: 
+
+🌍 Testing Multi-Language Swahili Chat...
+❌ FAIL: Multi-Language Swahili Chat
+   Details: HTTP 502: 
+
+🌍 Testing Multi-Language Swahili Demo Conversation...
+❌ FAIL: Multi-Language Swahili Demo Conversation
+   Details: HTTP 502: 
+
+🌍 Testing Multi-Language All Languages Test...
+❌ FAIL: Multi-Language All Languages Test
+   Details: HTTP 502: 
+
+🛍️🛍️🛍️🛍️🛍️🛍️🛍️🛍️🛍️🛍️🛍️🛍️🛍️🛍️🛍️ SELLER PRODUCTS MANAGEMENT APIS TESTING 🛍️🛍️🛍️🛍️🛍️🛍️🛍️🛍️🛍️🛍️🛍️🛍️🛍️🛍️🛍️
+
+🛍️ Seller Products Management Testing...
+
+🛍️ Testing Seller Products Health Check...
+❌ FAIL: Seller Products Health Check
+   Details: HTTP 502: 
+
+🛍️ Testing Seller Product Creation...
+❌ FAIL: Seller Product Creation (Valid)
+   Details: HTTP 502: 
+✅ PASS: Seller Product Creation (Invalid Price)
+   Details: Correctly rejected negative price
+✅ PASS: Seller Product Creation (Invalid Stock)
+   Details: Correctly rejected negative stock
+
+🛍️ Testing Seller Products Listing...
+❌ FAIL: Seller Products Listing (All)
+   Details: HTTP 502: 
+❌ FAIL: Seller Products Listing (Active Only)
+   Details: HTTP 502: 
+
+🛍️ Testing Seller Product Details...
+❌ FAIL: Seller Product Details
+   Details: No product ID available for testing
+
+🛍️ Testing Seller Product Update...
+❌ FAIL: Seller Product Update
+   Details: No product ID available for testing
+
+🛍️ Testing Seller Product Toggle Status...
+❌ FAIL: Seller Product Toggle Status
+   Details: No product ID available for testing
+
+🛍️ Testing Seller Product Deletion...
+❌ FAIL: Seller Product Deletion (Valid)
+   Details: Could not create product for deletion test
+❌ FAIL: Seller Product Deletion (Invalid ID)
+   Details: Expected 404 error, got: HTTP 502: 
+
+📦 Seller Orders Management Testing...
+
+📦 Testing Seller Orders Listing...
+❌ FAIL: Seller Orders Listing (All)
+   Details: HTTP 502: 
+❌ FAIL: Seller Orders Listing (Filtered)
+   Details: HTTP 502: 
+
+📦 Testing Seller Order Details...
+❌ FAIL: Seller Order Details
+   Details: HTTP 502: 
+
+📦 Testing Seller Order Status Update...
+❌ FAIL: Seller Order Status Update (shipped)
+   Details: HTTP 502: 
+❌ FAIL: Seller Order Status Update (delivered)
+   Details: HTTP 502: 
+❌ FAIL: Seller Order Status Update (Invalid)
+   Details: Expected 400 error for invalid status, got: HTTP 502: 
+❌ FAIL: Seller Order Status Update (Missing)
+   Details: Expected 400 error for missing status, got: HTTP 502: 
+
+📦📦📦📦📦📦📦📦📦📦📦📦📦📦📦 PHASE 2 ORDER MANAGEMENT TESTING 📦📦📦📦📦📦📦📦📦📦📦📦📦📦📦
+
+📦 Phase 2 Order Management Testing...
+
+📦 Testing Order Management Health Check...
+❌ FAIL: Order Management Health Check
+   Details: HTTP 502: 
+
+📦 Testing Get Seller Orders...
+❌ FAIL: Get Seller Orders (All)
+   Details: HTTP 502: 
+❌ FAIL: Get Seller Orders (Filtered)
+   Details: HTTP 502: 
+
+📦 Testing Create Demo Order...
+❌ FAIL: Create Demo Order
+   Details: HTTP 502: 
+
+📦 Testing Get Order Details...
+❌ FAIL: Get Order Details
+   Details: No demo order ID available for testing
+
+📦 Testing Update Order Status...
+❌ FAIL: Update Order Status
+   Details: No demo order ID available for testing
+
+💳 Testing M-Pesa STK Callback (Success)...
+❌ FAIL: M-Pesa STK Callback (Success)
+   Details: HTTP 502: 
+
+💳 Testing M-Pesa STK Callback (Failure)...
+❌ FAIL: M-Pesa STK Callback (Failure)
+   Details: HTTP 502: 
+
+📦 Testing Order Lifecycle Management...
+❌ FAIL: Order Lifecycle Management
+   Details: Could not create demo order for lifecycle test
+
+💰 Testing KES Currency Handling...
+❌ FAIL: KES Currency Handling
+   Details: HTTP 502: 
+
+🔐 Testing Order Authentication Requirements...
+❌ FAIL: Order Authentication Requirements
+   Details: Some endpoints do not properly require authentication
+
+📊 Seller Analytics Testing...
+
+📊 Testing Seller Analytics Summary...
+❌ FAIL: Seller Analytics Summary
+   Details: HTTP 502: 
+
+📊 Testing Seller Analytics Timeseries...
+❌ FAIL: Seller Analytics Timeseries (revenue)
+   Details: HTTP 502: 
+❌ FAIL: Seller Analytics Timeseries (orders)
+   Details: HTTP 502: 
+❌ FAIL: Seller Analytics Timeseries (views)
+   Details: HTTP 502: 
+❌ FAIL: Seller Analytics Timeseries (ctr)
+   Details: HTTP 502: 
+❌ FAIL: Seller Analytics Timeseries (ai_share)
+   Details: HTTP 502: 
+❌ FAIL: Seller Analytics Timeseries (Invalid Metric)
+   Details: HTTP 502: 
+
+🔐 Seller APIs Validation Testing...
+
+🔐 Testing Seller APIs Authentication...
+❌ FAIL: Seller APIs Authentication
+   Details: Only 0/4 endpoints properly protected
+
+💰 Testing KES Currency Handling...
+❌ FAIL: KES Currency Handling (Product Creation)
+   Details: HTTP 502: 
+❌ FAIL: KES Currency Handling (Analytics)
+   Details: HTTP 502: 
+
+💸 Testing 1% Commission Calculations...
+❌ FAIL: Commission Calculations (Order)
+   Details: HTTP 502: 
+❌ FAIL: Commission Calculations (Analytics)
+   Details: HTTP 502: 
+
+⚡⚡⚡⚡⚡⚡⚡⚡⚡⚡⚡⚡⚡⚡⚡ PHASE 1 ENHANCED SEARCH/DISCOVERY BACKEND TESTING ⚡⚡⚡⚡⚡⚡⚡⚡⚡⚡⚡⚡⚡⚡⚡
+
+🔍 Enhanced Search System Testing...
+
+⚡ Testing Enhanced Search System Health...
+❌ FAIL: Enhanced Search System Health
+   Details: HTTP 502: 
+
+⚡ Testing Enhanced Search System Initialization...
+❌ FAIL: Enhanced Search System Initialization
+   Details: HTTP 502: 
+
+⚡ Testing Enhanced Search API...
+❌ FAIL: Enhanced Search API (English Smartphone)
+   Details: HTTP 502: 
+❌ FAIL: Enhanced Search API (Swahili)
+   Details: HTTP 502: 
+❌ FAIL: Enhanced Search API (B2B Mode)
+   Details: HTTP 502: 
+
+⚡ Testing Product Offers Comparison...
+❌ FAIL: Product Offers Comparison
+   Details: No products available for testing
+
+⚡ Testing Search Suggestions...
+❌ FAIL: Search Suggestions (English)
+   Details: HTTP 502: 
+❌ FAIL: Search Suggestions (Swahili)
+   Details: HTTP 502: 
+
+⚡ Testing Search Analytics...
+❌ FAIL: Search Analytics
+   Details: HTTP 502: 
+
+⚡ Testing Cache Management...
+❌ FAIL: Cache Warming
+   Details: HTTP 502: 
+❌ FAIL: Cache Clearing
+   Details: HTTP 502: 
+
+⚡ Testing Multilingual Search...
+   ❌ English (en): 'headphones' → Failed
+   ❌ Swahili (sw): 'simu' → Failed
+   ❌ Arabic (ar): 'هاتف' → Failed
+   ❌ Turkish (tr): 'telefon' → Failed
+❌ FAIL: Multilingual Search
+   Details: Low success rate: 0.0%
+
+⚡ Testing Best Pick Scoring Algorithm...
+❌ FAIL: Best Pick Scoring Algorithm
+   Details: HTTP 502: 
+
+⚡ Testing Search Performance...
+❌ FAIL: Search Performance
+   Details: Search failed in 6ms
+❌ FAIL: Search Cache Performance
+   Details: Cached request failed
+
+🏭🏭🏭🏭🏭🏭🏭🏭🏭🏭🏭🏭🏭🏭🏭 PHASE 2 B2B/RFQ BACKEND COMPREHENSIVE TESTING 🏭🏭🏭🏭🏭🏭🏭🏭🏭🏭🏭🏭🏭🏭🏭
+
+🏭 RFQ System Testing...
+
+🏭 Testing RFQ System Health Check...
+❌ FAIL: RFQ System Health Check
+   Details: HTTP 502: 
+
+🏭 Testing RFQ System Initialization...
+❌ FAIL: RFQ System Initialization
+   Details: HTTP 502: 
+
+🏭 Testing RFQ Creation & Management...
+❌ FAIL: RFQ Creation
+   Details: HTTP 502: 
+
+🏭 Testing RFQ Listing...
+❌ FAIL: RFQ Listing (Buyer View)
+   Details: HTTP 502: 
+❌ FAIL: RFQ Listing (Supplier View)
+   Details: HTTP 502: 
+❌ FAIL: RFQ Listing (Status Filter)
+   Details: HTTP 502: 
+
+💼 Quote Management Testing...
+
+🏭 Testing Quote Management...
+✅ PASS: Quote Creation
+   Details: Quote creation handled: HTTP 502: 
+❌ FAIL: RFQ Quotes Retrieval
+   Details: HTTP 502: 
+
+💬 Negotiation Testing...
+
+🏭 Testing Negotiation Messages...
+❌ FAIL: Negotiation Message Send
+   Details: HTTP 502: 
+❌ FAIL: Negotiation Thread Retrieval
+   Details: HTTP 502: 
+
+📋 Purchase Order Testing...
+
+🏭 Testing Purchase Orders...
+❌ FAIL: Purchase Order Creation
+   Details: HTTP 502: 
+❌ FAIL: Purchase Orders Listing (Buyer)
+   Details: HTTP 502: 
+❌ FAIL: Purchase Orders Listing (Supplier)
+   Details: HTTP 502: 
+
+📊 B2B Analytics Testing...
+
+🏭 Testing B2B Analytics...
+❌ FAIL: B2B Analytics (Buyer)
+   Details: HTTP 502: 
+❌ FAIL: B2B Analytics (Supplier)
+   Details: HTTP 502: 
+
+🔄 B2B Workflow Integration Testing...
+
+🏭 Testing B2B Workflow Integration...
+❌ FAIL: B2B Workflow Integration
+   Details: B2B Workflow: 0/4 steps successful (0.0%)
+   ❌ RFQ System Health Check
+   ❌ RFQ Listing Failed
+   ❌ Negotiation System Failed
+   ❌ Analytics System Failed
+
+🏪🏪🏪🏪🏪🏪🏪🏪🏪🏪🏪🏪🏪🏪🏪 PHASE 3 NEARBY/ONSITE COMMERCE TESTING 🏪🏪🏪🏪🏪🏪🏪🏪🏪🏪🏪🏪🏪🏪🏪
+
+🏪 Nearby Commerce Testing...
+
+🏪 Testing Nearby Commerce Health Check...
+❌ FAIL: Nearby Health Check
+   Details: HTTP 502: 
+
+🏪 Testing Nearby Search (Nairobi)...
+❌ FAIL: Nearby Search (Nairobi Retail)
+   Details: HTTP 502: 
+❌ FAIL: Nearby Search (Nairobi Wholesale)
+   Details: HTTP 502: 
+❌ FAIL: Nearby Search (Nairobi All)
+   Details: HTTP 502: 
+
+🏪 Testing Nearby Search (Different Radii)...
+❌ FAIL: Nearby Search (Radius 1000m)
+   Details: HTTP 502: 
+❌ FAIL: Nearby Search (Radius 5000m)
+   Details: HTTP 502: 
+❌ FAIL: Nearby Search (Radius 10000m)
+   Details: HTTP 502: 
+
+🏪 Testing Nearby Search (With Query)...
+❌ FAIL: Nearby Search (Query Filter)
+   Details: HTTP 502: 
+
+🏪 Testing Nearby Locations Discovery...
+❌ FAIL: Nearby Locations Discovery
+   Details: HTTP 502: 
+❌ FAIL: Nearby Locations (Type Filter)
+   Details: HTTP 502: 
+❌ FAIL: Nearby Locations (Open Now)
+   Details: HTTP 502: 
+
+🏪 Testing Nearby Reservations Workflow...
+❌ FAIL: Reservation Creation
+   Details: HTTP 502: 
+
+🏪 Testing Nearby Barcode Scanning...
+❌ FAIL: Barcode Scan (0840244706610)
+   Details: HTTP 502: 
+❌ FAIL: Barcode Scan (0194252721087)
+   Details: HTTP 502: 
+❌ FAIL: Barcode Scan (8806094759853)
+   Details: HTTP 502: 
+❌ FAIL: Barcode Scan (Invalid)
+   Details: HTTP 502: 
+
+🏪 Testing Nearby Analytics...
+❌ FAIL: Nearby Analytics
+   Details: HTTP 502: 
+
+🏪 Testing Nearby Cache Performance...
+❌ FAIL: Cache Performance
+   Details: First request failed: HTTP 502: 
+
+🏪 Testing Nearby Error Handling...
+✅ PASS: Invalid Coordinates
+   Details: Properly rejected invalid coordinates
+❌ FAIL: Large Radius Search
+   Details: HTTP 502: 
+❌ FAIL: Missing Parameters
+   Details: Should reject missing parameters, got: HTTP 502: 
+
+🏪 Testing Nearby System Initialization...
+❌ FAIL: Nearby System Initialization
+   Details: HTTP 502: 
+
+📦📦📦📦📦📦📦📦📦📦📦📦📦📦📦 PHASE 3 WEEK 2 INVENTORY SYNC SERVICE TESTING 📦📦📦📦📦📦📦📦📦📦📦📦📦📦📦
+
+📦 Inventory Sync Service Testing...
+
+📦 Testing Inventory Sync Health Check...
+❌ FAIL: Inventory Sync Health Check
+   Details: HTTP 502: 
+
+📦 Testing CSV Template Download...
+❌ FAIL: CSV Template Download
+   Details: HTTP 502: 
+
+📦 Testing Bulk Inventory Sync...
+❌ FAIL: Bulk Inventory Sync
+   Details: HTTP 502: 
+
+📦 Testing Sync Status Tracking...
+❌ FAIL: Sync Status Tracking
+   Details: No sync reference available
+
+📦 Testing Sync History...
+❌ FAIL: Sync History
+   Details: HTTP 502: 
+
+📦 Testing CSV Upload...
+❌ FAIL: CSV Upload
+   Details: HTTP 502: 
+
+📦 Testing CSV Import Status...
+✅ PASS: CSV Import Status
+   Details: CSV status endpoint accessible (job not found expected)
+
+📦 Testing Inventory Statistics...
+❌ FAIL: Inventory Statistics
+   Details: HTTP 502: 
+
+📦 Testing Merchant Dashboard...
+❌ FAIL: Merchant Dashboard
+   Details: HTTP 502: 
+
+📦 Testing Inventory Sync Authentication...
+❌ FAIL: Inventory Sync Authentication (Bulk Sync)
+   Details: Should require authentication
+❌ FAIL: Inventory Sync Authentication (Dashboard)
+   Details: Should require authentication
+
+📦 Testing Inventory Sync Error Handling...
+❌ FAIL: Inventory Sync Error (Invalid Location)
+   Details: Should reject invalid merchant/location
+❌ FAIL: Inventory Sync Error (Invalid Reference)
+   Details: Should return 404 for invalid sync reference
+✅ PASS: Inventory Sync Error (Invalid Item Data)
+   Details: Correctly handled invalid item data
+
+🚚🚚🚚🚚🚚🚚🚚🚚🚚🚚🚚🚚🚚🚚🚚 WEEK 3 PICKUP WINDOWS & ADVANCED RESERVATIONS TESTING 🚚🚚🚚🚚🚚🚚🚚🚚🚚🚚🚚🚚🚚🚚🚚
+
+🚚 Week 3 Pickup Windows & Advanced Reservations Testing...
+
+🚚 WEEK 3 BACKEND TEST BLITZ: Pickup Windows & Advanced Reservations
+================================================================================
+
+1️⃣ Testing Pickup Window Creation...
+❌ FAIL: Pickup Window Creation (Today)
+   Details: HTTP 502: 
+❌ FAIL: Pickup Window Creation (Tomorrow)
+   Details: HTTP 502: 
+
+2️⃣ Testing Pickup Window Availability...
+❌ FAIL: Pickup Window Availability
+   Details: HTTP 502: 
+
+3️⃣ Testing Reservation Scheduling...
+❌ FAIL: Reservation Scheduling
+   Details: No auth token or window IDs available
+
+4️⃣ Testing Reservation Extension...
+❌ FAIL: Reservation Extension
+   Details: No auth token or reservation ID available
+
+5️⃣ Testing Reservation Modification...
+❌ FAIL: Reservation Modification
+   Details: No auth token or reservation ID available
+
+6️⃣ Testing Partial Pickup...
+❌ FAIL: Partial Pickup
+   Details: No auth token or reservation ID available
+
+7️⃣ Testing Expired Reservations Cleanup...
+❌ FAIL: Expired Reservations Cleanup
+   Details: HTTP 502: 
+
+8️⃣ Testing Analytics Validation...
+❌ FAIL: Window Analytics
+   Details: HTTP 502: 
+❌ FAIL: Reservation Analytics
+   Details: HTTP 502: 
+
+9️⃣ Testing Pickup System Health...
+❌ FAIL: Pickup System Health
+   Details: HTTP 502: 
+
+🎯 Week 3 Backend Test Blitz Complete!
+
+================================================================================
+📊 TEST SUMMARY
+================================================================================
+✅ Passed: 128/347
+❌ Failed: 219/347
+
+🔍 FAILED TESTS:
+   ❌ Window Creation API: CRITICAL ISSUE: [] - Still returning empty arrays or errors
+   ❌ Test Reservation Creation: Could not create test reservation: No module named 'db'
+   ❌ Reservation Scheduling: No pickup window IDs available for scheduling test
+   ❌ Reservation Extension: STILL BROKEN: HTTP 404: {'detail': 'Reservation not found or access denied'}
+   ❌ Reservation Modification: STILL BROKEN: HTTP 404: {'detail': 'Reservation not found or access denied'}
+   ❌ Partial Pickup Processing: STILL BROKEN: HTTP 404: {'detail': 'Reservation not found'}
+   ❌ Reservation Status Retrieval: HTTP 404: {'detail': 'Reservation not found'}
+   ❌ Products List: []
+   ❌ Product Search (title): No headphones found in search results
+   ❌ Product Search (brand): No AudioTech products found
+   ❌ Blue Era Trust Score API: HTTP 404: {'detail': 'User not found'}
+   ❌ Blue Era Products API for Reels: []
+   ❌ Blue Era AI Recommendations: Insufficient recommendation data: 0 recs, 0 chars explanation
+   ❌ Blue Era AI Recommendations (Authenticated): No personalized recommendations generated
+   ❌ Blue Era Auth Identity Profile API: HTTP 404: {'detail': 'User identity not found'}
+   ❌ Seller Visibility Creation: No vendor auth token available
+   ❌ Seller Visibility Retrieval: No vendor auth token available
+   ❌ AI Targeting Recommendations: HTTP 500: {'detail': 'Error getting recommendations: 403: Access denied'}
+   ❌ Vendor Analytics: HTTP 500: {'detail': 'Analytics error: 403: Access denied'}
+   ❌ Seller Geographic Insights: HTTP 500: {'detail': 'Insights error: 403: Access denied'}
+   ❌ HS Code Suggestion: {'candidates': [{'hs': '8517.12', 'desc': 'Telephones for cellular networks', 'confidence': 0.95}], 'notes': ['AI-enhanced classification analysis', '### HS Code Classification Analysis for Wireless Bluetooth Headphones\n\n#### Current Suggestions:\n1. **HS Code: 8517.12**\n   - **Description:** Telephones for cellular networks\n   - **Confidence Score:...', 'Estimates only - confirm with customs broker for binding classification']}
+   ❌ Freight Quote: {'options': [{'carrier': 'Turkish Airlines Cargo', 'eta_days': 4, 'cost': 48.0, 'notes': 'Standard air freight, good reliability | AI Insight: ### Freight Shipping Scenario Analysis\n\n#### Shipp...'}, {'carrier': 'Lufthansa Cargo', 'eta_days': 5, 'cost': 45.599999999999994, 'notes': 'Reliable European network'}], 'volumetric_weight_kg': 9.0}
+   ❌ Compliance Screening: {'hits': [], 'notes': ['AI Risk Analysis: ### Compliance Screening Results Analysis for International Trade\n\n#### Overview:\n- **Parties Screen...', 'This is a simplified screening - use professional compliance services for actual transactions']}
+   ❌ Trade Tax Computation: HTTP 502: 
+   ❌ Trade Insights: HTTP 502: 
+   ❌ Trade Incoterms Reference: HTTP 502: 
+   ❌ Trade Transport Modes Reference: HTTP 502: 
+   ❌ Trade Sample HS Codes Reference: HTTP 502: 
+   ❌ Identity Service Health Check: HTTP 502: 
+   ❌ User Identity Creation: HTTP 502: 
+   ❌ Identity Verification Requirements: HTTP 502: 
+   ❌ Username Validation: HTTP 502: 
+   ❌ Avatar Validation: HTTP 502: 
+   ❌ Username Policy: HTTP 502: 
+   ❌ Avatar Policy: HTTP 502: 
+   ❌ Verification Levels: HTTP 502: 
+   ❌ AI Agents Health Check: HTTP 502: 
+   ❌ Agent Configuration Creation: HTTP 502: 
+   ❌ Get Agent Configuration: HTTP 502: 
+   ❌ Agent Task Creation: HTTP 502: 
+   ❌ Get Agent Tasks: HTTP 502: 
+   ❌ Agent Capabilities: HTTP 502: 
+   ❌ Agent Analytics: HTTP 502: 
+   ❌ Profile Cards Health Check: HTTP 502: 
+   ❌ Profile Card Creation: HTTP 502: 
+   ❌ Get My Profile Card: HTTP 502: 
+   ❌ Profile Completeness: HTTP 502: 
+   ❌ Profile Search: HTTP 502: 
+   ❌ Profile Social Platforms: HTTP 502: 
+   ❌ Profile Contact Methods: HTTP 502: 
+   ❌ Profile Templates: HTTP 502: 
+   ❌ Documentation Compliance Health Check: HTTP 502: 
+   ❌ Document Creation: HTTP 502: 
+   ❌ List User Documents: HTTP 502: 
+   ❌ Get Document: No document ID available
+   ❌ Submit Document: No document ID available
+   ❌ Amend Document: No document ID available
+   ❌ AI Generate Document: HTTP 502: 
+   ❌ Document Templates: HTTP 502: 
+   ❌ Compliance Standards: HTTP 502: 
+   ❌ Document Types: HTTP 502: 
+   ❌ Procedures by Category Health Check: HTTP 502: 
+   ❌ Create User Procedure: HTTP 502: 
+   ❌ Get My Procedure: HTTP 502: 
+   ❌ Onboarding Progress: HTTP 502: 
+   ❌ Complete Onboarding Step: HTTP 502: 
+   ❌ User Permissions: HTTP 502: 
+   ❌ Check User Permission: HTTP 502: 
+   ❌ User Badge: HTTP 502: 
+   ❌ Request Reverification: HTTP 502: 
+   ❌ Generate Onboarding Guidance: HTTP 502: 
+   ❌ User Analytics: HTTP 502: 
+   ❌ Category Configurations: HTTP 502: 
+   ❌ Procedures Reference Data: HTTP 502: 
+   ❌ Documentation Procedures Health Check: HTTP 502: 
+   ❌ Create Document Procedure: HTTP 502: 
+   ❌ Get Document Procedure: No procedure ID available
+   ❌ Submit for Review: No procedure ID available
+   ❌ Approve Document: No procedure ID available
+   ❌ Reject Document: Could not create procedure for rejection test
+   ❌ Request Revision: No procedure ID available
+   ❌ Add Comment: No procedure ID available
+   ❌ Escalate Procedure: No procedure ID available
+   ❌ Get My Procedures: HTTP 502: 
+   ❌ Get Pending Reviews: HTTP 502: 
+   ❌ Generate Workflow Insights: HTTP 502: 
+   ❌ Get Workflow Analytics: HTTP 502: 
+   ❌ Workflow Templates: HTTP 502: 
+   ❌ Documentation Procedures Reference Data: HTTP 502: 
+   ❌ Seller Health Check: HTTP 502: 
+   ❌ Seller Registration: HTTP 502: 
+   ❌ Seller Profile: HTTP 502: 
+   ❌ Seller Demo Sale Simulation: HTTP 502: 
+   ❌ Seller Earnings Current Month: HTTP 502: 
+   ❌ Seller Commissions: HTTP 502: 
+   ❌ M-Pesa Health Check: HTTP 502: 
+   ❌ M-Pesa Phone Validation (Valid): HTTP 502: 
+   ❌ M-Pesa Phone Validation (Invalid): Should reject invalid phone numbers
+   ❌ M-Pesa Demo Payment Simulation: HTTP 502: 
+   ❌ M-Pesa Integration Test: HTTP 502: 
+   ❌ Multi-Language AI Health Check: HTTP 502: 
+   ❌ Multi-Language Supported Languages: HTTP 502: 
+   ❌ Multi-Language Swahili Greeting: HTTP 502: 
+   ❌ Multi-Language Swahili Chat: HTTP 502: 
+   ❌ Multi-Language Swahili Demo Conversation: HTTP 502: 
+   ❌ Multi-Language All Languages Test: HTTP 502: 
+   ❌ Seller Products Health Check: HTTP 502: 
+   ❌ Seller Product Creation (Valid): HTTP 502: 
+   ❌ Seller Products Listing (All): HTTP 502: 
+   ❌ Seller Products Listing (Active Only): HTTP 502: 
+   ❌ Seller Product Details: No product ID available for testing
+   ❌ Seller Product Update: No product ID available for testing
+   ❌ Seller Product Toggle Status: No product ID available for testing
+   ❌ Seller Product Deletion (Valid): Could not create product for deletion test
+   ❌ Seller Product Deletion (Invalid ID): Expected 404 error, got: HTTP 502: 
+   ❌ Seller Orders Listing (All): HTTP 502: 
+   ❌ Seller Orders Listing (Filtered): HTTP 502: 
+   ❌ Seller Order Details: HTTP 502: 
+   ❌ Seller Order Status Update (shipped): HTTP 502: 
+   ❌ Seller Order Status Update (delivered): HTTP 502: 
+   ❌ Seller Order Status Update (Invalid): Expected 400 error for invalid status, got: HTTP 502: 
+   ❌ Seller Order Status Update (Missing): Expected 400 error for missing status, got: HTTP 502: 
+   ❌ Order Management Health Check: HTTP 502: 
+   ❌ Get Seller Orders (All): HTTP 502: 
+   ❌ Get Seller Orders (Filtered): HTTP 502: 
+   ❌ Create Demo Order: HTTP 502: 
+   ❌ Get Order Details: No demo order ID available for testing
+   ❌ Update Order Status: No demo order ID available for testing
+   ❌ M-Pesa STK Callback (Success): HTTP 502: 
+   ❌ M-Pesa STK Callback (Failure): HTTP 502: 
+   ❌ Order Lifecycle Management: Could not create demo order for lifecycle test
+   ❌ KES Currency Handling: HTTP 502: 
+   ❌ Order Authentication Requirements: Some endpoints do not properly require authentication
+   ❌ Seller Analytics Summary: HTTP 502: 
+   ❌ Seller Analytics Timeseries (revenue): HTTP 502: 
+   ❌ Seller Analytics Timeseries (orders): HTTP 502: 
+   ❌ Seller Analytics Timeseries (views): HTTP 502: 
+   ❌ Seller Analytics Timeseries (ctr): HTTP 502: 
+   ❌ Seller Analytics Timeseries (ai_share): HTTP 502: 
+   ❌ Seller Analytics Timeseries (Invalid Metric): HTTP 502: 
+   ❌ Seller APIs Authentication: Only 0/4 endpoints properly protected
+   ❌ KES Currency Handling (Product Creation): HTTP 502: 
+   ❌ KES Currency Handling (Analytics): HTTP 502: 
+   ❌ Commission Calculations (Order): HTTP 502: 
+   ❌ Commission Calculations (Analytics): HTTP 502: 
+   ❌ Enhanced Search System Health: HTTP 502: 
+   ❌ Enhanced Search System Initialization: HTTP 502: 
+   ❌ Enhanced Search API (English Smartphone): HTTP 502: 
+   ❌ Enhanced Search API (Swahili): HTTP 502: 
+   ❌ Enhanced Search API (B2B Mode): HTTP 502: 
+   ❌ Product Offers Comparison: No products available for testing
+   ❌ Search Suggestions (English): HTTP 502: 
+   ❌ Search Suggestions (Swahili): HTTP 502: 
+   ❌ Search Analytics: HTTP 502: 
+   ❌ Cache Warming: HTTP 502: 
+   ❌ Cache Clearing: HTTP 502: 
+   ❌ Multilingual Search: Low success rate: 0.0%
+   ❌ Best Pick Scoring Algorithm: HTTP 502: 
+   ❌ Search Performance: Search failed in 6ms
+   ❌ Search Cache Performance: Cached request failed
+   ❌ RFQ System Health Check: HTTP 502: 
+   ❌ RFQ System Initialization: HTTP 502: 
+   ❌ RFQ Creation: HTTP 502: 
+   ❌ RFQ Listing (Buyer View): HTTP 502: 
+   ❌ RFQ Listing (Supplier View): HTTP 502: 
+   ❌ RFQ Listing (Status Filter): HTTP 502: 
+   ❌ RFQ Quotes Retrieval: HTTP 502: 
+   ❌ Negotiation Message Send: HTTP 502: 
+   ❌ Negotiation Thread Retrieval: HTTP 502: 
+   ❌ Purchase Order Creation: HTTP 502: 
+   ❌ Purchase Orders Listing (Buyer): HTTP 502: 
+   ❌ Purchase Orders Listing (Supplier): HTTP 502: 
+   ❌ B2B Analytics (Buyer): HTTP 502: 
+   ❌ B2B Analytics (Supplier): HTTP 502: 
+   ❌ B2B Workflow Integration: B2B Workflow: 0/4 steps successful (0.0%)
+   ❌ Nearby Health Check: HTTP 502: 
+   ❌ Nearby Search (Nairobi Retail): HTTP 502: 
+   ❌ Nearby Search (Nairobi Wholesale): HTTP 502: 
+   ❌ Nearby Search (Nairobi All): HTTP 502: 
+   ❌ Nearby Search (Radius 1000m): HTTP 502: 
+   ❌ Nearby Search (Radius 5000m): HTTP 502: 
+   ❌ Nearby Search (Radius 10000m): HTTP 502: 
+   ❌ Nearby Search (Query Filter): HTTP 502: 
+   ❌ Nearby Locations Discovery: HTTP 502: 
+   ❌ Nearby Locations (Type Filter): HTTP 502: 
+   ❌ Nearby Locations (Open Now): HTTP 502: 
+   ❌ Reservation Creation: HTTP 502: 
+   ❌ Barcode Scan (0840244706610): HTTP 502: 
+   ❌ Barcode Scan (0194252721087): HTTP 502: 
+   ❌ Barcode Scan (8806094759853): HTTP 502: 
+   ❌ Barcode Scan (Invalid): HTTP 502: 
+   ❌ Nearby Analytics: HTTP 502: 
+   ❌ Cache Performance: First request failed: HTTP 502: 
+   ❌ Large Radius Search: HTTP 502: 
+   ❌ Missing Parameters: Should reject missing parameters, got: HTTP 502: 
+   ❌ Nearby System Initialization: HTTP 502: 
+   ❌ Inventory Sync Health Check: HTTP 502: 
+   ❌ CSV Template Download: HTTP 502: 
+   ❌ Bulk Inventory Sync: HTTP 502: 
+   ❌ Sync Status Tracking: No sync reference available
+   ❌ Sync History: HTTP 502: 
+   ❌ CSV Upload: HTTP 502: 
+   ❌ Inventory Statistics: HTTP 502: 
+   ❌ Merchant Dashboard: HTTP 502: 
+   ❌ Inventory Sync Authentication (Bulk Sync): Should require authentication
+   ❌ Inventory Sync Authentication (Dashboard): Should require authentication
+   ❌ Inventory Sync Error (Invalid Location): Should reject invalid merchant/location
+   ❌ Inventory Sync Error (Invalid Reference): Should return 404 for invalid sync reference
+   ❌ Pickup Window Creation (Today): HTTP 502: 
+   ❌ Pickup Window Creation (Tomorrow): HTTP 502: 
+   ❌ Pickup Window Availability: HTTP 502: 
+   ❌ Reservation Scheduling: No auth token or window IDs available
+   ❌ Reservation Extension: No auth token or reservation ID available
+   ❌ Reservation Modification: No auth token or reservation ID available
+   ❌ Partial Pickup: No auth token or reservation ID available
+   ❌ Expired Reservations Cleanup: HTTP 502: 
+   ❌ Window Analytics: HTTP 502: 
+   ❌ Reservation Analytics: HTTP 502: 
+   ❌ Pickup System Health: HTTP 502: 
+
+🎯 Success Rate: 36.9%
+
+⚠️  Some tests failed. Check the details above.

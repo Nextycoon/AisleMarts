@@ -1,0 +1,4 @@
+[33mWARNING: The legacy expo-cli does not support Node +17. Migrate to the new local Expo CLI: https://blog.expo.dev/the-new-expo-cli-f4250d8e3421.[39m
+[17:05:20] › Port 3000 is running this app in another window
+  /app/frontend (pid 557)
+[?25l[2K[1G[36m?[39m [1mUse port 3001 instead?[22m [90m›[39m [90m(Y/n)[39m

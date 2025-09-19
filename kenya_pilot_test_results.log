@@ -1,0 +1,679 @@
+🚀 Starting AisleMarts Backend API Tests (Including Geographic Targeting System)
+📍 Testing against: https://ai-marketplace-12.preview.emergentagent.com/api
+================================================================================
+
+🔍 Testing Health Check...
+✅ PASS: Health Check
+   Details: Service: AisleMarts API
+
+🔍 Testing User Registration...
+✅ PASS: User Registration
+   Details: User may already exist: HTTP 400: {'detail': 'Email already in use'}
+
+🔍 Testing User Login...
+✅ PASS: User Login
+   Details: Successfully logged in and got token
+
+🔍 Testing Vendor Login...
+✅ PASS: Vendor Login
+   Details: Successfully logged in vendor and got token
+
+🔍 Testing Protected Route (/auth/me)...
+✅ PASS: Protected Route Access
+   Details: User: buyer@aislemarts.com
+
+🔍 Testing Categories List...
+✅ PASS: Categories List
+   Details: Found 3 categories
+
+🔍 Testing Products List...
+✅ PASS: Products List
+   Details: Found 7 products
+
+🔍 Testing Product Details...
+✅ PASS: Product Details
+   Details: Product: Wireless Bluetooth Headphones
+
+🔍 Testing Product Search...
+✅ PASS: Product Search (title)
+   Details: Found 2 results for 'headphones'
+✅ PASS: Product Search (brand)
+   Details: Found 2 results for 'AudioTech'
+
+🔍 Testing Category Filter...
+✅ PASS: Category Filter
+   Details: Found 1 products in category
+
+🔍 Testing Payment Intent Creation...
+❌ FAIL: Payment Intent Creation
+   Details: HTTP 400: {'detail': 'Stripe error: Invalid API Key provided: sk_test_'}
+
+🔍 Testing User Orders...
+✅ PASS: User Orders
+   Details: Found 0 orders
+
+🔍 Testing Order Details...
+❌ FAIL: Order Details
+   Details: No order ID available for testing
+
+🔍 Testing Error Scenarios...
+✅ PASS: Invalid Login Error
+   Details: Correctly rejected invalid credentials
+✅ PASS: Unauthorized Access Error
+   Details: Correctly rejected request without token
+✅ PASS: Invalid Product ID Error
+   Details: Correctly returned 404 for invalid product
+
+🤖🤖🤖🤖🤖🤖🤖🤖🤖🤖🤖🤖🤖🤖🤖🤖🤖🤖🤖🤖 AI ENDPOINTS TESTING 🤖🤖🤖🤖🤖🤖🤖🤖🤖🤖🤖🤖🤖🤖🤖🤖🤖🤖🤖🤖
+
+🔍 Testing AI Chat (Anonymous)...
+✅ PASS: AI Chat (Anonymous)
+   Details: Response received: I can help you find the perfect headphones for work! Here are some options to consider based on diff...
+
+🔍 Testing AI Chat (Authenticated)...
+✅ PASS: AI Chat (Authenticated)
+   Details: Agent ID: aislemarts_agent_anonymous
+
+🔍 Testing AI Locale Detection...
+✅ PASS: AI Locale Detection
+   Details: Country: US, Currency: USD
+
+🔍 Testing AI Product Recommendations (Anonymous)...
+✅ PASS: AI Product Recommendations (Anonymous)
+   Details: Found 3 recommendations
+
+🔍 Testing AI Product Recommendations (Authenticated)...
+✅ PASS: AI Product Recommendations (Authenticated)
+   Details: Found 7 recommendations with AI explanation
+
+🔍 Testing AI Search Enhancement...
+✅ PASS: AI Search Enhancement
+   Details: Enhanced query processed
+
+🔍 Testing AI Intent Analysis (Anonymous)...
+✅ PASS: AI Intent Analysis (Anonymous)
+   Details: Intent analyzed: product_search
+
+🔍 Testing AI Intent Analysis (Authenticated)...
+✅ PASS: AI Intent Analysis (Authenticated)
+   Details: Intent: product_search
+
+🔍 Testing AI Onboarding (Anonymous)...
+✅ PASS: AI Onboarding (Anonymous)
+   Details: Guidance provided for buyer role
+
+🔍 Testing AI Onboarding (Authenticated)...
+✅ PASS: AI Onboarding (Authenticated)
+   Details: Personalized guidance for buyer
+
+🔍 Testing AI Error Scenarios...
+✅ PASS: AI Chat Empty Message
+   Details: Handled empty message appropriately
+✅ PASS: AI Recommendations Invalid Query
+   Details: Handled invalid query
+
+💙💙💙💙💙💙💙💙💙💙💙💙💙💙💙 BLUE ERA DASHBOARD BACKEND INTEGRATION TESTING 💙💙💙💙💙💙💙💙💙💙💙💙💙💙💙
+
+💙 Testing Blue Era Trust Score API...
+❌ FAIL: Blue Era Trust Score API
+   Details: HTTP 404: {'detail': 'User not found'}
+
+💙 Testing Blue Era AI Chat Service...
+✅ PASS: Blue Era AI Chat Service (Brand Insights)
+   Details: Generated brand insights: Here are your daily insights for your brand on the AisleMarts marketplace:
+
+### Daily Insights for [... (Agent: aislemarts_agent_anonymous)
+✅ PASS: Blue Era AI Chat Service (Shopper Insights)
+   Details: Generated shopper insights: Here are your daily insights as a shopper on the AisleMarts marketplace:
+
+### Daily Insights for You...
+
+💙 Testing Blue Era Products API for Product Reels...
+✅ PASS: Blue Era Products API for Reels
+   Details: Found 7 products, 7 valid for reels. Sample: Wireless Bluetooth Headphones - $129.99 - 1 images
+
+💙 Testing Blue Era AI Recommendations...
+✅ PASS: Blue Era AI Recommendations
+   Details: Generated 5 recommendations with AI insights. Valid: 5
+✅ PASS: Blue Era AI Recommendations (Authenticated)
+   Details: Generated 7 personalized recommendations
+
+💙 Testing Blue Era Auth Identity Profile API...
+❌ FAIL: Blue Era Auth Identity Profile API
+   Details: HTTP 404: {'detail': 'User identity not found'}
+
+💙 Testing Blue Era Role-Based Responses...
+✅ PASS: Blue Era Role-Based Responses (Brand)
+   Details: Brand-focused response generated with 5 relevant terms
+✅ PASS: Blue Era Role-Based Responses (Shopper)
+   Details: Shopper-focused response generated with 6 relevant terms
+
+💙 Testing Blue Era Authentication Context...
+✅ PASS: Blue Era Authentication Context (Authenticated)
+   Details: Personalized response with agent ID: aislemarts_agent_anonymous
+✅ PASS: Blue Era Authentication Context (Anonymous)
+   Details: Generic response for anonymous user
+
+🌍🌍🌍🌍🌍🌍🌍🌍🌍🌍🌍🌍🌍🌍🌍 GEOGRAPHIC TARGETING SYSTEM TESTING 🌍🌍🌍🌍🌍🌍🌍🌍🌍🌍🌍🌍🌍🌍🌍
+
+🌍 Testing Geographic Data Initialization...
+✅ PASS: Geographic Data Initialization
+   Details: World cities and countries initialized successfully
+
+🌍 Testing Countries List...
+✅ PASS: Countries List
+   Details: Found 13 countries
+
+🌍 Testing Cities List...
+✅ PASS: Cities List (All)
+   Details: Found 8 cities
+✅ PASS: Cities List (Filtered by Country)
+   Details: Found 1 cities in US
+✅ PASS: Cities List (Major Cities Only)
+   Details: Found 8 major cities
+
+🌍 Testing Cities in Radius...
+✅ PASS: Cities in Radius
+   Details: Found 1 cities within 100km radius
+
+🌍 Testing Seller Visibility Creation...
+✅ PASS: Seller Visibility Creation (Local)
+   Details: Local visibility created: visibility_ec32dbe8-1012-4192-9e88-a40a004f1f47
+✅ PASS: Seller Visibility Creation (National)
+   Details: National visibility created successfully
+✅ PASS: Seller Visibility Creation (Global Strategic)
+   Details: Global strategic visibility created successfully
+✅ PASS: Seller Visibility Creation (Global All)
+   Details: Global all visibility created successfully
+
+🌍 Testing Seller Visibility Retrieval...
+✅ PASS: Seller Visibility Retrieval
+   Details: Retrieved visibility settings for vendor ec32dbe8-1012-4192-9e88-a40a004f1f47
+
+🌍 Testing AI Market Analysis...
+✅ PASS: AI Market Analysis
+   Details: Market analysis completed - Opportunity Score: 50, Insights: 0
+
+🌍 Testing AI Targeting Recommendations...
+❌ FAIL: AI Targeting Recommendations
+   Details: HTTP 500: {'detail': 'Error getting recommendations: 403: Access denied'}
+
+🌍 Testing Performance Tracking...
+✅ PASS: Performance Tracking (View)
+   Details: View event tracked successfully
+✅ PASS: Performance Tracking (Click)
+   Details: Click event tracked successfully
+✅ PASS: Performance Tracking (Conversion)
+   Details: Conversion event with revenue tracked successfully
+
+🌍 Testing Vendor Analytics...
+❌ FAIL: Vendor Analytics
+   Details: HTTP 500: {'detail': 'Analytics error: 403: Access denied'}
+
+🌍 Testing Geographic Product Filtering...
+✅ PASS: Geographic Product Filtering
+   Details: Found 2 products with geographic filtering applied
+
+🌍 Testing Seller Geographic Insights...
+❌ FAIL: Seller Geographic Insights
+   Details: HTTP 500: {'detail': 'Insights error: 403: Access denied'}
+
+🌍 Testing Geographic Authentication Controls...
+✅ PASS: Geographic Auth Control (No Token)
+   Details: Correctly rejected request without authentication
+✅ PASS: Geographic Auth Control (Valid Token)
+   Details: Authentication working correctly for vendor endpoints
+
+🔍🔍🔍🔍🔍🔍🔍🔍🔍🔍🔍🔍🔍🔍🔍 AI SEARCH HUB TESTING 🔍🔍🔍🔍🔍🔍🔍🔍🔍🔍🔍🔍🔍🔍🔍
+
+🔍 Testing AI Search Hub Health Check...
+✅ PASS: AI Search Hub Health Check
+   Details: Services: 4, Tools: 6
+
+🔍 Testing Quick Search (Anonymous)...
+✅ PASS: Quick Search (Hazelnuts)
+   Details: Found 1 results in 0ms
+✅ PASS: Quick Search (Cotton T-shirts with filters)
+   Details: Found 1 results with filters: {'price_max': 5.0}
+✅ PASS: Quick Search (Bamboo Towels)
+   Details: Found 1 eco-friendly products
+
+🔍 Testing Quick Search (Authenticated)...
+✅ PASS: Quick Search (Turkish Coffee - Authenticated)
+   Details: Found 3 Turkish products
+
+🔍 Testing Deep Search (Market Analysis)...
+✅ PASS: Deep Search (Bamboo Towels Market)
+   Details: Generated 4 insights with 0.85 confidence, 3 sources
+✅ PASS: Deep Search (Turkish Hazelnut Trends)
+   Details: Market analysis completed with 3 insights
+
+🔍 Testing Image Read (OCR)...
+✅ PASS: Image Read (OCR)
+   Details: Extracted 6 text blocks, 4 entities
+✅ PASS: Image Read (OCR + Translation)
+   Details: Translation included
+
+🔍 Testing QR Code Scanning...
+✅ PASS: QR Code Scanning (Product)
+   Details: Intent: product_lookup, Action: Open product page for Organic Turkish Hazelnuts
+✅ PASS: QR Code Scanning (Contact)
+   Details: Detected intent: contact
+
+🔍 Testing Barcode Scanning...
+✅ PASS: Barcode Scanning (EAN13)
+   Details: Value: 8690123456789, Type: EAN13, Key: turkish_product_001
+✅ PASS: Barcode Scanning (UPC)
+   Details: Detected symbology: UPC
+✅ PASS: Barcode Scanning (CODE128)
+   Details: CODE128 barcode processed successfully
+
+🔍 Testing Voice Input Processing...
+✅ PASS: Voice Input (English)
+   Details: Transcript: 'Find vegan leather manufacturers near Istanbul...', Language: en, Confidence: 0.92
+✅ PASS: Voice Input (Turkish)
+   Details: Language: tr, Confidence: 0.92
+✅ PASS: Voice Input (Arabic)
+   Details: Arabic processing completed with confidence: 0.92
+
+🔍 Testing Intent Analysis...
+✅ PASS: Intent Analysis (Product Search)
+   Details: Intent: buyer_find_products, Tool: quick_search, Confidence: 0.85
+✅ PASS: Intent Analysis (QR Scan)
+   Details: Suggested tool: qr_scan
+✅ PASS: Intent Analysis (Image Reading)
+   Details: Action: Use image_read to process this query
+
+🔍 Testing User Preferences (Anonymous)...
+✅ PASS: User Preferences (Anonymous GET)
+   Details: Correctly rejected unauthenticated request
+✅ PASS: User Preferences (Anonymous POST)
+   Details: Correctly rejected unauthenticated request
+
+🔍 Testing User Preferences (Authenticated)...
+✅ PASS: User Preferences (GET Default)
+   Details: Tools: ['quick_search', 'deep_search', 'image_read'], Currency: EUR, Privacy settings: 4 items
+✅ PASS: User Preferences (UPDATE)
+   Details: Preferences updated successfully
+✅ PASS: User Preferences (GET Updated)
+   Details: Updated preferences retrieved correctly
+
+🔍 Testing Search Analytics (User)...
+✅ PASS: Search Analytics (User)
+   Details: Total searches: 15, Success rate: 1.0, Tools used: 1, Recent: 10
+✅ PASS: Search Analytics (30 days)
+   Details: Analytics for 30 days retrieved
+
+🔍 Testing Search Hub Edge Cases...
+✅ PASS: Quick Search (Empty Query)
+   Details: Handled empty query, returned 0 results
+✅ PASS: Deep Search (Malformed Request)
+   Details: Handled malformed request appropriately
+✅ PASS: Image Read (Invalid Base64)
+   Details: Handled invalid image data gracefully
+✅ PASS: Intent Analysis (Long Query)
+   Details: Handled very long query successfully
+
+🔍 Testing Search Hub Multi-Language Support...
+✅ PASS: Quick Search (Turkish)
+   Details: Turkish search returned 3 results
+✅ PASS: Quick Search (Arabic)
+   Details: Arabic search processed, 1 results
+✅ PASS: Deep Search (German)
+   Details: German market analysis generated 3 insights
+
+💳💳💳💳💳💳💳💳💳💳💳💳💳💳💳 GLOBAL PAYMENTS & TAX ENGINE TESTING 💳💳💳💳💳💳💳💳💳💳💳💳💳💳💳
+
+💳 Testing Payments & Tax Data Initialization...
+✅ PASS: Payments & Tax Data Initialization
+   Details: Global payment methods, tax rules, and currencies initialized successfully
+
+💳 Testing Payment Method Suggestions...
+✅ PASS: Payment Method Suggestions (US B2C)
+   Details: Found 3 payment methods with AI insights
+✅ PASS: Payment Method Suggestions (TR High-Value)
+   Details: Found 1 payment methods for Turkey
+✅ PASS: Payment Method Suggestions (DE B2B)
+   Details: Found 1 payment methods for German B2B
+
+💳 Testing Tax Computation Engine...
+✅ PASS: Tax Computation (US B2C)
+   Details: Tax calculated: $16.5, 2 tax lines
+✅ PASS: Tax Computation (UK B2B Reverse Charge)
+   Details: B2B tax calculated: £0.0 (should be 0 for reverse charge)
+✅ PASS: Tax Computation (TR VAT)
+   Details: Turkey VAT calculated: ₺200.0
+
+💳 Testing Currency Conversion...
+✅ PASS: Currency Conversion (USD to EUR)
+   Details: $100 = €108.0 (rate: 1.08)
+✅ PASS: Currency Conversion (Same Currency)
+   Details: Same currency conversion handled correctly
+
+💳 Testing Fraud Risk Assessment...
+✅ PASS: Fraud Risk Assessment (Low Risk)
+   Details: Risk: 10/100 (low) - Action: allow
+✅ PASS: Fraud Risk Assessment (High Risk)
+   Details: Risk: 100/100 (very_high) - Action: block
+
+💳 Testing Enhanced Payment Intent...
+✅ PASS: Enhanced Payment Intent
+   Details: Subtotal: €1300.0, Total: €1547.0, Methods: 2, Risk: high
+
+💳 Testing Payment Analytics (Admin)...
+❌ FAIL: Payment Analytics (Admin)
+   Details: Could not login as admin
+
+💳 Testing Tax Analytics (Admin)...
+❌ FAIL: Tax Analytics (Admin)
+   Details: Could not login as admin
+
+💳 Testing Payments & Tax Health Check...
+✅ PASS: Payments & Tax Health Check
+   Details: Service healthy - Methods: 5, Tax Rules: 5, Currencies: 5
+
+💳 Testing Payment Methods Listing...
+✅ PASS: Payment Methods Listing (All)
+   Details: Found 5 payment methods
+✅ PASS: Payment Methods Listing (Filtered)
+   Details: Found 3 methods for US/USD
+
+💳 Testing Tax Rules Listing...
+✅ PASS: Tax Rules Listing (All)
+   Details: Found 5 tax rules
+✅ PASS: Tax Rules Listing (Filtered)
+   Details: Found 1 VAT rules for GB
+
+💳 Testing Currencies Listing...
+✅ PASS: Currencies Listing
+   Details: Found 5 supported currencies
+
+💳 Testing Payments & Tax Error Scenarios...
+✅ PASS: Invalid Country Code
+   Details: Handled invalid country gracefully - 0 methods
+✅ PASS: Invalid Currency Conversion
+   Details: Invalid currency properly rejected
+✅ PASS: Fraud Assessment Without Auth
+   Details: Properly requires authentication
+
+🏢🏢🏢🏢🏢🏢🏢🏢🏢🏢🏢🏢🏢🏢🏢 ENTERPRISE FEATURES TESTING 🏢🏢🏢🏢🏢🏢🏢🏢🏢🏢🏢🏢🏢🏢🏢
+
+🌐 AI Trade Intelligence Testing...
+
+🌐 Testing Trade Intelligence Health Check...
+✅ PASS: Trade Intelligence Health Check
+   Details: Capabilities: 7, Domains: 8
+
+🌐 Testing HS Code Suggestion...
+❌ FAIL: HS Code Suggestion
+   Details: {'candidates': [{'hs': '8517.12', 'desc': 'Telephones for cellular networks', 'confidence': 0.95}], 'notes': ['AI-enhanced classification analysis', '### HS Code Classification Analysis for Wireless Bluetooth Headphones\n\n#### Current Suggestion Validation\n**Current Suggested HS Code**: \n- **8517.12** - "Telephones for cellular networks"\n- **Confide...', 'Estimates only - confirm with customs broker for binding classification']}
+
+🌐 Testing Landed Cost Calculation...
+✅ PASS: Landed Cost Calculation
+   Details: Total cost: $1135.0, Components: 0
+
+🌐 Testing Freight Quote...
+❌ FAIL: Freight Quote
+   Details: {'options': [{'carrier': 'Turkish Airlines Cargo', 'eta_days': 4, 'cost': 48.0, 'notes': 'Standard air freight, good reliability | AI Insight: ### Freight Shipping Scenario Analysis\n\n#### Summa...'}, {'carrier': 'Lufthansa Cargo', 'eta_days': 5, 'cost': 45.599999999999994, 'notes': 'Reliable European network'}], 'volumetric_weight_kg': 9.0}
+
+🌐 Testing Compliance Screening...
+❌ FAIL: Compliance Screening
+   Details: {'hits': [], 'notes': ['AI Risk Analysis: ### Compliance Screening Analysis for International Trade\n\n#### Summary of Screening Results\n- **Par...', 'This is a simplified screening - use professional compliance services for actual transactions']}
+
+🌐 Testing Trade Payment Methods Suggestion...
+✅ PASS: Trade Payment Methods Suggestion
+   Details: Found 1 methods with AI insights
+
+🌐 Testing Trade Tax Computation...
+✅ PASS: Trade Tax Computation
+   Details: Tax: $26.249125, Lines: 0
+
+🌐 Testing Trade Insights...
+✅ PASS: Trade Insights
+   Details: AI insights provided with 0.85 confidence
+
+🌐 Testing Trade Reference Data...
+✅ PASS: Trade Incoterms Reference
+   Details: Found 11 Incoterms
+✅ PASS: Trade Transport Modes Reference
+   Details: Found 7 transport modes
+✅ PASS: Trade Sample HS Codes Reference
+   Details: Found 15 sample HS codes
+
+🔐 Auth Identity & Verification Testing...
+
+🔐 Testing Identity Service Health Check...
+✅ PASS: Identity Service Health Check
+   Details: Capabilities: 6, Levels: 3
+
+🔐 Testing User Identity Creation...
+✅ PASS: User Identity Creation
+   Details: Created identity for user: 50009728-eeb3-4b0a-a6d5-40ad694c0607
+
+🔐 Testing Identity Verification Requirements...
+❌ FAIL: Identity Verification Requirements
+   Details: {'error': 'User not found'}
+
+🔐 Testing Username Validation...
+❌ FAIL: Username Validation
+   Details: {'valid': False, 'error': 'User not found'}
+
+🔐 Testing Avatar Validation...
+❌ FAIL: Avatar Validation
+   Details: {'valid': False, 'error': 'User not found'}
+
+🔐 Testing Identity Policies...
+✅ PASS: Username Policy
+   Details: Policy retrieved with 7 rules
+✅ PASS: Avatar Policy
+   Details: Policy retrieved with 8 rules
+
+🔐 Testing Verification Levels...
+✅ PASS: Verification Levels
+   Details: Levels: 3, Role configs: 4
+
+🤖 AI User Agents Framework Testing...
+
+🤖 Testing AI Agents Health Check...
+✅ PASS: AI Agents Health Check
+   Details: Capabilities: 6, Roles: 2, Tasks: 7
+
+🤖 Testing Agent Configuration Creation...
+❌ FAIL: Agent Configuration Creation
+   Details: HTTP 422: {'detail': [{'type': 'enum', 'loc': ['body', 'priority_rules', 0], 'msg': "Input should be 'speed', 'cost', 'sustainability' or 'reliability'", 'input': 'budget_first', 'ctx': {'expected': "'speed', 'cost', 'sustainability' or 'reliability'"}, 'url': 'https://errors.pydantic.dev/2.11/v/enum'}, {'type': 'enum', 'loc': ['body', 'priority_rules', 1], 'msg': "Input should be 'speed', 'cost', 'sustainability' or 'reliability'", 'input': 'quality_second', 'ctx': {'expected': "'speed', 'cost', 'sustainability' or 'reliability'"}, 'url': 'https://errors.pydantic.dev/2.11/v/enum'}, {'type': 'enum', 'loc': ['body', 'agent_style'], 'msg': "Input should be 'formal', 'concise', 'friendly' or 'data_driven'", 'input': 'balanced', 'ctx': {'expected': "'formal', 'concise', 'friendly' or 'data_driven'"}, 'url': 'https://errors.pydantic.dev/2.11/v/enum'}]}
+
+🤖 Testing Get Agent Configuration...
+✅ PASS: Get Agent Configuration
+   Details: Role: buyer_agent, Tasks: 3
+
+🤖 Testing Agent Task Creation...
+✅ PASS: Agent Task Creation
+   Details: Created task: 80237841-931a-4976-ab82-387a1f7b46cd
+
+🤖 Testing Get Agent Tasks...
+✅ PASS: Get Agent Tasks
+   Details: Found 6 tasks
+
+🤖 Testing Agent Capabilities...
+✅ PASS: Agent Capabilities
+   Details: Capabilities: 2, Templates: 4, Roles: 2
+
+🤖 Testing Agent Analytics...
+❌ FAIL: Agent Analytics
+   Details: {'period_days': 30, 'total_tasks': 6, 'completed_tasks': 0, 'success_rate': 0.0, 'task_types': [{'task_type': 'shopping', 'count': 4}, {'task_type': 'shopping.discover_products', 'count': 2}], 'cost_saved_estimate': 0.0, 'time_saved_hours': 0.0}
+
+👤 Profile Card System Testing...
+
+👤 Testing Profile Cards Health Check...
+✅ PASS: Profile Cards Health Check
+   Details: Capabilities: 8, Types: 3, Social: 10
+
+👤 Testing Profile Card Creation...
+✅ PASS: Profile Card Creation
+   Details: Created card: 6ec621ed-ed0f-4f44-99f7-757274ca9ff4
+
+👤 Testing Get My Profile Card...
+✅ PASS: Get My Profile Card
+   Details: Card: Test Profile User (@testprofileuser)
+
+👤 Testing Profile Completeness...
+❌ FAIL: Profile Completeness
+   Details: {'percentage': 62.5, 'completed_fields': 5, 'total_fields': 8, 'missing_fields': ['avatar_url', 'verification_badges', 'social_links'], 'suggestions': ['Add a profile photo to help others recognize you', 'Complete verification to earn trust badges', 'Connect your social media accounts to expand your presence'], 'ai_suggestions': "Error getting AI suggestions: 'str' object has no attribute 'value'"}
+
+👤 Testing Profile Search...
+✅ PASS: Profile Search
+   Details: Found 0 profiles matching 'test'
+
+👤 Testing Profile Reference Data...
+✅ PASS: Profile Social Platforms
+   Details: Found 10 social platforms
+✅ PASS: Profile Contact Methods
+   Details: Found 5 contact methods
+✅ PASS: Profile Templates
+   Details: Found 3 templates
+
+📋📋📋📋📋📋📋📋📋📋📋📋📋📋📋 DOCUMENTATION SUITE TESTING 📋📋📋📋📋📋📋📋📋📋📋📋📋📋📋
+
+📄 Documentation Compliance Testing...
+
+📄 Testing Documentation Compliance Health Check...
+❌ FAIL: Documentation Compliance Health Check
+   Details: HTTP 404: {'detail': 'Document not found'}
+
+📄 Testing Document Creation...
+✅ PASS: Document Creation
+   Details: Created document: f5a2af4a-3eab-47b8-a8ac-81efd6963e79
+
+📄 Testing List User Documents...
+❌ FAIL: List User Documents
+   Details: HTTP 500: Internal Server Error
+
+📄 Testing Get Document...
+✅ PASS: Get Document
+   Details: Retrieved commercial_invoice: Test Commercial Invoice
+
+📄 Testing Submit Document...
+✅ PASS: Submit Document
+   Details: Document submitted: Document submitted successfully
+
+📄 Testing Amend Document...
+✅ PASS: Amend Document
+   Details: Amendment created: c2a4830e-7fd1-4cd1-aeaf-493431b3dd4a
+
+📄 Testing AI Generate Document...
+✅ PASS: AI Generate Document
+   Details: AI generated document with 5 fields
+
+📄 Testing Document Templates...
+✅ PASS: Document Templates
+   Details: Found 3 templates
+
+📄 Testing Compliance Standards...
+✅ PASS: Compliance Standards
+   Details: Compliance standards retrieved
+
+📄 Testing Document Types...
+❌ FAIL: Document Types
+   Details: HTTP 404: {'detail': 'Document not found'}
+
+👥 Procedures by Category Testing...
+
+👥 Testing Procedures by Category Health Check...
+✅ PASS: Procedures by Category Health Check
+   Details: Capabilities: 6, Categories: 2, Steps: 11, Permissions: 12, Badges: 3
+
+👥 Testing Create User Procedure...
+✅ PASS: Create User Procedure
+   Details: Procedure existing: f84917a3-2b7e-4f7a-a87c-52b7723dd7e5, Role: None
+
+👥 Testing Get My Procedure...
+❌ FAIL: Get My Procedure
+   Details: {'_id': 'f84917a3-2b7e-4f7a-a87c-52b7723dd7e5', 'user_id': '14d33012-07ee-4ac1-9069-4a9a8807738c', 'category': 'seller_brand', 'current_step': 'create_account', 'completed_steps': [], 'verification_status': {}, 'badge_earned': 'none', 'permissions_granted': [], 'created_at': '2025-09-14T00:25:03.164000', 'updated_at': '2025-09-15T15:31:26.384000', 'onboarding_completed_at': None, 'next_reverification_due': '2026-09-15T15:31:26.384000', 'status': 'under_review', 'notes': None, 'assigned_reviewer': None, 'step_history': [{'step': 'create_account', 'action': 'started', 'timestamp': '2025-09-14T00:25:03.164000', 'user_id': '14d33012-07ee-4ac1-9069-4a9a8807738c', 'details': {'role': 'seller_brand'}}], 'verification_history': [{'timestamp': '2025-09-14T00:25:03.369000', 'action': 'reverification_requested', 'user_id': '14d33012-07ee-4ac1-9069-4a9a8807738c', 'reason': 'periodic_reverification'}, {'timestamp': '2025-09-15T15:31:26.384000', 'action': 'reverification_requested', 'user_id': '14d33012-07ee-4ac1-9069-4a9a8807738c', 'reason': 'periodic_reverification'}]}
+
+👥 Testing Onboarding Progress...
+❌ FAIL: Onboarding Progress
+   Details: HTTP 404: {'detail': "'str' object has no attribute 'value'"}
+
+👥 Testing Complete Onboarding Step...
+❌ FAIL: Complete Onboarding Step
+   Details: HTTP 422: {'detail': [{'type': 'enum', 'loc': ['body', 'step'], 'msg': "Input should be 'create_account', 'email_phone_verify', 'enable_2fa', 'business_profile_setup', 'kyb_submission', 'bank_account_verification', 'tax_ids_submission', 'brand_assets_upload', 'policy_acceptance', 'profile_basics' or 'payment_method_verification'", 'input': 'company_verification', 'ctx': {'expected': "'create_account', 'email_phone_verify', 'enable_2fa', 'business_profile_setup', 'kyb_submission', 'bank_account_verification', 'tax_ids_submission', 'brand_assets_upload', 'policy_acceptance', 'profile_basics' or 'payment_method_verification'"}, 'url': 'https://errors.pydantic.dev/2.11/v/enum'}]}
+
+👥 Testing User Permissions...
+✅ PASS: User Permissions
+   Details: Found 0 permissions
+
+👥 Testing Check User Permission...
+❌ FAIL: Check User Permission
+   Details: HTTP 422: {'detail': [{'type': 'enum', 'loc': ['path', 'permission'], 'msg': "Input should be 'list_products', 'b2b_trading', 'cross_border', 'payments_accept', 'payouts_receive', 'api_access', 'city_targeting', 'browse_buy', 'wishlist', 'reviews', 'returns_support' or 'seller_tools'", 'input': 'create_products', 'ctx': {'expected': "'list_products', 'b2b_trading', 'cross_border', 'payments_accept', 'payouts_receive', 'api_access', 'city_targeting', 'browse_buy', 'wishlist', 'reviews', 'returns_support' or 'seller_tools'"}, 'url': 'https://errors.pydantic.dev/2.11/v/enum'}]}
+
+👥 Testing User Badge...
+❌ FAIL: User Badge
+   Details: {'badge': 'none', 'verified': False}
+
+👥 Testing Request Reverification...
+✅ PASS: Request Reverification
+   Details: Reverification requested: Reverification process started
+
+👥 Testing Generate Onboarding Guidance...
+❌ FAIL: Generate Onboarding Guidance
+   Details: HTTP 404: {'detail': "'str' object has no attribute 'value'"}
+
+👥 Testing User Analytics...
+❌ FAIL: User Analytics
+   Details: HTTP 404: {'detail': "'str' object has no attribute 'value'"}
+
+👥 Testing Category Configurations...
+✅ PASS: Category Configurations
+   Details: Category configurations retrieved
+
+👥 Testing Procedures Reference Data...
+✅ PASS: Procedures Reference Data
+   Details: Roles: 4, Steps: 11, Permissions: 12, Badges: 3
+
+🔄 Documentation Procedures Testing...
+
+🔄 Testing Documentation Procedures Health Check...
+❌ FAIL: Documentation Procedures Health Check
+   Details: HTTP 404: {'detail': 'Procedure not found'}
+
+🔄 Testing Create Document Procedure...
+✅ PASS: Create Document Procedure
+   Details: Procedure created: 53477db9-983b-4320-8388-178cf988d668
+
+🔄 Testing Get Document Procedure...
+❌ FAIL: Get Document Procedure
+   Details: {'_id': '53477db9-983b-4320-8388-178cf988d668', 'document_id': 'f5a2af4a-3eab-47b8-a8ac-81efd6963e79', 'document_type': 'commercial_invoice', 'document_title': 'Test Invoice for Procedure', 'current_state': 'draft', 'approval_level_required': 'auto', 'priority': 'low', 'created_by': '14d33012-07ee-4ac1-9069-4a9a8807738c', 'current_assignee': None, 'reviewer_pool': ['reviewer_1', 'reviewer_2'], 'created_at': '2025-09-15T20:27:49.094000', 'updated_at': '2025-09-15T20:27:49.094000', 'submitted_at': None, 'assigned_at': None, 'due_date': '2025-09-15T21:27:49.094000', 'completed_at': None, 'sla_config': {'level': 'auto', 'response_time_hours': 0, 'completion_time_hours': 1, 'escalation_time_hours': 2, 'business_hours_only': True, 'excluded_days': ['Saturday', 'Sunday']}, 'sla_met': None, 'response_time_minutes': None, 'completion_time_minutes': None, 'state_history': [{'state': 'draft', 'timestamp': '2025-09-15T20:27:49.094000', 'user_id': '14d33012-07ee-4ac1-9069-4a9a8807738c', 'action': 'created', 'details': {'approval_level': 'auto', 'risk_score': 0.0}}], 'approvals': [], 'comments': [], 'escalations': [], 'notification_rules': [{'rule_id': 'dd02d56b-752a-4871-a928-d0d66297990f', 'event_type': 'review_required', 'recipients': ['current_assignee'], 'notification_types': ['email', 'in_app'], 'delay_minutes': 0, 'conditions': {'state': 'pending_review'}}, {'rule_id': '29024b09-7fe8-4142-9958-dac4079d225b', 'event_type': 'sla_warning', 'recipients': ['current_assignee', 'supervisor'], 'notification_types': ['email'], 'delay_minutes': 60, 'conditions': {'state': 'in_review'}}], 'notifications_sent': [], 'risk_score': 0.0, 'compliance_flags': [], 'regulatory_requirements': [], 'tags': [], 'custom_fields': {}, 'external_references': [], 'audit_log': [{'timestamp': '2025-09-15T20:27:49.094000', 'action': 'procedure_created', 'user_id': '14d33012-07ee-4ac1-9069-4a9a8807738c', 'details': {'document_id': 'f5a2af4a-3eab-47b8-a8ac-81efd6963e79', 'approval_level': 'auto', 'risk_score': 0.0}}]}
+
+🔄 Testing Submit for Review...
+✅ PASS: Submit for Review
+   Details: New state: pending_review, 
+
+🔄 Testing Approve Document...
+✅ PASS: Approve Document
+   Details: Approved at level: None, New state: approved
+
+🔄 Testing Reject Document...
+❌ FAIL: Reject Document
+   Details: HTTP 422: {'detail': [{'type': 'enum', 'loc': ['body', 'reviewer_role'], 'msg': "Input should be 'compliance_officer', 'senior_compliance', 'legal_counsel', 'operations_manager', 'trade_specialist', 'customs_expert' or 'tax_advisor'", 'input': 'quality_control', 'ctx': {'expected': "'compliance_officer', 'senior_compliance', 'legal_counsel', 'operations_manager', 'trade_specialist', 'customs_expert' or 'tax_advisor'"}, 'url': 'https://errors.pydantic.dev/2.11/v/enum'}]}
+
+🔄 Testing Request Revision...
+✅ PASS: Request Revision
+   Details: Revision requested: None, New state: revision_requested
+
+🔄 Testing Add Comment...
+✅ PASS: Add Comment
+   Details: Comment added: c6576b24-3399-4c43-ae7e-84b88fc2b736
+
+🔄 Testing Escalate Procedure...
+❌ FAIL: Escalate Procedure
+   Details: HTTP 400: {'detail': "'sla_breach' is not a valid EscalationTrigger"}
+
+🔄 Testing Get My Procedures...
+❌ FAIL: Get My Procedures
+   Details: HTTP 404: {'detail': 'Procedure not found'}
+
+🔄 Testing Get Pending Reviews...
+❌ FAIL: Get Pending Reviews
+   Details: HTTP 404: {'detail': 'Procedure not found'}
+
+🔄 Testing Generate Workflow Insights...

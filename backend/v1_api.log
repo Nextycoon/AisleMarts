@@ -1,0 +1,228 @@
+INFO:     Will watch for changes in these directories: ['/app/backend']
+INFO:     Uvicorn running on http://0.0.0.0:8000 (Press CTRL+C to quit)
+INFO:     Started reloader process [5898] using WatchFiles
+INFO:     Started server process [5912]
+INFO:     Waiting for application startup.
+[ROUTES]
+/
+/api/ai/voice-command
+/api/cart/add
+/api/cart/clear
+/api/cart/current
+/api/cart/persist
+/api/payments/create-payment-intent
+/api/payments/webhook
+/api/recommendations
+/docs
+/docs/oauth2-redirect
+/health
+/metrics
+/openapi.json
+/redoc
+INFO:     Application startup complete.
+INFO:     127.0.0.1:49100 - "GET /__routes__ HTTP/1.1" 404 Not Found
+WARNING:  WatchFiles detected changes in 'v1_main.py'. Reloading...
+INFO:     Shutting down
+INFO:     Waiting for application shutdown.
+INFO:     Application shutdown complete.
+INFO:     Finished server process [5912]
+INFO:     Started server process [5998]
+INFO:     Waiting for application startup.
+[ROUTES]
+/
+/__routes__
+/api/ai/voice-command
+/api/cart/add
+/api/cart/clear
+/api/cart/current
+/api/cart/persist
+/api/payments/create-payment-intent
+/api/payments/webhook
+/api/recommendations
+/docs
+/docs/oauth2-redirect
+/health
+/metrics
+/openapi.json
+/redoc
+INFO:     Application startup complete.
+INFO:     127.0.0.1:60722 - "GET /__routes__ HTTP/1.1" 200 OK
+INFO:     127.0.0.1:60728 - "GET /health HTTP/1.1" 200 OK
+INFO:     127.0.0.1:53992 - "POST /api/cart/persist HTTP/1.1" 200 OK
+INFO:     127.0.0.1:54008 - "POST /api/ai/voice-command HTTP/1.1" 200 OK
+INFO:     127.0.0.1:54020 - "GET /api/recommendations?mood=luxury HTTP/1.1" 500 Internal Server Error
+ERROR:    Exception in ASGI application
+Traceback (most recent call last):
+  File "/root/.venv/lib/python3.11/site-packages/fastapi/encoders.py", line 324, in jsonable_encoder
+    data = dict(obj)
+           ^^^^^^^^^
+TypeError: 'ObjectId' object is not iterable
+
+During handling of the above exception, another exception occurred:
+
+Traceback (most recent call last):
+  File "/root/.venv/lib/python3.11/site-packages/fastapi/encoders.py", line 329, in jsonable_encoder
+    data = vars(obj)
+           ^^^^^^^^^
+TypeError: vars() argument must have __dict__ attribute
+
+The above exception was the direct cause of the following exception:
+
+Traceback (most recent call last):
+  File "/root/.venv/lib/python3.11/site-packages/uvicorn/protocols/http/httptools_impl.py", line 399, in run_asgi
+    result = await app(  # type: ignore[func-returns-value]
+             ^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^
+  File "/root/.venv/lib/python3.11/site-packages/uvicorn/middleware/proxy_headers.py", line 70, in __call__
+    return await self.app(scope, receive, send)
+           ^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^
+  File "/root/.venv/lib/python3.11/site-packages/fastapi/applications.py", line 1054, in __call__
+    await super().__call__(scope, receive, send)
+  File "/root/.venv/lib/python3.11/site-packages/starlette/applications.py", line 123, in __call__
+    await self.middleware_stack(scope, receive, send)
+  File "/root/.venv/lib/python3.11/site-packages/starlette/middleware/errors.py", line 186, in __call__
+    raise exc
+  File "/root/.venv/lib/python3.11/site-packages/starlette/middleware/errors.py", line 164, in __call__
+    await self.app(scope, receive, _send)
+  File "/root/.venv/lib/python3.11/site-packages/starlette/middleware/base.py", line 189, in __call__
+    with collapse_excgroups():
+  File "/usr/local/lib/python3.11/contextlib.py", line 158, in __exit__
+    self.gen.throw(typ, value, traceback)
+  File "/root/.venv/lib/python3.11/site-packages/starlette/_utils.py", line 93, in collapse_excgroups
+    raise exc
+  File "/root/.venv/lib/python3.11/site-packages/starlette/middleware/base.py", line 191, in __call__
+    response = await self.dispatch_func(request, call_next)
+               ^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^
+  File "/app/backend/v1_main.py", line 19, in dispatch
+    resp = await call_next(request)
+           ^^^^^^^^^^^^^^^^^^^^^^^^
+  File "/root/.venv/lib/python3.11/site-packages/starlette/middleware/base.py", line 165, in call_next
+    raise app_exc
+  File "/root/.venv/lib/python3.11/site-packages/starlette/middleware/base.py", line 151, in coro
+    await self.app(scope, receive_or_disconnect, send_no_error)
+  File "/root/.venv/lib/python3.11/site-packages/starlette/middleware/cors.py", line 85, in __call__
+    await self.app(scope, receive, send)
+  File "/root/.venv/lib/python3.11/site-packages/starlette/middleware/exceptions.py", line 65, in __call__
+    await wrap_app_handling_exceptions(self.app, conn)(scope, receive, send)
+  File "/root/.venv/lib/python3.11/site-packages/starlette/_exception_handler.py", line 64, in wrapped_app
+    raise exc
+  File "/root/.venv/lib/python3.11/site-packages/starlette/_exception_handler.py", line 53, in wrapped_app
+    await app(scope, receive, sender)
+  File "/root/.venv/lib/python3.11/site-packages/starlette/routing.py", line 756, in __call__
+    await self.middleware_stack(scope, receive, send)
+  File "/root/.venv/lib/python3.11/site-packages/starlette/routing.py", line 776, in app
+    await route.handle(scope, receive, send)
+  File "/root/.venv/lib/python3.11/site-packages/starlette/routing.py", line 297, in handle
+    await self.app(scope, receive, send)
+  File "/root/.venv/lib/python3.11/site-packages/starlette/routing.py", line 77, in app
+    await wrap_app_handling_exceptions(app, request)(scope, receive, send)
+  File "/root/.venv/lib/python3.11/site-packages/starlette/_exception_handler.py", line 64, in wrapped_app
+    raise exc
+  File "/root/.venv/lib/python3.11/site-packages/starlette/_exception_handler.py", line 53, in wrapped_app
+    await app(scope, receive, sender)
+  File "/root/.venv/lib/python3.11/site-packages/starlette/routing.py", line 72, in app
+    response = await func(request)
+               ^^^^^^^^^^^^^^^^^^^
+  File "/root/.venv/lib/python3.11/site-packages/fastapi/routing.py", line 296, in app
+    content = await serialize_response(
+              ^^^^^^^^^^^^^^^^^^^^^^^^^
+  File "/root/.venv/lib/python3.11/site-packages/fastapi/routing.py", line 180, in serialize_response
+    return jsonable_encoder(response_content)
+           ^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^
+  File "/root/.venv/lib/python3.11/site-packages/fastapi/encoders.py", line 303, in jsonable_encoder
+    jsonable_encoder(
+  File "/root/.venv/lib/python3.11/site-packages/fastapi/encoders.py", line 289, in jsonable_encoder
+    encoded_value = jsonable_encoder(
+                    ^^^^^^^^^^^^^^^^^
+  File "/root/.venv/lib/python3.11/site-packages/fastapi/encoders.py", line 332, in jsonable_encoder
+    raise ValueError(errors) from e
+ValueError: [TypeError("'ObjectId' object is not iterable"), TypeError('vars() argument must have __dict__ attribute')]
+INFO:     127.0.0.1:54028 - "POST /api/payments/create-payment-intent HTTP/1.1" 500 Internal Server Error
+INFO:     127.0.0.1:54030 - "GET /metrics HTTP/1.1" 200 OK
+WARNING:  WatchFiles detected changes in 'routers/orders.py'. Reloading...
+INFO:     Shutting down
+INFO:     Waiting for application shutdown.
+INFO:     Application shutdown complete.
+INFO:     Finished server process [5998]
+INFO:     Started server process [6201]
+INFO:     Waiting for application startup.
+[ROUTES]
+/
+/__routes__
+/api/ai/voice-command
+/api/cart/add
+/api/cart/clear
+/api/cart/current
+/api/cart/persist
+/api/payments/create-payment-intent
+/api/payments/webhook
+/api/recommendations
+/docs
+/docs/oauth2-redirect
+/health
+/metrics
+/openapi.json
+/redoc
+INFO:     Application startup complete.
+WARNING:  WatchFiles detected changes in 'routers/payments_stripe.py'. Reloading...
+INFO:     Shutting down
+INFO:     Waiting for application shutdown.
+INFO:     Application shutdown complete.
+INFO:     Finished server process [6201]
+INFO:     Started server process [6276]
+INFO:     Waiting for application startup.
+[ROUTES]
+/
+/__routes__
+/api/ai/voice-command
+/api/cart/add
+/api/cart/clear
+/api/cart/current
+/api/cart/persist
+/api/payments/stripe/create-intent
+/api/payments/stripe/create-payment-intent
+/api/payments/stripe/webhook
+/api/recommendations
+/docs
+/docs/oauth2-redirect
+/health
+/metrics
+/openapi.json
+/redoc
+INFO:     Application startup complete.
+WARNING:  WatchFiles detected changes in 'v1_main.py'. Reloading...
+INFO:     Shutting down
+INFO:     Waiting for application shutdown.
+INFO:     Application shutdown complete.
+INFO:     Finished server process [6276]
+INFO:     Started server process [6358]
+INFO:     Waiting for application startup.
+[ROUTES]
+/
+/__routes__
+/api/ai/voice-command
+/api/cart/add
+/api/cart/clear
+/api/cart/current
+/api/cart/persist
+/api/orders
+/api/orders/stripe/webhook
+/api/orders/{orderId}
+/api/payments/stripe/create-intent
+/api/payments/stripe/create-payment-intent
+/api/payments/stripe/webhook
+/api/recommendations
+/docs
+/docs/oauth2-redirect
+/health
+/metrics
+/openapi.json
+/redoc
+INFO:     Application startup complete.
+INFO:     127.0.0.1:59684 - "GET /health HTTP/1.1" 200 OK
+INFO:     127.0.0.1:59692 - "GET /__routes__ HTTP/1.1" 200 OK
+INFO:     127.0.0.1:59702 - "GET /api/orders?deviceId=test-device HTTP/1.1" 200 OK
+INFO:     127.0.0.1:59710 - "POST /api/payments/stripe/create-intent HTTP/1.1" 500 Internal Server Error
+INFO:     127.0.0.1:59712 - "POST /api/orders/stripe/webhook HTTP/1.1" 200 OK
+INFO:     127.0.0.1:35506 - "GET /health HTTP/1.1" 200 OK
+INFO:     127.0.0.1:35518 - "GET /__routes__ HTTP/1.1" 200 OK
+INFO:     127.0.0.1:35524 - "GET /products/collections HTTP/1.1" 404 Not Found

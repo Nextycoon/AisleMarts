@@ -1,0 +1,33 @@
+env: load .env
+env: export EXPO_TUNNEL_SUBDOMAIN EXPO_PACKAGER_HOSTNAME EXPO_PUBLIC_BACKEND_URL EXPO_USE_FAST_RESOLVER METRO_CACHE_ROOT
+Starting project at /app/frontend
+Fast resolver is enabled.
+Starting Metro Bundler
+The following packages should be updated for best compatibility with the installed expo version:
+  @react-native-async-storage/async-storage@2.2.0 - expected version: 2.1.2
+  expo-blur@15.0.7 - expected version: ~14.1.5
+  expo-linear-gradient@15.0.7 - expected version: ~14.1.5
+Your project may not work correctly until you install the expected versions of the packages.
+Waiting on http://localhost:3001
+Logs for your project will appear below.
+/app/frontend/node_modules/@expo/cli/build/src/utils/errors.js:130
+    throw error;
+    ^
+
+Error: ENOSPC: System limit for number of file watchers reached, watch '/app/frontend/node_modules/react-native-web/dist/vendor/react-native/Types'
+    at FSWatcher.<computed> (node:internal/fs/watchers:247:19)
+    at Object.watch (node:fs:2491:36)
+    at FallbackWatcher._watchdir (/app/frontend/node_modules/metro-file-map/src/watchers/FallbackWatcher.js:88:24)
+    at /app/frontend/node_modules/metro-file-map/src/watchers/FallbackWatcher.js:23:16
+    at Walker.<anonymous> (/app/frontend/node_modules/metro-file-map/src/watchers/FallbackWatcher.js:322:31)
+    at Walker.emit (node:events:524:28)
+    at /app/frontend/node_modules/walker/lib/walker.js:69:16
+    at FSReqCallback.oncomplete (node:fs:188:23) {
+  errno: -28,
+  syscall: 'watch',
+  code: 'ENOSPC',
+  path: '/app/frontend/node_modules/react-native-web/dist/vendor/react-native/Types',
+  filename: '/app/frontend/node_modules/react-native-web/dist/vendor/react-native/Types'
+}
+
+Node.js v20.19.5

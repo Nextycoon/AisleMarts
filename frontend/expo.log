@@ -1,0 +1,9 @@
+env: load .env
+env: export EXPO_TUNNEL_SUBDOMAIN EXPO_PACKAGER_HOSTNAME EXPO_PUBLIC_BACKEND_URL EXPO_USE_FAST_RESOLVER METRO_CACHE_ROOT
+Starting project at /app/frontend
+› Port 3000 is running this app in another window
+  /app/frontend (pid 4681)
+Input is required, but 'npx expo' is in non-interactive mode.
+Required input:
+> Use port 3001 instead?
+› Skipping dev server

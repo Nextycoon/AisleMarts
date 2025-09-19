@@ -1,0 +1,222 @@
+🚀 Starting AisleMarts Backend API Tests - PHASE 2 CRITICAL INTEGRATION
+📍 Testing against: https://ai-marketplace-12.preview.emergentagent.com/api
+================================================================================
+
+🎯 PHASE 2 PRIORITY 1: Health Check Validation
+
+🔍 Testing Health Check...
+✅ PASS: Health Check
+   Details: Service: AisleMarts API
+
+🎯 PHASE 2 PRIORITY 2: Authentication System
+
+🔍 Testing User Registration...
+✅ PASS: User Registration
+   Details: User may already exist: HTTP 400: {'detail': 'Email already in use'}
+
+🔍 Testing User Login...
+✅ PASS: User Login
+   Details: Successfully logged in and got token
+
+🔍 Testing Protected Route (/auth/me)...
+✅ PASS: Protected Route Access
+   Details: User: buyer@aislemarts.com
+
+🎯 PHASE 2 PRIORITY 3: Pickup Windows System (STUCK TASK - HIGH PRIORITY)
+
+🚚 COMPREHENSIVE PICKUP WINDOWS SYSTEM TESTING - STUCK TASK VALIDATION
+================================================================================
+
+🔍 Testing Pickup System Health Check...
+✅ PASS: Pickup System Health Check
+   Details: Status: healthy, Features enabled: 6/6
+
+🔍 Testing Window Creation API...
+❌ FAIL: Window Creation API
+   Details: CRITICAL ISSUE: [] - Still returning empty arrays or errors
+
+🔍 Testing Window Availability API...
+✅ PASS: Window Availability API
+   Details: Found 2 windows, Total capacity: 10, Available: 10
+
+🔍 Creating Test Reservation for Scheduling...
+❌ FAIL: Test Reservation Creation
+   Details: Could not create test reservation: No module named 'db'
+
+🔍 Testing Reservation Scheduling...
+❌ FAIL: Reservation Scheduling
+   Details: No pickup window IDs available for scheduling test
+
+🔍 Testing Reservation Extension...
+❌ FAIL: Reservation Extension
+   Details: STILL BROKEN: HTTP 404: {'detail': 'Reservation not found or access denied'}
+
+🔍 Testing Reservation Modification...
+❌ FAIL: Reservation Modification
+   Details: STILL BROKEN: Unsupported method: PATCH
+
+🔍 Testing Partial Pickup Processing...
+❌ FAIL: Partial Pickup Processing
+   Details: STILL BROKEN: HTTP 404: {'detail': 'Reservation not found'}
+
+🔍 Testing Reservation Status Retrieval...
+❌ FAIL: Reservation Status Retrieval
+   Details: HTTP 404: {'detail': 'Reservation not found'}
+
+🔍 Testing Analytics APIs...
+✅ PASS: Window Analytics API
+   Details: Windows: 2, Utilization: 0.0%
+✅ PASS: Reservation Analytics API
+   Details: Reservations: 0, Success rate: 0%
+
+🔍 Testing Admin Cleanup Operations...
+✅ PASS: Expired Reservations Cleanup
+   Details: Correctly requires admin access
+
+🚚 PICKUP WINDOWS SYSTEM COMPREHENSIVE TEST COMPLETED
+================================================================================
+
+🎯 PHASE 2 PRIORITY 4: Core Marketplace APIs
+
+🔍 Testing Categories List...
+✅ PASS: Categories List
+   Details: Found 3 categories
+
+🔍 Testing Products List...
+✅ PASS: Products List
+   Details: Found 7 products
+
+🔍 Testing Product Details...
+✅ PASS: Product Details
+   Details: Product: Wireless Bluetooth Headphones
+
+🔍 Testing Product Search...
+✅ PASS: Product Search (title)
+   Details: Found 2 results for 'headphones'
+✅ PASS: Product Search (brand)
+   Details: Found 2 results for 'AudioTech'
+
+🔍 Testing User Orders...
+✅ PASS: User Orders
+   Details: Found 0 orders
+
+🎯 PHASE 2 PRIORITY 5: AI Services
+
+🔍 Testing AI Chat (Authenticated)...
+✅ PASS: AI Chat (Authenticated)
+   Details: Agent ID: aislemarts_agent_anonymous
+
+🔍 Testing AI Product Recommendations (Authenticated)...
+✅ PASS: AI Product Recommendations (Authenticated)
+   Details: Found 7 recommendations with AI explanation
+
+🔍 Testing AI Locale Detection...
+✅ PASS: AI Locale Detection
+   Details: Country: US, Currency: USD
+
+🎯 PHASE 2 PRIORITY 6: Payment & Tax Services
+
+💳 Testing Payment Method Suggestions...
+✅ PASS: Payment Method Suggestions (US B2C)
+   Details: Found 3 payment methods with AI insights
+✅ PASS: Payment Method Suggestions (TR High-Value)
+   Details: Found 1 payment methods for Turkey
+✅ PASS: Payment Method Suggestions (DE B2B)
+   Details: Found 1 payment methods for German B2B
+
+💳 Testing Tax Computation Engine...
+✅ PASS: Tax Computation (US B2C)
+   Details: Tax calculated: $16.5, 2 tax lines
+✅ PASS: Tax Computation (UK B2B Reverse Charge)
+   Details: B2B tax calculated: £0.0 (should be 0 for reverse charge)
+✅ PASS: Tax Computation (TR VAT)
+   Details: Turkey VAT calculated: ₺200.0
+
+🎯 ERROR HANDLING VALIDATION
+
+🔍 Testing Error Scenarios...
+✅ PASS: Invalid Login Error
+   Details: Correctly rejected invalid credentials
+✅ PASS: Unauthorized Access Error
+   Details: Correctly rejected request without token
+✅ PASS: Invalid Product ID Error
+   Details: Correctly returned 404 for invalid product
+
+🤖🤖🤖🤖🤖🤖🤖🤖🤖🤖🤖🤖🤖🤖🤖🤖🤖🤖🤖🤖 AI ENDPOINTS TESTING 🤖🤖🤖🤖🤖🤖🤖🤖🤖🤖🤖🤖🤖🤖🤖🤖🤖🤖🤖🤖
+
+🔍 Testing AI Chat (Anonymous)...
+✅ PASS: AI Chat (Anonymous)
+   Details: Response received: Here are some great headphones options for work:
+
+1. **Anker Soundcore Life Q20**
+   - **Type:** Ove...
+
+🔍 Testing AI Chat (Authenticated)...
+✅ PASS: AI Chat (Authenticated)
+   Details: Agent ID: aislemarts_agent_anonymous
+
+🔍 Testing AI Locale Detection...
+✅ PASS: AI Locale Detection
+   Details: Country: US, Currency: USD
+
+🔍 Testing AI Product Recommendations (Anonymous)...
+✅ PASS: AI Product Recommendations (Anonymous)
+   Details: Found 5 recommendations
+
+🔍 Testing AI Product Recommendations (Authenticated)...
+✅ PASS: AI Product Recommendations (Authenticated)
+   Details: Found 7 recommendations with AI explanation
+
+🔍 Testing AI Search Enhancement...
+✅ PASS: AI Search Enhancement
+   Details: Enhanced query processed
+
+🔍 Testing AI Intent Analysis (Anonymous)...
+✅ PASS: AI Intent Analysis (Anonymous)
+   Details: Intent analyzed: product_search
+
+🔍 Testing AI Intent Analysis (Authenticated)...
+✅ PASS: AI Intent Analysis (Authenticated)
+   Details: Intent: product_search
+
+🔍 Testing AI Onboarding (Anonymous)...
+✅ PASS: AI Onboarding (Anonymous)
+   Details: Guidance provided for buyer role
+
+🔍 Testing AI Onboarding (Authenticated)...
+✅ PASS: AI Onboarding (Authenticated)
+   Details: Personalized guidance for buyer
+
+🔍 Testing AI Error Scenarios...
+✅ PASS: AI Chat Empty Message
+   Details: Handled empty message appropriately
+✅ PASS: AI Recommendations Invalid Query
+   Details: Handled invalid query
+
+💙💙💙💙💙💙💙💙💙💙💙💙💙💙💙 BLUE ERA DASHBOARD BACKEND INTEGRATION TESTING 💙💙💙💙💙💙💙💙💙💙💙💙💙💙💙
+
+💙 Testing Blue Era Trust Score API...
+❌ FAIL: Blue Era Trust Score API
+   Details: HTTP 404: {'detail': 'User not found'}
+
+💙 Testing Blue Era AI Chat Service...
+✅ PASS: Blue Era AI Chat Service (Brand Insights)
+   Details: Generated brand insights: Here are your daily insights as a brand vendor on AisleMarts:
+
+### Daily Insights Summary
+
+1. **Sale... (Agent: aislemarts_agent_anonymous)
+✅ PASS: Blue Era AI Chat Service (Shopper Insights)
+   Details: Generated shopper insights: Here are your daily insights as a shopper on AisleMarts:
+
+### Daily Shopper Insights
+
+1. **Shopping ...
+
+💙 Testing Blue Era Products API for Product Reels...
+✅ PASS: Blue Era Products API for Reels
+   Details: Found 7 products, 7 valid for reels. Sample: Wireless Bluetooth Headphones - $129.99 - 1 images
+
+💙 Testing Blue Era AI Recommendations...
+✅ PASS: Blue Era AI Recommendations
+   Details: Generated 5 recommendations with AI insights. Valid: 5
