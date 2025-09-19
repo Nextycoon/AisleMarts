@@ -153,8 +153,8 @@ class SchemaFixTester:
         
         success, data = self.make_request("POST", "/channels", channel_request)
         
-        if success and isinstance(data, dict) and data.get("id"):
-            channel_id = data.get("id")
+        if success and isinstance(data, dict) and (data.get("id") or data.get("_id")):
+            channel_id = data.get("id") or data.get("_id")
             title = data.get("title")
             channel_type = data.get("type")
             owner_id = data.get("owner_id")
