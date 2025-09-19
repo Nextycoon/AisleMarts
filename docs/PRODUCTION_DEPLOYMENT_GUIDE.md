@@ -41,9 +41,9 @@ Analytics: https://analytics.aislemarts.com
 
 ### **Development/Staging**
 ```
-Development: https://luxury-comms.preview.emergentagent.com
-Staging API: https://luxury-comms.preview.emergentagent.com/api
-Testing Suite: https://luxury-comms.preview.emergentagent.com/test
+Development: https://lux-aware.preview.emergentagent.com
+Staging API: https://lux-aware.preview.emergentagent.com/api
+Testing Suite: https://lux-aware.preview.emergentagent.com/test
 ```
 
 ---
