@@ -33,6 +33,16 @@
         "backgroundColor": "#000"
       },
       "edgeToEdgeEnabled": true,
+      "statusBar": {
+        "barStyle": "light-content",
+        "backgroundColor": "transparent",
+        "translucent": true,  
+        "hidden": false
+      },
+      "navigationBar": {
+        "visible": false,
+        "backgroundColor": "transparent"
+      },
       "permissions": [
         "CAMERA",
         "RECORD_AUDIO",
