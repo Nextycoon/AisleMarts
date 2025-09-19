@@ -212,80 +212,246 @@ const ti = {
   elevation: 2,
 } as const;
 
-/** ========= Step 1: Promo (Cinematic Full-Screen) ========= */
+/** ========= Step 1: Promo (Epic Full-Screen Video Background) ========= */
 function StepPromo({ onSignIn, onSignUp }: { onSignIn: () => void; onSignUp: () => void }) {
   const videoRef = useRef<Video | null>(null);
   
   return (
-    <ScreenShell
-      title="AisleMarts"
-      subtitle="Smarter. Faster. Everywhere. Experience Mood-to-Cart™ across luxury, trending and the best deals."
-      step={0}
-      total={6}
-    >
-      {/* Cinematic Video Container */}
-      <View
+    <View style={{ flex: 1, backgroundColor: BRAND.bg }}>
+      {/* FULL SCREEN VIDEO BACKGROUND */}
+      <Video
+        ref={videoRef}
+        source={{ uri: "https://cdn.coverr.co/videos/coverr-shopping-aisles-8515/1080p.mp4" }}
         style={{
-          borderRadius: 24,
-          overflow: "hidden",
-          borderWidth: 2,
-          borderColor: BRAND.gold,
-          backgroundColor: BRAND.card,
-          shadowColor: BRAND.goldGlow,
-          shadowOffset: { width: 0, height: 8 },
-          shadowOpacity: 0.4,
-          shadowRadius: 16,
-          elevation: 12,
+          position: 'absolute',
+          top: 0,
+          left: 0,
+          right: 0,
+          bottom: 0,
+          width: '100%',
+          height: '100%',
+          zIndex: 0,
         }}
-      >
-        <Video
-          ref={videoRef}
-          source={{ uri: "https://cdn.coverr.co/videos/coverr-shopping-aisles-8515/1080p.mp4" }}
-          style={{ width: "100%", height: 280 }}
-          resizeMode="cover"
-          isLooping
-          shouldPlay
-          isMuted
-        />
+        resizeMode="cover"
+        isLooping
+        shouldPlay
+        isMuted
+      />
+      
+      {/* CINEMATIC OVERLAY FOR READABILITY */}
+      <LinearGradient
+        colors={[
+          'rgba(0,0,0,0.4)', 
+          'rgba(0,0,0,0.2)', 
+          'rgba(0,0,0,0.3)',
+          'rgba(0,0,0,0.8)'
+        ]}
+        locations={[0, 0.3, 0.7, 1]}
+        style={{
+          position: 'absolute',
+          top: 0,
+          left: 0,
+          right: 0,
+          bottom: 0,
+          zIndex: 1,
+        }}
+      />
+      
+      {/* CONTENT OVERLAY */}
+      <View style={{
+        flex: 1,
+        justifyContent: 'space-between',
+        paddingTop: 80,  
+        paddingBottom: 60,
+        paddingHorizontal: 24,
+        zIndex: 2,
+      }}>
         
-        {/* Luxury overlay gradient */}
-        <LinearGradient
-          colors={['transparent', 'rgba(0,0,0,0.4)', 'rgba(212,175,55,0.2)']}
-          style={{
-            position: 'absolute',
-            bottom: 0,
-            left: 0,
-            right: 0,
-            height: 80,
-          }}
-        />
-      </View>
-
-      {/* Action Buttons with Cinematic Styling */}
-      <View style={{ gap: 16, marginTop: 8 }}>
-        <View style={{ flexDirection: "row", gap: 12 }}>
-          <View style={{ flex: 1 }}>
-            <SecondaryButton label="Watch Promo" onPress={() => WebBrowser.openBrowserAsync(PROMO_URL)} />
-          </View>
-          <View style={{ flex: 1 }}>
-            <SecondaryButton label="Sign In" onPress={onSignIn} />
+        {/* TOP CONTENT */}
+        <View style={{ alignItems: 'center', gap: 24 }}>
+          {/* Luxury brand header */}
+          <Text style={{ 
+            color: BRAND.gold, 
+            fontSize: 16, 
+            letterSpacing: 4, 
+            fontWeight: "700",
+            textAlign: "center",
+            opacity: 0.95,
+            textShadowColor: "rgba(0,0,0,0.8)",
+            textShadowOffset: { width: 0, height: 2 },
+            textShadowRadius: 4,
+          }}>
+            AISLEMARTS
+          </Text>
+          
+          {/* Main cinematic title */}
+          <Text style={{ 
+            color: BRAND.ink, 
+            fontSize: 42, 
+            fontWeight: "900",
+            textAlign: "center",
+            letterSpacing: 2,
+            lineHeight: 48,
+            textShadowColor: "rgba(0,0,0,0.9)",
+            textShadowOffset: { width: 0, height: 3 },
+            textShadowRadius: 8,
+          }}>AisleMarts</Text>
+          
+          {/* Epic subtitle */}
+          <Text style={{ 
+            color: BRAND.ink, 
+            fontSize: 18, 
+            lineHeight: 26,
+            textAlign: "center",
+            paddingHorizontal: 12,
+            opacity: 0.95,
+            fontWeight: "500",
+            letterSpacing: 0.5,
+            textShadowColor: "rgba(0,0,0,0.8)",
+            textShadowOffset: { width: 0, height: 2 },
+            textShadowRadius: 4,
+          }}>
+            Smarter. Faster. Everywhere.{'\n'}
+            Experience Mood-to-Cart™ across luxury,{'\n'}
+            trending and the best deals.
+          </Text>
+          
+          {/* Progress dots with cinematic styling */}
+          <View style={{ flexDirection: "row", gap: 16, marginTop: 20 }}>
+            {Array.from({ length: 6 }).map((_, i) => (
+              <View
+                key={i}
+                style={{
+                  width: i === 0 ? 40 : 12,
+                  height: 4,
+                  borderRadius: 8,
+                  backgroundColor: i === 0 ? BRAND.gold : "rgba(255,255,255,0.4)",
+                  shadowColor: i === 0 ? BRAND.goldGlow : "transparent",
+                  shadowOffset: { width: 0, height: 0 },
+                  shadowOpacity: 1,
+                  shadowRadius: 8,
+                  elevation: 6,
+                }}
+              />
+            ))}
           </View>
         </View>
         
-        <PrimaryButton label="Sign Up" onPress={onSignUp} />
+        {/* BOTTOM CONTENT - Action Buttons */}
+        <View style={{ gap: 20 }}>
+          <View style={{ flexDirection: "row", gap: 12 }}>
+            <View style={{ flex: 1 }}>
+              <Pressable
+                onPress={() => WebBrowser.openBrowserAsync(PROMO_URL)}
+                style={({ pressed }) => ({
+                  borderColor: BRAND.gold,
+                  borderWidth: 2,
+                  backgroundColor: "rgba(212, 175, 55, 0.15)",
+                  opacity: pressed ? 0.8 : 1,
+                  paddingVertical: 16,
+                  paddingHorizontal: 20,
+                  borderRadius: 25,
+                  alignItems: "center",
+                  justifyContent: "center",
+                  shadowColor: BRAND.gold,
+                  shadowOffset: { width: 0, height: 4 },
+                  shadowOpacity: 0.6,
+                  shadowRadius: 12,
+                  elevation: 8,
+                })}
+              >
+                <Text style={{ 
+                  color: BRAND.gold, 
+                  fontWeight: "800", 
+                  fontSize: 16,
+                  letterSpacing: 0.5,
+                  textShadowColor: "rgba(0,0,0,0.5)",
+                  textShadowOffset: { width: 0, height: 1 },
+                  textShadowRadius: 2,
+                }}>Watch Promo</Text>
+              </Pressable>
+            </View>
+            
+            <View style={{ flex: 1 }}>
+              <Pressable
+                onPress={onSignIn}
+                style={({ pressed }) => ({
+                  borderColor: BRAND.gold,
+                  borderWidth: 2,
+                  backgroundColor: "rgba(212, 175, 55, 0.15)",
+                  opacity: pressed ? 0.8 : 1,
+                  paddingVertical: 16,
+                  paddingHorizontal: 20,
+                  borderRadius: 25,
+                  alignItems: "center",
+                  justifyContent: "center",
+                  shadowColor: BRAND.gold,
+                  shadowOffset: { width: 0, height: 4 },
+                  shadowOpacity: 0.6,
+                  shadowRadius: 12,
+                  elevation: 8,
+                })}
+              >
+                <Text style={{ 
+                  color: BRAND.gold, 
+                  fontWeight: "800", 
+                  fontSize: 16,
+                  letterSpacing: 0.5,
+                  textShadowColor: "rgba(0,0,0,0.5)",
+                  textShadowOffset: { width: 0, height: 1 },
+                  textShadowRadius: 2,
+                }}>Sign In</Text>
+              </Pressable>
+            </View>
+          </View>
+          
+          {/* Epic Sign Up Button */}
+          <Pressable
+            onPress={onSignUp}
+            style={({ pressed }) => ({
+              backgroundColor: BRAND.gold,
+              opacity: pressed ? 0.9 : 1,
+              paddingVertical: 18,
+              paddingHorizontal: 32,
+              borderRadius: 30,
+              alignItems: "center",
+              justifyContent: "center",
+              shadowColor: BRAND.goldGlow,
+              shadowOffset: { width: 0, height: 6 },
+              shadowOpacity: 0.8,
+              shadowRadius: 16,
+              elevation: 12,
+              borderWidth: 1,
+              borderColor: BRAND.goldGlow,
+            })}
+          >
+            <Text style={{ 
+              color: BRAND.bg, 
+              fontWeight: "900", 
+              fontSize: 20,
+              letterSpacing: 1,
+              textShadowColor: "rgba(0,0,0,0.3)",
+              textShadowOffset: { width: 0, height: 1 },
+              textShadowRadius: 2,
+            }}>Sign Up</Text>
+          </Pressable>
+          
+          {/* Terms with luxury styling */}
+          <Text style={{ 
+            color: "rgba(255,255,255,0.8)", 
+            fontSize: 13,
+            textAlign: "center",
+            fontWeight: "400",
+            letterSpacing: 0.3,
+            textShadowColor: "rgba(0,0,0,0.8)",
+            textShadowOffset: { width: 0, height: 1 },
+            textShadowRadius: 2,
+          }}>
+            By continuing you agree to our Terms & Privacy Policy.
+          </Text>
+        </View>
       </View>
-      
-      {/* Terms with luxury styling */}
-      <Text style={{ 
-        color: "rgba(192,192,192,0.7)", 
-        fontSize: 13,
-        textAlign: "center",
-        fontWeight: "300",
-        letterSpacing: 0.3,
-      }}>
-        By continuing you agree to our Terms & Privacy Policy.
-      </Text>
-    </ScreenShell>
+    </View>
   );
 }
 
