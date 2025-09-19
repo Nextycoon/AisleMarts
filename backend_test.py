@@ -12249,6 +12249,412 @@ SKU-CSV-002,8,15000,9876543210987,KES,red,large,new"""
             else:
                 self.log_test("Awareness Error (Invalid Preference Update)", False, f"Expected 404 error, got: {data}")
 
+    # ========== INVESTOR DEMO MANAGEMENT SYSTEM TESTS ==========
+    
+    def test_investor_demo_health(self):
+        """Test investor demo system health check"""
+        print("\n💎 Testing Investor Demo - Health Check...")
+        
+        success, data = self.make_request("GET", "/demo/health")
+        
+        if success and isinstance(data, dict) and data.get("service") == "investor_demo_management":
+            status = data.get("status")
+            available_bundles = data.get("available_bundles", 0)
+            demo_environments = data.get("demo_environments", [])
+            capabilities = data.get("capabilities", [])
+            
+            self.log_test("Investor Demo Health Check", True, 
+                         f"Status: {status}, Bundles: {available_bundles}, Environments: {len(demo_environments)}, Capabilities: {len(capabilities)}")
+        else:
+            self.log_test("Investor Demo Health Check", False, str(data))
+    
+    def test_investor_demo_context_retrieval(self):
+        """Test getting demo context for multiple investor bundles"""
+        print("\n💎 Testing Investor Demo - Context Retrieval...")
+        
+        # Test bundles from the configuration
+        test_bundles = ["SEQUOIA_ROELOF_BOTHA", "A16Z_CHRIS_DIXON", "LVMH_JULIE_BERCOVY", "TIGER_GLOBAL_CHASE_COLEMAN"]
+        
+        for bundle_name in test_bundles:
+            success, data = self.make_request("GET", f"/demo/context/{bundle_name}")
+            
+            if success and isinstance(data, dict) and data.get("bundle") == bundle_name:
+                context = data.get("context", {})
+                demo_urls = data.get("demo_urls", {})
+                
+                # Validate context has required fields
+                required_fields = ["locale", "currency", "timezone", "device", "demo_emphasis"]
+                has_all_fields = all(field in context for field in required_fields)
+                
+                # Validate demo URLs
+                expected_urls = ["home", "ai_mood_cart", "livesale", "analytics"]
+                has_all_urls = all(url in demo_urls for url in expected_urls)
+                
+                if has_all_fields and has_all_urls:
+                    self.log_test(f"Demo Context ({bundle_name})", True, 
+                                 f"Locale: {context.get('locale')}, Currency: {context.get('currency')}, URLs: {len(demo_urls)}")
+                else:
+                    missing_fields = [f for f in required_fields if f not in context]
+                    missing_urls = [u for u in expected_urls if u not in demo_urls]
+                    self.log_test(f"Demo Context ({bundle_name})", False, 
+                                 f"Missing fields: {missing_fields}, Missing URLs: {missing_urls}")
+            else:
+                self.log_test(f"Demo Context ({bundle_name})", False, str(data))
+        
+        # Test non-existent bundle
+        success, data = self.make_request("GET", "/demo/context/NON_EXISTENT_BUNDLE")
+        
+        if not success and "404" in str(data):
+            self.log_test("Demo Context (Non-existent Bundle)", True, "Correctly returned 404 for non-existent bundle")
+        else:
+            self.log_test("Demo Context (Non-existent Bundle)", False, f"Expected 404 error, got: {data}")
+    
+    def test_investor_demo_interaction_tracking(self):
+        """Test demo interaction tracking for various event types"""
+        print("\n💎 Testing Investor Demo - Interaction Tracking...")
+        
+        # Test different event types
+        test_events = [
+            {
+                "bundle": "SEQUOIA_ROELOF_BOTHA",
+                "event_type": "demo_started",
+                "page": "home",
+                "utm_content": "email_outreach_v1",
+                "session_id": "demo_session_001"
+            },
+            {
+                "bundle": "A16Z_CHRIS_DIXON", 
+                "event_type": "demo_progression",
+                "page": "ai_mood_cart",
+                "utm_content": "ai_showcase",
+                "session_id": "demo_session_002"
+            },
+            {
+                "bundle": "LVMH_JULIE_BERCOVY",
+                "event_type": "demo_engagement",
+                "page": "luxury_collections",
+                "utm_content": "luxury_focus",
+                "session_id": "demo_session_003"
+            },
+            {
+                "bundle": "TIGER_GLOBAL_CHASE_COLEMAN",
+                "event_type": "demo_completed",
+                "page": "analytics",
+                "utm_content": "global_metrics",
+                "session_id": "demo_session_004"
+            }
+        ]
+        
+        for event in test_events:
+            success, data = self.make_request("POST", "/demo/track-interaction", event)
+            
+            if success and isinstance(data, dict) and data.get("tracked") is True:
+                tracked_event = data.get("event", {})
+                bundle = tracked_event.get("bundle")
+                event_type = tracked_event.get("event_type")
+                
+                self.log_test(f"Demo Tracking ({event['bundle']} - {event['event_type']})", True,
+                             f"Tracked {event_type} for {bundle}")
+            else:
+                self.log_test(f"Demo Tracking ({event['bundle']} - {event['event_type']})", False, str(data))
+        
+        # Test tracking for non-existent bundle
+        invalid_event = {
+            "bundle": "NON_EXISTENT_BUNDLE",
+            "event_type": "demo_started",
+            "page": "home"
+        }
+        
+        success, data = self.make_request("POST", "/demo/track-interaction", invalid_event)
+        
+        if not success and "404" in str(data):
+            self.log_test("Demo Tracking (Invalid Bundle)", True, "Correctly rejected tracking for non-existent bundle")
+        else:
+            self.log_test("Demo Tracking (Invalid Bundle)", False, f"Expected 404 error, got: {data}")
+    
+    def test_investor_demo_analytics(self):
+        """Test demo analytics endpoints for investor bundles"""
+        print("\n💎 Testing Investor Demo - Analytics System...")
+        
+        test_bundles = ["SEQUOIA_ROELOF_BOTHA", "A16Z_CHRIS_DIXON", "LVMH_JULIE_BERCOVY"]
+        
+        for bundle_name in test_bundles:
+            # Test default analytics (30 days)
+            success, data = self.make_request("GET", f"/demo/analytics/{bundle_name}")
+            
+            if success and isinstance(data, dict) and data.get("bundle") == bundle_name:
+                metrics = data.get("metrics", {})
+                investor_focus_metrics = data.get("investor_focus_metrics", {})
+                demo_progression = data.get("demo_progression", [])
+                
+                # Validate metrics structure
+                required_metrics = ["total_sessions", "unique_visitors", "avg_session_duration", "bounce_rate", "conversion_to_meeting"]
+                has_all_metrics = all(metric in metrics for metric in required_metrics)
+                
+                # Validate investor focus metrics
+                has_focus_metrics = len(investor_focus_metrics) > 0
+                
+                # Validate demo progression
+                has_progression = len(demo_progression) == 5  # Should have 5 steps
+                
+                if has_all_metrics and has_focus_metrics and has_progression:
+                    total_sessions = metrics.get("total_sessions", 0)
+                    conversion_rate = metrics.get("conversion_to_meeting", 0)
+                    self.log_test(f"Demo Analytics ({bundle_name})", True,
+                                 f"Sessions: {total_sessions}, Conversion: {conversion_rate}, Focus metrics: {len(investor_focus_metrics)}")
+                else:
+                    self.log_test(f"Demo Analytics ({bundle_name})", False,
+                                 f"Missing metrics: {not has_all_metrics}, focus: {not has_focus_metrics}, progression: {not has_progression}")
+            else:
+                self.log_test(f"Demo Analytics ({bundle_name})", False, str(data))
+            
+            # Test analytics with custom timeframe
+            success, data = self.make_request("GET", f"/demo/analytics/{bundle_name}", {"days": 7})
+            
+            if success and isinstance(data, dict) and data.get("timeframe_days") == 7:
+                self.log_test(f"Demo Analytics Custom Timeframe ({bundle_name})", True, "7-day analytics retrieved successfully")
+            else:
+                self.log_test(f"Demo Analytics Custom Timeframe ({bundle_name})", False, str(data))
+    
+    def test_investor_demo_kpis(self):
+        """Test investor-specific KPI retrieval with different currencies"""
+        print("\n💎 Testing Investor Demo - KPI Endpoints...")
+        
+        # Test KPIs for different investors with their preferred currencies
+        test_cases = [
+            {"bundle": "SEQUOIA_ROELOF_BOTHA", "currency": "USD", "expected_focus": "network"},
+            {"bundle": "A16Z_CHRIS_DIXON", "currency": "USD", "expected_focus": "ai"},
+            {"bundle": "LVMH_JULIE_BERCOVY", "currency": "EUR", "expected_focus": "luxury"},
+            {"bundle": "TIGER_GLOBAL_CHASE_COLEMAN", "currency": "SGD", "expected_focus": "global"}
+        ]
+        
+        for test_case in test_cases:
+            bundle_name = test_case["bundle"]
+            currency = test_case["currency"]
+            expected_focus = test_case["expected_focus"]
+            
+            # Test with specific currency
+            success, data = self.make_request("GET", f"/demo/kpis/{bundle_name}", {"currency": currency})
+            
+            if success and isinstance(data, dict) and data.get("bundle") == bundle_name:
+                returned_currency = data.get("currency")
+                base_metrics = data.get("base_metrics", {})
+                investor_focus_metrics = data.get("investor_focus_metrics", {})
+                growth_trajectory = data.get("growth_trajectory", {})
+                
+                # Validate currency conversion
+                currency_correct = returned_currency == currency
+                
+                # Validate base metrics
+                required_base_metrics = ["gmv_current", "gmv_projected", "arr_current", "users_active", "conversion_rate", "aov"]
+                has_base_metrics = all(metric in base_metrics for metric in required_base_metrics)
+                
+                # Validate investor-specific metrics based on focus
+                has_focus_metrics = len(investor_focus_metrics) > 0
+                
+                # Validate growth trajectory
+                required_growth_fields = ["current_month", "projected_6_months", "projected_12_months"]
+                has_growth_trajectory = all(field in growth_trajectory for field in required_growth_fields)
+                
+                if currency_correct and has_base_metrics and has_focus_metrics and has_growth_trajectory:
+                    gmv_current = base_metrics.get("gmv_current", 0)
+                    focus_metrics_count = len(investor_focus_metrics)
+                    self.log_test(f"Demo KPIs ({bundle_name} - {currency})", True,
+                                 f"GMV: {currency} {gmv_current:,}, Focus metrics: {focus_metrics_count}")
+                else:
+                    issues = []
+                    if not currency_correct: issues.append("currency")
+                    if not has_base_metrics: issues.append("base_metrics")
+                    if not has_focus_metrics: issues.append("focus_metrics")
+                    if not has_growth_trajectory: issues.append("growth_trajectory")
+                    self.log_test(f"Demo KPIs ({bundle_name} - {currency})", False, f"Issues: {issues}")
+            else:
+                self.log_test(f"Demo KPIs ({bundle_name} - {currency})", False, str(data))
+            
+            # Test without currency (should use bundle default)
+            success, data = self.make_request("GET", f"/demo/kpis/{bundle_name}")
+            
+            if success and isinstance(data, dict):
+                default_currency = data.get("currency")
+                self.log_test(f"Demo KPIs Default Currency ({bundle_name})", True, f"Default currency: {default_currency}")
+            else:
+                self.log_test(f"Demo KPIs Default Currency ({bundle_name})", False, str(data))
+    
+    def test_investor_demo_smoke_test(self):
+        """Test automated smoke test functionality for bundles"""
+        print("\n💎 Testing Investor Demo - Smoke Testing...")
+        
+        test_bundles = ["SEQUOIA_ROELOF_BOTHA", "A16Z_CHRIS_DIXON", "LVMH_JULIE_BERCOVY"]
+        
+        for bundle_name in test_bundles:
+            success, data = self.make_request("GET", f"/demo/smoke-test/{bundle_name}")
+            
+            if success and isinstance(data, dict) and data.get("bundle") == bundle_name:
+                overall_status = data.get("overall_status")
+                tests = data.get("tests", {})
+                performance = data.get("performance", {})
+                demo_ready = data.get("demo_ready")
+                
+                # Validate 5-step smoke test
+                expected_steps = [
+                    "step_1_home_awareness",
+                    "step_2_ai_mood_cart", 
+                    "step_3_livesale",
+                    "step_4_dm_leads",
+                    "step_5_analytics"
+                ]
+                
+                has_all_steps = all(step in tests for step in expected_steps)
+                all_steps_pass = all(tests.get(step, {}).get("status") == "PASS" for step in expected_steps)
+                
+                # Validate performance metrics
+                has_performance = "avg_page_load" in performance and "awareness_adaptation" in performance
+                
+                if has_all_steps and all_steps_pass and has_performance and demo_ready:
+                    avg_load_time = performance.get("avg_page_load", "unknown")
+                    adaptation_time = performance.get("awareness_adaptation", "unknown")
+                    self.log_test(f"Demo Smoke Test ({bundle_name})", True,
+                                 f"Status: {overall_status}, Load: {avg_load_time}, Adaptation: {adaptation_time}")
+                else:
+                    issues = []
+                    if not has_all_steps: issues.append("missing_steps")
+                    if not all_steps_pass: issues.append("failed_steps")
+                    if not has_performance: issues.append("missing_performance")
+                    if not demo_ready: issues.append("not_ready")
+                    self.log_test(f"Demo Smoke Test ({bundle_name})", False, f"Issues: {issues}")
+            else:
+                self.log_test(f"Demo Smoke Test ({bundle_name})", False, str(data))
+    
+    def test_investor_demo_bundle_management(self):
+        """Test getting all demo bundles and bundle status"""
+        print("\n💎 Testing Investor Demo - Bundle Management...")
+        
+        # Test getting all bundles
+        success, data = self.make_request("GET", "/demo/all-bundles")
+        
+        if success and isinstance(data, dict):
+            total_bundles = data.get("total_bundles", 0)
+            bundles = data.get("bundles", [])
+            last_updated = data.get("last_updated")
+            
+            # Validate bundle count matches
+            bundles_count_matches = total_bundles == len(bundles)
+            
+            # Validate bundle structure
+            if len(bundles) > 0:
+                first_bundle = bundles[0]
+                required_fields = ["bundle", "investor", "locale", "currency", "timezone", "device", "focus", "demo_url", "status"]
+                has_required_fields = all(field in first_bundle for field in required_fields)
+                
+                # Check for expected bundles
+                expected_bundles = ["SEQUOIA_ROELOF_BOTHA", "A16Z_CHRIS_DIXON", "LVMH_JULIE_BERCOVY", "TIGER_GLOBAL_CHASE_COLEMAN"]
+                bundle_names = [b.get("bundle") for b in bundles]
+                has_expected_bundles = all(bundle in bundle_names for bundle in expected_bundles)
+                
+                if bundles_count_matches and has_required_fields and has_expected_bundles:
+                    active_bundles = sum(1 for b in bundles if b.get("status") == "active")
+                    self.log_test("Demo Bundle Management (All Bundles)", True,
+                                 f"Total: {total_bundles}, Active: {active_bundles}, Updated: {last_updated is not None}")
+                else:
+                    issues = []
+                    if not bundles_count_matches: issues.append("count_mismatch")
+                    if not has_required_fields: issues.append("missing_fields")
+                    if not has_expected_bundles: issues.append("missing_expected_bundles")
+                    self.log_test("Demo Bundle Management (All Bundles)", False, f"Issues: {issues}")
+            else:
+                self.log_test("Demo Bundle Management (All Bundles)", False, "No bundles returned")
+        else:
+            self.log_test("Demo Bundle Management (All Bundles)", False, str(data))
+    
+    def test_investor_demo_reset(self):
+        """Test demo environment reset functionality"""
+        print("\n💎 Testing Investor Demo - Demo Reset...")
+        
+        test_bundles = ["SEQUOIA_ROELOF_BOTHA", "A16Z_CHRIS_DIXON"]
+        
+        for bundle_name in test_bundles:
+            success, data = self.make_request("POST", f"/demo/reset/{bundle_name}")
+            
+            if success and isinstance(data, dict) and data.get("bundle") == bundle_name:
+                reset_completed = data.get("reset_completed")
+                timestamp = data.get("timestamp")
+                next_scheduled_reset = data.get("next_scheduled_reset")
+                seed_data_status = data.get("seed_data_status")
+                demo_ready = data.get("demo_ready")
+                
+                # Validate reset response
+                reset_successful = (reset_completed is True and 
+                                  timestamp is not None and 
+                                  next_scheduled_reset is not None and
+                                  seed_data_status == "fresh" and
+                                  demo_ready is True)
+                
+                if reset_successful:
+                    self.log_test(f"Demo Reset ({bundle_name})", True,
+                                 f"Reset completed, seed data: {seed_data_status}, ready: {demo_ready}")
+                else:
+                    self.log_test(f"Demo Reset ({bundle_name})", False,
+                                 f"Reset incomplete - completed: {reset_completed}, ready: {demo_ready}")
+            else:
+                self.log_test(f"Demo Reset ({bundle_name})", False, str(data))
+        
+        # Test reset for non-existent bundle
+        success, data = self.make_request("POST", "/demo/reset/NON_EXISTENT_BUNDLE")
+        
+        if not success and "404" in str(data):
+            self.log_test("Demo Reset (Invalid Bundle)", True, "Correctly rejected reset for non-existent bundle")
+        else:
+            self.log_test("Demo Reset (Invalid Bundle)", False, f"Expected 404 error, got: {data}")
+    
+    def test_investor_demo_error_scenarios(self):
+        """Test error handling in investor demo endpoints"""
+        print("\n💎 Testing Investor Demo - Error Scenarios...")
+        
+        # Test context retrieval with invalid bundle
+        success, data = self.make_request("GET", "/demo/context/INVALID_BUNDLE")
+        
+        if not success and "404" in str(data):
+            self.log_test("Demo Error (Invalid Context Bundle)", True, "Correctly returned 404 for invalid bundle")
+        else:
+            self.log_test("Demo Error (Invalid Context Bundle)", False, f"Expected 404 error, got: {data}")
+        
+        # Test analytics with invalid bundle
+        success, data = self.make_request("GET", "/demo/analytics/INVALID_BUNDLE")
+        
+        if not success and "404" in str(data):
+            self.log_test("Demo Error (Invalid Analytics Bundle)", True, "Correctly returned 404 for invalid analytics bundle")
+        else:
+            self.log_test("Demo Error (Invalid Analytics Bundle)", False, f"Expected 404 error, got: {data}")
+        
+        # Test KPIs with invalid bundle
+        success, data = self.make_request("GET", "/demo/kpis/INVALID_BUNDLE")
+        
+        if not success and "404" in str(data):
+            self.log_test("Demo Error (Invalid KPIs Bundle)", True, "Correctly returned 404 for invalid KPIs bundle")
+        else:
+            self.log_test("Demo Error (Invalid KPIs Bundle)", False, f"Expected 404 error, got: {data}")
+        
+        # Test smoke test with invalid bundle
+        success, data = self.make_request("GET", "/demo/smoke-test/INVALID_BUNDLE")
+        
+        if not success and "404" in str(data):
+            self.log_test("Demo Error (Invalid Smoke Test Bundle)", True, "Correctly returned 404 for invalid smoke test bundle")
+        else:
+            self.log_test("Demo Error (Invalid Smoke Test Bundle)", False, f"Expected 404 error, got: {data}")
+        
+        # Test tracking with missing required fields
+        incomplete_tracking = {
+            "bundle": "SEQUOIA_ROELOF_BOTHA",
+            # Missing event_type and page
+        }
+        
+        success, data = self.make_request("POST", "/demo/track-interaction", incomplete_tracking)
+        
+        if not success and ("422" in str(data) or "400" in str(data)):
+            self.log_test("Demo Error (Incomplete Tracking Data)", True, "Correctly rejected incomplete tracking data")
+        else:
+            self.log_test("Demo Error (Incomplete Tracking Data)", False, f"Expected validation error, got: {data}")
+
 def main():
     """Main test runner"""
     tester = APITester()
