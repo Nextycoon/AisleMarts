@@ -1,0 +1,145 @@
+# Default values for aislemarts
+replicaCount: 3
+
+image:
+  repository: us-central1-docker.pkg.dev/aislemarts-prod/aislemarts/backend
+  pullPolicy: IfNotPresent
+  tag: "latest"
+
+imagePullSecrets: []
+nameOverride: ""
+fullnameOverride: ""
+
+serviceAccount:
+  create: false
+  annotations: {}
+  name: ""
+
+podAnnotations:
+  prometheus.io/scrape: "true"
+  prometheus.io/port: "8000"
+  prometheus.io/path: "/metrics"
+
+podSecurityContext:
+  runAsNonRoot: true
+  runAsUser: 1000
+  fsGroup: 2000
+
+securityContext:
+  allowPrivilegeEscalation: false
+  readOnlyRootFilesystem: false
+  capabilities:
+    drop:
+    - ALL
+
+service:
+  type: ClusterIP
+  port: 80
+  targetPort: 8000
+
+ingress:
+  enabled: true
+  className: "gce"
+  annotations:
+    networking.gke.io/managed-certificates: "aislemarts-cert"
+    kubernetes.io/ingress.global-static-ip-name: "aislemarts-ip"
+  host: staging.AisleMarts.com
+  tls: []
+
+resources:
+  limits:
+    cpu: 2000m
+    memory: 2Gi
+  requests:
+    cpu: 500m
+    memory: 512Mi
+
+autoscaling:
+  enabled: true
+  minReplicas: 3
+  maxReplicas: 20
+  targetCPUUtilizationPercentage: 60
+  targetMemoryUtilizationPercentage: 70
+
+nodeSelector: {}
+
+tolerations: []
+
+affinity: {}
+
+# Environment variables
+env:
+  APP_NAME: "AisleMarts"
+  LOG_LEVEL: "INFO"
+  PORT: "8000"
+  HOST: "0.0.0.0"
+
+# Secret references
+secretRefs:
+  - aislemarts-secrets
+
+# ConfigMap references  
+configMapRefs:
+  - aislemarts-config
+
+# Probes configuration
+probes:
+  readiness:
+    enabled: true
+    path: /health
+    port: 8000
+    initialDelaySeconds: 10
+    periodSeconds: 10
+    timeoutSeconds: 5
+    successThreshold: 1
+    failureThreshold: 3
+  liveness:
+    enabled: true
+    path: /health
+    port: 8000
+    initialDelaySeconds: 30
+    periodSeconds: 15
+    timeoutSeconds: 5
+    successThreshold: 1
+    failureThreshold: 3
+
+# Network policy
+networkPolicy:
+  enabled: true
+  ingress:
+    - from:
+      - namespaceSelector:
+          matchLabels:
+            name: kube-system
+      - podSelector: {}
+      ports:
+      - protocol: TCP
+        port: 8000
+  egress:
+    - to: []
+      ports:
+      - protocol: TCP
+        port: 443
+      - protocol: TCP
+        port: 27017
+      - protocol: UDP
+        port: 53
+
+# Monitoring
+monitoring:
+  enabled: true
+  serviceMonitor:
+    enabled: true
+    interval: 30s
+    path: /metrics
+    port: http
+
+# Backup configuration
+backup:
+  enabled: true
+  schedule: "0 2,14 * * *"
+  gcsBackup:
+    bucket: "gs://aislemarts-backups"
+  serviceAccount:
+    annotations:
+      iam.gke.io/gcp-service-account: mongo-backup@aislemarts-prod.iam.gserviceaccount.com
