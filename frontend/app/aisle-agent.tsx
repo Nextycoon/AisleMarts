@@ -9,6 +9,7 @@ import {
   ScrollView
 } from 'react-native';
 import { LinearGradient } from 'expo-linear-gradient';
+import { router } from 'expo-router';
 
 export default function AisleAgentScreen() {
   const [isListening, setIsListening] = useState(false);
