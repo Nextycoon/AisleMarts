@@ -259,6 +259,35 @@ class WebRTCManager {
     this.onICECandidateCallback = callback;
   }
 
+  onConnectionStateChange(callback: (state: RTCPeerConnectionState) => void) {
+    this.onConnectionStateChangeCallback = callback;
+  }
+
+  onDataChannel(callback: (channel: RTCDataChannel) => void) {
+    this.onDataChannelCallback = callback;
+  }
+
+  // Getters
+  get connectionState(): RTCPeerConnectionState | null {
+    return this.peerConnection?.connectionState || null;
+  }
+
+  get isConnected(): boolean {
+    return this.peerConnection?.connectionState === 'connected';
+  }
+
+  get callQualityStatus(): 'excellent' | 'good' | 'fair' | 'poor' {
+    return this.callQuality;
+  }
+
+  get networkStatsSnapshot() {
+    return { ...this.networkStats };
+  }
+
+  get isRecording(): boolean {
+    return this.mediaRecorder?.state === 'recording';
+  }
+
   // Clean up
   cleanup() {
     console.log('🧹 Cleaning up WebRTC');
