@@ -1,51 +1,62 @@
-import React from 'react';
-import { View, Text, StyleSheet, ActivityIndicator, TouchableOpacity } from 'react-native';
-import { LinearGradient } from 'expo-linear-gradient';
+import React, { useEffect, useState } from 'react';
+import { View, Text, StyleSheet, TouchableOpacity, Dimensions } from 'react-native';
 import { router } from 'expo-router';
-import { useAuth } from '../src/context/AuthContext';
 import AsyncStorage from '@react-native-async-storage/async-storage';
+import { useAuth } from '../src/context/AuthContext';
+import AppLoader from '../src/components/AppLoader';
+
+const { width, height } = Dimensions.get('window');
 
 export default function IndexScreen() {
   const { loading, hasCompletedAvatarSetup } = useAuth();
-  const [showDebug, setShowDebug] = React.useState(false);
+  const [isInitializing, setIsInitializing] = useState(true);
+  const [loadingProgress, setLoadingProgress] = useState(0);
+  const [showDebug, setShowDebug] = useState(false);
 
-  React.useEffect(() => {
-    // Check if user has completed onboarding
-    const checkOnboarding = async () => {
-      try {
-        const hasCompletedOnboarding = await AsyncStorage.getItem('hasCompletedOnboarding');
+  useEffect(() => {
+    initializeApp();
+  }, []);
+
+  const initializeApp = async () => {
+    try {
+      // Simulate initialization steps with progress
+      const steps = [
+        { message: 'Loading user preferences...', duration: 400 },
+        { message: 'Connecting to services...', duration: 600 },
+        { message: 'Initializing awareness engine...', duration: 500 },
+        { message: 'Setting up luxury experience...', duration: 300 },
+      ];
+
+      for (let i = 0; i < steps.length; i++) {
+        setLoadingProgress((i) / steps.length);
+        await new Promise(resolve => setTimeout(resolve, steps[i].duration));
+      }
+
+      setLoadingProgress(1);
+      
+      // Check onboarding status
+      const hasCompletedOnboarding = await AsyncStorage.getItem('hasCompletedOnboarding');
+      
+      // Small delay to show completed loading
+      setTimeout(() => {
+        setIsInitializing(false);
         
-        // Force navigation after maximum 3 seconds to prevent infinite loading
-        const forceNavTimer = setTimeout(() => {
-          console.log('🚨 Force navigation after 3 seconds');
+        // Navigate based on onboarding state
+        setTimeout(() => {
           if (hasCompletedOnboarding === 'true') {
             router.replace('/aisle-agent');
           } else {
             router.replace('/onboarding');
           }
-        }, 3000);
+        }, 300);
+      }, 400);
 
-        if (!loading) {
-          clearTimeout(forceNavTimer);
-          // Navigate based on onboarding state after loading is complete
-          setTimeout(() => {
-            if (hasCompletedOnboarding === 'true') {
-              router.replace('/aisle-agent');
-            } else {
-              router.replace('/onboarding');
-            }
-          }, 1000); // Small delay to show loading screen
-        }
-
-        return () => clearTimeout(forceNavTimer);
-      } catch (error) {
-        console.error('Error checking onboarding status:', error);
-        router.replace('/onboarding');
-      }
-    };
-
-    checkOnboarding();
-  }, [loading]);
+    } catch (error) {
+      console.error('Error initializing app:', error);
+      setIsInitializing(false);
+      router.replace('/onboarding');
+    }
+  };
 
   const handleDebugTap = () => {
     setShowDebug(true);
@@ -61,57 +72,67 @@ export default function IndexScreen() {
     }
   };
 
-  const handleGoToCompletion = () => {
-    router.replace('/completion-demo');
+  const handleNavigateTo = (route: string) => {
+    console.log(`🎯 Navigating to ${route}`);
+    router.push(route as any);
   };
 
-  const handleGoToOnboarding = () => {
-    console.log('🎯 Navigating to new onboarding flow');
-    router.push('/onboarding');
-  };
-
-  const handleGoToPermissions = () => {
-    console.log('🛡️ Navigating to working permissions');
-    router.push('/working-permissions');
-  };
+  if (isInitializing) {
+    return (
+      <AppLoader
+        message="AisleMarts"
+        subMessage="Luxury Shopping Experience"
+        showProgress={true}
+        progress={loadingProgress}
+      />
+    );
+  }
 
   return (
     <View style={styles.container}>
-      <LinearGradient
-        colors={['#0C0F14', '#1a1a2e', '#16213e']}
-        style={StyleSheet.absoluteFill}
-      />
-      
       <View style={styles.content}>
-        <TouchableOpacity onPress={handleDebugTap}>
+        <TouchableOpacity onPress={handleDebugTap} style={styles.logoContainer}>
           <Text style={styles.logo}>AisleMarts</Text>
+          <Text style={styles.tagline}>Your AI Shopping Companion</Text>
         </TouchableOpacity>
-        <Text style={styles.tagline}>Your AI Shopping Companion</Text>
-        
-        <View style={styles.loadingContainer}>
-          <ActivityIndicator size="large" color="#4facfe" />
-          <Text style={styles.loadingText}>
-            {loading ? 'Initializing...' : 'Welcome!'}
-          </Text>
-        </View>
 
-        {/* Always show both buttons for testing */}
-        <View style={styles.debugContainer}>
-          <TouchableOpacity style={[styles.debugButton, { borderColor: '#E8C968', backgroundColor: 'rgba(232, 201, 104, 0.2)' }]} onPress={handleGoToOnboarding}>
-            <Text style={[styles.debugButtonText, { color: '#E8C968' }]}>🚀 Test New Onboarding Flow</Text>
+        {/* Quick Navigation for Development */}
+        <View style={styles.navigationContainer}>
+          <TouchableOpacity 
+            style={[styles.navButton, { backgroundColor: 'rgba(232, 201, 104, 0.2)', borderColor: '#E8C968' }]} 
+            onPress={() => handleNavigateTo('/onboarding')}
+          >
+            <Text style={[styles.navButtonText, { color: '#E8C968' }]}>🚀 New Onboarding Flow</Text>
           </TouchableOpacity>
-          <TouchableOpacity style={[styles.debugButton, { borderColor: '#EBD6A0', backgroundColor: 'rgba(235, 214, 160, 0.2)' }]} onPress={handleGoToPermissions}>
-            <Text style={[styles.debugButtonText, { color: '#EBD6A0' }]}>🛡️ Test Permissions System</Text>
+          
+          <TouchableOpacity 
+            style={[styles.navButton, { backgroundColor: 'rgba(235, 214, 160, 0.2)', borderColor: '#EBD6A0' }]} 
+            onPress={() => handleNavigateTo('/working-permissions')}
+          >
+            <Text style={[styles.navButtonText, { color: '#EBD6A0' }]}>🛡️ Permissions System</Text>
+          </TouchableOpacity>
+
+          <TouchableOpacity 
+            style={[styles.navButton, { backgroundColor: 'rgba(59, 130, 246, 0.2)', borderColor: '#3b82f6' }]} 
+            onPress={() => handleNavigateTo('/aisle-agent')}
+          >
+            <Text style={[styles.navButtonText, { color: '#3b82f6' }]}>🤖 Main App</Text>
           </TouchableOpacity>
         </View>
 
         {showDebug && (
-          <View style={[styles.debugContainer, { bottom: 160 }]}>
+          <View style={styles.debugContainer}>
             <TouchableOpacity style={styles.debugButton} onPress={handleClearStorage}>
-              <Text style={styles.debugButtonText}>Clear Storage & Reset</Text>
+              <Text style={styles.debugButtonText}>🗑️ Clear Storage & Reset</Text>
             </TouchableOpacity>
-            <TouchableOpacity style={styles.debugButton} onPress={handleGoToCompletion}>
-              <Text style={styles.debugButtonText}>View Completion Demo</Text>
+            <TouchableOpacity style={styles.debugButton} onPress={() => handleNavigateTo('/completion-demo')}>
+              <Text style={styles.debugButtonText}>✨ View Completion Demo</Text>
+            </TouchableOpacity>
+            <TouchableOpacity style={styles.debugButton} onPress={() => handleNavigateTo('/ai-assistant')}>
+              <Text style={styles.debugButtonText}>🧠 AI Assistant</Text>
+            </TouchableOpacity>
+            <TouchableOpacity style={styles.debugButton} onPress={() => handleNavigateTo('/chat')}>
+              <Text style={styles.debugButtonText}>💬 Messages</Text>
             </TouchableOpacity>
           </View>
         )}
@@ -131,8 +152,12 @@ const styles = StyleSheet.create({
     alignItems: 'center',
     paddingHorizontal: 32,
   },
+  logoContainer: {
+    alignItems: 'center',
+    marginBottom: 48,
+  },
   logo: {
-    fontSize: 32,
+    fontSize: 36,
     fontWeight: '800',
     color: '#ffffff',
     marginBottom: 8,
@@ -140,29 +165,36 @@ const styles = StyleSheet.create({
   tagline: {
     fontSize: 16,
     color: 'rgba(255,255,255,0.7)',
-    marginBottom: 48,
     textAlign: 'center',
   },
-  loadingContainer: {
-    alignItems: 'center',
+  navigationContainer: {
+    width: '100%',
     gap: 16,
+    marginBottom: 32,
   },
-  loadingText: {
+  navButton: {
+    borderWidth: 1,
+    borderRadius: 12,
+    paddingVertical: 16,
+    paddingHorizontal: 20,
+    alignItems: 'center',
+    minHeight: 56,
+    justifyContent: 'center',
+  },
+  navButtonText: {
     fontSize: 16,
-    color: 'rgba(255,255,255,0.8)',
-    fontWeight: '500',
+    fontWeight: '600',
+    textAlign: 'center',
   },
   debugContainer: {
-    position: 'absolute',
-    bottom: 100,
-    left: 32,
-    right: 32,
+    width: '100%',
     gap: 12,
+    marginTop: 16,
   },
   debugButton: {
-    backgroundColor: 'rgba(59, 130, 246, 0.2)',
+    backgroundColor: 'rgba(59, 130, 246, 0.15)',
     borderWidth: 1,
-    borderColor: '#3b82f6',
+    borderColor: 'rgba(59, 130, 246, 0.3)',
     borderRadius: 8,
     paddingVertical: 12,
     paddingHorizontal: 16,
@@ -171,6 +203,6 @@ const styles = StyleSheet.create({
   debugButtonText: {
     color: '#3b82f6',
     fontSize: 14,
-    fontWeight: '600',
+    fontWeight: '500',
   },
 });
