@@ -8073,7 +8073,7 @@ SKU-CSV-002,8,15000,9876543210987,KES,red,large,new"""
 
     def run_all_tests(self):
         """Run all tests in sequence - PHASE 2 CRITICAL INTEGRATION FOCUS"""
-        print(f"🚀 Starting AisleMarts Backend API Tests - PHASE 2 CRITICAL INTEGRATION")
+        print(f"🚀 Starting AisleMarts Backend API Tests - TRACK C AI SUPERCHARGE VALIDATION")
         print(f"📍 Testing against: {API_URL}")
         print("=" * 80)
         
@@ -8087,6 +8087,31 @@ SKU-CSV-002,8,15000,9876543210987,KES,red,large,new"""
         if not self.auth_token:
             self.test_user_login()
         self.test_protected_route()
+        
+        # ========== TRACK C AI SUPERCHARGE VALIDATION ==========
+        print("\n" + "="*80)
+        print("🧠💎 TRACK C AI SUPERCHARGE VALIDATION - REVOLUTIONARY AI FEATURES")
+        print("="*80)
+        
+        # Multi-Language Voice AI Tests
+        print("\n🎤 MULTI-LANGUAGE VOICE AI TESTING")
+        self.test_multilang_voice_health_check()
+        self.test_multilang_voice_processing()
+        self.test_multilang_voice_languages_list()
+        self.test_multilang_voice_demo()
+        
+        # Contextual AI Recommendations Tests
+        print("\n🧠 CONTEXTUAL AI RECOMMENDATIONS TESTING")
+        self.test_contextual_ai_health_check()
+        self.test_contextual_ai_recommendations()
+        self.test_mood_to_cart_feature()
+        self.test_session_memory_tracking()
+        self.test_available_moods_with_insights()
+        self.test_session_cleanup()
+        
+        print("\n" + "="*80)
+        print("🧠💎 TRACK C AI SUPERCHARGE VALIDATION COMPLETE")
+        print("="*80)
         
         # AVATAR ENDPOINT TESTS (CRITICAL - NEW IMPLEMENTATION)
         print("\n👤 AVATAR ENDPOINT TESTING (CRITICAL - NEW IMPLEMENTATION)")
