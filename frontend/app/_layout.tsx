@@ -14,11 +14,13 @@ export default function RootLayout() {
   return (
     <SafeAreaProvider>
       <ErrorBoundary>
-        <AuthProvider>
-          <UserRolesProvider>
-            <Stack screenOptions={{ headerShown: false }} />
-          </UserRolesProvider>
-        </AuthProvider>
+        <PermissionsManager>
+          <AuthProvider>
+            <UserRolesProvider>
+              <Stack screenOptions={{ headerShown: false }} />
+            </UserRolesProvider>
+          </AuthProvider>
+        </PermissionsManager>
         <StatusBar style="light" />
       </ErrorBoundary>
     </SafeAreaProvider>
