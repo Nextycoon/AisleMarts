@@ -4,7 +4,7 @@
 
 ### Web Preview (Desktop/Mobile Browser)
 ```
-🌐 Live Preview: https://cinematic-aislemarts.preview.emergentagent.com
+🌐 Live Preview: https://mood-to-cart.preview.emergentagent.com
 ```
 
 ### Mobile App Testing (Expo Go)
