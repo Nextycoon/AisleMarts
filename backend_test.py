@@ -9917,6 +9917,67 @@ SKU-CSV-002,8,15000,9876543210987,KES,red,large,new"""
         self.test_dm_encryption_functionality()
         self.test_dm_error_handling()
         
+        # ========== LUXURY COMMUNICATION SUITE TESTS ==========
+        print("\n" + "📞" * 15 + " LUXURY COMMUNICATION SUITE TESTING " + "📞" * 15)
+        
+        # Voice/Video Calls System Tests
+        print("\n📞 Voice/Video Calls System Testing...")
+        self.test_calls_initiate()
+        self.test_calls_answer()
+        self.test_calls_decline()
+        self.test_calls_end()
+        self.test_calls_ice_candidate()
+        self.test_calls_history()
+        self.test_calls_active()
+        self.test_calls_error_scenarios()
+        
+        # Channels & Groups System Tests
+        print("\n📺 Channels & Groups System Testing...")
+        self.test_channels_create()
+        self.test_channels_list()
+        self.test_channels_get_details()
+        self.test_channels_join()
+        self.test_channels_post_message()
+        self.test_channels_get_messages()
+        self.test_channels_pin_message()
+        self.test_channels_create_invite()
+        self.test_channels_update()
+        self.test_channels_error_scenarios()
+        
+        # LiveSale Commerce System Tests
+        print("\n🎥 LiveSale Commerce System Testing...")
+        self.test_livesale_get_all()
+        self.test_livesale_get_details()
+        self.test_livesale_join()
+        self.test_livesale_leave()
+        self.test_livesale_purchase()
+        self.test_livesale_share()
+        self.test_livesale_get_active()
+        self.test_livesale_error_scenarios()
+        
+        # Business LiveSale Management Tests
+        print("\n🏢 Business LiveSale Management Testing...")
+        self.test_biz_livesale_create()
+        self.test_biz_livesale_get_my()
+        self.test_biz_livesale_update()
+        self.test_biz_livesale_start()
+        self.test_biz_livesale_analytics()
+        self.test_biz_livesale_error_scenarios()
+        
+        # Business Leads Kanban System Tests
+        print("\n📊 Business Leads Kanban System Testing...")
+        self.test_leads_get_all()
+        self.test_leads_analytics()
+        self.test_leads_get_details()
+        self.test_leads_update()
+        self.test_leads_add_note()
+        self.test_leads_initiate_call()
+        self.test_leads_jump_to_dm()
+        self.test_leads_create_offer()
+        self.test_leads_kanban_summary()
+        self.test_leads_kanban_move()
+        self.test_leads_error_scenarios()
+        
         # Print summary
         print("\n" + "=" * 80)
         print("📊 TEST SUMMARY")
