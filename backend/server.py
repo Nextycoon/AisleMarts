@@ -449,11 +449,13 @@ try:
     from routers.wishlist import router as wishlist_router
     from routers.orders_cancel import router as orders_cancel_router
     from routers.products_cached import router as products_cached_router
+    from routers.auth import router as auth_router
     
     app.include_router(ai_intent_router)
     app.include_router(wishlist_router)
     app.include_router(orders_cancel_router)
     app.include_router(products_cached_router)
+    app.include_router(auth_router)
     print("✅ ALL-IN MICRO-SPRINT routers loaded successfully")
 except ImportError as e:
     print(f"⚠️ ALL-IN MICRO-SPRINT routers not available: {e}")
