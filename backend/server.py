@@ -536,7 +536,11 @@ try:
     from routers.business_console_routes import router as business_console_router
     app.include_router(business_console_router, tags=["business_console"])
     
-    print("✅ UNIVERSAL COMMERCE AI HUB + ALL-IN MICRO-SPRINT + PHASE 2 LUXURY COMMUNICATION SUITE + ADVANCED AI + PERFORMANCE ANALYTICS + AWARENESS ENGINE + INVESTOR DEMO MANAGEMENT + CURRENCY-INFINITY ENGINE + A/B TESTING + EXECUTIVE DASHBOARD + PRODUCTION MONITORING + ENHANCED FEATURES + BUSINESS TOOLS + OPERATIONAL SYSTEMS + INTERNATIONAL EXPANSION + E2EE + KMS + BLUEWAVE FAMILY SAFETY + BUSINESS CONSOLE routers loaded successfully")
+    # Import and include TikTok Features router for social commerce
+    from routers.tiktok_features_routes import router as tiktok_features_router
+    app.include_router(tiktok_features_router, tags=["tiktok_features"])
+    
+    print("✅ UNIVERSAL COMMERCE AI HUB + ALL-IN MICRO-SPRINT + PHASE 2 LUXURY COMMUNICATION SUITE + ADVANCED AI + PERFORMANCE ANALYTICS + AWARENESS ENGINE + INVESTOR DEMO MANAGEMENT + CURRENCY-INFINITY ENGINE + A/B TESTING + EXECUTIVE DASHBOARD + PRODUCTION MONITORING + ENHANCED FEATURES + BUSINESS TOOLS + OPERATIONAL SYSTEMS + INTERNATIONAL EXPANSION + E2EE + KMS + BLUEWAVE FAMILY SAFETY + BUSINESS CONSOLE + TIKTOK SOCIAL COMMERCE routers loaded successfully")
 except ImportError as e:
     print(f"⚠️ Routers not available: {e}")
 except Exception as e:
