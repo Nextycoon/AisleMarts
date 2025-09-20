@@ -12,7 +12,7 @@ import {
   Image,
 } from 'react-native';
 import { LinearGradient } from 'expo-linear-gradient';
-import EnhancedPriceDual from '../currency/EnhancedPriceDual';
+import EnhancedPriceDual from '../../components/currency/EnhancedPriceDual';
 
 const { width } = Dimensions.get('window');
 const CARD_WIDTH = (width - 48) / 2; // 2 cards per row with 16px margins
