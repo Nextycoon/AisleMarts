@@ -508,9 +508,9 @@ try:
     from routers.enhanced_features_routes import router as enhanced_features_router
     app.include_router(enhanced_features_router, prefix="/api", tags=["enhanced_features"])
     
-    # Import and include Business Tools router
-    from routers.business_tools_routes import router as business_tools_router
-    app.include_router(business_tools_router, prefix="/api", tags=["business_tools"])
+    # Import and include Advanced Business Tools router
+    from routers.business_tools_routes import router as advanced_business_tools_router
+    app.include_router(advanced_business_tools_router, prefix="/api", tags=["advanced_business_tools"])
     
     # Import and include Operational Systems router
     from routers.operational_systems_routes import router as operational_systems_router
