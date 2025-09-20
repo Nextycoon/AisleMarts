@@ -84,6 +84,12 @@ const styles = StyleSheet.create({
     margin: 0,
     padding: 0,
   },
+  languageToggle: {
+    position: 'absolute',
+    top: 50,
+    right: 12,
+    zIndex: 10000,
+  },
   networkBadge: {
     position: 'absolute',
     right: 12,
