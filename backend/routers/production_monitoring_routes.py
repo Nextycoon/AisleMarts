@@ -10,6 +10,9 @@ from pydantic import BaseModel
 from datetime import datetime
 import logging
 
+import sys
+import os
+sys.path.append(os.path.dirname(os.path.dirname(os.path.abspath(__file__))))
 from services.production_monitoring import production_monitoring, AlertSeverity
 
 router = APIRouter(prefix="/monitoring", tags=["monitoring"])
