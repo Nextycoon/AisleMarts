@@ -418,8 +418,8 @@ class ComprehensiveBlueWaveTester:
             "/health",
             "/currency/health", 
             "/universal-ai/health",
-            "/family-safety/health",
-            "/business-console/health",
+            "/family/health",
+            "/business/health",
             "/e2ee/health",
             "/kms/health"
         ]
