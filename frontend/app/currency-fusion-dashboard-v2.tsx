@@ -324,7 +324,7 @@ export default function CurrencyFusionDashboardV2() {
           </Text>
           
           <View style={styles.badge}>
-            <Text style={styles.badgeText}>🌍 AisleMarts • The Digital Lifestyle Universe</Text>
+            <Text style={styles.badgeText}>🌊 BlueWave • Family-Safe AI Commerce</Text>
           </View>
           
           {/* Health Status */}
