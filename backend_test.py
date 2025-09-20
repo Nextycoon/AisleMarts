@@ -952,7 +952,7 @@ class BlueWaveTestSuite:
         """Test content search functionality"""
         success, data, status = await self.make_request('GET', '/social/search', params={
             'query': 'family',
-            'family_safe_only': True,
+            'family_safe_only': 'true',
             'limit': 10
         })
         
