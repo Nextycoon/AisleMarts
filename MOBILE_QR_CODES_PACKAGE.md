@@ -4,7 +4,7 @@
 
 ### Web Preview (Desktop/Mobile Browser)
 ```
-🌐 Live Preview: https://investor-ready-ui.preview.emergentagent.com
+🌐 Live Preview: https://currency-aware.preview.emergentagent.com
 ```
 
 ### Mobile App Testing (Expo Go)

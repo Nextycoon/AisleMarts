@@ -1,7 +1,7 @@
 # AisleMarts Investor Demo Deep Links Index
 
 ## Base Configuration
-- **Dev Environment**: `https://investor-ready-ui.preview.emergentagent.com`
+- **Dev Environment**: `https://currency-aware.preview.emergentagent.com`
 - **Awareness Engine**: Auto-detects context parameters and adapts UI/content/pricing
 - **UTM Tracking**: All links include investor-specific tracking codes
 

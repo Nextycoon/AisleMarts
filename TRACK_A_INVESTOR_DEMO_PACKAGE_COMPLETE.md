@@ -14,7 +14,7 @@
 cd /app/frontend
 
 # 1. Update production API endpoint
-echo 'EXPO_PUBLIC_API_URL=https://investor-ready-ui.preview.emergentagent.com' >> .env.production
+echo 'EXPO_PUBLIC_API_URL=https://currency-aware.preview.emergentagent.com' >> .env.production
 
 # 2. Generate Staging APK for Investors
 eas build -p android --profile staging --non-interactive
@@ -36,7 +36,7 @@ eas build -p ios --profile staging --non-interactive
 ## **🌐 STAGING DEPLOYMENT - LIVE INVESTOR URL**
 
 ### **Current Staging Status**
-**Live Demo URL**: `https://investor-ready-ui.preview.emergentagent.com`
+**Live Demo URL**: `https://currency-aware.preview.emergentagent.com`
 
 **Backend Health Validated**: ✅ **78.8% Success Rate** (41/52 tests passed)
 
@@ -49,12 +49,12 @@ cd /app
 ./deploy_demo.sh staging
 
 # 2. Verify all endpoints
-curl -s https://investor-ready-ui.preview.emergentagent.com/health
-curl -s https://investor-ready-ui.preview.emergentagent.com/api/products/collections
+curl -s https://currency-aware.preview.emergentagent.com/health
+curl -s https://currency-aware.preview.emergentagent.com/api/products/collections
 
 # 3. Test investor-critical APIs
-curl -s https://investor-ready-ui.preview.emergentagent.com/api/ai/chat
-curl -s https://investor-ready-ui.preview.emergentagent.com/api/ai/recommendations
+curl -s https://currency-aware.preview.emergentagent.com/api/ai/chat
+curl -s https://currency-aware.preview.emergentagent.com/api/ai/recommendations
 ```
 
 ---
