@@ -492,7 +492,19 @@ try:
     from routers.universal_ai_routes import router as universal_ai_router
     app.include_router(universal_ai_router, prefix="/api", tags=["universal_ai"])
     
-    print("✅ UNIVERSAL COMMERCE AI HUB + ALL-IN MICRO-SPRINT + PHASE 2 LUXURY COMMUNICATION SUITE + ADVANCED AI + PERFORMANCE ANALYTICS + AWARENESS ENGINE + INVESTOR DEMO MANAGEMENT + CURRENCY-INFINITY ENGINE routers loaded successfully")
+    # Import and include A/B Testing router
+    from routers.ab_testing_routes import router as ab_testing_router
+    app.include_router(ab_testing_router, prefix="/api", tags=["ab_testing"])
+    
+    # Import and include Executive Dashboard router
+    from routers.executive_dashboard_routes import router as executive_dashboard_router
+    app.include_router(executive_dashboard_router, prefix="/api", tags=["executive_dashboard"])
+    
+    # Import and include Production Monitoring router
+    from routers.production_monitoring_routes import router as production_monitoring_router
+    app.include_router(production_monitoring_router, prefix="/api", tags=["production_monitoring"])
+    
+    print("✅ UNIVERSAL COMMERCE AI HUB + ALL-IN MICRO-SPRINT + PHASE 2 LUXURY COMMUNICATION SUITE + ADVANCED AI + PERFORMANCE ANALYTICS + AWARENESS ENGINE + INVESTOR DEMO MANAGEMENT + CURRENCY-INFINITY ENGINE + A/B TESTING + EXECUTIVE DASHBOARD + PRODUCTION MONITORING routers loaded successfully")
 except ImportError as e:
     print(f"⚠️ Routers not available: {e}")
 except Exception as e:
