@@ -38,9 +38,25 @@ EXTENDED_EXCHANGE_RATES = {
     'CDF': 2700.0,   'GMD': 67.0,     'GNF': 8600.0,   'LRD': 185.0,   'SLL': 20700.0,
     'STN': 22.5,     'CVE': 100.0,    'MUR': 44.0,     'KID': 1.35,    'TVD': 1.35,
     
+    # Additional currencies to reach 180+
+    'AMD': 385.0,    'GEL': 2.7,      'LBP': 15000.0,  'JOD': 0.71,    'KWD': 0.30,
+    'BHD': 0.38,     'OMR': 0.38,     'QAR': 3.64,     'SAR': 3.75,    'AED': 3.67,
+    'ILS': 3.20,     'TRY': 8.50,     'EGP': 15.7,     'LYD': 4.8,     'TND': 3.1,
+    'MAD': 9.0,      'DZD': 140.0,    'MRU': 37.0,     'SEN': 580.0,   'GNF': 8600.0,
+    'LRD': 185.0,    'SLL': 20700.0,  'GMD': 67.0,     'CVE': 100.0,   'STN': 22.5,
+    'GHS': 15.8,     'NGN': 410.0,    'XOF': 580.0,    'XAF': 580.0,   'CDF': 2700.0,
+    'AOA': 825.0,    'ZMW': 25.0,     'BWP': 13.5,     'ZAR': 14.5,    'NAD': 14.5,
+    'SZL': 14.5,     'LSL': 14.5,     'MZN': 64.0,     'MWK': 820.0,   'MGA': 4100.0,
+    'KMF': 460.0,    'SCR': 13.8,     'MUR': 44.0,     'ETB': 55.0,    'KES': 108.0,
+    'UGX': 3700.0,   'TZS': 2800.0,   'RWF': 1300.0,   'BIF': 2800.0,  'DJF': 178.0,
+    'ERN': 15.0,     'SOS': 570.0,    'SDG': 585.0,    'SSP': 130.0,   'CFA': 580.0,
+    
     # Crypto rates (display-only, highly volatile)
     'BTC': 0.000016, 'ETH': 0.00043,  'USDT': 1.0,     'USDC': 1.0,    'BNB': 0.0017,
     'XRP': 2.1,      'ADA': 2.8,      'SOL': 0.0067,   'DOT': 0.14,    'MATIC': 1.8,
+    'AVAX': 0.027,   'LINK': 0.068,   'UNI': 0.12,     'LTC': 0.011,   'BCH': 0.0021,
+    'XLM': 8.5,      'ALGO': 4.2,     'VET': 45.0,     'ICP': 0.085,   'FIL': 0.18,
+    'ATOM': 0.11,    'NEAR': 0.21,    'SAND': 2.1,     'MANA': 2.5,    'CRO': 11.0,
 }
 
 @router.get("/rates")
