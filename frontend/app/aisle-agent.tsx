@@ -289,7 +289,7 @@ export default function AisleAgentScreen() {
         style={[styles.scrollView, { opacity: fadeAnim }]} 
         showsVerticalScrollIndicator={false}
       >
-        {/* Header */}
+        {/* Header with Health Tile */}
         <View style={styles.header}>
           <View style={styles.headerContent}>
             <View>
@@ -300,6 +300,9 @@ export default function AisleAgentScreen() {
               <Text style={styles.profileIcon}>👤</Text>
             </TouchableOpacity>
           </View>
+          
+          {/* Currency Health Tile */}
+          <RatesHealthTile />
         </View>
 
         {/* Dashboard Stats */}
