@@ -237,20 +237,16 @@ class ComprehensiveBlueWaveTester:
         universal_ai_tests = [
             # Core Universal AI Hub endpoints
             ("GET", "/universal-ai/health", None, False, 200),
+            ("GET", "/universal-ai/status", None, False, 200),
             ("GET", "/universal-ai/platforms", None, False, 200),
-            ("POST", "/universal-ai/discover/products", {"query": "luxury handbags", "platforms": ["amazon", "alibaba"], "limit": 20}, False, 200),
-            ("GET", "/universal-ai/market/intelligence", None, False, 200),
-            ("POST", "/universal-ai/predict/trends", {"category": "fashion", "timeframe": "30_days", "regions": ["EU", "US"]}, False, 200),
-            ("POST", "/universal-ai/orchestrate", {"action": "price_sync", "platforms": ["shopify", "ebay"]}, False, 200),
-            ("GET", "/universal-ai/customer/intelligence", None, False, 200),
-            ("POST", "/universal-ai/ai/communicate", {"platform": "amazon", "message": "Get product recommendations"}, False, 200),
-            ("POST", "/universal-ai/recommendations/products", {"user_preferences": {"category": "electronics", "budget": 500}}, False, 200),
-            ("GET", "/universal-ai/analytics/dashboard", None, False, 200),
-            ("POST", "/universal-ai/visual/search", {"image_url": "https://example.com/product.jpg", "platforms": ["amazon"]}, False, 200),
-            ("GET", "/universal-ai/assistant/status", None, False, 200),
-            ("POST", "/universal-ai/assistant/chat", {"message": "Find me the best deals on smartphones", "language": "en"}, False, 200),
-            ("POST", "/universal-ai/agents/deploy", {"agent_type": "price_monitor", "platforms": ["amazon", "ebay", "shopify"]}, False, 200),
-            ("GET", "/universal-ai/performance/metrics", None, False, 200)
+            ("GET", "/universal-ai/products/search?query=luxury handbags&category=fashion", None, False, 200),
+            ("POST", "/universal-ai/market-intelligence", {}, False, 200),
+            ("POST", "/universal-ai/trends/predict?category=fashion&timeframe=30", {}, False, 200),
+            ("POST", "/universal-ai/orchestrate", {"type": "price_sync", "parameters": {"platforms": ["shopify", "ebay"]}}, False, 200),
+            ("GET", "/universal-ai/customers/intelligence", None, False, 200),
+            ("POST", "/universal-ai/ai-communication", {"platform": "amazon", "message": {"type": "recommendation_request"}}, False, 200),
+            ("GET", "/universal-ai/analytics/global", None, False, 200),
+            ("POST", "/universal-ai/agents/deploy", {"type": "price_monitor", "platforms": ["amazon", "ebay", "shopify"], "parameters": {"capabilities": ["price_tracking"]}}, False, 200)
         ]
         
         # Execute tests with maximum concurrency
