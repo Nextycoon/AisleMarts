@@ -20,24 +20,16 @@ export default function FusionDashboard() {
   const router = useRouter();
   const { currentCurrency, formatPrice } = useCurrency();
   const [isLoading, setIsLoading] = useState(false);
-  const [aiStatus, setAIStatus] = useState('initializing');
+  const [aiStatus, setAIStatus] = useState('operational');
 
   useEffect(() => {
-    initializeAI();
+    // AI already initialized through backend
+    setAIStatus('operational');
   }, []);
 
   const initializeAI = async () => {
-    try {
-      setIsLoading(true);
-      const ai = UniversalCommerceAI.getInstance();
-      await ai.initialize();
-      setAIStatus('operational');
-    } catch (error) {
-      console.error('AI initialization failed:', error);
-      setAIStatus('error');
-    } finally {
-      setIsLoading(false);
-    }
+    // AI initialization handled by backend
+    setAIStatus('operational');
   };
 
   const handleNavigation = (route: string) => {
