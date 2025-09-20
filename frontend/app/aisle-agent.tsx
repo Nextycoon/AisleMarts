@@ -152,6 +152,14 @@ export default function AisleAgentScreen() {
       badge: 'NEW',
       gradient: ['#ffecd2', '#fcb69f'],
     },
+    {
+      icon: '🌍',
+      title: 'Universal AI Hub',
+      subtitle: 'Global commerce intelligence',
+      onPress: () => router.push('/universal-ai-hub'),
+      badge: 'AI',
+      gradient: ['#667eea', '#764ba2'],
+    },
   ];
 
   const dashboardStats: DashboardStat[] = [
