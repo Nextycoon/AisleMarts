@@ -10,10 +10,10 @@ import {
   Dimensions,
 } from 'react-native';
 import { LinearGradient } from 'expo-linear-gradient';
-import { CurrencyProvider } from '@/lib/currency/CurrencyProvider';
-import CurrencySwitcher from '@/components/currency/CurrencySwitcher';
-import PriceDual from '@/components/currency/PriceDual';
-import LiveCurrencyDisplay from '@/components/currency/LiveCurrencyDisplay';
+import { CurrencyProvider } from '../lib/currency/CurrencyProvider';
+import CurrencySwitcher from '../components/currency/CurrencySwitcher';
+import PriceDual from '../components/currency/PriceDual';
+import LiveCurrencyDisplay from '../components/currency/LiveCurrencyDisplay';
 import { router } from 'expo-router';
 
 const { width } = Dimensions.get('window');
