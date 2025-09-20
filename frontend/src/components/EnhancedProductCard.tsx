@@ -1,5 +1,5 @@
 /**
- * Enhanced Product Card with improved animations and luxury design
+ * Enhanced Product Card with Currency-Infinity Engine Integration
  */
 import React, { useRef, useState } from 'react';
 import {
@@ -12,6 +12,7 @@ import {
   Image,
 } from 'react-native';
 import { LinearGradient } from 'expo-linear-gradient';
+import EnhancedPriceDual from '../currency/EnhancedPriceDual';
 
 const { width } = Dimensions.get('window');
 const CARD_WIDTH = (width - 48) / 2; // 2 cards per row with 16px margins
