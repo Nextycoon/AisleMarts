@@ -488,7 +488,11 @@ try:
     from routers.currency_routes import router as currency_router
     app.include_router(currency_router, prefix="/api", tags=["currency"])
     
-    print("✅ ALL-IN MICRO-SPRINT + PHASE 2 LUXURY COMMUNICATION SUITE + ADVANCED AI + PERFORMANCE ANALYTICS + AWARENESS ENGINE + INVESTOR DEMO MANAGEMENT + CURRENCY-INFINITY ENGINE routers loaded successfully")
+    # Import and include Universal Commerce AI Hub router
+    from routers.universal_ai_routes import router as universal_ai_router
+    app.include_router(universal_ai_router, prefix="/api", tags=["universal_ai"])
+    
+    print("✅ UNIVERSAL COMMERCE AI HUB + ALL-IN MICRO-SPRINT + PHASE 2 LUXURY COMMUNICATION SUITE + ADVANCED AI + PERFORMANCE ANALYTICS + AWARENESS ENGINE + INVESTOR DEMO MANAGEMENT + CURRENCY-INFINITY ENGINE routers loaded successfully")
 except ImportError as e:
     print(f"⚠️ Routers not available: {e}")
 except Exception as e:
