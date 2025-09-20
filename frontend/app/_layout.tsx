@@ -33,39 +33,31 @@ function AppProviders({ children }: { children: React.ReactNode }) {
 
 export default function RootLayout() {
   return (
-    <GlobalLanguageProvider>
-      <View style={styles.container}>
-        {/* Language Switcher - Global Access */}
-        <View style={styles.languageToggle}>
-          <LanguageSwitcher compact={true} />
-        </View>
-        
-        <StatusBar style="light" backgroundColor="transparent" translucent={true} hidden={false} />
-        
-        {/* Digital Lifestyle Universe Badge */}
-        <View style={styles.networkBadge}>
-          <Text style={styles.networkText}>
-            🌍 AisleMarts • The Digital Lifestyle Universe
-          </Text>
-        </View>
-        
-        <ErrorBoundary>
+    <ErrorBoundary>
+      <AuthProvider>
+        <UserRolesProvider>
           <AppProviders>
-            <AuthProvider>
-              <UserRolesProvider>
-                <Stack 
-                  screenOptions={{ 
-                    headerShown: false,
-                    contentStyle: styles.screen,
-                    animation: 'fade',
-                  }} 
-                />
-              </UserRolesProvider>
-            </AuthProvider>
+            <View style={styles.container}>
+              <StatusBar style="light" />
+              <Stack
+                screenOptions={{
+                  headerShown: false,
+                  contentStyle: { backgroundColor: '#0f0f23' },
+                  animation: 'slide_from_right',
+                }}
+              />
+
+              {/* Digital Lifestyle Universe Badge */}
+              <View style={styles.networkBadge}>
+                <Text style={styles.networkText}>
+                  🌍 AisleMarts • The Digital Lifestyle Universe
+                </Text>
+              </View>
+            </View>
           </AppProviders>
-        </ErrorBoundary>
-      </View>
-    </GlobalLanguageProvider>
+        </UserRolesProvider>
+      </AuthProvider>
+    </ErrorBoundary>
   );
 }
 
