@@ -197,16 +197,16 @@ export default function EnhancedProductCard({
             </View>
           )}
 
-          {/* Price */}
+          {/* Price with Currency-Infinity Engine */}
           <View style={styles.priceContainer}>
-            <Text style={styles.price}>
-              {formatPrice(product.price, product.currency)}
-            </Text>
-            {product.originalPrice && product.originalPrice > product.price && (
-              <Text style={styles.originalPrice}>
-                {formatPrice(product.originalPrice, product.currency)}
-              </Text>
-            )}
+            <EnhancedPriceDual
+              amount={product.price}
+              code={product.currency}
+              originalPrice={product.originalPrice}
+              showFXAge={true}
+              fxMarginBps={90} // 0.90% retail FX margin
+              style={styles.priceDual}
+            />
           </View>
 
           {/* Availability */}
