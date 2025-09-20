@@ -10377,6 +10377,24 @@ SKU-CSV-002,8,15000,9876543210987,KES,red,large,new"""
         self.test_investor_demo_reset()
         self.test_investor_demo_error_scenarios()
         
+        # ========== CURRENCY-INFINITY ENGINE TESTS ==========
+        print("\n" + "💱" * 15 + " CURRENCY-INFINITY ENGINE TESTING " + "💱" * 15)
+        
+        # Currency-Infinity Engine Tests
+        print("\n💱 Currency-Infinity Engine Testing...")
+        self.test_currency_health_check()
+        self.test_currency_supported_currencies()
+        self.test_currency_exchange_rates_default()
+        self.test_currency_exchange_rates_eur_base()
+        self.test_currency_exchange_rates_invalid_base()
+        self.test_currency_conversion_usd_eur()
+        self.test_currency_conversion_jpy_gbp()
+        self.test_currency_conversion_same_currency()
+        self.test_currency_conversion_zero_amount()
+        self.test_currency_conversion_invalid_from()
+        self.test_currency_conversion_invalid_to()
+        self.test_currency_performance_and_cors()
+        
         # Print summary
         print("\n" + "=" * 80)
         print("📊 TEST SUMMARY")
