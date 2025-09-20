@@ -926,7 +926,7 @@ class BlueWaveTestSuite:
     async def test_trending_content(self):
         """Test trending content discovery"""
         success, data, status = await self.make_request('GET', '/social/explore/trending', params={
-            'family_safe_only': True,
+            'family_safe_only': 'true',
             'limit': 10
         })
         
