@@ -38,6 +38,10 @@ export default function IndexScreen() {
       console.log('✅ Loading complete');
       setLoadingProgress(1);
       
+      // For testing purposes, set onboarding as completed to test main app
+      await AsyncStorage.setItem('hasCompletedOnboarding', 'true');
+      console.log('🧪 Testing mode: Onboarding marked as completed');
+      
       // Check onboarding status
       const hasCompletedOnboarding = await AsyncStorage.getItem('hasCompletedOnboarding');
       console.log('🔍 Onboarding status:', hasCompletedOnboarding);
