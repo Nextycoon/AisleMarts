@@ -528,7 +528,15 @@ try:
     from routers.kms_routes import router as kms_router
     app.include_router(kms_router, prefix="/api", tags=["kms"])
     
-    print("✅ UNIVERSAL COMMERCE AI HUB + ALL-IN MICRO-SPRINT + PHASE 2 LUXURY COMMUNICATION SUITE + ADVANCED AI + PERFORMANCE ANALYTICS + AWARENESS ENGINE + INVESTOR DEMO MANAGEMENT + CURRENCY-INFINITY ENGINE + A/B TESTING + EXECUTIVE DASHBOARD + PRODUCTION MONITORING + ENHANCED FEATURES + BUSINESS TOOLS + OPERATIONAL SYSTEMS + INTERNATIONAL EXPANSION + E2EE + KMS routers loaded successfully")
+    # Import and include BlueWave Family Safety router
+    from routers.family_safety_routes import router as family_safety_router
+    app.include_router(family_safety_router, tags=["family_safety"])
+    
+    # Import and include BlueWave Business Console router
+    from routers.business_console_routes import router as business_console_router
+    app.include_router(business_console_router, tags=["business_console"])
+    
+    print("✅ UNIVERSAL COMMERCE AI HUB + ALL-IN MICRO-SPRINT + PHASE 2 LUXURY COMMUNICATION SUITE + ADVANCED AI + PERFORMANCE ANALYTICS + AWARENESS ENGINE + INVESTOR DEMO MANAGEMENT + CURRENCY-INFINITY ENGINE + A/B TESTING + EXECUTIVE DASHBOARD + PRODUCTION MONITORING + ENHANCED FEATURES + BUSINESS TOOLS + OPERATIONAL SYSTEMS + INTERNATIONAL EXPANSION + E2EE + KMS + BLUEWAVE FAMILY SAFETY + BUSINESS CONSOLE routers loaded successfully")
 except ImportError as e:
     print(f"⚠️ Routers not available: {e}")
 except Exception as e:
