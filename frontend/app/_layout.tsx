@@ -63,4 +63,21 @@ const styles = StyleSheet.create({
     margin: 0,
     padding: 0,
   },
+  safeModebadge: {
+    position: 'absolute',
+    right: 12,
+    bottom: 12,
+    paddingHorizontal: 10,
+    paddingVertical: 6,
+    backgroundColor: 'rgba(15, 111, 255, 0.2)',
+    borderWidth: 1,
+    borderColor: '#0F6FFF',
+    borderRadius: 8,
+    zIndex: 9999,
+  },
+  safeModeText: {
+    fontSize: 12,
+    color: '#0F6FFF',
+    fontWeight: '600',
+  },
 });
