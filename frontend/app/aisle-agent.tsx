@@ -407,6 +407,8 @@ export default function AisleAgentScreen() {
         {/* Bottom Padding */}
         <View style={{ height: 32 }} />
       </Animated.ScrollView>
+      
+      <TabNavigator />
     </SafeAreaView>
   );
 }
