@@ -10,6 +10,9 @@ from pydantic import BaseModel
 from datetime import datetime, timedelta
 import logging
 
+import sys
+import os
+sys.path.append(os.path.dirname(os.path.dirname(os.path.abspath(__file__))))
 from services.executive_dashboard import executive_dashboard
 
 router = APIRouter(prefix="/dashboard", tags=["executive_dashboard"])
