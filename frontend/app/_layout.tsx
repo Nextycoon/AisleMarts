@@ -36,10 +36,10 @@ export default function RootLayout() {
     <View style={styles.container}>
       <StatusBar style="light" backgroundColor="transparent" translucent={true} hidden={false} />
       
-      {/* Everything Network Badge */}
+      {/* Digital Lifestyle Universe Badge */}
       <View style={styles.networkBadge}>
         <Text style={styles.networkText}>
-          AisleMarts • The Everything Network 🌍
+          🌍 AisleMarts • The Digital Lifestyle Universe
         </Text>
       </View>
       
