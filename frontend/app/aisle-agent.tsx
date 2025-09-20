@@ -146,9 +146,9 @@ export default function AisleAgentScreen() {
     },
     {
       icon: '💱',
-      title: 'Currency Fusion',
-      subtitle: 'Global currency engine',
-      onPress: () => router.push('/currency-fusion-dashboard'),
+      title: 'Currency Fusion v2',
+      subtitle: 'Live global rates + crypto',
+      onPress: () => router.push('/currency-fusion-dashboard-v2'),
       badge: 'NEW',
       gradient: ['#ffecd2', '#fcb69f'],
     },
