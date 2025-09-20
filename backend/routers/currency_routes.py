@@ -131,6 +131,10 @@ async def convert_currency(
     from_currency = from_currency.upper()
     to_currency = to_currency.upper()
     
+    # Validate amount is not negative
+    if amount < 0:
+        raise HTTPException(status_code=400, detail="Amount cannot be negative")
+    
     if from_currency not in EXTENDED_EXCHANGE_RATES:
         raise HTTPException(status_code=400, detail=f"Unsupported source currency: {from_currency}")
     
