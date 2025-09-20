@@ -1230,6 +1230,10 @@ class BlueWaveTestSuite:
         business_passed = sum(1 for t in business_tests if t['success'])
         print(f"   {business_passed}/{len(business_tests)} tests passed ({business_passed/len(business_tests)*100:.1f}%)" if business_tests else "   No tests found")
         
+        print(f"\n🎬 TIKTOK FEATURES SYSTEM:")
+        tiktok_passed = sum(1 for t in tiktok_tests if t['success'])
+        print(f"   {tiktok_passed}/{len(tiktok_tests)} tests passed ({tiktok_passed/len(tiktok_tests)*100:.1f}%)" if tiktok_tests else "   No tests found")
+        
         print(f"\n🔧 SYSTEM INTEGRATION:")
         system_passed = sum(1 for t in system_tests if t['success'])
         print(f"   {system_passed}/{len(system_tests)} tests passed ({system_passed/len(system_tests)*100:.1f}%)" if system_tests else "   No tests found")
