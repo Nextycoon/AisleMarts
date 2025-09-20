@@ -509,7 +509,7 @@ export default function CurrencyFusionDashboardV2() {
           </View>
           
           <Text style={styles.footerText}>
-            🌍 AisleMarts • The Digital Lifestyle Universe
+            🌊 BlueWave • Family-Safe AI Commerce
           </Text>
         </View>
       </ScrollView>
