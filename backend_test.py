@@ -2,12 +2,13 @@
 """
 BlueWave Backend Systems Comprehensive Test Suite
 ===============================================
-Testing newly implemented BlueWave Family Safety and Business Console systems.
+Testing newly implemented BlueWave systems including TikTok-inspired social commerce features.
 
 Test Coverage:
 1. Family Safety System (/api/family/*)
 2. Business Console System (/api/business/*)
-3. System Integration and Error Handling
+3. TikTok Features System (/api/social/*)
+4. System Integration and Error Handling
 """
 
 import asyncio
