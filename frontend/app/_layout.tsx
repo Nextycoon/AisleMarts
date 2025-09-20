@@ -5,6 +5,8 @@ import { View, StyleSheet, Text } from 'react-native';
 import { AuthProvider } from '@/src/context/AuthContext'; 
 import { UserRolesProvider } from '@/src/context/UserRolesContext';
 import { ErrorBoundary } from '../src/components/ErrorBoundary';
+import GlobalLanguageProvider from '../components/GlobalLanguageProvider';
+import LanguageSwitcher from '../components/LanguageSwitcher';
 
 // Environment-based Configuration - FULL MODE GO-LIVE with Safety Rails
 const safeMode = process.env.NEXT_PUBLIC_SAFE_MODE === 'true';
