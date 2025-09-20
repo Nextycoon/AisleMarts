@@ -24,12 +24,12 @@ from datetime import datetime
 BACKEND_URL = os.getenv('REACT_APP_BACKEND_URL', 'https://lifestyle-universe.preview.emergentagent.com')
 API_BASE = f"{BACKEND_URL}/api"
 
-class APITester:
+class UniversalCommerceAITester:
     def __init__(self):
-        self.session = requests.Session()
-        self.auth_token = None
+        self.session = None
         self.test_results = []
-        self.user_id = None
+        self.total_tests = 0
+        self.passed_tests = 0
         
     def log_test(self, test_name: str, success: bool, details: str = ""):
         """Log test results"""
