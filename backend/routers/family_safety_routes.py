@@ -1,28 +1,26 @@
 """
-AisleMarts Family Safety API Routes - BlueWave Design
-===================================================
-Production-ready Family Safety API endpoints with BlueWave design principles:
-- Screen time management and wellbeing tracking
-- Family pairing and parental controls  
-- Budget monitoring and spending alerts
-- Safety insights and recommendations
+AisleMarts Family Safety Routes - BlueWave System
+==============================================
+Complete backend API endpoints for family safety and wellbeing management.
 """
 
-from fastapi import APIRouter, HTTPException, Depends
-from pydantic import BaseModel
-from typing import Dict, Any, Optional, List
+from fastapi import APIRouter, HTTPException, Depends, status
+from typing import List, Dict, Any, Optional
+from pydantic import BaseModel, Field
 from datetime import datetime
 import logging
 
 from services.family_safety_service import family_safety_service, UserRole, SafetyLevel, ActivityCategory
 
-router = APIRouter(prefix="/family", tags=["family_safety"])
+router = APIRouter(prefix="/api/family", tags=["family_safety"])
+logger = logging.getLogger(__name__)
 
 # ============================================================================
 # PYDANTIC MODELS
 # ============================================================================
 
-class ScreenTimeTrackingRequest(BaseModel):
+class ScreenTimeTrackRequest(BaseModel):
+    user_id: str
     app_name: str
     minutes: int
     category: ActivityCategory
@@ -30,64 +28,80 @@ class ScreenTimeTrackingRequest(BaseModel):
 class ScreenTimeLimitRequest(BaseModel):
     user_id: str
     daily_limit_minutes: int
+    set_by_user_id: str
 
 class CreateFamilyRequest(BaseModel):
+    parent_user_id: str
     family_name: str
 
-class GenerateFamilyInviteRequest(BaseModel):
+class GenerateInviteRequest(BaseModel):
     family_id: str
-    invite_type: Optional[str] = "general"
+    inviter_user_id: str
+    invite_type: str = "general"
 
 class JoinFamilyRequest(BaseModel):
     invite_code: str
+    user_id: str
     user_name: str
     user_age: Optional[int] = None
 
-class PurchaseApprovalCheckRequest(BaseModel):
+class PurchaseApprovalCheck(BaseModel):
+    user_id: str
     amount: float
     item_description: str
 
 class PurchaseApprovalRequest(BaseModel):
+    user_id: str
     amount: float
     item_description: str
     merchant: str
 
+class ApprovePurchaseRequest(BaseModel):
+    request_id: str
+    parent_user_id: str
+    approved: bool
+    notes: Optional[str] = None
+
 # ============================================================================
-# FAMILY SAFETY HEALTH & STATUS
+# HEALTH & STATUS ENDPOINTS
 # ============================================================================
 
 @router.get("/health")
-async def family_safety_health():
-    """Family Safety system health check"""
-    return await family_safety_service.get_system_status()
+async def get_family_safety_health():
+    """Get family safety system health status"""
+    try:
+        status = await family_safety_service.get_system_status()
+        logger.info("✅ Family Safety health check successful")
+        return status
+    except Exception as e:
+        logger.error(f"❌ Family Safety health check failed: {e}")
+        raise HTTPException(status_code=500, detail=f"Health check failed: {str(e)}")
 
 # ============================================================================
-# SCREEN TIME MANAGEMENT
+# SCREEN TIME MANAGEMENT ENDPOINTS
 # ============================================================================
 
 @router.post("/screen-time/track")
-async def track_screen_time(user_id: str, request: ScreenTimeTrackingRequest):
+async def track_screen_time(request: ScreenTimeTrackRequest):
     """Track user screen time activity"""
     try:
         result = await family_safety_service.track_screen_time(
-            user_id=user_id,
+            user_id=request.user_id,
             app_name=request.app_name,
             minutes=request.minutes,
             category=request.category
         )
         
-        if not result["success"]:
-            raise HTTPException(status_code=400, detail=result["error"])
-        
-        return {
-            "success": True,
-            "data": result,
-            "message": "Screen time tracked successfully"
-        }
-        
+        if result["success"]:
+            logger.info(f"✅ Screen time tracked for user {request.user_id}: {request.minutes}m")
+            return result
+        else:
+            logger.error(f"❌ Screen time tracking failed: {result.get('error', 'Unknown error')}")
+            raise HTTPException(status_code=400, detail=result.get("error", "Tracking failed"))
+            
     except Exception as e:
-        logging.error(f"Track screen time endpoint error: {e}")
-        raise HTTPException(status_code=500, detail="Screen time tracking failed")
+        logger.error(f"❌ Screen time tracking error: {e}")
+        raise HTTPException(status_code=500, detail=f"Tracking error: {str(e)}")
 
 @router.get("/screen-time/{user_id}")
 async def get_screen_time_summary(user_id: str, period: str = "today"):
@@ -95,179 +109,167 @@ async def get_screen_time_summary(user_id: str, period: str = "today"):
     try:
         result = await family_safety_service.get_screen_time_summary(user_id, period)
         
-        if not result["success"]:
-            raise HTTPException(status_code=404, detail=result["error"])
-        
-        return {
-            "success": True,
-            "data": result,
-            "message": "Screen time summary retrieved successfully"
-        }
-        
+        if result["success"]:
+            logger.info(f"✅ Screen time summary retrieved for user {user_id}")
+            return result
+        else:
+            logger.error(f"❌ Screen time summary failed: {result.get('error', 'Unknown error')}")
+            raise HTTPException(status_code=404, detail=result.get("error", "Data not found"))
+            
     except Exception as e:
-        logging.error(f"Get screen time summary endpoint error: {e}")
-        raise HTTPException(status_code=500, detail="Failed to retrieve screen time summary")
+        logger.error(f"❌ Screen time summary error: {e}")
+        raise HTTPException(status_code=500, detail=f"Summary error: {str(e)}")
 
 @router.post("/screen-time/limit")
-async def set_screen_time_limit(set_by_user_id: str, request: ScreenTimeLimitRequest):
+async def set_screen_time_limit(request: ScreenTimeLimitRequest):
     """Set screen time limit for user"""
     try:
         result = await family_safety_service.set_screen_time_limit(
             user_id=request.user_id,
             daily_limit_minutes=request.daily_limit_minutes,
-            set_by_user_id=set_by_user_id
+            set_by_user_id=request.set_by_user_id
         )
         
-        if not result["success"]:
-            raise HTTPException(status_code=400, detail=result["error"])
-        
-        return {
-            "success": True,
-            "data": result,
-            "message": "Screen time limit updated successfully"
-        }
-        
+        if result["success"]:
+            logger.info(f"✅ Screen time limit set for user {request.user_id}")
+            return result
+        else:
+            logger.error(f"❌ Set screen time limit failed: {result.get('error', 'Unknown error')}")
+            raise HTTPException(status_code=403, detail=result.get("error", "Permission denied"))
+            
     except Exception as e:
-        logging.error(f"Set screen time limit endpoint error: {e}")
-        raise HTTPException(status_code=500, detail="Failed to set screen time limit")
+        logger.error(f"❌ Set screen time limit error: {e}")
+        raise HTTPException(status_code=500, detail=f"Limit setting error: {str(e)}")
 
 # ============================================================================
-# FAMILY PAIRING & MANAGEMENT
+# FAMILY PAIRING & MANAGEMENT ENDPOINTS
 # ============================================================================
 
 @router.post("/create")
-async def create_family(parent_user_id: str, request: CreateFamilyRequest):
+async def create_family(request: CreateFamilyRequest):
     """Create a new family group"""
     try:
         result = await family_safety_service.create_family(
-            parent_user_id=parent_user_id,
+            parent_user_id=request.parent_user_id,
             family_name=request.family_name
         )
         
-        if not result["success"]:
-            raise HTTPException(status_code=400, detail=result["error"])
-        
-        return {
-            "success": True,
-            "family_id": result["family_id"],
-            "message": result["message"]
-        }
-        
+        if result["success"]:
+            logger.info(f"✅ Family created: {request.family_name}")
+            return result
+        else:
+            logger.error(f"❌ Family creation failed: {result.get('error', 'Unknown error')}")
+            raise HTTPException(status_code=400, detail=result.get("error", "Creation failed"))
+            
     except Exception as e:
-        logging.error(f"Create family endpoint error: {e}")
-        raise HTTPException(status_code=500, detail="Family creation failed")
+        logger.error(f"❌ Family creation error: {e}")
+        raise HTTPException(status_code=500, detail=f"Creation error: {str(e)}")
 
 @router.post("/invite/generate")
-async def generate_family_invite(inviter_user_id: str, request: GenerateFamilyInviteRequest):
+async def generate_family_invite(request: GenerateInviteRequest):
     """Generate family invitation link/code"""
     try:
         result = await family_safety_service.generate_family_invite(
             family_id=request.family_id,
-            inviter_user_id=inviter_user_id,
+            inviter_user_id=request.inviter_user_id,
             invite_type=request.invite_type
         )
         
-        if not result["success"]:
-            raise HTTPException(status_code=400, detail=result["error"])
-        
-        return {
-            "success": True,
-            "invite_data": {
-                "invite_code": result["invite_code"],
-                "expires_at": result["expires_at"],
-                "share_links": result["share_links"]
-            },
-            "message": "Family invitation generated successfully"
-        }
-        
+        if result["success"]:
+            logger.info(f"✅ Family invite generated for family {request.family_id}")
+            return result
+        else:
+            logger.error(f"❌ Family invite generation failed: {result.get('error', 'Unknown error')}")
+            raise HTTPException(status_code=403, detail=result.get("error", "Permission denied"))
+            
     except Exception as e:
-        logging.error(f"Generate family invite endpoint error: {e}")
-        raise HTTPException(status_code=500, detail="Failed to generate family invite")
+        logger.error(f"❌ Family invite generation error: {e}")
+        raise HTTPException(status_code=500, detail=f"Invite generation error: {str(e)}")
 
 @router.post("/join")
-async def join_family(user_id: str, request: JoinFamilyRequest):
+async def join_family(request: JoinFamilyRequest):
     """Join family using invite code"""
     try:
         result = await family_safety_service.join_family(
             invite_code=request.invite_code,
-            user_id=user_id,
+            user_id=request.user_id,
             user_name=request.user_name,
             user_age=request.user_age
         )
         
-        if not result["success"]:
-            raise HTTPException(status_code=400, detail=result["error"])
-        
-        return {
-            "success": True,
-            "family_data": {
-                "family_id": result["family_id"],
-                "role": result["role"]
-            },
-            "message": result["message"]
-        }
-        
+        if result["success"]:
+            logger.info(f"✅ User {request.user_id} joined family")
+            return result
+        else:
+            logger.error(f"❌ Family join failed: {result.get('error', 'Unknown error')}")
+            raise HTTPException(status_code=400, detail=result.get("error", "Join failed"))
+            
     except Exception as e:
-        logging.error(f"Join family endpoint error: {e}")
-        raise HTTPException(status_code=500, detail="Failed to join family")
+        logger.error(f"❌ Family join error: {e}")
+        raise HTTPException(status_code=500, detail=f"Join error: {str(e)}")
+
+@router.get("/dashboard/{family_id}")
+async def get_family_dashboard(family_id: str, requesting_user_id: str):
+    """Get comprehensive family dashboard data"""
+    try:
+        result = await family_safety_service.get_family_dashboard(family_id, requesting_user_id)
+        
+        if result["success"]:
+            logger.info(f"✅ Family dashboard retrieved for family {family_id}")
+            return result
+        else:
+            logger.error(f"❌ Family dashboard failed: {result.get('error', 'Unknown error')}")
+            raise HTTPException(status_code=403, detail=result.get("error", "Permission denied"))
+            
+    except Exception as e:
+        logger.error(f"❌ Family dashboard error: {e}")
+        raise HTTPException(status_code=500, detail=f"Dashboard error: {str(e)}")
 
 # ============================================================================
-# BUDGET MONITORING & PURCHASE APPROVAL
+# BUDGET MONITORING & PURCHASE APPROVAL ENDPOINTS
 # ============================================================================
 
 @router.post("/purchase/check-approval")
-async def check_purchase_approval(user_id: str, request: PurchaseApprovalCheckRequest):
+async def check_purchase_approval(request: PurchaseApprovalCheck):
     """Check if purchase requires parental approval"""
     try:
         result = await family_safety_service.check_purchase_approval(
-            user_id=user_id,
+            user_id=request.user_id,
             amount=request.amount,
             item_description=request.item_description
         )
         
-        return {
-            "success": True,
-            "approval_required": result.get("approval_required", False),
-            "reason": result.get("reason", ""),
-            "additional_info": {
-                k: v for k, v in result.items() 
-                if k not in ["approval_required", "reason"]
-            }
-        }
-        
+        logger.info(f"✅ Purchase approval check for user {request.user_id}: ${request.amount}")
+        return result
+            
     except Exception as e:
-        logging.error(f"Check purchase approval endpoint error: {e}")
-        raise HTTPException(status_code=500, detail="Failed to check purchase approval")
+        logger.error(f"❌ Purchase approval check error: {e}")
+        raise HTTPException(status_code=500, detail=f"Approval check error: {str(e)}")
 
 @router.post("/purchase/request-approval")
-async def request_purchase_approval(user_id: str, request: PurchaseApprovalRequest):
+async def request_purchase_approval(request: PurchaseApprovalRequest):
     """Request purchase approval from parents"""
     try:
         result = await family_safety_service.request_purchase_approval(
-            user_id=user_id,
+            user_id=request.user_id,
             amount=request.amount,
             item_description=request.item_description,
             merchant=request.merchant
         )
         
-        if not result["success"]:
-            raise HTTPException(status_code=400, detail=result["error"])
-        
-        return {
-            "success": True,
-            "request_data": {
-                "request_id": result["request_id"],
-                "expires_at": result["expires_at"]
-            },
-            "message": result["message"]
-        }
-        
+        if result["success"]:
+            logger.info(f"✅ Purchase approval requested for user {request.user_id}")
+            return result
+        else:
+            logger.error(f"❌ Purchase approval request failed: {result.get('error', 'Unknown error')}")
+            raise HTTPException(status_code=400, detail=result.get("error", "Request failed"))
+            
     except Exception as e:
-        logging.error(f"Request purchase approval endpoint error: {e}")
-        raise HTTPException(status_code=500, detail="Failed to request purchase approval")
+        logger.error(f"❌ Purchase approval request error: {e}")
+        raise HTTPException(status_code=500, detail=f"Request error: {str(e)}")
 
 # ============================================================================
-# SAFETY INSIGHTS & RECOMMENDATIONS
+# SAFETY INSIGHTS & RECOMMENDATIONS ENDPOINTS
 # ============================================================================
 
 @router.get("/insights/{user_id}")
@@ -276,66 +278,43 @@ async def get_safety_insights(user_id: str):
     try:
         insights = await family_safety_service.generate_safety_insights(user_id)
         
-        insights_data = []
-        for insight in insights:
-            insights_data.append({
-                "insight_id": insight.insight_id,
-                "category": insight.category,
-                "title": insight.title,
-                "description": insight.description,
-                "icon": insight.icon,
-                "priority": insight.priority,
-                "action_required": insight.action_required,
-                "timestamp": insight.timestamp.isoformat()
-            })
-        
+        logger.info(f"✅ Safety insights generated for user {user_id}")
         return {
             "success": True,
-            "insights": insights_data,
-            "total_insights": len(insights_data),
-            "message": "Safety insights generated successfully"
+            "user_id": user_id,
+            "insights_count": len(insights),
+            "insights": [
+                {
+                    "insight_id": insight.insight_id,
+                    "category": insight.category,
+                    "title": insight.title,
+                    "description": insight.description,
+                    "icon": insight.icon,
+                    "priority": insight.priority,
+                    "action_required": insight.action_required,
+                    "timestamp": insight.timestamp.isoformat()
+                }
+                for insight in insights
+            ]
         }
-        
+            
     except Exception as e:
-        logging.error(f"Get safety insights endpoint error: {e}")
-        raise HTTPException(status_code=500, detail="Failed to generate safety insights")
+        logger.error(f"❌ Safety insights error: {e}")
+        raise HTTPException(status_code=500, detail=f"Insights error: {str(e)}")
 
 # ============================================================================
-# FAMILY DASHBOARD
-# ============================================================================
-
-@router.get("/dashboard/{family_id}")
-async def get_family_dashboard(family_id: str, requesting_user_id: str):
-    """Get comprehensive family dashboard data"""
-    try:
-        result = await family_safety_service.get_family_dashboard(family_id, requesting_user_id)
-        
-        if not result["success"]:
-            raise HTTPException(status_code=400, detail=result["error"])
-        
-        return {
-            "success": True,
-            "dashboard": result,
-            "message": "Family dashboard retrieved successfully"
-        }
-        
-    except Exception as e:
-        logging.error(f"Get family dashboard endpoint error: {e}")
-        raise HTTPException(status_code=500, detail="Failed to retrieve family dashboard")
-
-# ============================================================================
-# BADGES & MISSIONS
+# BADGES & MISSIONS ENDPOINTS
 # ============================================================================
 
 @router.get("/badges/{user_id}")
 async def get_user_badges(user_id: str):
-    """Get user's badges and mission progress"""
+    """Get user's badges and progress"""
     try:
-        # This would integrate with the badge system
+        # Mock badges data for now - would integrate with actual badge system
         badges = [
             {
-                "id": "sleep_hours",
-                "name": "Sleep Hours",
+                "id": "1",
+                "name": "Sleep Champion",
                 "icon": "💤",
                 "earned": True,
                 "progress": 100,
@@ -343,26 +322,26 @@ async def get_user_badges(user_id: str):
                 "earned_at": "2024-01-15T10:30:00Z"
             },
             {
-                "id": "screen_time",
-                "name": "Screen Time",
+                "id": "2",
+                "name": "Screen Time Master",
                 "icon": "⏱️",
                 "earned": False,
                 "progress": 75,
                 "description": "Stay under daily limit",
-                "earned_at": None
+                "target_date": "2024-01-20T00:00:00Z"
             },
             {
-                "id": "digital_wellbeing",
+                "id": "3",
                 "name": "Digital Wellbeing",
                 "icon": "📱",
                 "earned": False,
                 "progress": 60,
                 "description": "Take regular breaks",
-                "earned_at": None
+                "target_date": "2024-01-25T00:00:00Z"
             },
             {
-                "id": "safety_tools",
-                "name": "Safety Tools",
+                "id": "4",
+                "name": "Safety Scout",
                 "icon": "🛡️",
                 "earned": True,
                 "progress": 100,
@@ -370,194 +349,132 @@ async def get_user_badges(user_id: str):
                 "earned_at": "2024-01-10T14:20:00Z"
             },
             {
-                "id": "family_trust",
-                "name": "Family Trust",
+                "id": "5",
+                "name": "Family Bond",
                 "icon": "🏠",
                 "earned": False,
                 "progress": 85,
                 "description": "Build family connection",
-                "earned_at": None
+                "target_date": "2024-01-22T00:00:00Z"
             }
         ]
         
+        logger.info(f"✅ Badges retrieved for user {user_id}")
         return {
             "success": True,
-            "badges": badges,
+            "user_id": user_id,
             "total_badges": len(badges),
             "earned_badges": len([b for b in badges if b["earned"]]),
-            "message": "User badges retrieved successfully"
+            "badges": badges
         }
-        
+            
     except Exception as e:
-        logging.error(f"Get user badges endpoint error: {e}")
-        raise HTTPException(status_code=500, detail="Failed to retrieve user badges")
+        logger.error(f"❌ Badges retrieval error: {e}")
+        raise HTTPException(status_code=500, detail=f"Badges error: {str(e)}")
 
-@router.post("/missions/{user_id}/complete")
-async def complete_mission(user_id: str, mission_id: str):
-    """Mark mission as completed for user"""
+@router.get("/missions/{user_id}")
+async def get_user_missions(user_id: str):
+    """Get user's current missions"""
     try:
-        # This would integrate with the mission system
-        return {
-            "success": True,
-            "mission_completed": True,
-            "badge_earned": mission_id == "sleep_hours",
-            "points_earned": 100,
-            "message": f"Mission {mission_id} completed successfully"
-        }
-        
-    except Exception as e:
-        logging.error(f"Complete mission endpoint error: {e}")
-        raise HTTPException(status_code=500, detail="Failed to complete mission")
-
-# ============================================================================
-# DIGITAL PARENTING GUIDANCE
-# ============================================================================
-
-@router.get("/parenting/tips")
-async def get_digital_parenting_tips():
-    """Get digital parenting tips adapted for commerce"""
-    try:
-        tips = [
+        # Mock missions data for now - would integrate with actual mission system
+        missions = [
             {
-                "id": "understand_rules",
-                "title": "Help me understand the rules",
-                "description": "Guide your teen in understanding safe online shopping practices",
-                "icon": "📚",
-                "category": "education",
-                "actionable_steps": [
-                    "Explain why certain products require approval",
-                    "Discuss budget limits and spending goals",
-                    "Share examples of safe vs unsafe sellers"
-                ]
+                "id": "1",
+                "title": "Take 3 Screen Breaks",
+                "description": "Take a 5-minute break every hour while shopping",
+                "icon": "⏰",
+                "progress": 2,
+                "target": 3,
+                "reward": "15 points",
+                "expires_at": "2024-01-17T23:59:59Z"
             },
             {
-                "id": "be_available",
-                "title": "Be available to chat",
-                "description": "Guide your teen through purchase decisions and questions",
-                "icon": "💬",
-                "category": "communication",
-                "actionable_steps": [
-                    "Respond to approval requests promptly",
-                    "Discuss purchases they're considering",
-                    "Share your own shopping experiences"
-                ]
-            },
-            {
-                "id": "dont_panic",
-                "title": "Don't panic about delays",
-                "description": "Handle shipping delays and returns calmly",
-                "icon": "😌",
-                "category": "patience",
-                "actionable_steps": [
-                    "Explain that online shopping takes time",
-                    "Help them track orders together",
-                    "Turn delays into learning opportunities"
-                ]
-            },
-            {
-                "id": "trust_gradually",
-                "title": "Trust me with small purchases",
-                "description": "Build trust through small, independent buying decisions",
-                "icon": "🤝",
-                "category": "trust",
-                "actionable_steps": [
-                    "Start with low-value items",
-                    "Gradually increase spending limits",
-                    "Celebrate responsible choices"
-                ]
-            },
-            {
-                "id": "respect_privacy",
-                "title": "Respect my privacy",
-                "description": "Balance oversight with appropriate privacy",
-                "icon": "🔒",
-                "category": "privacy",
-                "actionable_steps": [
-                    "Explain what you monitor and why",
-                    "Focus on safety, not control",
-                    "Respect their personal preferences"
-                ]
-            },
-            {
-                "id": "teach_budgeting",
-                "title": "Teach me budgeting",
-                "description": "Help develop financial literacy through shopping",
+                "id": "2",
+                "title": "Compare 5 Prices",
+                "description": "Use price comparison for 5 different products",
                 "icon": "💰",
-                "category": "financial_literacy",
-                "actionable_steps": [
-                    "Set up allowances and savings goals",
-                    "Teach price comparison skills",
-                    "Discuss needs vs wants"
-                ]
+                "progress": 3,
+                "target": 5,
+                "reward": "25 points",
+                "expires_at": "2024-01-18T23:59:59Z"
             },
             {
-                "id": "guide_authenticity",
-                "title": "Guide me on authenticity",
-                "description": "Help identify legitimate sellers and products",
-                "icon": "✅",
-                "category": "safety",
-                "actionable_steps": [
-                    "Show how to check seller ratings",
-                    "Explain red flags to watch for",
-                    "Practice identifying fake products together"
-                ]
+                "id": "3",
+                "title": "Family Connection",
+                "description": "Share a product with a family member",
+                "icon": "👨‍👩‍👧‍👦",
+                "progress": 0,
+                "target": 1,
+                "reward": "20 points",
+                "expires_at": "2024-01-19T23:59:59Z"
             }
         ]
         
+        logger.info(f"✅ Missions retrieved for user {user_id}")
         return {
             "success": True,
-            "tips": tips,
-            "total_tips": len(tips),
-            "message": "Digital parenting tips retrieved successfully"
+            "user_id": user_id,
+            "active_missions": len(missions),
+            "missions": missions
         }
-        
+            
     except Exception as e:
-        logging.error(f"Get digital parenting tips endpoint error: {e}")
-        raise HTTPException(status_code=500, detail="Failed to retrieve parenting tips")
+        logger.error(f"❌ Missions retrieval error: {e}")
+        raise HTTPException(status_code=500, detail=f"Missions error: {str(e)}")
 
 # ============================================================================
-# WELLBEING INSIGHTS
+# NOTIFICATIONS & ALERTS ENDPOINTS
 # ============================================================================
 
-@router.get("/wellbeing/{user_id}")
-async def get_wellbeing_insights(user_id: str):
-    """Get wellbeing insights for user"""
+@router.get("/notifications/{user_id}")
+async def get_family_notifications(user_id: str):
+    """Get family safety notifications for user"""
     try:
-        insights = [
+        # Mock notifications data
+        notifications = [
             {
-                "category": "smart_spending",
-                "icon": "🎯",
-                "title": "Smart Spending",
-                "description": "You've saved $45 this week by comparing prices",
-                "positive": True
+                "id": "1",
+                "type": "screen_time_limit",
+                "title": "Screen Time Reminder", 
+                "message": "You have 30 minutes left of your daily screen time",
+                "icon": "⏰",
+                "priority": "medium",
+                "created_at": "2024-01-16T15:30:00Z",
+                "read": False
             },
             {
-                "category": "safety_score",
-                "icon": "🛡️",
-                "title": "Safety Score",
-                "description": "100% of your purchases were from verified sellers",
-                "positive": True
+                "id": "2",
+                "type": "purchase_approval",
+                "title": "Purchase Approved",
+                "message": "Your request for Designer Handbag ($89.99) has been approved",
+                "icon": "✅",
+                "priority": "high",
+                "created_at": "2024-01-16T14:15:00Z",
+                "read": False
             },
             {
-                "category": "learning_time",
-                "icon": "📚",
-                "title": "Learning Time",
-                "description": "30 minutes spent on educational content today",
-                "positive": True
+                "id": "3",
+                "type": "family_invite",
+                "title": "New Family Member",
+                "message": "Sarah joined your family group",
+                "icon": "👥",
+                "priority": "low",
+                "created_at": "2024-01-16T12:00:00Z",
+                "read": True
             }
         ]
         
+        logger.info(f"✅ Notifications retrieved for user {user_id}")
         return {
             "success": True,
-            "insights": insights,
-            "wellbeing_score": 92,
-            "message": "Wellbeing insights retrieved successfully"
+            "user_id": user_id,
+            "total_notifications": len(notifications),
+            "unread_count": len([n for n in notifications if not n["read"]]),
+            "notifications": notifications
         }
-        
+            
     except Exception as e:
-        logging.error(f"Get wellbeing insights endpoint error: {e}")
-        raise HTTPException(status_code=500, detail="Failed to retrieve wellbeing insights")
+        logger.error(f"❌ Notifications retrieval error: {e}")
+        raise HTTPException(status_code=500, detail=f"Notifications error: {str(e)}")
 
-logging.basicConfig(level=logging.INFO)
-logger = logging.getLogger(__name__)
-logger.info("✅ Family Safety API Routes initialized with BlueWave design principles")
+logger.info("✅ Family Safety Routes initialized with BlueWave system")
