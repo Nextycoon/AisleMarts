@@ -255,7 +255,7 @@ export default function AisleAgentScreen() {
           <View style={styles.headerContent}>
             <View>
               <Text style={styles.greeting}>{getGreeting()}, {userName}!</Text>
-              <Text style={styles.headerSubtitle}>All platforms. All shops. All intelligence. One lifestyle.</Text>
+              <Text style={styles.headerSubtitle}>One lifestyle. Both worlds. Real meets virtual.</Text>
             </View>
             <TouchableOpacity style={styles.profileButton}>
               <Text style={styles.profileIcon}>👤</Text>
