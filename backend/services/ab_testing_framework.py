@@ -130,6 +130,7 @@ class ABTestingFramework:
                 ExperimentMetric("aov", "revenue", target_improvement=0.05)
             ],
             start_date=datetime.now(),
+            end_date=None,
             min_sample_size=2000
         )
         self.experiments[recs_experiment.id] = recs_experiment
