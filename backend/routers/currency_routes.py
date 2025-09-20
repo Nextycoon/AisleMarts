@@ -95,12 +95,13 @@ async def get_supported_currencies() -> Dict[str, Any]:
         "currencies": sorted(EXTENDED_EXCHANGE_RATES.keys()),
         "count": len(EXTENDED_EXCHANGE_RATES),
         "regions": {
-            "americas": ["USD", "CAD", "MXN", "BRL", "ARS", "CLP", "COP", "PEN", "UYU", "BOB"],
-            "europe": ["EUR", "GBP", "CHF", "SEK", "NOK", "DKK", "PLN", "CZK", "HUF", "RUB", "TRY"],
-            "asia": ["CNY", "JPY", "KRW", "INR", "IDR", "MYR", "THB", "VND", "PHP", "SGD", "HKD", "TWD"],
-            "middleEast": ["AED", "SAR", "QAR", "KWD", "BHD", "OMR", "JOD", "ILS", "EGP"],
-            "africa": ["ZAR", "NGN", "KES", "MAD", "DZD", "TND", "GHS", "ETB", "ZMW"],
-            "oceania": ["AUD", "NZD", "FJD", "PGK", "SBD", "WST", "TOP", "VUV"]
+            "americas": ["USD", "CAD", "MXN", "BRL", "ARS", "CLP", "COP", "PEN", "UYU", "BOB", "XCD", "HTG", "JMD", "TTD", "BBD", "BZD", "GYD", "SRD", "CUP", "CUC", "ANG", "PAB"],
+            "europe": ["EUR", "GBP", "CHF", "SEK", "NOK", "DKK", "PLN", "CZK", "HUF", "RUB", "TRY", "UAH", "BYN", "RON", "BGN", "HRK", "RSD", "ISK", "ALL", "MKD", "BAM", "GEL", "MDL"],
+            "asia": ["CNY", "CNH", "JPY", "KRW", "INR", "IDR", "MYR", "THB", "VND", "PHP", "SGD", "HKD", "TWD", "PKR", "BDT", "LKR", "NPR", "BTN", "MMK", "LAK", "KHR", "BND", "MVR"],
+            "middleEast": ["AED", "SAR", "QAR", "KWD", "BHD", "OMR", "JOD", "ILS", "EGP", "LBP", "SYP", "IQD", "IRR", "YER"],
+            "africa": ["ZAR", "NGN", "KES", "MAD", "DZD", "TND", "XOF", "XAF", "GHS", "ETB", "TZS", "UGX", "RWF", "BWP", "ZMW", "MZN", "AOA", "NAD", "SZL", "LSL"],
+            "oceania": ["AUD", "NZD", "FJD", "PGK", "SBD", "WST", "TOP", "VUV", "NCF", "XPF"],
+            "crypto": ["BTC", "ETH", "USDT", "USDC", "BNB", "XRP", "ADA", "SOL", "DOT", "MATIC"]
         }
     }
 
