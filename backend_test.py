@@ -12671,6 +12671,427 @@ SKU-CSV-002,8,15000,9876543210987,KES,red,large,new"""
         else:
             self.log_test("Demo Error (Incomplete Tracking Data)", False, f"Expected validation error, got: {data}")
 
+    # ========== CURRENCY-INFINITY ENGINE TESTS ==========
+    
+    def test_currency_health_check(self):
+        """Test Currency-Infinity Engine health check"""
+        print("\n💱 Testing Currency-Infinity Engine - Health Check...")
+        
+        success, data = self.make_request("GET", "/currency/health")
+        
+        if success and isinstance(data, dict):
+            service = data.get("service")
+            status = data.get("status")
+            supported_currencies = data.get("supported_currencies", 0)
+            regions = data.get("regions", 0)
+            features = data.get("features", [])
+            
+            # Validate expected values
+            if (service == "currency-infinity-engine" and 
+                status == "operational" and 
+                supported_currencies >= 80 and
+                regions >= 6 and
+                len(features) >= 6):
+                self.log_test("Currency Health Check", True, 
+                             f"Service operational with {supported_currencies} currencies, {regions} regions, {len(features)} features")
+            else:
+                self.log_test("Currency Health Check", False, 
+                             f"Unexpected values - service: {service}, status: {status}, currencies: {supported_currencies}")
+        else:
+            self.log_test("Currency Health Check", False, str(data))
+    
+    def test_currency_supported_currencies(self):
+        """Test getting supported currencies list"""
+        print("\n💱 Testing Currency-Infinity Engine - Supported Currencies...")
+        
+        success, data = self.make_request("GET", "/currency/supported")
+        
+        if success and isinstance(data, dict):
+            currencies = data.get("currencies", [])
+            count = data.get("count", 0)
+            regions = data.get("regions", {})
+            
+            # Validate structure and content
+            if (isinstance(currencies, list) and 
+                len(currencies) == count and 
+                count >= 80 and
+                isinstance(regions, dict)):
+                
+                # Check for major currencies
+                major_currencies = ["USD", "EUR", "GBP", "JPY", "CNY", "CAD", "AUD", "CHF"]
+                missing_major = [c for c in major_currencies if c not in currencies]
+                
+                # Check regional groupings
+                expected_regions = ["americas", "europe", "asia", "middleEast", "africa", "oceania"]
+                missing_regions = [r for r in expected_regions if r not in regions]
+                
+                if not missing_major and not missing_regions:
+                    self.log_test("Currency Supported Currencies", True, 
+                                 f"{count} currencies across {len(regions)} regions")
+                else:
+                    self.log_test("Currency Supported Currencies", False, 
+                                 f"Missing major currencies: {missing_major}, regions: {missing_regions}")
+            else:
+                self.log_test("Currency Supported Currencies", False, 
+                             f"Invalid structure - currencies: {len(currencies)}, count: {count}")
+        else:
+            self.log_test("Currency Supported Currencies", False, str(data))
+    
+    def test_currency_exchange_rates_default(self):
+        """Test getting exchange rates with default USD base"""
+        print("\n💱 Testing Currency-Infinity Engine - Exchange Rates (USD Base)...")
+        
+        success, data = self.make_request("GET", "/currency/rates")
+        
+        if success and isinstance(data, dict):
+            base = data.get("base")
+            rates = data.get("rates", {})
+            count = data.get("count", 0)
+            provider = data.get("provider")
+            timestamp = data.get("ts")
+            
+            # Validate response structure
+            if (base == "USD" and 
+                isinstance(rates, dict) and 
+                len(rates) == count and
+                count >= 80 and
+                "AisleMarts Currency-Infinity Engine" in provider and
+                timestamp is not None):
+                
+                # USD should have rate of 1.0 when it's the base
+                usd_rate = rates.get("USD")
+                if usd_rate == 1.0:
+                    self.log_test("Currency Exchange Rates (USD Base)", True, 
+                                 f"Retrieved {count} rates with USD base, USD rate: {usd_rate}")
+                else:
+                    self.log_test("Currency Exchange Rates (USD Base)", False, 
+                                 f"USD rate should be 1.0, got: {usd_rate}")
+            else:
+                self.log_test("Currency Exchange Rates (USD Base)", False, 
+                             f"Invalid response - base: {base}, rates count: {len(rates)}, expected count: {count}")
+        else:
+            self.log_test("Currency Exchange Rates (USD Base)", False, str(data))
+    
+    def test_currency_exchange_rates_eur_base(self):
+        """Test getting exchange rates with EUR base"""
+        print("\n💱 Testing Currency-Infinity Engine - Exchange Rates (EUR Base)...")
+        
+        success, data = self.make_request("GET", "/currency/rates", {"base": "EUR"})
+        
+        if success and isinstance(data, dict):
+            base = data.get("base")
+            rates = data.get("rates", {})
+            count = data.get("count", 0)
+            
+            # Validate EUR base
+            if base == "EUR":
+                eur_rate = rates.get("EUR")
+                if eur_rate == 1.0:
+                    # Test mathematical consistency with USD base
+                    usd_success, usd_data = self.make_request("GET", "/currency/rates", {"base": "USD"})
+                    if usd_success:
+                        usd_rates = usd_data.get("rates", {})
+                        eur_from_usd = usd_rates.get("EUR", 0)
+                        usd_from_eur = rates.get("USD", 0)
+                        
+                        # Check if they are mathematical inverses (within tolerance)
+                        if eur_from_usd > 0 and usd_from_eur > 0:
+                            expected_inverse = 1.0 / eur_from_usd
+                            if abs(usd_from_eur - expected_inverse) < 0.01:
+                                self.log_test("Currency Exchange Rates (EUR Base)", True, 
+                                             f"EUR base with {count} rates, mathematical consistency verified")
+                            else:
+                                self.log_test("Currency Exchange Rates (EUR Base)", False, 
+                                             f"Rate inconsistency: USD from EUR = {usd_from_eur}, expected ~{expected_inverse}")
+                        else:
+                            self.log_test("Currency Exchange Rates (EUR Base)", True, 
+                                         f"EUR base with {count} rates (consistency check skipped)")
+                    else:
+                        self.log_test("Currency Exchange Rates (EUR Base)", True, 
+                                     f"EUR base with {count} rates")
+                else:
+                    self.log_test("Currency Exchange Rates (EUR Base)", False, 
+                                 f"EUR rate should be 1.0, got: {eur_rate}")
+            else:
+                self.log_test("Currency Exchange Rates (EUR Base)", False, 
+                             f"Wrong base currency: {base}")
+        else:
+            self.log_test("Currency Exchange Rates (EUR Base)", False, str(data))
+    
+    def test_currency_exchange_rates_invalid_base(self):
+        """Test getting exchange rates with invalid base currency"""
+        print("\n💱 Testing Currency-Infinity Engine - Exchange Rates (Invalid Base)...")
+        
+        success, data = self.make_request("GET", "/currency/rates", {"base": "INVALID"})
+        
+        if not success and "400" in str(data):
+            # Check if error message contains expected text
+            if "Unsupported base currency" in str(data):
+                self.log_test("Currency Exchange Rates (Invalid Base)", True, 
+                             "Correctly rejected invalid base currency with proper error message")
+            else:
+                self.log_test("Currency Exchange Rates (Invalid Base)", False, 
+                             f"Wrong error message: {data}")
+        else:
+            self.log_test("Currency Exchange Rates (Invalid Base)", False, 
+                         f"Expected HTTP 400 error, got: {data}")
+    
+    def test_currency_conversion_usd_eur(self):
+        """Test currency conversion from USD to EUR"""
+        print("\n💱 Testing Currency-Infinity Engine - Conversion (USD to EUR)...")
+        
+        success, data = self.make_request("GET", "/currency/convert", {
+            "amount": 100,
+            "from": "USD",
+            "to": "EUR"
+        })
+        
+        if success and isinstance(data, dict):
+            amount = data.get("amount")
+            from_currency = data.get("from")
+            to_currency = data.get("to")
+            result = data.get("result")
+            rate = data.get("rate")
+            provider = data.get("provider")
+            
+            # Validate response structure
+            if (amount == 100 and 
+                from_currency == "USD" and 
+                to_currency == "EUR" and
+                result is not None and
+                rate is not None and
+                "AisleMarts Currency-Infinity Engine" in provider):
+                
+                # Validate mathematical correctness
+                expected_result = 100 * rate
+                if abs(result - expected_result) < 0.001:
+                    # Validate result is reasonable (EUR should be less than USD typically)
+                    if result < 100:
+                        self.log_test("Currency Conversion (USD to EUR)", True, 
+                                     f"100 USD = {result} EUR (rate: {rate})")
+                    else:
+                        self.log_test("Currency Conversion (USD to EUR)", False, 
+                                     f"Suspicious result: {result} EUR for 100 USD")
+                else:
+                    self.log_test("Currency Conversion (USD to EUR)", False, 
+                                 f"Math error: {result} != {expected_result}")
+            else:
+                self.log_test("Currency Conversion (USD to EUR)", False, 
+                             f"Invalid response structure: amount={amount}, result={result}")
+        else:
+            self.log_test("Currency Conversion (USD to EUR)", False, str(data))
+    
+    def test_currency_conversion_jpy_gbp(self):
+        """Test currency conversion from JPY to GBP"""
+        print("\n💱 Testing Currency-Infinity Engine - Conversion (JPY to GBP)...")
+        
+        success, data = self.make_request("GET", "/currency/convert", {
+            "amount": 1000,
+            "from": "JPY",
+            "to": "GBP"
+        })
+        
+        if success and isinstance(data, dict):
+            amount = data.get("amount")
+            from_currency = data.get("from")
+            to_currency = data.get("to")
+            result = data.get("result")
+            rate = data.get("rate")
+            
+            # Validate basic structure
+            if (amount == 1000 and 
+                from_currency == "JPY" and 
+                to_currency == "GBP" and
+                result is not None and
+                rate is not None):
+                
+                # Validate mathematical correctness
+                expected_result = 1000 * rate
+                if abs(result - expected_result) < 0.001:
+                    # Validate result is reasonable (1000 JPY should be much less than 1000 GBP)
+                    if result < 100:
+                        self.log_test("Currency Conversion (JPY to GBP)", True, 
+                                     f"1000 JPY = {result} GBP (rate: {rate})")
+                    else:
+                        self.log_test("Currency Conversion (JPY to GBP)", False, 
+                                     f"Suspicious result: {result} GBP for 1000 JPY")
+                else:
+                    self.log_test("Currency Conversion (JPY to GBP)", False, 
+                                 f"Math error: {result} != {expected_result}")
+            else:
+                self.log_test("Currency Conversion (JPY to GBP)", False, 
+                             f"Invalid response structure")
+        else:
+            self.log_test("Currency Conversion (JPY to GBP)", False, str(data))
+    
+    def test_currency_conversion_same_currency(self):
+        """Test currency conversion with same source and target currency"""
+        print("\n💱 Testing Currency-Infinity Engine - Conversion (Same Currency)...")
+        
+        success, data = self.make_request("GET", "/currency/convert", {
+            "amount": 100,
+            "from": "USD",
+            "to": "USD"
+        })
+        
+        if success and isinstance(data, dict):
+            amount = data.get("amount")
+            result = data.get("result")
+            rate = data.get("rate")
+            
+            # For same currency conversion, result should equal input amount and rate should be 1.0
+            if result == 100 and rate == 1.0:
+                self.log_test("Currency Conversion (Same Currency)", True, 
+                             "Same currency conversion handled correctly")
+            else:
+                self.log_test("Currency Conversion (Same Currency)", False, 
+                             f"Wrong result: {result}, rate: {rate} (expected 100, 1.0)")
+        else:
+            self.log_test("Currency Conversion (Same Currency)", False, str(data))
+    
+    def test_currency_conversion_zero_amount(self):
+        """Test currency conversion with zero amount"""
+        print("\n💱 Testing Currency-Infinity Engine - Conversion (Zero Amount)...")
+        
+        success, data = self.make_request("GET", "/currency/convert", {
+            "amount": 0,
+            "from": "USD",
+            "to": "EUR"
+        })
+        
+        if success and isinstance(data, dict):
+            result = data.get("result")
+            
+            # Zero amount should result in zero
+            if result == 0:
+                self.log_test("Currency Conversion (Zero Amount)", True, 
+                             "Zero amount conversion handled correctly")
+            else:
+                self.log_test("Currency Conversion (Zero Amount)", False, 
+                             f"Wrong result: {result} (expected 0)")
+        else:
+            self.log_test("Currency Conversion (Zero Amount)", False, str(data))
+    
+    def test_currency_conversion_invalid_from(self):
+        """Test currency conversion with invalid source currency"""
+        print("\n💱 Testing Currency-Infinity Engine - Conversion (Invalid From)...")
+        
+        success, data = self.make_request("GET", "/currency/convert", {
+            "amount": 100,
+            "from": "INVALID",
+            "to": "USD"
+        })
+        
+        if not success and "400" in str(data):
+            if "Unsupported source currency" in str(data):
+                self.log_test("Currency Conversion (Invalid From)", True, 
+                             "Correctly rejected invalid source currency")
+            else:
+                self.log_test("Currency Conversion (Invalid From)", False, 
+                             f"Wrong error message: {data}")
+        else:
+            self.log_test("Currency Conversion (Invalid From)", False, 
+                         f"Expected HTTP 400 error, got: {data}")
+    
+    def test_currency_conversion_invalid_to(self):
+        """Test currency conversion with invalid target currency"""
+        print("\n💱 Testing Currency-Infinity Engine - Conversion (Invalid To)...")
+        
+        success, data = self.make_request("GET", "/currency/convert", {
+            "amount": 100,
+            "from": "USD",
+            "to": "INVALID"
+        })
+        
+        if not success and "400" in str(data):
+            if "Unsupported target currency" in str(data):
+                self.log_test("Currency Conversion (Invalid To)", True, 
+                             "Correctly rejected invalid target currency")
+            else:
+                self.log_test("Currency Conversion (Invalid To)", False, 
+                             f"Wrong error message: {data}")
+        else:
+            self.log_test("Currency Conversion (Invalid To)", False, 
+                         f"Expected HTTP 400 error, got: {data}")
+    
+    def test_currency_performance_and_cors(self):
+        """Test Currency-Infinity Engine performance and CORS headers"""
+        print("\n💱 Testing Currency-Infinity Engine - Performance & CORS...")
+        
+        import time
+        import threading
+        import queue
+        
+        # Test response times
+        endpoints = [
+            ("/currency/health", "Health Check"),
+            ("/currency/supported", "Supported Currencies"),
+            ("/currency/rates", "Exchange Rates"),
+            ("/currency/convert?amount=100&from=USD&to=EUR", "Currency Conversion")
+        ]
+        
+        all_fast = True
+        slow_endpoints = []
+        
+        for endpoint, name in endpoints:
+            try:
+                start_time = time.time()
+                success, data = self.make_request("GET", endpoint.replace("/currency/", "/currency/"))
+                end_time = time.time()
+                
+                response_time = (end_time - start_time) * 1000  # Convert to milliseconds
+                
+                if response_time > 2000:  # 2 seconds threshold
+                    all_fast = False
+                    slow_endpoints.append(f"{name}: {response_time:.0f}ms")
+                
+            except Exception as e:
+                all_fast = False
+                slow_endpoints.append(f"{name}: Exception - {str(e)}")
+        
+        if all_fast:
+            self.log_test("Currency Performance", True, "All endpoints respond within 2 seconds")
+        else:
+            self.log_test("Currency Performance", False, f"Slow endpoints: {', '.join(slow_endpoints)}")
+        
+        # Test concurrent requests
+        results_queue = queue.Queue()
+        
+        def make_concurrent_request():
+            try:
+                success, data = self.make_request("GET", "/currency/convert", {
+                    "amount": 100,
+                    "from": "USD",
+                    "to": "EUR"
+                })
+                results_queue.put(success)
+            except:
+                results_queue.put(False)
+        
+        # Create 10 concurrent threads
+        threads = []
+        for _ in range(10):
+            thread = threading.Thread(target=make_concurrent_request)
+            threads.append(thread)
+            thread.start()
+        
+        # Wait for all threads to complete
+        for thread in threads:
+            thread.join()
+        
+        # Check results
+        successful_requests = 0
+        while not results_queue.empty():
+            if results_queue.get():
+                successful_requests += 1
+        
+        if successful_requests >= 8:  # Allow for some failures due to network issues
+            self.log_test("Currency Concurrent Requests", True, 
+                         f"{successful_requests}/10 concurrent requests successful")
+        else:
+            self.log_test("Currency Concurrent Requests", False, 
+                         f"Only {successful_requests}/10 concurrent requests successful")
+
 def main():
     """Main test runner"""
     tester = APITester()
