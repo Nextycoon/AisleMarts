@@ -4,7 +4,6 @@ import { StatusBar } from 'expo-status-bar';
 
 // Import global providers
 import { CurrencyProvider } from '../lib/currency/CurrencyProvider';
-import { LocationProvider } from '../lib/location/LocationProvider';
 
 export default function RootLayout() {
   return (
