@@ -57,6 +57,7 @@ export default function RootLayout() {
               </View>
             </View>
           </AppProviders>
+          </CurrencyProvider>
         </UserRolesProvider>
       </AuthProvider>
     </ErrorBoundary>
