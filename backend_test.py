@@ -66,7 +66,7 @@ class BlueWaveTestSuite:
         if details:
             print(f"    Details: {details}")
             
-    async def make_request(self, method: str, endpoint: str, data: Dict = None, params: Dict = None) -> tuple:
+    async def make_request(self, method: str, endpoint: str, data: Dict = None, params: Dict = None, form_data: Dict = None) -> tuple:
         """Make HTTP request and return (success, response_data, status_code)"""
         try:
             url = f"{BASE_URL}{endpoint}"
@@ -76,9 +76,15 @@ class BlueWaveTestSuite:
                     response_data = await response.json()
                     return response.status < 400, response_data, response.status
             elif method.upper() == 'POST':
-                async with self.session.post(url, json=data, params=params) as response:
-                    response_data = await response.json()
-                    return response.status < 400, response_data, response.status
+                if form_data:
+                    # Use form data for endpoints that expect form data
+                    async with self.session.post(url, data=form_data, params=params) as response:
+                        response_data = await response.json()
+                        return response.status < 400, response_data, response.status
+                else:
+                    async with self.session.post(url, json=data, params=params) as response:
+                        response_data = await response.json()
+                        return response.status < 400, response_data, response.status
             elif method.upper() == 'PUT':
                 async with self.session.put(url, json=data, params=params) as response:
                     response_data = await response.json()
