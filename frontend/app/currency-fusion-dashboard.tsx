@@ -14,6 +14,8 @@ import { CurrencyProvider } from '../lib/currency/CurrencyProvider';
 import CurrencySwitcher from '../components/currency/CurrencySwitcher';
 import PriceDual from '../components/currency/PriceDual';
 import LiveCurrencyDisplay from '../components/currency/LiveCurrencyDisplay';
+import CurrencyObservability from '../components/currency/CurrencyObservability';
+import CryptoTertiaryDisplay from '../components/currency/CryptoTertiaryDisplay';
 import { router } from 'expo-router';
 
 const { width } = Dimensions.get('window');
