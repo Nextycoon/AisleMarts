@@ -352,9 +352,12 @@ test_plan:
   current_focus:
     - "BlueWave Family Safety System Implementation"
     - "BlueWave Business Console System Implementation"
+    - "Universal Commerce AI Hub Backend Implementation"
+    - "Currency-Infinity Engine v2.0 Enhanced System"
+    - "Security Systems (E2EE & KMS)"
   stuck_tasks: []
-  test_all: false
-  test_priority: "high_first"
+  test_all: true
+  test_priority: "comprehensive_validation"
 
   - task: "End-to-End Encryption (E2EE) System Implementation"
     implemented: true
