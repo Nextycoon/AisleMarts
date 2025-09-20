@@ -30,82 +30,85 @@ sys.path.append('/app/backend')
 BACKEND_URL = os.getenv('REACT_APP_BACKEND_URL', 'https://lifestyle-universe.preview.emergentagent.com')
 API_BASE = f"{BACKEND_URL}/api"
 
-class UniversalCommerceAITester:
+class ProductionSystemsTester:
+    """
+    Comprehensive tester for AisleMarts production-grade systems:
+    - A/B Testing Framework
+    - Executive Dashboard  
+    - Production Monitoring
+    """
+    
     def __init__(self):
         self.session = None
-        self.test_results = []
-        self.total_tests = 0
-        self.passed_tests = 0
+        self.test_results = {
+            "ab_testing": {"passed": 0, "failed": 0, "tests": []},
+            "executive_dashboard": {"passed": 0, "failed": 0, "tests": []},
+            "production_monitoring": {"passed": 0, "failed": 0, "tests": []},
+            "integration": {"passed": 0, "failed": 0, "tests": []},
+            "performance": {"passed": 0, "failed": 0, "tests": []}
+        }
+        self.start_time = time.time()
         
     async def setup(self):
         """Setup test environment"""
         self.session = aiohttp.ClientSession(
             timeout=aiohttp.ClientTimeout(total=30),
-            headers={'Content-Type': 'application/json'}
+            headers={"Content-Type": "application/json"}
         )
-        print("🚀 Universal Commerce AI Hub Testing Suite Started")
+        print("🚀 AisleMarts Universal Commerce AI Hub Production Systems Testing")
         print(f"📡 Backend URL: {BACKEND_URL}")
         print(f"🔗 API Base: {API_BASE}")
         print("=" * 80)
-    
+        
     async def cleanup(self):
         """Cleanup test environment"""
         if self.session:
             await self.session.close()
     
-    def log_test(self, test_name: str, success: bool, details: str = "", response_time: float = 0):
+    def log_test(self, category: str, test_name: str, success: bool, details: str, response_time: float = 0):
         """Log test result"""
-        self.total_tests += 1
-        if success:
-            self.passed_tests += 1
-            status = "✅ PASS"
-        else:
-            status = "❌ FAIL"
+        status = "✅ PASS" if success else "❌ FAIL"
+        print(f"{status} [{category.upper()}] {test_name} ({response_time:.3f}s)")
+        if not success or details:
+            print(f"    Details: {details}")
         
-        result = {
-            "test": test_name,
-            "status": status,
+        self.test_results[category]["tests"].append({
+            "name": test_name,
             "success": success,
             "details": details,
-            "response_time": f"{response_time:.2f}s"
-        }
-        self.test_results.append(result)
-        print(f"{status} | {test_name} | {response_time:.2f}s | {details}")
+            "response_time": response_time
+        })
+        
+        if success:
+            self.test_results[category]["passed"] += 1
+        else:
+            self.test_results[category]["failed"] += 1
     
-    async def test_endpoint(self, method: str, endpoint: str, data: Dict = None, expected_status: int = 200) -> Dict:
-        """Generic endpoint testing method"""
-        url = f"{API_BASE}{endpoint}"
+    async def make_request(self, method: str, endpoint: str, data: Dict = None, params: Dict = None) -> tuple:
+        """Make HTTP request and return (success, response_data, response_time)"""
         start_time = time.time()
         
         try:
+            url = f"{API_BASE}{endpoint}"
+            
             if method.upper() == "GET":
-                async with self.session.get(url) as response:
+                async with self.session.get(url, params=params) as response:
                     response_time = time.time() - start_time
                     response_data = await response.json()
-                    return {
-                        "success": response.status == expected_status,
-                        "status_code": response.status,
-                        "data": response_data,
-                        "response_time": response_time
-                    }
+                    return response.status == 200, response_data, response_time
+            
             elif method.upper() == "POST":
-                async with self.session.post(url, json=data) as response:
+                async with self.session.post(url, json=data, params=params) as response:
                     response_time = time.time() - start_time
                     response_data = await response.json()
-                    return {
-                        "success": response.status == expected_status,
-                        "status_code": response.status,
-                        "data": response_data,
-                        "response_time": response_time
-                    }
+                    return response.status == 200, response_data, response_time
+            
+            else:
+                return False, {"error": f"Unsupported method: {method}"}, 0
+                
         except Exception as e:
             response_time = time.time() - start_time
-            return {
-                "success": False,
-                "status_code": 0,
-                "data": {"error": str(e)},
-                "response_time": response_time
-            }
+            return False, {"error": str(e)}, response_time
     
     async def test_universal_ai_health(self):
         """Test Universal AI health endpoint"""
