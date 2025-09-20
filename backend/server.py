@@ -484,7 +484,11 @@ try:
     from routers.investor_demo_management import router as investor_demo_router
     app.include_router(investor_demo_router, prefix="/api", tags=["investor_demos"])
     
-    print("✅ ALL-IN MICRO-SPRINT + PHASE 2 LUXURY COMMUNICATION SUITE + ADVANCED AI + PERFORMANCE ANALYTICS + AWARENESS ENGINE + INVESTOR DEMO MANAGEMENT routers loaded successfully")
+    # Import and include Currency-Infinity Engine router
+    from routers.currency_routes import router as currency_router
+    app.include_router(currency_router, prefix="/api", tags=["currency"])
+    
+    print("✅ ALL-IN MICRO-SPRINT + PHASE 2 LUXURY COMMUNICATION SUITE + ADVANCED AI + PERFORMANCE ANALYTICS + AWARENESS ENGINE + INVESTOR DEMO MANAGEMENT + CURRENCY-INFINITY ENGINE routers loaded successfully")
 except ImportError as e:
     print(f"⚠️ Routers not available: {e}")
 except Exception as e:
