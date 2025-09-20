@@ -1219,6 +1219,7 @@ class BlueWaveTestSuite:
         # Categorize results
         family_tests = [r for r in self.test_results if 'Family' in r['test'] or 'Screen Time' in r['test'] or 'Safety' in r['test'] or 'Purchase' in r['test'] or 'User' in r['test']]
         business_tests = [r for r in self.test_results if 'Business' in r['test'] or 'Campaign' in r['test'] or 'Order' in r['test'] or 'Customer' in r['test']]
+        tiktok_tests = [r for r in self.test_results if 'TikTok' in r['test'] or 'For You' in r['test'] or 'Following' in r['test'] or 'Content' in r['test'] or 'Live Stream' in r['test'] or 'Trending' in r['test'] or 'Search' in r['test'] or 'Report' in r['test'] or 'Controls' in r['test']]
         system_tests = [r for r in self.test_results if 'Error' in r['test'] or 'Performance' in r['test'] or 'Concurrent' in r['test'] or 'Validation' in r['test']]
         
         print(f"\n📱 FAMILY SAFETY SYSTEM:")
