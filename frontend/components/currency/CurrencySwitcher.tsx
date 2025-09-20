@@ -6,8 +6,8 @@ import {
   StyleSheet,
   ScrollView,
 } from "react-native";
-import { useCurrency } from "@/lib/currency/CurrencyProvider";
-import { CURRENCY_DATA } from "@/lib/currency/regionMaps";
+import { useCurrency } from "../../lib/currency/CurrencyProvider";
+import { CURRENCY_DATA } from "../../lib/currency/regionMaps";
 
 export default function CurrencySwitcher() {
   const { prefs, setPrimary, setSecondary, available } = useCurrency();
