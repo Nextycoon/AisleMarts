@@ -56,7 +56,12 @@ async def get_current_user(authorization: str | None = Header(None)):
 
 @api_router.get("/health")
 async def health():
-    return {"ok": True, "service": "AisleMarts API"}
+    return {
+        "ok": True, 
+        "service": "🌊 AisleMarts • The Everything Network", 
+        "status": "All platforms, shops, and intelligence operational",
+        "version": "20250920100547"
+    }
 
 # -------- Auth --------
 @api_router.post("/auth/register")
