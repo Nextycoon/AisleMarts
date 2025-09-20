@@ -1,59 +1,25 @@
 {
-  "build_info": {
-    "timestamp": "2025-09-20T09:50:34Z",
-    "app_version": "20250920095034",
-    "build_id": "20250920095034",
-    "safe_mode": true,
-    "awareness_enabled": false,
-    "cache_status": "purged"
+  "deployment_type": "blue_wave_go_live",
+  "app_version": "20250920100547",
+  "next_build_id": "20250920100547",
+  "deployment_timestamp": "2025-09-20T10:13:45Z",
+  "cache_purge_protocol": "nuclear_complete",
+  "awareness_status": "full_mode_enabled",
+  "environment_variables": {
+    "NEXT_PUBLIC_SAFE_MODE": "false",
+    "NEXT_PUBLIC_AWARENESS_ENABLED": "true"
   },
-  "environment": {
-    "safe_mode_active": true,
-    "cache_busting_enabled": true,
-    "phantom_cache_bypassed": true,
-    "awareness_context_disabled": true
+  "backend_systems": {
+    "api_health": "operational",
+    "awareness_engine": "operational",
+    "investor_demo_system": "operational",
+    "communication_suite": "operational"
   },
-  "features_status": {
-    "enhanced_loader": "operational",
-    "enhanced_product_cards": "operational", 
-    "enhanced_chat_screen": "operational",
-    "enhanced_search": "operational",
-    "enhanced_notifications": "operational",
-    "enhanced_dashboard": "operational",
-    "awareness_context": "disabled_safe_mode"
+  "frontend_status": {
+    "loading": "successful",
+    "mode_badge": "FULL MODE • Blue Wave Live 🌊",
+    "cache_artifacts": "resolved"
   },
-  "backend_integration": {
-    "investor_demo_system": "100%_operational",
-    "api_endpoints": "37/37_passing",
-    "multi_currency": "operational",
-    "websocket": "operational",
-    "performance": "<200ms_response"
-  },
-  "mobile_metrics": {
-    "touch_targets": "44px+_compliant",
-    "animations": "60fps_native_driver",
-    "keyboard_handling": "proper_avoidance",
-    "safe_areas": "full_support",
-    "responsive_design": "all_screen_sizes"
-  },
-  "luxury_design": {
-    "color_palette": "blue_wave_champagne_gold",
-    "typography": "professional_hierarchy",
-    "animations": "luxury_micro_interactions",
-    "branding": "consistent_throughout"
-  },
-  "cache_artifact": {
-    "phantom_file": "lib/awarenessContext.ts",
-    "phantom_lines": 554,
-    "actual_lines": 71,
-    "error_line": "551:22",
-    "bypass_method": "safe_mode_import_isolation",
-    "resolution_required": "container_reset"
-  },
-  "deployment": {
-    "preview_url": "https://investor-ready-ui.preview.emergentagent.com",
-    "safe_mode_badge": "visible_confirmation",
-    "api_health": "https://investor-ready-ui.preview.emergentagent.com/api/demo/health",
-    "status": "ready_now"
-  }
+  "deployment_success": true,
+  "rollback_available": true
 }
