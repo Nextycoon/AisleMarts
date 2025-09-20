@@ -36,10 +36,10 @@ export default function RootLayout() {
     <View style={styles.container}>
       <StatusBar style="light" backgroundColor="transparent" translucent={true} hidden={false} />
       
-      {/* Mode Status Badge */}
-      <View style={styles.modeBadge}>
-        <Text style={styles.modeText}>
-          {safeMode || !enableAwareness ? 'SAFE MODE • Awareness disabled' : 'FULL MODE • Blue Wave Live 🌊'}
+      {/* Everything Network Badge */}
+      <View style={styles.networkBadge}>
+        <Text style={styles.networkText}>
+          AisleMarts • The Everything Network 🌍
         </Text>
       </View>
       
