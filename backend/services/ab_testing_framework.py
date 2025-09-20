@@ -194,6 +194,7 @@ class ABTestingFramework:
                 ExperimentMetric("csat", "conversion", target_improvement=0.1)
             ],
             start_date=datetime.now(),
+            end_date=None,
             min_sample_size=1000
         )
         self.experiments[assistant_experiment.id] = assistant_experiment
