@@ -35,32 +35,39 @@ function AppProviders({ children }: { children: React.ReactNode }) {
 
 export default function RootLayout() {
   return (
-    <View style={styles.container}>
-      <StatusBar style="light" backgroundColor="transparent" translucent={true} hidden={false} />
-      
-      {/* Digital Lifestyle Universe Badge */}
-      <View style={styles.networkBadge}>
-        <Text style={styles.networkText}>
-          🌍 AisleMarts • The Digital Lifestyle Universe
-        </Text>
+    <GlobalLanguageProvider>
+      <View style={styles.container}>
+        {/* Language Switcher - Global Access */}
+        <View style={styles.languageToggle}>
+          <LanguageSwitcher compact={true} />
+        </View>
+        
+        <StatusBar style="light" backgroundColor="transparent" translucent={true} hidden={false} />
+        
+        {/* Digital Lifestyle Universe Badge */}
+        <View style={styles.networkBadge}>
+          <Text style={styles.networkText}>
+            🌍 AisleMarts • The Digital Lifestyle Universe
+          </Text>
+        </View>
+        
+        <ErrorBoundary>
+          <AppProviders>
+            <AuthProvider>
+              <UserRolesProvider>
+                <Stack 
+                  screenOptions={{ 
+                    headerShown: false,
+                    contentStyle: styles.screen,
+                    animation: 'fade',
+                  }} 
+                />
+              </UserRolesProvider>
+            </AuthProvider>
+          </AppProviders>
+        </ErrorBoundary>
       </View>
-      
-      <ErrorBoundary>
-        <AppProviders>
-          <AuthProvider>
-            <UserRolesProvider>
-              <Stack 
-                screenOptions={{ 
-                  headerShown: false,
-                  contentStyle: styles.screen,
-                  animation: 'fade',
-                }} 
-              />
-            </UserRolesProvider>
-          </AuthProvider>
-        </AppProviders>
-      </ErrorBoundary>
-    </View>
+    </GlobalLanguageProvider>
   );
 }
 
