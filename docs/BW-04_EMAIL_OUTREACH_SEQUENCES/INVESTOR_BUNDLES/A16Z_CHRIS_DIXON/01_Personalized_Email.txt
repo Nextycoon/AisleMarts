@@ -7,7 +7,7 @@ Your thesis on AI-first consumer applications and next-generation platforms alig
 We've developed the first AI-aware luxury commerce platform that adapts in real-time to user context - location, time, language, currency, and behavior patterns. This isn't just personalization; it's contextual intelligence that transforms commerce.
 
 **Your Personalized Demo Access:**
-🔗 https://luxury-comms.preview.emergentagent.com/?locale=en-US&currency=USD&tz=America/New_York&device=desktop&utm_source=investor&utm_medium=email&utm_campaign=series_a&utm_bundle=A16Z_CHRIS_DIXON
+🔗 https://investor-ready-ui.preview.emergentagent.com/?locale=en-US&currency=USD&tz=America/New_York&device=desktop&utm_source=investor&utm_medium=email&utm_campaign=series_a&utm_bundle=A16Z_CHRIS_DIXON
 
 **Demo Credentials:**
 Email: a16z.demo@aislemarts.luxury

@@ -15,7 +15,7 @@
 ### **Test A: HTML Returns Must-Revalidate** ✅ PASS
 ```bash
 # Validation Command
-curl -I https://luxury-comms.preview.emergentagent.com | grep -i cache
+curl -I https://investor-ready-ui.preview.emergentagent.com | grep -i cache
 
 # Expected Result: HTML should revalidate
 Cache-Control: public, max-age=0, must-revalidate
@@ -26,7 +26,7 @@ Cache-Control: public, max-age=0, must-revalidate
 ### **Test B: /api/awareness/health No-Store** ✅ PASS  
 ```bash
 # Validation Command
-curl -I https://luxury-comms.preview.emergentagent.com/api/demo/health
+curl -I https://investor-ready-ui.preview.emergentagent.com/api/demo/health
 
 # Expected Result: API endpoints should not cache
 Cache-Control: no-store, no-cache, must-revalidate
@@ -38,7 +38,7 @@ Pragma: no-cache
 ### **Test C: ?v={APP_VERSION} Reflects in HTML** ✅ PASS
 ```bash
 # Validation Command
-open "https://luxury-comms.preview.emergentagent.com/?v=20250920095034"
+open "https://investor-ready-ui.preview.emergentagent.com/?v=20250920095034"
 
 # Expected Result: Cache buster parameter should be recognized
 # Status: ✅ CONFIRMED - URL parameters properly handled

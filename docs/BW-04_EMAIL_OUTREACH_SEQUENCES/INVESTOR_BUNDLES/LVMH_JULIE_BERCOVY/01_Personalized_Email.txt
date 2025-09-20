@@ -7,7 +7,7 @@ Votre expertise en transformation digitale du luxe et votre connaissance du marc
 Nous avons créé la première plateforme de commerce de luxe avec intelligence contextuelle qui s'adapte automatiquement aux marchés européens - langue, devise, réglementations RGPD, et préférences culturelles locales.
 
 **Votre Accès Demo Personnalisé:**
-🔗 https://luxury-comms.preview.emergentagent.com/?locale=fr-FR&currency=EUR&tz=Europe/Paris&device=mobile&utm_source=investor&utm_medium=email&utm_campaign=series_a&utm_bundle=LVMH_JULIE_BERCOVY
+🔗 https://investor-ready-ui.preview.emergentagent.com/?locale=fr-FR&currency=EUR&tz=Europe/Paris&device=mobile&utm_source=investor&utm_medium=email&utm_campaign=series_a&utm_bundle=LVMH_JULIE_BERCOVY
 
 **Identifiants Demo:**
 Email: lvmh.demo@aislemarts.luxury

@@ -41,9 +41,9 @@ Analytics: https://analytics.aislemarts.com
 
 ### **Development/Staging**
 ```
-Development: https://lux-aware.preview.emergentagent.com
-Staging API: https://lux-aware.preview.emergentagent.com/api
-Testing Suite: https://lux-aware.preview.emergentagent.com/test
+Development: https://investor-ready-ui.preview.emergentagent.com
+Staging API: https://investor-ready-ui.preview.emergentagent.com/api
+Testing Suite: https://investor-ready-ui.preview.emergentagent.com/test
 ```
 
 ---

@@ -13,7 +13,7 @@
 cd /app/frontend
 
 # 1. Production Environment Setup
-export EXPO_PUBLIC_API_URL="https://lux-aware.preview.emergentagent.com"
+export EXPO_PUBLIC_API_URL="https://investor-ready-ui.preview.emergentagent.com"
 export NODE_ENV="production"
 export EAS_BUILD_PROFILE="investor-demo"
 
@@ -128,7 +128,7 @@ eas submit -p ios --latest
 - **Installation Instructions**: Step-by-step setup guide
 
 ### **2. Demo Environment Access**:
-- **Staging URL**: https://lux-aware.preview.emergentagent.com
+- **Staging URL**: https://investor-ready-ui.preview.emergentagent.com
 - **Demo Credentials**: Pre-configured test accounts
 - **Admin Dashboard**: Backend metrics and analytics view
 - **API Documentation**: Live API explorer and testing interface
@@ -174,10 +174,10 @@ Demo Account: investor@aislemarts.com / DemoPass123
 ## **🌐 Web Demo Environment**:
 ```
 💻 STAGING ENVIRONMENT
-URL: https://lux-aware.preview.emergentagent.com
-Admin Portal: https://lux-aware.preview.emergentagent.com/admin
-API Explorer: https://lux-aware.preview.emergentagent.com/docs
-Monitoring: https://lux-aware.preview.emergentagent.com/metrics
+URL: https://investor-ready-ui.preview.emergentagent.com
+Admin Portal: https://investor-ready-ui.preview.emergentagent.com/admin
+API Explorer: https://investor-ready-ui.preview.emergentagent.com/docs
+Monitoring: https://investor-ready-ui.preview.emergentagent.com/metrics
 ```
 
 ---

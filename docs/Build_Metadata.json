@@ -51,9 +51,9 @@
     "resolution_required": "container_reset"
   },
   "deployment": {
-    "preview_url": "https://luxury-comms.preview.emergentagent.com",
+    "preview_url": "https://investor-ready-ui.preview.emergentagent.com",
     "safe_mode_badge": "visible_confirmation",
-    "api_health": "https://luxury-comms.preview.emergentagent.com/api/demo/health",
+    "api_health": "https://investor-ready-ui.preview.emergentagent.com/api/demo/health",
     "status": "ready_now"
   }
 }

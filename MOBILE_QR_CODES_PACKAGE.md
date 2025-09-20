@@ -4,7 +4,7 @@
 
 ### Web Preview (Desktop/Mobile Browser)
 ```
-🌐 Live Preview: https://lux-aware.preview.emergentagent.com
+🌐 Live Preview: https://investor-ready-ui.preview.emergentagent.com
 ```
 
 ### Mobile App Testing (Expo Go)
