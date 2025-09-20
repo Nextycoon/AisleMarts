@@ -41,9 +41,9 @@ Analytics: https://analytics.aislemarts.com
 
 ### **Development/Staging**
 ```
-Development: https://bluewave-family.preview.emergentagent.com
-Staging API: https://bluewave-family.preview.emergentagent.com/api
-Testing Suite: https://bluewave-family.preview.emergentagent.com/test
+Development: https://bluewave-social.preview.emergentagent.com
+Staging API: https://bluewave-social.preview.emergentagent.com/api
+Testing Suite: https://bluewave-social.preview.emergentagent.com/test
 ```
 
 ---
