@@ -387,12 +387,16 @@ class KMSService:
             if encrypted_key["key_type"] == KeyType.SSL_CERTIFICATE and encrypted_key["status"] == KeyStatus.ACTIVE:
                 key_data = self._decrypt_key_data(encrypted_key)
                 
+                expires_at = key_data["expires_at"]
+                if isinstance(expires_at, str):
+                    expires_at = datetime.fromisoformat(expires_at)
+                
                 certificates.append({
                     "key_id": key_data["key_id"],
                     "domain": key_data["domain"],
                     "created_at": key_data["created_at"],
                     "expires_at": key_data["expires_at"],
-                    "days_until_expiry": (key_data["expires_at"] - datetime.now()).days
+                    "days_until_expiry": (expires_at - datetime.now()).days
                 })
         
         return {
