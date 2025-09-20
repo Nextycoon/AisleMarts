@@ -69,7 +69,7 @@ const styles = StyleSheet.create({
     margin: 0,
     padding: 0,
   },
-  safeModebadge: {
+  modeBadge: {
     position: 'absolute',
     right: 12,
     bottom: 12,
@@ -81,7 +81,7 @@ const styles = StyleSheet.create({
     borderRadius: 8,
     zIndex: 9999,
   },
-  safeModeText: {
+  modeText: {
     fontSize: 12,
     color: '#0F6FFF',
     fontWeight: '600',
