@@ -12,7 +12,6 @@ import { StatusBar } from 'expo-status-bar';
 import { useRouter } from 'expo-router';
 
 // Import AI services
-import { UniversalCommerceAI } from '../lib/ai/UniversalCommerceAI';
 import { useCurrency } from '../lib/currency/CurrencyProvider';
 
 const { width, height } = Dimensions.get('window');
