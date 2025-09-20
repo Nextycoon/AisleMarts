@@ -6,8 +6,8 @@ import {
   TouchableOpacity,
   Animated,
 } from "react-native";
-import { useCurrency } from "@/lib/currency/CurrencyProvider";
-import { CURRENCY_DATA } from "@/lib/currency/regionMaps";
+import { useCurrency } from "../../lib/currency/CurrencyProvider";
+import { CURRENCY_DATA } from "../../lib/currency/regionMaps";
 
 export default function LiveCurrencyDisplay() {
   const { prefs, lastUpdated } = useCurrency();
