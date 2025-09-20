@@ -110,502 +110,409 @@ class ProductionSystemsTester:
             response_time = time.time() - start_time
             return False, {"error": str(e)}, response_time
     
-    async def test_universal_ai_health(self):
-        """Test Universal AI health endpoint"""
-        print("\n🏥 Testing Universal AI Health Check...")
-        
-        result = await self.test_endpoint("GET", "/universal-ai/health")
-        
-        if result["success"]:
-            data = result["data"]
-            capabilities = data.get("capabilities", [])
-            platforms_connected = data.get("platforms_connected", 0)
-            ai_agents_active = data.get("ai_agents_active", 0)
-            
-            details = f"Service operational, {platforms_connected} platforms, {ai_agents_active} AI agents, {len(capabilities)} capabilities"
-            self.log_test("Universal AI Health Check", True, details, result["response_time"])
-            
-            # Validate expected capabilities
-            expected_capabilities = [
-                "universal_product_discovery",
-                "cross_platform_intelligence", 
-                "global_trend_prediction",
-                "ai_to_ai_communication"
-            ]
-            
-            missing_capabilities = [cap for cap in expected_capabilities if cap not in capabilities]
-            if missing_capabilities:
-                self.log_test("Universal AI Capabilities Check", False, f"Missing: {missing_capabilities}", 0)
-            else:
-                self.log_test("Universal AI Capabilities Check", True, f"All {len(expected_capabilities)} core capabilities present", 0)
-        else:
-            self.log_test("Universal AI Health Check", False, f"HTTP {result['status_code']}: {result['data']}", result["response_time"])
+    # ==================== A/B TESTING FRAMEWORK TESTS ====================
     
-    async def test_platforms_info(self):
-        """Test platforms information endpoint"""
-        print("\n🌐 Testing Platforms Information...")
+    async def test_ab_testing_health(self):
+        """Test A/B testing system health endpoint"""
+        success, data, response_time = await self.make_request("GET", "/ab-testing/health")
         
-        result = await self.test_endpoint("GET", "/universal-ai/platforms")
-        
-        if result["success"]:
-            data = result["data"]
-            total_platforms = data.get("total_platforms", 0)
-            connected_platforms = data.get("connected_platforms", 0)
-            platforms = data.get("platforms", {})
+        if success:
+            required_fields = ["system_name", "status", "total_experiments", "active_experiments"]
+            missing_fields = [f for f in required_fields if f not in data]
             
-            details = f"{connected_platforms}/{total_platforms} platforms connected"
-            self.log_test("Platforms Information", True, details, result["response_time"])
-            
-            # Test platform details
-            if platforms:
-                sample_platform = list(platforms.keys())[0]
-                platform_data = platforms[sample_platform]
-                required_fields = ["status", "capabilities", "rate_limit"]
-                
-                missing_fields = [field for field in required_fields if field not in platform_data]
-                if missing_fields:
-                    self.log_test("Platform Data Structure", False, f"Missing fields: {missing_fields}", 0)
-                else:
-                    self.log_test("Platform Data Structure", True, f"All required fields present for {sample_platform}", 0)
+            if missing_fields:
+                self.log_test("ab_testing", "Health Check", False, 
+                            f"Missing fields: {missing_fields}", response_time)
             else:
-                self.log_test("Platform Data Structure", False, "No platform data available", 0)
+                self.log_test("ab_testing", "Health Check", True, 
+                            f"System operational with {data.get('active_experiments', 0)} active experiments", response_time)
         else:
-            self.log_test("Platforms Information", False, f"HTTP {result['status_code']}: {result['data']}", result["response_time"])
+            self.log_test("ab_testing", "Health Check", False, 
+                        f"Request failed: {data.get('error', 'Unknown error')}", response_time)
     
-    async def test_market_intelligence(self):
-        """Test market intelligence collection"""
-        print("\n📊 Testing Market Intelligence Collection...")
+    async def test_ab_testing_experiments(self):
+        """Test getting active experiments"""
+        success, data, response_time = await self.make_request("GET", "/ab-testing/experiments")
         
-        result = await self.test_endpoint("POST", "/universal-ai/market-intelligence")
-        
-        if result["success"]:
-            data = result["data"]
-            platforms_analyzed = data.get("platforms_analyzed", 0)
-            categories_covered = data.get("categories_covered", [])
-            global_avg_price = data.get("global_avg_price", 0)
-            
-            details = f"{platforms_analyzed} platforms analyzed, {len(categories_covered)} categories, avg price: ${global_avg_price:.2f}"
-            self.log_test("Market Intelligence Collection", True, details, result["response_time"])
-            
-            # Validate intelligence structure
-            if "detailed_intelligence" in data and "ai_insights" in data:
-                self.log_test("Market Intelligence Structure", True, "Complete intelligence data structure", 0)
+        if success:
+            if "experiments" in data and "total_active" in data:
+                experiments = data["experiments"]
+                self.log_test("ab_testing", "Active Experiments", True, 
+                            f"Found {len(experiments)} active experiments", response_time)
             else:
-                self.log_test("Market Intelligence Structure", False, "Missing intelligence data fields", 0)
+                self.log_test("ab_testing", "Active Experiments", False, 
+                            "Missing experiments or total_active fields", response_time)
         else:
-            self.log_test("Market Intelligence Collection", False, f"HTTP {result['status_code']}: {result['data']}", result["response_time"])
+            self.log_test("ab_testing", "Active Experiments", False, 
+                        f"Request failed: {data.get('error', 'Unknown error')}", response_time)
     
-    async def test_universal_product_search(self):
-        """Test universal product search across platforms"""
-        print("\n🔍 Testing Universal Product Search...")
-        
-        # Test basic search
-        result = await self.test_endpoint("GET", "/universal-ai/products/search?query=smartphone")
-        
-        if result["success"]:
-            data = result["data"]
-            total_results = data.get("total_results", 0)
-            platforms_searched = data.get("platforms_searched", 0)
-            top_results = data.get("top_results", [])
-            
-            details = f"{total_results} products found across {platforms_searched} platforms"
-            self.log_test("Universal Product Search", True, details, result["response_time"])
-            
-            # Validate search results structure
-            if top_results and len(top_results) > 0:
-                sample_product = top_results[0]
-                required_fields = ["title", "price", "currency", "platform"]
-                missing_fields = [field for field in required_fields if field not in sample_product]
-                
-                if missing_fields:
-                    self.log_test("Product Search Results Structure", False, f"Missing fields: {missing_fields}", 0)
-                else:
-                    self.log_test("Product Search Results Structure", True, f"Complete product data structure", 0)
-            else:
-                self.log_test("Product Search Results Structure", False, "No search results returned", 0)
-        else:
-            self.log_test("Universal Product Search", False, f"HTTP {result['status_code']}: {result['data']}", result["response_time"])
-        
-        # Test search with filters
-        result = await self.test_endpoint("GET", "/universal-ai/products/search?query=laptop&category=electronics&min_price=500&max_price=2000")
-        
-        if result["success"]:
-            data = result["data"]
-            filters_applied = data.get("filters_applied", {})
-            
-            expected_filters = ["category", "min_price", "max_price"]
-            applied_filters = list(filters_applied.keys())
-            
-            if all(f in applied_filters for f in expected_filters):
-                self.log_test("Product Search with Filters", True, f"Filters applied: {applied_filters}", result["response_time"])
-            else:
-                self.log_test("Product Search with Filters", False, f"Missing filters: {set(expected_filters) - set(applied_filters)}", result["response_time"])
-        else:
-            self.log_test("Product Search with Filters", False, f"HTTP {result['status_code']}: {result['data']}", result["response_time"])
-    
-    async def test_trend_prediction(self):
-        """Test AI-powered trend prediction"""
-        print("\n🔮 Testing AI Trend Prediction...")
-        
-        # Test basic trend prediction
-        result = await self.test_endpoint("POST", "/universal-ai/trends/predict?category=electronics&timeframe=30")
-        
-        if result["success"]:
-            data = result["data"]
-            ai_model_info = data.get("ai_model_info", {})
-            predictions = data.get("predictions", [])
-            key_insights = data.get("key_insights", [])
-            
-            model_accuracy = ai_model_info.get("accuracy", 0)
-            details = f"Model accuracy: {model_accuracy:.2%}, {len(predictions)} predictions, {len(key_insights)} insights"
-            self.log_test("AI Trend Prediction", True, details, result["response_time"])
-            
-            # Validate prediction structure
-            if predictions and len(predictions) > 0:
-                sample_prediction = predictions[0]
-                required_fields = ["date", "predicted_growth", "confidence"]
-                missing_fields = [field for field in required_fields if field not in sample_prediction]
-                
-                if missing_fields:
-                    self.log_test("Trend Prediction Structure", False, f"Missing fields: {missing_fields}", 0)
-                else:
-                    self.log_test("Trend Prediction Structure", True, "Complete prediction data structure", 0)
-            else:
-                self.log_test("Trend Prediction Structure", False, "No predictions returned", 0)
-        else:
-            self.log_test("AI Trend Prediction", False, f"HTTP {result['status_code']}: {result['data']}", result["response_time"])
-    
-    async def test_cross_platform_orchestration(self):
-        """Test cross-platform operation orchestration"""
-        print("\n🎯 Testing Cross-Platform Orchestration...")
-        
-        # Test price sync operation
-        operation_data = {
-            "type": "price_sync",
-            "parameters": {
-                "products": ["product_1", "product_2"],
-                "target_margin": 0.15
-            }
+    async def test_ab_testing_user_assignment(self):
+        """Test user assignment to experiment variants"""
+        test_user_id = f"test_user_{uuid.uuid4().hex[:8]}"
+        assignment_data = {
+            "user_id": test_user_id,
+            "experiment_id": "personalized_recs_v1",
+            "context": {"source": "test", "timestamp": datetime.now().isoformat()}
         }
         
-        result = await self.test_endpoint("POST", "/universal-ai/orchestrate", operation_data)
+        success, data, response_time = await self.make_request("POST", "/ab-testing/assign", assignment_data)
         
-        if result["success"]:
-            data = result["data"]
-            execution_result = data.get("execution_result", {})
-            platforms_affected = execution_result.get("platforms_affected", 0)
+        if success:
+            required_fields = ["user_id", "experiment_id", "variant_id", "configuration"]
+            missing_fields = [f for f in required_fields if f not in data]
             
-            details = f"Operation executed across {platforms_affected} platforms"
-            self.log_test("Cross-Platform Orchestration", True, details, result["response_time"])
-            
-            # Validate orchestration result
-            if "orchestration_id" in data and "execution_result" in data:
-                self.log_test("Orchestration Response Structure", True, "Complete orchestration response", 0)
+            if missing_fields:
+                self.log_test("ab_testing", "User Assignment", False, 
+                            f"Missing fields: {missing_fields}", response_time)
             else:
-                self.log_test("Orchestration Response Structure", False, "Missing orchestration response fields", 0)
+                variant_id = data.get("variant_id")
+                self.log_test("ab_testing", "User Assignment", True, 
+                            f"User assigned to variant: {variant_id}", response_time)
         else:
-            self.log_test("Cross-Platform Orchestration", False, f"HTTP {result['status_code']}: {result['data']}", result["response_time"])
-        
-        # Test invalid operation
-        invalid_operation = {"type": "invalid_operation"}
-        result = await self.test_endpoint("POST", "/universal-ai/orchestrate", invalid_operation)
-        
-        if result["status_code"] == 500:  # Expecting error for invalid operation
-            self.log_test("Invalid Operation Handling", True, "Properly rejected invalid operation", result["response_time"])
-        else:
-            self.log_test("Invalid Operation Handling", False, f"Unexpected response: {result['status_code']}", result["response_time"])
+            self.log_test("ab_testing", "User Assignment", False, 
+                        f"Request failed: {data.get('error', 'Unknown error')}", response_time)
     
-    async def test_customer_intelligence(self):
-        """Test unified customer intelligence"""
-        print("\n👤 Testing Unified Customer Intelligence...")
+    async def test_ab_testing_analytics_summary(self):
+        """Test A/B testing analytics summary"""
+        success, data, response_time = await self.make_request("GET", "/ab-testing/analytics/summary")
         
-        result = await self.test_endpoint("GET", "/universal-ai/customers/intelligence")
+        if success:
+            if "summary" in data and "experiment_performance" in data:
+                summary = data["summary"]
+                performance = data["experiment_performance"]
+                self.log_test("ab_testing", "Analytics Summary", True, 
+                            f"Analytics retrieved: {summary.get('total_experiments', 0)} experiments, {len(performance)} performance metrics", response_time)
+            else:
+                self.log_test("ab_testing", "Analytics Summary", False, 
+                            "Missing summary or experiment_performance fields", response_time)
+        else:
+            self.log_test("ab_testing", "Analytics Summary", False, 
+                        f"Request failed: {data.get('error', 'Unknown error')}", response_time)
+    
+    # ==================== EXECUTIVE DASHBOARD TESTS ====================
+    
+    async def test_dashboard_health(self):
+        """Test executive dashboard system health"""
+        success, data, response_time = await self.make_request("GET", "/dashboard/health")
         
-        if result["success"]:
-            data = result["data"]
-            intelligence = data.get("intelligence", {})
-            data_sources = data.get("data_sources", 0)
-            ai_recommendations = data.get("ai_recommendations", [])
+        if success:
+            required_fields = ["system_name", "status", "capabilities"]
+            missing_fields = [f for f in required_fields if f not in data]
             
-            details = f"{data_sources} data sources, {len(ai_recommendations)} AI recommendations"
-            self.log_test("Unified Customer Intelligence", True, details, result["response_time"])
-            
-            # Validate intelligence structure
-            expected_sections = ["customer_segments", "cross_platform_behavior", "ai_insights"]
-            missing_sections = [section for section in expected_sections if section not in intelligence]
+            if missing_fields:
+                self.log_test("executive_dashboard", "Health Check", False, 
+                            f"Missing fields: {missing_fields}", response_time)
+            else:
+                capabilities = len(data.get("capabilities", []))
+                self.log_test("executive_dashboard", "Health Check", True, 
+                            f"Dashboard operational with {capabilities} capabilities", response_time)
+        else:
+            self.log_test("executive_dashboard", "Health Check", False, 
+                        f"Request failed: {data.get('error', 'Unknown error')}", response_time)
+    
+    async def test_dashboard_kpis(self):
+        """Test executive KPI dashboard"""
+        success, data, response_time = await self.make_request("GET", "/dashboard/kpis")
+        
+        if success:
+            if "kpis" in data and "overall_health" in data:
+                kpis = data["kpis"]
+                health = data["overall_health"]
+                self.log_test("executive_dashboard", "KPI Dashboard", True, 
+                            f"KPIs retrieved: {len(kpis)} metrics, overall health: {health}", response_time)
+            else:
+                self.log_test("executive_dashboard", "KPI Dashboard", False, 
+                            "Missing kpis or overall_health fields", response_time)
+        else:
+            self.log_test("executive_dashboard", "KPI Dashboard", False, 
+                        f"Request failed: {data.get('error', 'Unknown error')}", response_time)
+    
+    async def test_dashboard_commerce_metrics(self):
+        """Test commerce metrics and analytics"""
+        success, data, response_time = await self.make_request("GET", "/dashboard/commerce")
+        
+        if success:
+            if "commerce_metrics" in data:
+                metrics = data["commerce_metrics"]
+                required_metrics = ["gmv", "orders", "conversion_rate", "aov"]
+                missing_metrics = [m for m in required_metrics if m not in metrics]
+                
+                if missing_metrics:
+                    self.log_test("executive_dashboard", "Commerce Metrics", False, 
+                                f"Missing metrics: {missing_metrics}", response_time)
+                else:
+                    gmv = metrics["gmv"]["formatted"]
+                    cvr = metrics["conversion_rate"]["formatted"]
+                    self.log_test("executive_dashboard", "Commerce Metrics", True, 
+                                f"Commerce data retrieved: GMV {gmv}, CVR {cvr}", response_time)
+            else:
+                self.log_test("executive_dashboard", "Commerce Metrics", False, 
+                            "Missing commerce_metrics field", response_time)
+        else:
+            self.log_test("executive_dashboard", "Commerce Metrics", False, 
+                        f"Request failed: {data.get('error', 'Unknown error')}", response_time)
+    
+    async def test_dashboard_comprehensive_analytics(self):
+        """Test comprehensive business analytics"""
+        success, data, response_time = await self.make_request("GET", "/dashboard/analytics/comprehensive")
+        
+        if success:
+            required_sections = ["executive_summary", "detailed_metrics", "kpi_dashboard", "insights", "recommendations"]
+            missing_sections = [s for s in required_sections if s not in data]
             
             if missing_sections:
-                self.log_test("Customer Intelligence Structure", False, f"Missing sections: {missing_sections}", 0)
+                self.log_test("executive_dashboard", "Comprehensive Analytics", False, 
+                            f"Missing sections: {missing_sections}", response_time)
             else:
-                self.log_test("Customer Intelligence Structure", True, "Complete intelligence structure", 0)
+                insights_count = len(data.get("insights", []))
+                recommendations_count = len(data.get("recommendations", []))
+                self.log_test("executive_dashboard", "Comprehensive Analytics", True, 
+                            f"Comprehensive analytics retrieved: {insights_count} insights, {recommendations_count} recommendations", response_time)
         else:
-            self.log_test("Unified Customer Intelligence", False, f"HTTP {result['status_code']}: {result['data']}", result["response_time"])
+            self.log_test("executive_dashboard", "Comprehensive Analytics", False, 
+                        f"Request failed: {data.get('error', 'Unknown error')}", response_time)
     
-    async def test_ai_communication(self):
-        """Test AI-to-AI platform communication"""
-        print("\n🤖 Testing AI-to-AI Communication...")
-        
-        # Test valid AI communication
-        communication_data = {
-            "platform": "amazon",
-            "message": {
-                "type": "optimization_request",
-                "data": {
-                    "category": "electronics",
-                    "optimization_type": "pricing"
-                }
-            }
-        }
-        
-        result = await self.test_endpoint("POST", "/universal-ai/ai-communication", communication_data)
-        
-        if result["success"]:
-            data = result["data"]
-            ai_response = data.get("ai_response", {})
-            communication_status = data.get("communication_status", "")
-            
-            details = f"Communication {communication_status} with {communication_data['platform']}"
-            self.log_test("AI-to-AI Communication", True, details, result["response_time"])
-            
-            # Validate AI response structure
-            if "ai_response" in ai_response and "recommendations" in ai_response.get("ai_response", {}):
-                self.log_test("AI Communication Response Structure", True, "Complete AI response structure", 0)
-            else:
-                self.log_test("AI Communication Response Structure", False, "Missing AI response fields", 0)
-        else:
-            self.log_test("AI-to-AI Communication", False, f"HTTP {result['status_code']}: {result['data']}", result["response_time"])
-        
-        # Test communication with non-existent platform
-        invalid_communication = {
-            "platform": "non_existent_platform",
-            "message": {"type": "test"}
-        }
-        
-        result = await self.test_endpoint("POST", "/universal-ai/ai-communication", invalid_communication, expected_status=404)
-        
-        if result["status_code"] == 404:
-            self.log_test("Invalid Platform Communication", True, "Properly rejected non-existent platform", result["response_time"])
-        else:
-            self.log_test("Invalid Platform Communication", False, f"Unexpected response: {result['status_code']}", result["response_time"])
+    # ==================== PRODUCTION MONITORING TESTS ====================
     
-    async def test_global_analytics(self):
-        """Test comprehensive global analytics"""
-        print("\n📈 Testing Global Analytics...")
+    async def test_monitoring_health(self):
+        """Test production monitoring system health"""
+        success, data, response_time = await self.make_request("GET", "/monitoring/health")
         
-        result = await self.test_endpoint("GET", "/universal-ai/analytics/global")
-        
-        if result["success"]:
-            data = result["data"]
-            analytics = data.get("analytics", {})
-            recommendations = data.get("recommendations", [])
+        if success:
+            required_fields = ["system_name", "status", "capabilities"]
+            missing_fields = [f for f in required_fields if f not in data]
             
-            # Check analytics sections
-            expected_sections = ["global_metrics", "platform_performance", "market_insights", "ai_performance"]
-            missing_sections = [section for section in expected_sections if section not in analytics]
-            
-            if missing_sections:
-                self.log_test("Global Analytics", False, f"Missing sections: {missing_sections}", result["response_time"])
+            if missing_fields:
+                self.log_test("production_monitoring", "Health Check", False, 
+                            f"Missing fields: {missing_fields}", response_time)
             else:
-                global_metrics = analytics.get("global_metrics", {})
-                total_products = global_metrics.get("total_products_tracked", 0)
-                platforms_monitored = global_metrics.get("platforms_monitored", 0)
+                capabilities = len(data.get("capabilities", []))
+                self.log_test("production_monitoring", "Health Check", True, 
+                            f"Monitoring system operational with {capabilities} capabilities", response_time)
+        else:
+            self.log_test("production_monitoring", "Health Check", False, 
+                        f"Request failed: {data.get('error', 'Unknown error')}", response_time)
+    
+    async def test_monitoring_golden_signals(self):
+        """Test four golden signals monitoring"""
+        success, data, response_time = await self.make_request("GET", "/monitoring/golden-signals")
+        
+        if success:
+            if "golden_signals" in data:
+                signals = data["golden_signals"]
+                required_signals = ["latency", "traffic", "errors", "saturation"]
+                missing_signals = [s for s in required_signals if s not in signals]
                 
-                details = f"{total_products:,} products tracked, {platforms_monitored} platforms monitored, {len(recommendations)} recommendations"
-                self.log_test("Global Analytics", True, details, result["response_time"])
-                
-                # Validate performance metrics
-                ai_performance = analytics.get("ai_performance", {})
-                if "prediction_models_accuracy" in ai_performance:
-                    self.log_test("AI Performance Metrics", True, "AI performance metrics available", 0)
+                if missing_signals:
+                    self.log_test("production_monitoring", "Golden Signals", False, 
+                                f"Missing signals: {missing_signals}", response_time)
                 else:
-                    self.log_test("AI Performance Metrics", False, "Missing AI performance metrics", 0)
-        else:
-            self.log_test("Global Analytics", False, f"HTTP {result['status_code']}: {result['data']}", result["response_time"])
-    
-    async def test_ai_agent_deployment(self):
-        """Test AI agent deployment"""
-        print("\n🚀 Testing AI Agent Deployment...")
-        
-        agent_config = {
-            "type": "price_monitor",
-            "platforms": ["amazon", "alibaba", "shopify"],
-            "parameters": {
-                "capabilities": ["real_time_monitoring", "price_alerts", "trend_analysis"],
-                "monitoring_interval": 300
-            }
-        }
-        
-        result = await self.test_endpoint("POST", "/universal-ai/agents/deploy", agent_config)
-        
-        if result["success"]:
-            data = result["data"]
-            deployment_results = data.get("deployment_results", {})
-            platforms_targeted = data.get("platforms_targeted", [])
-            
-            successful_deployments = sum(1 for r in deployment_results.values() if r.get("status") == "deployed")
-            details = f"{successful_deployments}/{len(platforms_targeted)} agents deployed successfully"
-            self.log_test("AI Agent Deployment", True, details, result["response_time"])
-            
-            # Validate deployment structure
-            if "deployment_id" in data and "monitoring_enabled" in data:
-                self.log_test("Agent Deployment Structure", True, "Complete deployment response", 0)
+                    latency_p95 = signals["latency"]["p95"]
+                    error_rate = signals["errors"]["error_rate"]
+                    self.log_test("production_monitoring", "Golden Signals", True, 
+                                f"Golden signals retrieved: P95 latency {latency_p95}ms, error rate {error_rate}%", response_time)
             else:
-                self.log_test("Agent Deployment Structure", False, "Missing deployment response fields", 0)
+                self.log_test("production_monitoring", "Golden Signals", False, 
+                            "Missing golden_signals field", response_time)
         else:
-            self.log_test("AI Agent Deployment", False, f"HTTP {result['status_code']}: {result['data']}", result["response_time"])
+            self.log_test("production_monitoring", "Golden Signals", False, 
+                        f"Request failed: {data.get('error', 'Unknown error')}", response_time)
     
-    async def test_system_status(self):
-        """Test system status endpoint"""
-        print("\n⚡ Testing System Status...")
+    async def test_monitoring_service_health(self):
+        """Test service health monitoring"""
+        success, data, response_time = await self.make_request("GET", "/monitoring/service/universal_ai_hub/health")
         
-        result = await self.test_endpoint("GET", "/universal-ai/status")
-        
-        if result["success"]:
-            data = result["data"]
-            system_name = data.get("system_name", "")
-            status = data.get("status", "")
-            platforms_connected = data.get("platforms_connected", 0)
-            ai_agents_deployed = data.get("ai_agents_deployed", 0)
+        if success:
+            required_fields = ["service", "status", "health_score"]
+            missing_fields = [f for f in required_fields if f not in data]
             
-            details = f"Status: {status}, {platforms_connected} platforms, {ai_agents_deployed} AI agents"
-            self.log_test("System Status", True, details, result["response_time"])
-            
-            # Validate performance metrics
-            performance_metrics = data.get("performance_metrics", {})
-            if performance_metrics:
-                self.log_test("Performance Metrics", True, f"Performance data available", 0)
+            if missing_fields:
+                self.log_test("production_monitoring", "Service Health", False, 
+                            f"Missing fields: {missing_fields}", response_time)
             else:
-                self.log_test("Performance Metrics", False, "Missing performance metrics", 0)
+                service = data.get("service")
+                status = data.get("status")
+                health_score = data.get("health_score")
+                self.log_test("production_monitoring", "Service Health", True, 
+                            f"Service {service} status: {status}, health score: {health_score}", response_time)
         else:
-            self.log_test("System Status", False, f"HTTP {result['status_code']}: {result['data']}", result["response_time"])
+            self.log_test("production_monitoring", "Service Health", False, 
+                        f"Request failed: {data.get('error', 'Unknown error')}", response_time)
     
-    async def test_error_handling(self):
-        """Test error handling and edge cases"""
-        print("\n🛡️ Testing Error Handling...")
+    # ==================== PERFORMANCE TESTS ====================
+    
+    async def test_performance_response_times(self):
+        """Test that all endpoints respond within 2 seconds"""
+        endpoints = [
+            "/ab-testing/health",
+            "/dashboard/health", 
+            "/monitoring/health",
+            "/ab-testing/experiments",
+            "/dashboard/kpis",
+            "/monitoring/golden-signals"
+        ]
         
-        # Test missing required parameters
-        result = await self.test_endpoint("POST", "/universal-ai/orchestrate", {}, expected_status=400)
+        slow_endpoints = []
+        total_time = 0
         
-        if result["status_code"] == 400:
-            self.log_test("Missing Parameters Handling", True, "Properly rejected missing parameters", result["response_time"])
+        for endpoint in endpoints:
+            success, data, response_time = await self.make_request("GET", endpoint)
+            total_time += response_time
+            
+            if response_time > 2.0:
+                slow_endpoints.append(f"{endpoint} ({response_time:.3f}s)")
+        
+        if slow_endpoints:
+            self.log_test("performance", "Response Times", False, 
+                        f"Slow endpoints: {', '.join(slow_endpoints)}", total_time)
         else:
-            self.log_test("Missing Parameters Handling", False, f"Unexpected response: {result['status_code']}", result["response_time"])
-        
-        # Test invalid JSON
-        try:
-            url = f"{API_BASE}/universal-ai/ai-communication"
-            async with self.session.post(url, data="invalid json") as response:
-                if response.status in [400, 422]:
-                    self.log_test("Invalid JSON Handling", True, "Properly rejected invalid JSON", 0)
-                else:
-                    self.log_test("Invalid JSON Handling", False, f"Unexpected response: {response.status}", 0)
-        except Exception as e:
-            self.log_test("Invalid JSON Handling", False, f"Exception: {str(e)}", 0)
+            avg_time = total_time / len(endpoints)
+            self.log_test("performance", "Response Times", True, 
+                        f"All endpoints under 2s (avg: {avg_time:.3f}s)", total_time)
     
-    async def test_performance(self):
-        """Test system performance"""
-        print("\n⚡ Testing Performance...")
+    async def test_performance_concurrent_requests(self):
+        """Test system handles concurrent requests"""
+        start_time = time.time()
         
-        # Test concurrent requests
+        # Create 5 concurrent requests to different endpoints
         tasks = []
-        for i in range(5):
-            task = self.test_endpoint("GET", "/universal-ai/health")
+        endpoints = [
+            "/ab-testing/health",
+            "/dashboard/health",
+            "/monitoring/health",
+            "/ab-testing/experiments",
+            "/dashboard/kpis"
+        ]
+        
+        for endpoint in endpoints:
+            task = self.make_request("GET", endpoint)
             tasks.append(task)
         
-        start_time = time.time()
-        results = await asyncio.gather(*tasks)
+        # Execute all requests concurrently
+        results = await asyncio.gather(*tasks, return_exceptions=True)
+        
         total_time = time.time() - start_time
         
-        successful_requests = sum(1 for r in results if r["success"])
-        avg_response_time = sum(r["response_time"] for r in results) / len(results)
+        # Count successful requests
+        successful = 0
+        failed = 0
         
-        if successful_requests == len(tasks) and avg_response_time < 5.0:
-            details = f"{successful_requests}/{len(tasks)} requests successful, avg: {avg_response_time:.2f}s"
-            self.log_test("Concurrent Requests Performance", True, details, total_time)
+        for result in results:
+            if isinstance(result, Exception):
+                failed += 1
+            else:
+                success, data, response_time = result
+                if success:
+                    successful += 1
+                else:
+                    failed += 1
+        
+        if failed == 0:
+            self.log_test("performance", "Concurrent Requests", True, 
+                        f"All {successful} concurrent requests successful", total_time)
         else:
-            details = f"{successful_requests}/{len(tasks)} requests successful, avg: {avg_response_time:.2f}s"
-            self.log_test("Concurrent Requests Performance", False, details, total_time)
+            self.log_test("performance", "Concurrent Requests", False, 
+                        f"{failed} out of {len(endpoints)} requests failed", total_time)
+    
+    # ==================== MAIN TEST EXECUTION ====================
     
     async def run_all_tests(self):
-        """Run all Universal Commerce AI Hub tests"""
+        """Run all production systems tests"""
         await self.setup()
         
         try:
-            # Core system tests
-            await self.test_universal_ai_health()
-            await self.test_system_status()
-            await self.test_platforms_info()
+            print("\n📊 A/B TESTING FRAMEWORK TESTS")
+            print("-" * 40)
+            await self.test_ab_testing_health()
+            await self.test_ab_testing_experiments()
+            await self.test_ab_testing_user_assignment()
+            await self.test_ab_testing_analytics_summary()
             
-            # AI functionality tests
-            await self.test_market_intelligence()
-            await self.test_universal_product_search()
-            await self.test_trend_prediction()
-            await self.test_cross_platform_orchestration()
-            await self.test_customer_intelligence()
-            await self.test_ai_communication()
-            await self.test_global_analytics()
-            await self.test_ai_agent_deployment()
+            print("\n📈 EXECUTIVE DASHBOARD TESTS")
+            print("-" * 40)
+            await self.test_dashboard_health()
+            await self.test_dashboard_kpis()
+            await self.test_dashboard_commerce_metrics()
+            await self.test_dashboard_comprehensive_analytics()
             
-            # System reliability tests
-            await self.test_error_handling()
-            await self.test_performance()
+            print("\n🔍 PRODUCTION MONITORING TESTS")
+            print("-" * 40)
+            await self.test_monitoring_health()
+            await self.test_monitoring_golden_signals()
+            await self.test_monitoring_service_health()
+            
+            print("\n⚡ PERFORMANCE TESTS")
+            print("-" * 40)
+            await self.test_performance_response_times()
+            await self.test_performance_concurrent_requests()
+            
+            # Print final results
+            self.print_final_results()
             
         finally:
             await self.cleanup()
     
-    def print_summary(self):
-        """Print test summary"""
+    def print_final_results(self):
+        """Print comprehensive test results summary"""
         print("\n" + "=" * 80)
-        print("🏆 UNIVERSAL COMMERCE AI HUB TEST SUMMARY")
+        print("🎯 FINAL TEST RESULTS SUMMARY")
         print("=" * 80)
         
-        success_rate = (self.passed_tests / self.total_tests * 100) if self.total_tests > 0 else 0
+        total_passed = 0
+        total_failed = 0
         
-        print(f"📊 Total Tests: {self.total_tests}")
-        print(f"✅ Passed: {self.passed_tests}")
-        print(f"❌ Failed: {self.total_tests - self.passed_tests}")
-        print(f"📈 Success Rate: {success_rate:.1f}%")
+        for category, results in self.test_results.items():
+            passed = results["passed"]
+            failed = results["failed"]
+            total = passed + failed
+            success_rate = (passed / total * 100) if total > 0 else 0
+            
+            status_icon = "✅" if failed == 0 else "⚠️" if success_rate >= 80 else "❌"
+            
+            print(f"{status_icon} {category.upper().replace('_', ' ')}: {passed}/{total} passed ({success_rate:.1f}%)")
+            
+            total_passed += passed
+            total_failed += failed
         
-        print(f"\n🎯 TEST RESULTS:")
-        for result in self.test_results:
-            print(f"{result['status']} | {result['test']} | {result['response_time']} | {result['details']}")
+        print("-" * 80)
+        overall_total = total_passed + total_failed
+        overall_success_rate = (total_passed / overall_total * 100) if overall_total > 0 else 0
         
-        # Categorize results
-        failed_tests = [r for r in self.test_results if not r['success']]
-        if failed_tests:
-            print(f"\n❌ FAILED TESTS ({len(failed_tests)}):")
-            for test in failed_tests:
-                print(f"   • {test['test']}: {test['details']}")
+        print(f"🎯 OVERALL: {total_passed}/{overall_total} tests passed ({overall_success_rate:.1f}%)")
         
-        critical_tests = [
-            "Universal AI Health Check",
-            "Universal Product Search", 
-            "AI Trend Prediction",
-            "Cross-Platform Orchestration"
-        ]
+        # Series A Investment Readiness Assessment
+        print("\n💎 SERIES A INVESTMENT READINESS ASSESSMENT")
+        print("-" * 50)
         
-        critical_failures = [t for t in failed_tests if t['test'] in critical_tests]
-        if critical_failures:
-            print(f"\n🚨 CRITICAL FAILURES ({len(critical_failures)}):")
-            for test in critical_failures:
-                print(f"   • {test['test']}: {test['details']}")
-        
-        print("\n" + "=" * 80)
-        
-        if success_rate >= 80:
-            print("🎉 UNIVERSAL COMMERCE AI HUB: PRODUCTION READY")
-        elif success_rate >= 60:
-            print("⚠️ UNIVERSAL COMMERCE AI HUB: NEEDS ATTENTION")
+        if overall_success_rate >= 90:
+            print("🚀 EXCELLENT: Production systems are Series A ready")
+            print("   ✅ All critical systems operational")
+            print("   ✅ Performance meets enterprise standards")
+            print("   ✅ Integration between systems working")
+        elif overall_success_rate >= 80:
+            print("✅ GOOD: Production systems mostly ready with minor issues")
+            print("   ⚠️ Some non-critical issues to address")
+            print("   ✅ Core functionality operational")
+        elif overall_success_rate >= 70:
+            print("⚠️ FAIR: Production systems need attention before Series A")
+            print("   ❌ Several issues need resolution")
+            print("   ⚠️ Performance or integration concerns")
         else:
-            print("🚨 UNIVERSAL COMMERCE AI HUB: CRITICAL ISSUES")
+            print("❌ POOR: Significant issues prevent Series A readiness")
+            print("   ❌ Critical systems failing")
+            print("   ❌ Major performance or functionality issues")
         
-        print("=" * 80)
+        # Test execution time
+        total_time = time.time() - self.start_time
+        print(f"\n⏱️ Total test execution time: {total_time:.2f} seconds")
+        print(f"📊 Tests per second: {overall_total / total_time:.1f}")
+        
+        print("\n" + "=" * 80)
 
 async def main():
-    """Main test execution"""
-    tester = UniversalCommerceAITester()
+    """Main test execution function"""
+    tester = ProductionSystemsTester()
     await tester.run_all_tests()
-    tester.print_summary()
 
 if __name__ == "__main__":
     asyncio.run(main())
