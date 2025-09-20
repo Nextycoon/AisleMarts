@@ -160,6 +160,14 @@ export default function AisleAgentScreen() {
       badge: 'AI',
       gradient: ['#667eea', '#764ba2'],
     },
+    {
+      icon: '📊',
+      title: 'Executive Dashboard',
+      subtitle: 'Business metrics & KPIs',
+      onPress: () => router.push('/executive-dashboard'),
+      badge: 'C-SUITE',
+      gradient: ['#ff9a9e', '#fecfef'],
+    },
   ];
 
   const dashboardStats: DashboardStat[] = [
