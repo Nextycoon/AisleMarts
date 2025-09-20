@@ -37,18 +37,19 @@ export default function RootLayout() {
     <ErrorBoundary>
       <AuthProvider>
         <UserRolesProvider>
-          <AppProviders>
-            <View style={styles.container}>
-              <StatusBar style="light" />
-              <Stack
-                screenOptions={{
-                  headerShown: false,
-                  contentStyle: { backgroundColor: '#0f0f23' },
-                  animation: 'slide_from_right',
-                }}
-              />
+          <CurrencyProvider>
+            <AppProviders>
+              <View style={styles.container}>
+                <StatusBar style="light" />
+                <Stack
+                  screenOptions={{
+                    headerShown: false,
+                    contentStyle: { backgroundColor: '#0f0f23' },
+                    animation: 'slide_from_right',
+                  }}
+                />
 
-              {/* Digital Lifestyle Universe Badge */}
+                {/* Digital Lifestyle Universe Badge */}
               <View style={styles.networkBadge}>
                 <Text style={styles.networkText}>
                   🌍 AisleMarts • The Digital Lifestyle Universe
