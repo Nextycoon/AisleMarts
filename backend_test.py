@@ -1,28 +1,28 @@
 #!/usr/bin/env python3
 """
-AisleMarts Backend API Test Suite
-Tests all backend endpoints with comprehensive scenarios
+Universal Commerce AI Hub Backend Testing Suite
+==============================================
+Comprehensive testing for the AisleMarts Universal Commerce AI Hub backend system.
+
+Test Coverage:
+- Universal Commerce AI Hub endpoints
+- AI Product Recommendations
+- Predictive Analytics
+- System Integration
+- Error handling and performance
 """
 
-import requests
+import asyncio
+import aiohttp
 import json
-import sys
+import time
+from typing import Dict, List, Any
 import os
-from typing import Dict, Any, Optional
+from datetime import datetime
 
-# Get the backend URL from frontend .env file
-def get_backend_url():
-    try:
-        with open('/app/frontend/.env', 'r') as f:
-            for line in f:
-                if line.startswith('EXPO_PUBLIC_BACKEND_URL='):
-                    return line.split('=', 1)[1].strip()
-    except FileNotFoundError:
-        pass
-    return "http://localhost:8001"
-
-BASE_URL = get_backend_url()
-API_URL = f"{BASE_URL}/api"
+# Get backend URL from environment
+BACKEND_URL = os.getenv('REACT_APP_BACKEND_URL', 'https://lifestyle-universe.preview.emergentagent.com')
+API_BASE = f"{BACKEND_URL}/api"
 
 class APITester:
     def __init__(self):
