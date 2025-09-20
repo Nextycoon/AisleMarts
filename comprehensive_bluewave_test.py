@@ -151,17 +151,17 @@ class ComprehensiveBlueWaveTester:
         
         family_safety_tests = [
             # Core family safety endpoints
-            ("GET", "/family-safety/health", None, False, 200),
             ("GET", "/family/health", None, False, 200),
             ("POST", "/family/screen-time/track", {"user_id": "test_user", "app_name": "AisleMarts", "minutes": 45, "category": "shopping"}, False, 200),
             ("GET", "/family/screen-time/test_user", None, False, 200),
-            ("POST", "/family/create", {"name": "BlueWave Test Family", "description": "Test family for system validation"}, False, 200),
-            ("GET", "/family/families", None, False, 200),
-            ("POST", "/family/invite", {"family_id": "test_family", "email": "test@example.com"}, False, 200),
-            ("POST", "/family/join", {"invite_code": "test_invite", "user_id": "test_user"}, False, 200),
+            ("POST", "/family/screen-time/limit", {"user_id": "test_user", "daily_limit_minutes": 120, "set_by_user_id": "parent_user"}, False, 200),
+            ("POST", "/family/create", {"parent_user_id": "parent_user", "family_name": "BlueWave Test Family"}, False, 200),
+            ("POST", "/family/invite/generate", {"family_id": "test_family", "inviter_user_id": "parent_user", "invite_type": "general"}, False, 200),
+            ("POST", "/family/join", {"invite_code": "test_invite", "user_id": "test_user", "user_name": "Test User", "user_age": 16}, False, 200),
             ("GET", "/family/dashboard/test_family", None, False, 200),
-            ("POST", "/family/purchase-approval/check", {"item_id": "test-item-001", "amount": 89.99, "currency": "EUR"}, False, 200),
-            ("GET", "/family/safety-insights/test_user", None, False, 200),
+            ("POST", "/family/purchase/check-approval", {"user_id": "test_user", "amount": 89.99, "item_description": "Designer Handbag"}, False, 200),
+            ("POST", "/family/purchase/request-approval", {"user_id": "test_user", "amount": 89.99, "item_description": "Designer Handbag", "merchant": "LuxeFashion"}, False, 200),
+            ("GET", "/family/insights/test_user", None, False, 200),
             ("GET", "/family/badges/test_user", None, False, 200),
             ("GET", "/family/missions/test_user", None, False, 200),
             ("GET", "/family/notifications/test_user", None, False, 200)
