@@ -168,6 +168,14 @@ export default function AisleAgentScreen() {
       badge: 'C-SUITE',
       gradient: ['#ff9a9e', '#fecfef'],
     },
+    {
+      icon: '🎬',
+      title: 'Series A Demo Mode',
+      subtitle: 'Investor presentation ready',
+      onPress: () => router.push('/demo-mode'),
+      badge: 'INVESTOR',
+      gradient: ['#667eea', '#764ba2'],
+    },
   ];
 
   const dashboardStats: DashboardStat[] = [
