@@ -4,7 +4,7 @@
 
 ### Web Preview (Desktop/Mobile Browser)
 ```
-🌐 Live Preview: https://lifestyle-universe.preview.emergentagent.com
+🌐 Live Preview: https://retail-fusion-5.preview.emergentagent.com
 ```
 
 ### Mobile App Testing (Expo Go)

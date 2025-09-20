@@ -112,7 +112,7 @@ index 0bee275b..5a81abd7 100644
 +sys.path.append('/app/backend')
  
  # Get backend URL from environment
- BACKEND_URL = os.getenv('REACT_APP_BACKEND_URL', 'https://lifestyle-universe.preview.emergentagent.com')
+ BACKEND_URL = os.getenv('REACT_APP_BACKEND_URL', 'https://retail-fusion-5.preview.emergentagent.com')
  API_BASE = f"{BACKEND_URL}/api"
  
 -class UniversalCommerceAITester:
@@ -1150,7 +1150,7 @@ index 4d0b6207..bd2639a7 100644
 ---        pass
 ---    return "http://localhost:8001"
 --+# Get backend URL from environment
---+BACKEND_URL = os.getenv('REACT_APP_BACKEND_URL', 'https://lifestyle-universe.preview.emergentagent.com')
+--+BACKEND_URL = os.getenv('REACT_APP_BACKEND_URL', 'https://retail-fusion-5.preview.emergentagent.com')
 --+API_BASE = f"{BACKEND_URL}/api"
 -- 
 ---BASE_URL = get_backend_url()
@@ -14870,7 +14870,7 @@ index 4d0b6207..bd2639a7 100644
 -------+import os
 -------+
 -------+# Get backend URL from environment
--------+BACKEND_URL = os.getenv('EXPO_PUBLIC_BACKEND_URL', 'https://lifestyle-universe.preview.emergentagent.com')
+-------+BACKEND_URL = os.getenv('EXPO_PUBLIC_BACKEND_URL', 'https://retail-fusion-5.preview.emergentagent.com')
 -------+API_BASE = f"{BACKEND_URL}/api"
 -------+
 -------+class CurrencyEngineV2Tester:

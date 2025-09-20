@@ -9,7 +9,7 @@ import json
 import sys
 from datetime import datetime, timedelta
 
-BASE_URL = 'https://lifestyle-universe.preview.emergentagent.com'
+BASE_URL = 'https://retail-fusion-5.preview.emergentagent.com'
 API_URL = f'{BASE_URL}/api'
 
 class FinalPickupTester:

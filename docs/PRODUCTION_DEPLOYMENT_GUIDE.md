@@ -41,9 +41,9 @@ Analytics: https://analytics.aislemarts.com
 
 ### **Development/Staging**
 ```
-Development: https://lifestyle-universe.preview.emergentagent.com
-Staging API: https://lifestyle-universe.preview.emergentagent.com/api
-Testing Suite: https://lifestyle-universe.preview.emergentagent.com/test
+Development: https://retail-fusion-5.preview.emergentagent.com
+Staging API: https://retail-fusion-5.preview.emergentagent.com/api
+Testing Suite: https://retail-fusion-5.preview.emergentagent.com/test
 ```
 
 ---
