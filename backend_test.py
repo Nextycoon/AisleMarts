@@ -1,14 +1,14 @@
 #!/usr/bin/env python3
 """
-AisleMarts Total Domination Features Backend Testing Suite
-=========================================================
-Comprehensive testing for the newly fixed backend router integration:
-- Enhanced Features Router (/api/enhanced/*)
-- Advanced Business Tools Router (/api/business/*)
-- Operational Systems Router (/api/ops/*)
-- International Expansion Router (/api/international/*)
+AisleMarts Backend Testing Suite - E2EE & KMS Security Systems + Total Domination Features
+========================================================================================
+Comprehensive testing for:
+1. End-to-End Encryption (E2EE) System (/api/e2ee/*)
+2. Key Management System (KMS) (/api/kms/*)
+3. Total Domination Features Integration Verification
+4. System Stability and Performance
 
-Focus: Health checks, router imports, API accessibility, authentication, system integration
+Focus: E2EE security implementation, KMS enterprise key management, router integration, system stability
 """
 
 import asyncio
