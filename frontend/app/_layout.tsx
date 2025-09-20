@@ -127,7 +127,6 @@ export default function RootLayout() {
             }}
           />
         </Stack>
-      </LocationProvider>
     </CurrencyProvider>
   );
 }
