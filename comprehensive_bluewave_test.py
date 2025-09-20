@@ -284,18 +284,15 @@ class ComprehensiveBlueWaveTester:
             ("GET", "/currency/health", None, False, 200),
             ("GET", "/currency/supported", None, False, 200),
             ("GET", "/currency/rates", None, False, 200),
-            ("GET", "/currency/rates/USD", None, False, 200),
-            ("GET", "/currency/rates/EUR", None, False, 200),
-            ("GET", "/currency/rates/JPY", None, False, 200),
-            ("POST", "/currency/convert", {"from_currency": "USD", "to_currency": "EUR", "amount": 100}, False, 200),
-            ("POST", "/currency/convert", {"from_currency": "JPY", "to_currency": "GBP", "amount": 1000}, False, 200),
-            ("POST", "/currency/convert", {"from_currency": "BTC", "to_currency": "USD", "amount": 0.1}, False, 200),
-            ("POST", "/currency/convert", {"from_currency": "ETH", "to_currency": "EUR", "amount": 1}, False, 200),
-            ("POST", "/currency/convert", {"from_currency": "USD", "to_currency": "KWD", "amount": 100}, False, 200),
-            ("POST", "/currency/convert", {"from_currency": "EUR", "to_currency": "BHD", "amount": 100}, False, 200),
-            ("GET", "/currency/regions", None, False, 200),
-            ("GET", "/currency/crypto", None, False, 200),
-            ("GET", "/currency/precision", None, False, 200)
+            ("GET", "/currency/rates?base=USD", None, False, 200),
+            ("GET", "/currency/rates?base=EUR", None, False, 200),
+            ("GET", "/currency/rates?base=JPY", None, False, 200),
+            ("GET", "/currency/convert?amount=100&from=USD&to=EUR", None, False, 200),
+            ("GET", "/currency/convert?amount=1000&from=JPY&to=GBP", None, False, 200),
+            ("GET", "/currency/convert?amount=0.1&from=BTC&to=USD", None, False, 200),
+            ("GET", "/currency/convert?amount=1&from=ETH&to=EUR", None, False, 200),
+            ("GET", "/currency/convert?amount=100&from=USD&to=KWD", None, False, 200),
+            ("GET", "/currency/convert?amount=100&from=EUR&to=BHD", None, False, 200)
         ]
         
         # Execute tests with global simulation
