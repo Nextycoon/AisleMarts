@@ -19,40 +19,48 @@ export default function IndexScreen() {
 
   const initializeApp = async () => {
     try {
+      console.log('🚀 Starting app initialization...');
+      
       // Simulate initialization steps with progress
       const steps = [
-        { message: 'Loading user preferences...', duration: 400 },
-        { message: 'Connecting to services...', duration: 600 },
-        { message: 'Initializing awareness engine...', duration: 500 },
-        { message: 'Setting up luxury experience...', duration: 300 },
+        { message: 'Loading user preferences...', duration: 200 },
+        { message: 'Connecting to services...', duration: 200 },
+        { message: 'Initializing awareness engine...', duration: 200 },
+        { message: 'Setting up luxury experience...', duration: 200 },
       ];
 
       for (let i = 0; i < steps.length; i++) {
-        setLoadingProgress((i) / steps.length);
+        console.log(`📊 Loading step ${i + 1}/${steps.length}: ${steps[i].message}`);
+        setLoadingProgress((i + 1) / steps.length);
         await new Promise(resolve => setTimeout(resolve, steps[i].duration));
       }
 
+      console.log('✅ Loading complete');
       setLoadingProgress(1);
       
       // Check onboarding status
       const hasCompletedOnboarding = await AsyncStorage.getItem('hasCompletedOnboarding');
+      console.log('🔍 Onboarding status:', hasCompletedOnboarding);
       
       // Small delay to show completed loading
       setTimeout(() => {
         setIsInitializing(false);
+        console.log('🎯 Initialization complete, navigating...');
         
         // Navigate based on onboarding state
         setTimeout(() => {
           if (hasCompletedOnboarding === 'true') {
+            console.log('🎯 Navigating to /aisle-agent');
             router.replace('/aisle-agent');
           } else {
+            console.log('🎯 Navigating to /onboarding');
             router.replace('/onboarding');
           }
         }, 300);
       }, 400);
 
     } catch (error) {
-      console.error('Error initializing app:', error);
+      console.error('❌ Error initializing app:', error);
       setIsInitializing(false);
       router.replace('/onboarding');
     }
