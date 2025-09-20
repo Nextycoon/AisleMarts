@@ -1,18 +1,14 @@
 #!/usr/bin/env python3
 """
-AisleMarts Backend Testing Suite - Series A Investment Readiness Validation
-===========================================================================
+AisleMarts Total Domination Features Backend Testing Suite
+=========================================================
+Comprehensive testing for the newly fixed backend router integration:
+- Enhanced Features Router (/api/enhanced/*)
+- Advanced Business Tools Router (/api/business/*)
+- Operational Systems Router (/api/ops/*)
+- International Expansion Router (/api/international/*)
 
-Comprehensive testing for:
-1. Universal Commerce AI Hub System (15+ endpoints)
-2. Currency-Infinity Engine v2.0 (185+ currency support)
-3. Production Monitoring System
-4. A/B Testing Framework
-5. Executive Dashboard
-6. Core backend systems
-
-Focus: Production system reliability, API performance, AI accuracy validation,
-global currency support, cross-platform integration, investor demo readiness.
+Focus: Health checks, router imports, API accessibility, authentication, system integration
 """
 
 import asyncio
