@@ -1168,6 +1168,23 @@ class BlueWaveTestSuite:
             await self.test_create_campaign()
             await self.test_business_settings()
             
+            # TikTok Features System Tests
+            print("\n🎬 TIKTOK FEATURES SYSTEM TESTS")
+            print("-" * 40)
+            await self.test_tiktok_health_check()
+            await self.test_for_you_feed()
+            await self.test_following_feed()
+            await self.test_content_interaction()
+            await self.test_content_comments()
+            await self.test_add_comment()
+            await self.test_start_live_stream()
+            await self.test_pin_product_to_live()
+            await self.test_live_stream_stats()
+            await self.test_trending_content()
+            await self.test_search_content()
+            await self.test_report_content()
+            await self.test_family_controls()
+            
             # Error Handling & Edge Cases
             print("\n⚠️ ERROR HANDLING & VALIDATION TESTS")
             print("-" * 40)
