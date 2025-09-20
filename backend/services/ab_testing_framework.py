@@ -162,6 +162,7 @@ class ABTestingFramework:
                 ExperimentMetric("session_engagement", "engagement", target_improvement=0.15)
             ],
             start_date=datetime.now(),
+            end_date=None,
             min_sample_size=1500
         )
         self.experiments[visual_experiment.id] = visual_experiment
