@@ -135,6 +135,14 @@ export default function AisleAgentScreen() {
       onPress: () => router.push('/mood-to-cart'),
       gradient: ['#a8edea', '#fed6e3'],
     },
+    {
+      icon: '💱',
+      title: 'Currency Fusion',
+      subtitle: 'Global currency engine',
+      onPress: () => router.push('/currency-fusion-dashboard'),
+      badge: 'NEW',
+      gradient: ['#ffecd2', '#fcb69f'],
+    },
   ];
 
   const dashboardStats: DashboardStat[] = [
