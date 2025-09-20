@@ -1,367 +1,379 @@
-import React, { useEffect, useRef } from 'react';
+import React, { useState, useEffect } from 'react';
 import {
   View,
   Text,
+  ScrollView,
+  TouchableOpacity,
   StyleSheet,
   Dimensions,
-  Animated,
-  TouchableOpacity,
+  Alert,
 } from 'react-native';
-import { LinearGradient } from 'expo-linear-gradient';
+import { StatusBar } from 'expo-status-bar';
+import { useRouter } from 'expo-router';
+
+// Import AI services
+import { UniversalCommerceAI } from '../lib/ai/UniversalCommerceAI';
+import { useCurrency } from '../lib/currency/CurrencyProvider';
 
 const { width, height } = Dimensions.get('window');
 
-interface FusionDashboardProps {
-  userName?: string;
-}
-
-export default function FusionDashboard({ userName = 'Alex' }: FusionDashboardProps) {
-  const pulseAnim = useRef(new Animated.Value(1)).current;
-  const flowAnim = useRef(new Animated.Value(0)).current;
-  const fadeAnim = useRef(new Animated.Value(0)).current;
+export default function FusionDashboard() {
+  const router = useRouter();
+  const { currentCurrency, formatPrice } = useCurrency();
+  const [isLoading, setIsLoading] = useState(false);
+  const [aiStatus, setAIStatus] = useState('initializing');
 
   useEffect(() => {
-    // Start animations
-    Animated.timing(fadeAnim, {
-      toValue: 1,
-      duration: 1000,
-      useNativeDriver: true,
-    }).start();
-
-    // Pulsing fusion zone
-    Animated.loop(
-      Animated.sequence([
-        Animated.timing(pulseAnim, {
-          toValue: 1.1,
-          duration: 2000,
-          useNativeDriver: true,
-        }),
-        Animated.timing(pulseAnim, {
-          toValue: 1,
-          duration: 2000,
-          useNativeDriver: true,
-        }),
-      ])
-    ).start();
-
-    // Flowing data animation
-    Animated.loop(
-      Animated.timing(flowAnim, {
-        toValue: 1,
-        duration: 3000,
-        useNativeDriver: true,
-      })
-    ).start();
+    initializeAI();
   }, []);
 
+  const initializeAI = async () => {
+    try {
+      setIsLoading(true);
+      const ai = UniversalCommerceAI.getInstance();
+      await ai.initialize();
+      setAIStatus('operational');
+    } catch (error) {
+      console.error('AI initialization failed:', error);
+      setAIStatus('error');
+    } finally {
+      setIsLoading(false);
+    }
+  };
+
+  const handleNavigation = (route: string) => {
+    router.push(route as any);
+  };
+
   return (
-    <Animated.View style={[styles.container, { opacity: fadeAnim }]}>
-      <LinearGradient
-        colors={['#0f0f23', '#1a1a2e', '#16213e', '#581c87']}
-        style={StyleSheet.absoluteFill}
-      />
+    <View style={styles.container}>
+      <StatusBar style="dark" backgroundColor="#F5F7FA" />
       
       {/* Header Badge */}
-      <View style={styles.headerBadge}>
-        <Text style={styles.badgeText}>🌍 AisleMarts • The Digital Lifestyle Universe</Text>
+      <View style={styles.badge}>
+        <Text style={styles.badgeText}>🌊 BlueWave • Family-Safe AI Commerce</Text>
       </View>
 
-      {/* Main Title */}
-      <View style={styles.titleSection}>
-        <Text style={styles.mainTitle}>Welcome to Your Digital Lifestyle, {userName}</Text>
-        <Text style={styles.subtitle}>One lifestyle. Both worlds. Real meets virtual.</Text>
-      </View>
-
-      {/* Fusion Dashboard Layout */}
-      <View style={styles.dashboardLayout}>
-        
-        {/* Real World Side */}
-        <View style={styles.worldSection}>
-          <LinearGradient
-            colors={['rgba(212, 175, 55, 0.2)', 'rgba(232, 201, 104, 0.1)']}
-            style={styles.worldCard}
-          >
-            <Text style={styles.worldTitle}>REAL WORLD</Text>
-            <Text style={styles.worldIcon}>🏪</Text>
-            
-            <View style={styles.activityList}>
-              <View style={styles.activityItem}>
-                <Text style={styles.activityIcon}>🛍️</Text>
-                <Text style={styles.activityText}>Milan Boutique</Text>
-                <Text style={styles.activityStatus}>Active</Text>
-              </View>
-              
-              <View style={styles.activityItem}>
-                <Text style={styles.activityIcon}>☕</Text>
-                <Text style={styles.activityText}>Café Meeting</Text>
-                <Text style={styles.activityStatus}>2:30 PM</Text>
-              </View>
-              
-              <View style={styles.activityItem}>
-                <Text style={styles.activityIcon}>👥</Text>
-                <Text style={styles.activityText}>Friends Chat</Text>
-                <Text style={styles.activityStatus}>3 msgs</Text>
-              </View>
-            </View>
-          </LinearGradient>
+      <ScrollView 
+        style={styles.scrollView}
+        contentContainerStyle={styles.scrollContent}
+        showsVerticalScrollIndicator={false}
+      >
+        {/* Main Title */}
+        <View style={styles.titleSection}>
+          <Text style={styles.mainTitle}>BlueWave Control Center</Text>
+          <Text style={styles.subtitle}>Family-Safe AI-Powered Commerce Platform</Text>
         </View>
 
-        {/* Fusion Zone Center */}
-        <Animated.View style={[styles.fusionZone, { transform: [{ scale: pulseAnim }] }]}>
-          <LinearGradient
-            colors={['rgba(212, 175, 55, 0.3)', 'rgba(15, 111, 255, 0.2)']}
-            style={styles.fusionCard}
-          >
-            <Text style={styles.fusionTitle}>FUSION ZONE</Text>
-            <Text style={styles.fusionIcon}>⚡</Text>
-            
-            <View style={styles.fusionServices}>
-              <TouchableOpacity style={styles.fusionService}>
-                <Text style={styles.serviceIcon}>🤖</Text>
-                <Text style={styles.serviceText}>AI Assistant</Text>
-              </TouchableOpacity>
-              
-              <TouchableOpacity style={styles.fusionService}>
-                <Text style={styles.serviceIcon}>∞</Text>
-                <Text style={styles.serviceText}>Cloud Hub</Text>
-              </TouchableOpacity>
-              
-              <TouchableOpacity style={styles.fusionService}>
-                <Text style={styles.serviceIcon}>✨</Text>
-                <Text style={styles.serviceText}>Lifestyle Ads</Text>
-              </TouchableOpacity>
-            </View>
-          </LinearGradient>
-        </Animated.View>
-
-        {/* Virtual World Side */}
-        <View style={styles.worldSection}>
-          <LinearGradient
-            colors={['rgba(15, 111, 255, 0.2)', 'rgba(139, 69, 255, 0.1)']}
-            style={styles.worldCard}
-          >
-            <Text style={styles.worldTitle}>VIRTUAL WORLD</Text>
-            <Text style={styles.worldIcon}>🎮</Text>
-            
-            <View style={styles.activityList}>
-              <View style={styles.activityItem}>
-                <Text style={styles.activityIcon}>👗</Text>
-                <Text style={styles.activityText}>Avatar Closet</Text>
-                <Text style={styles.activityStatus}>Updated</Text>
-              </View>
-              
-              <View style={styles.activityItem}>
-                <Text style={styles.activityIcon}>🌐</Text>
-                <Text style={styles.activityText}>Virtual Hangout</Text>
-                <Text style={styles.activityStatus}>Live</Text>
-              </View>
-              
-              <View style={styles.activityItem}>
-                <Text style={styles.activityIcon}>🤖</Text>
-                <Text style={styles.activityText}>AI Community</Text>
-                <Text style={styles.activityStatus}>5 online</Text>
-              </View>
-            </View>
-          </LinearGradient>
+        {/* Status Grid */}
+        <View style={styles.statusGrid}>
+          <View style={styles.statusCard}>
+            <Text style={styles.statusEmoji}>👨‍👩‍👧‍👦</Text>
+            <Text style={styles.statusTitle}>Family Safety</Text>
+            <Text style={styles.statusValue}>Active</Text>
+          </View>
+          
+          <View style={styles.statusCard}>
+            <Text style={styles.statusEmoji}>⭐</Text>
+            <Text style={styles.statusTitle}>Business Console</Text>
+            <Text style={styles.statusValue}>Ready</Text>
+          </View>
+          
+          <View style={styles.statusCard}>
+            <Text style={styles.statusEmoji}>🤖</Text>
+            <Text style={styles.statusTitle}>AI Systems</Text>
+            <Text style={styles.statusValue}>{aiStatus}</Text>
+          </View>
+          
+          <View style={styles.statusCard}>
+            <Text style={styles.statusEmoji}>💱</Text>
+            <Text style={styles.statusTitle}>Currency Engine</Text>
+            <Text style={styles.statusValue}>{currentCurrency}</Text>
+          </View>
         </View>
-      </View>
 
-      {/* Flow Arrows */}
-      <Animated.View style={[styles.flowArrow, styles.leftArrow, {
-        opacity: flowAnim.interpolate({
-          inputRange: [0, 0.5, 1],
-          outputRange: [0.3, 1, 0.3]
-        })
-      }]}>
-        <Text style={styles.arrowText}>←→</Text>
-      </Animated.View>
-      
-      <Animated.View style={[styles.flowArrow, styles.rightArrow, {
-        opacity: flowAnim.interpolate({
-          inputRange: [0, 0.5, 1],
-          outputRange: [0.3, 1, 0.3]
-        })
-      }]}>
-        <Text style={styles.arrowText}>←→</Text>
-      </Animated.View>
+        {/* Quick Actions */}
+        <View style={styles.section}>
+          <Text style={styles.sectionTitle}>Quick Actions</Text>
+          
+          <TouchableOpacity 
+            style={styles.actionButton}
+            onPress={() => handleNavigation('/family/dashboard')}
+          >
+            <Text style={styles.actionIcon}>👨‍👩‍👧‍👦</Text>
+            <View style={styles.actionContent}>
+              <Text style={styles.actionTitle}>Family Dashboard</Text>
+              <Text style={styles.actionDescription}>Manage family safety and wellbeing</Text>
+            </View>
+            <Text style={styles.actionArrow}>›</Text>
+          </TouchableOpacity>
 
-      {/* Bottom Tagline */}
-      <View style={styles.bottomTagline}>
-        <Text style={styles.taglineText}>Where real meets virtual, and one lifestyle spans both worlds.</Text>
-      </View>
-    </Animated.View>
+          <TouchableOpacity 
+            style={styles.actionButton}
+            onPress={() => handleNavigation('/business/dashboard')}
+          >
+            <Text style={styles.actionIcon}>⭐</Text>
+            <View style={styles.actionContent}>
+              <Text style={styles.actionTitle}>Business Console</Text>
+              <Text style={styles.actionDescription}>Analytics, content, and growth tools</Text>
+            </View>
+            <Text style={styles.actionArrow}>›</Text>
+          </TouchableOpacity>
+
+          <TouchableOpacity 
+            style={styles.actionButton}
+            onPress={() => handleNavigation('/universal-ai-hub')}
+          >
+            <Text style={styles.actionIcon}>🤖</Text>
+            <View style={styles.actionContent}>
+              <Text style={styles.actionTitle}>AI Hub</Text>
+              <Text style={styles.actionDescription}>Universal Commerce AI systems</Text>
+            </View>
+            <Text style={styles.actionArrow}>›</Text>
+          </TouchableOpacity>
+
+          <TouchableOpacity 
+            style={styles.actionButton}
+            onPress={() => handleNavigation('/currency-fusion-dashboard-v2')}
+          >
+            <Text style={styles.actionIcon}>💱</Text>
+            <View style={styles.actionContent}>
+              <Text style={styles.actionTitle}>Currency Engine</Text>
+              <Text style={styles.actionDescription}>185 currencies, real-time rates</Text>
+            </View>
+            <Text style={styles.actionArrow}>›</Text>
+          </TouchableOpacity>
+        </View>
+
+        {/* System Status */}
+        <View style={styles.section}>
+          <Text style={styles.sectionTitle}>System Status</Text>
+          
+          <View style={styles.systemStatus}>
+            <View style={styles.statusRow}>
+              <Text style={styles.statusLabel}>Family Safety System</Text>
+              <View style={styles.statusIndicator}>
+                <Text style={styles.statusDot}>🟢</Text>
+                <Text style={styles.statusText}>Operational</Text>
+              </View>
+            </View>
+
+            <View style={styles.statusRow}>
+              <Text style={styles.statusLabel}>Business Console</Text>
+              <View style={styles.statusIndicator}>
+                <Text style={styles.statusDot}>🟢</Text>
+                <Text style={styles.statusText}>Operational</Text>
+              </View>
+            </View>
+
+            <View style={styles.statusRow}>
+              <Text style={styles.statusLabel}>AI Commerce Hub</Text>
+              <View style={styles.statusIndicator}>
+                <Text style={styles.statusDot}>🟢</Text>
+                <Text style={styles.statusText}>32/32 Connected</Text>
+              </View>
+            </View>
+
+            <View style={styles.statusRow}>
+              <Text style={styles.statusLabel}>Currency Engine</Text>
+              <View style={styles.statusIndicator}>
+                <Text style={styles.statusDot}>🟢</Text>
+                <Text style={styles.statusText}>185 Currencies</Text>
+              </View>
+            </View>
+          </View>
+        </View>
+
+        {/* Footer */}
+        <View style={styles.footer}>
+          <Text style={styles.footerText}>
+            🌊 Powered by BlueWave Technology
+          </Text>
+          <Text style={styles.footerSubtext}>
+            Family-Safe AI Commerce Platform
+          </Text>
+        </View>
+      </ScrollView>
+    </View>
   );
 }
 
 const styles = StyleSheet.create({
   container: {
     flex: 1,
-    paddingTop: 60,
-    paddingHorizontal: 20,
+    backgroundColor: '#F5F7FA',
   },
-  headerBadge: {
-    alignSelf: 'center',
-    paddingHorizontal: 20,
-    paddingVertical: 10,
-    backgroundColor: 'rgba(212, 175, 55, 0.15)',
-    borderWidth: 1,
-    borderColor: '#D4AF37',
-    borderRadius: 20,
-    marginBottom: 30,
+  badge: {
+    backgroundColor: '#0066CC',
+    paddingVertical: 8,
+    paddingHorizontal: 16,
+    alignItems: 'center',
+    borderBottomWidth: 1,
+    borderBottomColor: '#E6F3FF',
   },
   badgeText: {
-    color: '#D4AF37',
+    color: '#FFFFFF',
     fontSize: 14,
-    fontWeight: '700',
-    textAlign: 'center',
+    fontWeight: '600',
+    letterSpacing: 0.5,
+  },
+  scrollView: {
+    flex: 1,
+  },
+  scrollContent: {
+    padding: 20,
   },
   titleSection: {
     alignItems: 'center',
-    marginBottom: 40,
+    marginBottom: 32,
   },
   mainTitle: {
-    color: '#FFFFFF',
-    fontSize: 24,
-    fontWeight: '700',
+    fontSize: 28,
+    fontWeight: '800',
+    color: '#2C3E50',
     textAlign: 'center',
     marginBottom: 8,
   },
   subtitle: {
-    color: '#D4AF37',
     fontSize: 16,
-    fontWeight: '500',
+    color: '#8E95A3',
     textAlign: 'center',
-    opacity: 0.9,
+    lineHeight: 24,
   },
-  dashboardLayout: {
+  statusGrid: {
     flexDirection: 'row',
-    justifyContent: 'space-between',
-    alignItems: 'flex-start',
+    flexWrap: 'wrap',
+    gap: 12,
+    marginBottom: 32,
+  },
+  statusCard: {
     flex: 1,
-    marginBottom: 40,
-  },
-  worldSection: {
-    width: '35%',
-  },
-  worldCard: {
+    minWidth: (width - 56) / 2,
+    backgroundColor: '#FFFFFF',
+    borderRadius: 16,
     padding: 20,
-    borderRadius: 20,
-    borderWidth: 1,
-    borderColor: 'rgba(212, 175, 55, 0.3)',
-    minHeight: 300,
-  },
-  worldTitle: {
-    color: '#D4AF37',
-    fontSize: 14,
-    fontWeight: '700',
-    textAlign: 'center',
-    marginBottom: 10,
-    letterSpacing: 1,
-  },
-  worldIcon: {
-    fontSize: 40,
-    textAlign: 'center',
-    marginBottom: 20,
-  },
-  activityList: {
-    gap: 15,
-  },
-  activityItem: {
-    flexDirection: 'row',
     alignItems: 'center',
-    paddingVertical: 8,
-    paddingHorizontal: 12,
-    backgroundColor: 'rgba(255, 255, 255, 0.05)',
-    borderRadius: 12,
+    borderWidth: 1,
+    borderColor: '#E6F3FF',
+    shadowColor: '#000',
+    shadowOffset: { width: 0, height: 2 },
+    shadowOpacity: 0.1,
+    shadowRadius: 8,
+    elevation: 3,
   },
-  activityIcon: {
-    fontSize: 16,
-    marginRight: 10,
+  statusEmoji: {
+    fontSize: 32,
+    marginBottom: 12,
   },
-  activityText: {
-    color: '#FFFFFF',
-    fontSize: 12,
-    fontWeight: '500',
-    flex: 1,
-  },
-  activityStatus: {
-    color: '#D4AF37',
-    fontSize: 10,
+  statusTitle: {
+    fontSize: 14,
     fontWeight: '600',
-  },
-  fusionZone: {
-    width: '25%',
-    alignItems: 'center',
-  },
-  fusionCard: {
-    padding: 20,
-    borderRadius: 20,
-    borderWidth: 2,
-    borderColor: '#D4AF37',
-    minHeight: 300,
-    width: '100%',
-    alignItems: 'center',
-  },
-  fusionTitle: {
-    color: '#D4AF37',
-    fontSize: 14,
-    fontWeight: '700',
+    color: '#2C3E50',
     textAlign: 'center',
-    marginBottom: 10,
-    letterSpacing: 1,
-  },
-  fusionIcon: {
-    fontSize: 50,
-    textAlign: 'center',
-    marginBottom: 20,
-  },
-  fusionServices: {
-    gap: 15,
-    width: '100%',
-  },
-  fusionService: {
-    alignItems: 'center',
-    paddingVertical: 12,
-    paddingHorizontal: 8,
-    backgroundColor: 'rgba(212, 175, 55, 0.1)',
-    borderRadius: 12,
-    borderWidth: 1,
-    borderColor: 'rgba(212, 175, 55, 0.3)',
-  },
-  serviceIcon: {
-    fontSize: 20,
     marginBottom: 4,
   },
-  serviceText: {
-    color: '#FFFFFF',
-    fontSize: 11,
-    fontWeight: '600',
-    textAlign: 'center',
+  statusValue: {
+    fontSize: 12,
+    color: '#0066CC',
+    fontWeight: '500',
   },
-  flowArrow: {
-    position: 'absolute',
-    top: '50%',
+  section: {
+    marginBottom: 32,
   },
-  leftArrow: {
-    left: '32%',
-  },
-  rightArrow: {
-    right: '32%',
-  },
-  arrowText: {
-    color: '#D4AF37',
-    fontSize: 24,
+  sectionTitle: {
+    fontSize: 20,
     fontWeight: '700',
+    color: '#2C3E50',
+    marginBottom: 16,
   },
-  bottomTagline: {
+  actionButton: {
+    flexDirection: 'row',
     alignItems: 'center',
-    paddingVertical: 20,
+    backgroundColor: '#FFFFFF',
+    borderRadius: 16,
+    padding: 20,
+    marginBottom: 12,
+    borderWidth: 1,
+    borderColor: '#E6F3FF',
+    shadowColor: '#000',
+    shadowOffset: { width: 0, height: 2 },
+    shadowOpacity: 0.1,
+    shadowRadius: 8,
+    elevation: 3,
   },
-  taglineText: {
-    color: '#D4AF37',
+  actionIcon: {
+    fontSize: 32,
+    marginRight: 16,
+  },
+  actionContent: {
+    flex: 1,
+  },
+  actionTitle: {
+    fontSize: 18,
+    fontWeight: '600',
+    color: '#2C3E50',
+    marginBottom: 4,
+  },
+  actionDescription: {
+    fontSize: 14,
+    color: '#8E95A3',
+    lineHeight: 20,
+  },
+  actionArrow: {
+    fontSize: 24,
+    color: '#0066CC',
+    fontWeight: '300',
+  },
+  systemStatus: {
+    backgroundColor: '#FFFFFF',
+    borderRadius: 16,
+    padding: 20,
+    borderWidth: 1,
+    borderColor: '#E6F3FF',
+    shadowColor: '#000',
+    shadowOffset: { width: 0, height: 2 },
+    shadowOpacity: 0.1,
+    shadowRadius: 8,
+    elevation: 3,
+  },
+  statusRow: {
+    flexDirection: 'row',
+    justifyContent: 'space-between',
+    alignItems: 'center',
+    paddingVertical: 12,
+    borderBottomWidth: 1,
+    borderBottomColor: '#F5F7FA',
+  },
+  statusLabel: {
     fontSize: 16,
     fontWeight: '500',
-    textAlign: 'center',
-    fontStyle: 'italic',
+    color: '#2C3E50',
+  },
+  statusIndicator: {
+    flexDirection: 'row',
+    alignItems: 'center',
+  },
+  statusDot: {
+    fontSize: 12,
+    marginRight: 8,
+  },
+  statusText: {
+    fontSize: 14,
+    color: '#34C759',
+    fontWeight: '500',
+  },
+  footer: {
+    alignItems: 'center',
+    paddingVertical: 24,
+  },
+  footerText: {
+    fontSize: 16,
+    fontWeight: '600',
+    color: '#0066CC',
+    marginBottom: 4,
+  },
+  footerSubtext: {
+    fontSize: 12,
+    color: '#8E95A3',
   },
 });
