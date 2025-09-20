@@ -2,7 +2,7 @@ import React from 'react';
 import { Stack } from 'expo-router';
 import { StatusBar } from 'expo-status-bar';
 import { View, StyleSheet, Text } from 'react-native';
-import { AuthProvider } from '@/src/context/AuthProvider'; 
+import { AuthProvider } from '@/src/context/AuthContext'; 
 import { UserRolesProvider } from '@/src/context/UserRolesContext';
 import { ErrorBoundary } from '../src/components/ErrorBoundary';
 // CACHE-BUSTED: Awareness import removed for Safe Mode - line 551 phantom error eliminated
