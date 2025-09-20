@@ -838,7 +838,7 @@ class BlueWaveTestSuite:
         live_data = {
             'creator_id': 'test_creator_001',
             'title': 'Family-Safe Fashion Show',
-            'family_safe': True,
+            'family_safe': 'true',
             'age_rating': 'all_ages'
         }
         
