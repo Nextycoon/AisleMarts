@@ -69,6 +69,12 @@ export default function CurrencyFusionDashboard() {
 
           {/* Live Currency Status */}
           <LiveCurrencyDisplay />
+          
+          {/* Observability Panel */}
+          <CurrencyObservability />
+          
+          {/* Crypto Tertiary Display */}
+          <CryptoTertiaryDisplay />
 
           {/* Currency Controls */}
           <View style={styles.section}>
