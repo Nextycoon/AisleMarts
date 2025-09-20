@@ -6,7 +6,7 @@ Comprehensive 5-step smoke testing protocol ensuring every investor demo bundle 
 ## Universal Testing Protocol
 
 ### Pre-Test Setup
-- [ ] Demo environment accessible: `https://currency-aware.preview.emergentagent.com`
+- [ ] Demo environment accessible: `https://lifestyle-universe.preview.emergentagent.com`
 - [ ] Bundle-specific credentials loaded
 - [ ] Awareness Engine context parameters ready
 - [ ] UTM tracking codes configured

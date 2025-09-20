@@ -218,7 +218,7 @@ class InvestorDemoService {
     route: string = '/',
     utmContent?: string
   ): string {
-    const baseUrl = process.env.EXPO_PUBLIC_BASE_URL || 'https://currency-aware.preview.emergentagent.com';
+    const baseUrl = process.env.EXPO_PUBLIC_BASE_URL || 'https://lifestyle-universe.preview.emergentagent.com';
     const params = new URLSearchParams({
       locale: context.locale,
       currency: context.currency,

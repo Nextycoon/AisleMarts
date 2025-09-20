@@ -150,7 +150,7 @@ index f92f8bc7..e69de29b 100644
 ---+import os
 ---+
 ---+# Get backend URL from environment
----+BACKEND_URL = os.getenv('EXPO_PUBLIC_BACKEND_URL', 'https://currency-aware.preview.emergentagent.com')
+---+BACKEND_URL = os.getenv('EXPO_PUBLIC_BACKEND_URL', 'https://lifestyle-universe.preview.emergentagent.com')
 ---+API_BASE = f"{BACKEND_URL}/api"
 ---+
 ---+class CurrencyEngineV2Tester:

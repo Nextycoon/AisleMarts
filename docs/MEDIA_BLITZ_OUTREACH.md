@@ -37,7 +37,7 @@ KEY STORY ELEMENTS:
 
 The demonstration will shock you. This is what post-digital humanity looks like.
 
-Available for exclusive demo this week? I can arrange live walkthrough of their fusion dashboard at: https://currency-aware.preview.emergentagent.com/fusion-dashboard
+Available for exclusive demo this week? I can arrange live walkthrough of their fusion dashboard at: https://lifestyle-universe.preview.emergentagent.com/fusion-dashboard
 
 Best,
 [Your name]
@@ -183,7 +183,7 @@ Best,
 ## 🎬 **MEDIA KIT MATERIALS**
 
 ### **Demo Assets Available:**
-- **Live Fusion Dashboard**: https://currency-aware.preview.emergentagent.com/fusion-dashboard
+- **Live Fusion Dashboard**: https://lifestyle-universe.preview.emergentagent.com/fusion-dashboard
 - **Milan Journey Storyboard**: 30-second user experience narrative
 - **Technical Architecture**: System design and integration documentation
 - **Founder Interview**: Available for remote or in-person interviews

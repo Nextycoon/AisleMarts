@@ -41,9 +41,9 @@ Analytics: https://analytics.aislemarts.com
 
 ### **Development/Staging**
 ```
-Development: https://currency-aware.preview.emergentagent.com
-Staging API: https://currency-aware.preview.emergentagent.com/api
-Testing Suite: https://currency-aware.preview.emergentagent.com/test
+Development: https://lifestyle-universe.preview.emergentagent.com
+Staging API: https://lifestyle-universe.preview.emergentagent.com/api
+Testing Suite: https://lifestyle-universe.preview.emergentagent.com/test
 ```
 
 ---
