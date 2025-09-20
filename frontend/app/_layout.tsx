@@ -8,15 +8,14 @@ import { CurrencyProvider } from '../lib/currency/CurrencyProvider';
 export default function RootLayout() {
   return (
     <CurrencyProvider>
-      <LocationProvider>
-        <StatusBar style="light" backgroundColor="#1A1A1A" />
-        <Stack
-          screenOptions={{
-            headerShown: false,
-            contentStyle: { backgroundColor: '#1A1A1A' },
-            animation: 'slide_from_right',
-          }}
-        >
+      <StatusBar style="light" backgroundColor="#1A1A1A" />
+      <Stack
+        screenOptions={{
+          headerShown: false,
+          contentStyle: { backgroundColor: '#1A1A1A' },
+          animation: 'slide_from_right',
+        }}
+      >
           <Stack.Screen name="index" />
           <Stack.Screen name="(tabs)" />
           <Stack.Screen 
