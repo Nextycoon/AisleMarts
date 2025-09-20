@@ -357,20 +357,10 @@ const styles = StyleSheet.create({
     color: 'rgba(255, 255, 255, 0.6)',
   },
   priceContainer: {
-    flexDirection: 'row',
-    alignItems: 'center',
-    marginBottom: 6,
+    marginBottom: 12,
   },
-  price: {
-    fontSize: 16,
-    fontWeight: '700',
-    color: '#ffffff',
-    marginRight: 8,
-  },
-  originalPrice: {
-    fontSize: 12,
-    color: 'rgba(255, 255, 255, 0.5)',
-    textDecorationLine: 'line-through',
+  priceDual: {
+    // EnhancedPriceDual handles its own styling
   },
   availabilityContainer: {
     flexDirection: 'row',
