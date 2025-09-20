@@ -30,9 +30,11 @@ export default function RootLayout() {
     <View style={styles.container}>
       <StatusBar style="light" backgroundColor="transparent" translucent={true} hidden={false} />
       
-      {/* Safe Mode Badge - Confirms cache-busted version */}
-      <View style={styles.safeModebadge}>
-        <Text style={styles.safeModeText}>SAFE MODE • Cache Cleared • Ready Now</Text>
+      {/* Mode Status Badge */}
+      <View style={styles.modeBadge}>
+        <Text style={styles.modeText}>
+          {safeMode || !enableAwareness ? 'SAFE MODE • Awareness disabled' : 'FULL MODE • Blue Wave Live 🌊'}
+        </Text>
       </View>
       
       <ErrorBoundary>
