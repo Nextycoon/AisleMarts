@@ -5,15 +5,24 @@ import { View, StyleSheet, Text } from 'react-native';
 import { AuthProvider } from '@/src/context/AuthContext'; 
 import { UserRolesProvider } from '@/src/context/UserRolesContext';
 import { ErrorBoundary } from '../src/components/ErrorBoundary';
-// CACHE-BUSTED: Awareness import removed for Safe Mode - line 551 phantom error eliminated
+import { AwarenessProvider } from '../lib/awarenessContext';
 
-// Safe Mode Configuration - GUARANTEED WORKING VERSION
-const safeMode = true; // FORCE Safe Mode until cache fully purged
-const enableAwareness = false; // DISABLE until container reset
+// Environment-based Configuration - FULL MODE GO-LIVE
+const safeMode = process.env.NEXT_PUBLIC_SAFE_MODE === 'true';
+const enableAwareness = process.env.NEXT_PUBLIC_AWARENESS_ENABLED === 'true';
 
 function AppProviders({ children }: { children: React.ReactNode }) {
-  console.log('🛡️ SAFE MODE ACTIVE: All enhanced features available except awareness');
-  return <>{children}</>;
+  if (safeMode || !enableAwareness) {
+    console.log('🛡️ SAFE MODE ACTIVE: All enhanced features available except awareness');
+    return <>{children}</>;
+  }
+  
+  console.log('🌊 FULL MODE ACTIVE: Awareness Context Enabled - Blue Wave Go-Live');
+  return (
+    <AwarenessProvider>
+      {children}
+    </AwarenessProvider>
+  );
 }
 
 export default function RootLayout() {
