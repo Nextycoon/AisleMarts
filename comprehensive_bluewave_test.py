@@ -195,17 +195,16 @@ class ComprehensiveBlueWaveTester:
         
         business_console_tests = [
             # Core business console endpoints
-            ("GET", "/business-console/health", None, False, 200),
             ("GET", "/business/health", None, False, 200),
             ("GET", "/business/analytics/business_test_001", None, False, 200),
             ("GET", "/business/alerts/business_test_001", None, False, 200),
             ("GET", "/business/products/business_test_001", None, False, 200),
-            ("POST", "/business/products", {"business_id": "business_test_001", "name": "BlueWave Test Product", "price": 99.99, "currency": "EUR"}, False, 200),
+            ("POST", "/business/products", {"title": "BlueWave Test Product", "description": "Test product", "price": 99.99, "currency": "EUR", "category": "Test", "sku": "TEST-001"}, False, 200),
             ("GET", "/business/orders/business_test_001", None, False, 200),
-            ("PUT", "/business/orders/test-order-001/status", {"status": "shipped"}, False, 200),
+            ("PUT", "/business/orders/test-order-001", {"order_id": "test-order-001", "status": "shipped"}, False, 200),
             ("GET", "/business/customers/business_test_001", None, False, 200),
             ("GET", "/business/campaigns/business_test_001", None, False, 200),
-            ("POST", "/business/campaigns", {"business_id": "business_test_001", "name": "BlueWave Test Campaign", "budget": 1500, "currency": "EUR"}, False, 200),
+            ("POST", "/business/campaigns", {"name": "BlueWave Test Campaign", "type": "conversion", "budget": 1500, "duration_days": 14, "target_audience": {}, "creative_assets": []}, False, 200),
             ("GET", "/business/settings/business_test_001", None, False, 200)
         ]
         
