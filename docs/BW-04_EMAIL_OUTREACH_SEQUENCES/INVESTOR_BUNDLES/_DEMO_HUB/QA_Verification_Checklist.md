@@ -6,7 +6,7 @@ Comprehensive 5-step smoke testing protocol ensuring every investor demo bundle 
 ## Universal Testing Protocol
 
 ### Pre-Test Setup
-- [ ] Demo environment accessible: `https://retail-fusion-5.preview.emergentagent.com`
+- [ ] Demo environment accessible: `https://seriesaready.preview.emergentagent.com`
 - [ ] Bundle-specific credentials loaded
 - [ ] Awareness Engine context parameters ready
 - [ ] UTM tracking codes configured
