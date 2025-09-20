@@ -821,7 +821,7 @@ class BlueWaveTestSuite:
             'text': 'This looks amazing! Perfect for my family!'
         }
         
-        success, data, status = await self.make_request('POST', '/social/content/fyp_001/comment', data=comment_data)
+        success, data, status = await self.make_request('POST', '/social/content/fyp_001/comment', form_data=comment_data)
         
         if success and data.get('moderation_passed') and data.get('family_safety_score', 0) > 0.8:
             comment = data.get('comment', {})
