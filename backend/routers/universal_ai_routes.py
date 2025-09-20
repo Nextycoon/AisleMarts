@@ -10,7 +10,7 @@ import asyncio
 from datetime import datetime
 import json
 
-from ..services.universal_commerce_ai import universal_ai, Platform
+from services.universal_commerce_ai import universal_ai, Platform
 
 router = APIRouter(prefix="/universal-ai", tags=["universal_ai"])
 
