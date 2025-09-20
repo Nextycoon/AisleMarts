@@ -20,7 +20,7 @@ from typing import Dict, List, Any
 from datetime import datetime
 
 # Configuration
-BACKEND_URL = os.getenv('REACT_APP_BACKEND_URL', 'https://seriesaready.preview.emergentagent.com')
+BACKEND_URL = os.getenv('REACT_APP_BACKEND_URL', 'https://bluewave-family.preview.emergentagent.com')
 API_BASE = f"{BACKEND_URL}/api"
 
 class TotalDominationTester:

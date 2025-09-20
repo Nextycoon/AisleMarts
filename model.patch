@@ -79,7 +79,7 @@ index ee1cc068..e69de29b 100644
 -+from typing import Dict, List, Any, Optional
 -+
 -+# Configuration
--+BACKEND_URL = os.getenv('REACT_APP_BACKEND_URL', 'https://seriesaready.preview.emergentagent.com')
+-+BACKEND_URL = os.getenv('REACT_APP_BACKEND_URL', 'https://bluewave-family.preview.emergentagent.com')
 -+API_BASE = f"{BACKEND_URL}/api"
 -+
 -+class E2EEKMSTester:
@@ -626,7 +626,7 @@ index ee1cc068..e69de29b 100644
 ---
 ---# Get backend URL from environment
 --+# Configuration
--- BACKEND_URL = os.getenv('REACT_APP_BACKEND_URL', 'https://seriesaready.preview.emergentagent.com')
+-- BACKEND_URL = os.getenv('REACT_APP_BACKEND_URL', 'https://bluewave-family.preview.emergentagent.com')
 -- API_BASE = f"{BACKEND_URL}/api"
 -- 
 ---class ProductionSystemsTester:
@@ -1877,7 +1877,7 @@ index ee1cc068..e69de29b 100644
 -------+sys.path.append('/app/backend')
 ------- 
 ------- # Get backend URL from environment
-------- BACKEND_URL = os.getenv('REACT_APP_BACKEND_URL', 'https://seriesaready.preview.emergentagent.com')
+------- BACKEND_URL = os.getenv('REACT_APP_BACKEND_URL', 'https://bluewave-family.preview.emergentagent.com')
 ------- API_BASE = f"{BACKEND_URL}/api"
 ------- 
 --------class UniversalCommerceAITester:
@@ -2915,7 +2915,7 @@ index ee1cc068..e69de29b 100644
 ----------        pass
 ----------    return "http://localhost:8001"
 ---------+# Get backend URL from environment
----------+BACKEND_URL = os.getenv('REACT_APP_BACKEND_URL', 'https://seriesaready.preview.emergentagent.com')
+---------+BACKEND_URL = os.getenv('REACT_APP_BACKEND_URL', 'https://bluewave-family.preview.emergentagent.com')
 ---------+API_BASE = f"{BACKEND_URL}/api"
 --------- 
 ----------BASE_URL = get_backend_url()
@@ -16635,7 +16635,7 @@ index ee1cc068..e69de29b 100644
 --------------+import os
 --------------+
 --------------+# Get backend URL from environment
---------------+BACKEND_URL = os.getenv('EXPO_PUBLIC_BACKEND_URL', 'https://seriesaready.preview.emergentagent.com')
+--------------+BACKEND_URL = os.getenv('EXPO_PUBLIC_BACKEND_URL', 'https://bluewave-family.preview.emergentagent.com')
 --------------+API_BASE = f"{BACKEND_URL}/api"
 --------------+
 --------------+class CurrencyEngineV2Tester:
@@ -18167,7 +18167,7 @@ index ee1cc068..e69de29b 100644
 -----+from dataclasses import dataclass
 -----+
 -----+# Get backend URL from environment
------+BACKEND_URL = os.getenv('REACT_APP_BACKEND_URL', 'https://seriesaready.preview.emergentagent.com')
+-----+BACKEND_URL = os.getenv('REACT_APP_BACKEND_URL', 'https://bluewave-family.preview.emergentagent.com')
 -----+API_BASE = f"{BACKEND_URL}/api"
 -----+
 -----+@dataclass
@@ -18884,7 +18884,7 @@ index ee1cc068..e69de29b 100644
 -----+4. ❌ Prepare investor demo environment
 -----+
 -----+Generated: 2025-09-20 16:48:01 UTC
------+Testing Environment: https://seriesaready.preview.emergentagent.com
+-----+Testing Environment: https://bluewave-family.preview.emergentagent.com
 -----diff --git a/test_result.md b/test_result.md
 -----index 8992702e..1c2a1961 100644
 -------- a/test_result.md

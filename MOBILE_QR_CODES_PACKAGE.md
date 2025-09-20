@@ -4,7 +4,7 @@
 
 ### Web Preview (Desktop/Mobile Browser)
 ```
-🌐 Live Preview: https://seriesaready.preview.emergentagent.com
+🌐 Live Preview: https://bluewave-family.preview.emergentagent.com
 ```
 
 ### Mobile App Testing (Expo Go)
