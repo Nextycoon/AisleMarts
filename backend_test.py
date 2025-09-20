@@ -34,8 +34,7 @@ class BlueWaveTestSuite:
     async def setup(self):
         """Initialize test session"""
         self.session = aiohttp.ClientSession(
-            timeout=aiohttp.ClientTimeout(total=30),
-            headers={'Content-Type': 'application/json'}
+            timeout=aiohttp.ClientTimeout(total=30)
         )
         
     async def teardown(self):
