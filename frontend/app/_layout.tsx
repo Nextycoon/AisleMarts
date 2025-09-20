@@ -5,9 +5,8 @@ import { View, StyleSheet, Text } from 'react-native';
 import { AuthProvider } from '@/src/context/AuthContext'; 
 import { UserRolesProvider } from '@/src/context/UserRolesContext';
 import { ErrorBoundary } from '../src/components/ErrorBoundary';
-import { AwarenessProvider } from '../lib/awarenessContext';
 
-// Environment-based Configuration - FULL MODE GO-LIVE
+// Environment-based Configuration - FULL MODE GO-LIVE with Safety Rails
 const safeMode = process.env.NEXT_PUBLIC_SAFE_MODE === 'true';
 const enableAwareness = process.env.NEXT_PUBLIC_AWARENESS_ENABLED === 'true';
 
@@ -17,12 +16,19 @@ function AppProviders({ children }: { children: React.ReactNode }) {
     return <>{children}</>;
   }
   
-  console.log('🌊 FULL MODE ACTIVE: Awareness Context Enabled - Blue Wave Go-Live');
-  return (
-    <AwarenessProvider>
-      {children}
-    </AwarenessProvider>
-  );
+  try {
+    console.log('🌊 FULL MODE ACTIVE: Loading Awareness Context - Blue Wave Go-Live');
+    // Lazy import with safety guard to prevent cache issues
+    const { AwarenessProvider } = require('../lib/awarenessContext');
+    return (
+      <AwarenessProvider>
+        {children}
+      </AwarenessProvider>
+    );
+  } catch (error) {
+    console.warn('🔄 Awareness Context failed to load, falling back to Safe Mode:', error);
+    return <>{children}</>;
+  }
 }
 
 export default function RootLayout() {
