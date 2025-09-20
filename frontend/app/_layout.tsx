@@ -75,21 +75,23 @@ const styles = StyleSheet.create({
     margin: 0,
     padding: 0,
   },
-  modeBadge: {
+  networkBadge: {
     position: 'absolute',
     right: 12,
     bottom: 12,
-    paddingHorizontal: 10,
-    paddingVertical: 6,
-    backgroundColor: 'rgba(15, 111, 255, 0.2)',
+    paddingHorizontal: 12,
+    paddingVertical: 8,
+    backgroundColor: 'rgba(212, 175, 55, 0.15)',
     borderWidth: 1,
-    borderColor: '#0F6FFF',
-    borderRadius: 8,
+    borderColor: '#D4AF37',
+    borderRadius: 12,
     zIndex: 9999,
+    backdropFilter: 'blur(10px)',
   },
-  modeText: {
-    fontSize: 12,
-    color: '#0F6FFF',
-    fontWeight: '600',
+  networkText: {
+    fontSize: 11,
+    color: '#D4AF37',
+    fontWeight: '700',
+    letterSpacing: 0.5,
   },
 });
