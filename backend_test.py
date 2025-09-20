@@ -712,7 +712,7 @@ class BlueWaveTestSuite:
         success, data, status = await self.make_request('GET', '/social/feed/for-you', params={
             'user_id': 'test_user_001',
             'limit': 5,
-            'family_safe_only': True
+            'family_safe_only': 'true'
         })
         
         if success and 'content' in data:
