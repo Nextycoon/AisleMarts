@@ -504,7 +504,19 @@ try:
     from routers.production_monitoring_routes import router as production_monitoring_router
     app.include_router(production_monitoring_router, prefix="/api", tags=["production_monitoring"])
     
-    print("✅ UNIVERSAL COMMERCE AI HUB + ALL-IN MICRO-SPRINT + PHASE 2 LUXURY COMMUNICATION SUITE + ADVANCED AI + PERFORMANCE ANALYTICS + AWARENESS ENGINE + INVESTOR DEMO MANAGEMENT + CURRENCY-INFINITY ENGINE + A/B TESTING + EXECUTIVE DASHBOARD + PRODUCTION MONITORING routers loaded successfully")
+    # Import and include Enhanced Features router
+    from routers.enhanced_features_routes import router as enhanced_features_router
+    app.include_router(enhanced_features_router, prefix="/api", tags=["enhanced_features"])
+    
+    # Import and include Business Tools router
+    from routers.business_tools_routes import router as business_tools_router
+    app.include_router(business_tools_router, prefix="/api", tags=["business_tools"])
+    
+    # Import and include Operational Systems router
+    from routers.operational_systems_routes import router as operational_systems_router
+    app.include_router(operational_systems_router, prefix="/api", tags=["operational_systems"])
+    
+    print("✅ UNIVERSAL COMMERCE AI HUB + ALL-IN MICRO-SPRINT + PHASE 2 LUXURY COMMUNICATION SUITE + ADVANCED AI + PERFORMANCE ANALYTICS + AWARENESS ENGINE + INVESTOR DEMO MANAGEMENT + CURRENCY-INFINITY ENGINE + A/B TESTING + EXECUTIVE DASHBOARD + PRODUCTION MONITORING + ENHANCED FEATURES + BUSINESS TOOLS + OPERATIONAL SYSTEMS routers loaded successfully")
 except ImportError as e:
     print(f"⚠️ Routers not available: {e}")
 except Exception as e:
