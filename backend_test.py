@@ -81,7 +81,8 @@ class BlueWaveTestSuite:
                         response_data = await response.json()
                         return response.status < 400, response_data, response.status
                 else:
-                    async with self.session.post(url, json=data, params=params) as response:
+                    headers = {'Content-Type': 'application/json'}
+                    async with self.session.post(url, json=data, params=params, headers=headers) as response:
                         response_data = await response.json()
                         return response.status < 400, response_data, response.status
             elif method.upper() == 'PUT':
