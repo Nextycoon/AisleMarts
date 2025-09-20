@@ -1,6 +1,6 @@
 import React from "react";
 import { View, Text, StyleSheet } from "react-native";
-import { useCurrency } from "@/lib/currency/CurrencyProvider";
+import { useCurrency } from "../../lib/currency/CurrencyProvider";
 
 interface PriceDualProps {
   amount: number;
