@@ -682,6 +682,351 @@ class BlueWaveTestSuite:
             )
 
     # ============================================================================
+    # TIKTOK FEATURES SYSTEM TESTS
+    # ============================================================================
+    
+    async def test_tiktok_health_check(self):
+        """Test TikTok features system health check"""
+        success, data, status = await self.make_request('GET', '/social/health')
+        
+        if success and 'service' in data:
+            features = data.get('features', {})
+            bluewave_integration = data.get('bluewave_integration')
+            safety_first = data.get('safety_first')
+            self.log_test(
+                "TikTok Features Health Check",
+                True,
+                f"Service operational with {len(features)} features, BlueWave integration: {bluewave_integration}, Safety first: {safety_first}",
+                data
+            )
+        else:
+            self.log_test(
+                "TikTok Features Health Check",
+                False,
+                f"Health check failed with status {status}: {data}",
+                data
+            )
+            
+    async def test_for_you_feed(self):
+        """Test For You feed functionality"""
+        success, data, status = await self.make_request('GET', '/social/feed/for-you', params={
+            'user_id': 'test_user_001',
+            'limit': 5,
+            'family_safe_only': True
+        })
+        
+        if success and 'content' in data:
+            content = data.get('content', [])
+            recommendation_signals = data.get('recommendation_signals', {})
+            family_safety_active = recommendation_signals.get('family_safety_active', False)
+            
+            # Check all content is family safe
+            all_family_safe = all(item.get('safety', {}).get('family_safe', False) for item in content)
+            
+            self.log_test(
+                "For You Feed",
+                True,
+                f"Retrieved {len(content)} family-safe content items, personalization strength: {recommendation_signals.get('personalization_strength', 0)}",
+                {'content_count': len(content), 'all_family_safe': all_family_safe}
+            )
+        else:
+            self.log_test(
+                "For You Feed",
+                False,
+                f"For You feed failed with status {status}: {data}",
+                data
+            )
+            
+    async def test_following_feed(self):
+        """Test Following feed functionality"""
+        success, data, status = await self.make_request('GET', '/social/feed/following', params={
+            'user_id': 'test_user_002',
+            'limit': 5
+        })
+        
+        if success and 'content' in data:
+            content = data.get('content', [])
+            self.log_test(
+                "Following Feed",
+                True,
+                f"Retrieved {len(content)} content items from followed creators",
+                {'content_count': len(content)}
+            )
+        else:
+            self.log_test(
+                "Following Feed",
+                False,
+                f"Following feed failed with status {status}: {data}",
+                data
+            )
+            
+    async def test_content_interaction(self):
+        """Test content interaction (like)"""
+        interaction_data = {
+            "content_id": "fyp_001",
+            "user_id": "test_user_003",
+            "interaction_type": "like"
+        }
+        
+        success, data, status = await self.make_request('POST', '/social/content/fyp_001/interact', interaction_data)
+        
+        if success and data.get('family_safety_check') == 'passed':
+            self.log_test(
+                "Content Interaction",
+                True,
+                f"Like interaction successful with family safety check passed",
+                {'interaction_type': data.get('interaction_type')}
+            )
+        else:
+            self.log_test(
+                "Content Interaction",
+                False,
+                f"Content interaction failed with status {status}: {data}",
+                data
+            )
+            
+    async def test_content_comments(self):
+        """Test content comments retrieval"""
+        success, data, status = await self.make_request('GET', '/social/content/fyp_001/comments', params={'limit': 10})
+        
+        if success and 'comments' in data:
+            comments = data.get('comments', [])
+            family_safe_moderation = data.get('family_safe_moderation')
+            all_family_safe = all(comment.get('family_safe', False) for comment in comments)
+            
+            self.log_test(
+                "Content Comments",
+                True,
+                f"Retrieved {len(comments)} family-safe comments, moderation: {family_safe_moderation}",
+                {'comment_count': len(comments), 'all_family_safe': all_family_safe}
+            )
+        else:
+            self.log_test(
+                "Content Comments",
+                False,
+                f"Content comments failed with status {status}: {data}",
+                data
+            )
+            
+    async def test_add_comment(self):
+        """Test adding a comment with family-safe moderation"""
+        comment_data = {
+            'user_id': 'test_user_004',
+            'text': 'This looks amazing! Perfect for my family!'
+        }
+        
+        success, data, status = await self.make_request('POST', '/social/content/fyp_001/comment', data=comment_data)
+        
+        if success and data.get('moderation_passed') and data.get('family_safety_score', 0) > 0.8:
+            comment = data.get('comment', {})
+            self.log_test(
+                "Add Comment",
+                True,
+                f"Comment added successfully with family safety score: {data.get('family_safety_score')}",
+                {'comment_id': comment.get('id'), 'family_safety_score': data.get('family_safety_score')}
+            )
+        else:
+            self.log_test(
+                "Add Comment",
+                False,
+                f"Add comment failed with status {status}: {data}",
+                data
+            )
+            
+    async def test_start_live_stream(self):
+        """Test starting a live stream"""
+        live_data = {
+            'creator_id': 'test_creator_001',
+            'title': 'Family-Safe Fashion Show',
+            'family_safe': True,
+            'age_rating': 'all_ages'
+        }
+        
+        success, data, status = await self.make_request('POST', '/social/live/start', params=live_data)
+        
+        if success and 'live_stream' in data:
+            live_stream = data.get('live_stream', {})
+            setup_instructions = data.get('setup_instructions', {})
+            
+            if (live_stream.get('is_active') and 
+                live_stream.get('safety', {}).get('family_safe') and
+                'rtmp_url' in setup_instructions):
+                
+                self.log_test(
+                    "Start Live Stream",
+                    True,
+                    f"Live stream started successfully - ID: {live_stream.get('id')}, Family safe: {live_stream.get('safety', {}).get('family_safe')}",
+                    {'live_id': live_stream.get('id')}
+                )
+            else:
+                self.log_test(
+                    "Start Live Stream",
+                    False,
+                    "Live stream setup incomplete or not family safe",
+                    data
+                )
+        else:
+            self.log_test(
+                "Start Live Stream",
+                False,
+                f"Start live stream failed with status {status}: {data}",
+                data
+            )
+            
+    async def test_pin_product_to_live(self):
+        """Test pinning a product to live stream"""
+        product_data = {
+            'product_id': 'prod_test_001',
+            'title': 'Family-Safe Product',
+            'price': 29.99,
+            'currency': 'EUR',
+            'family_approval_required': False
+        }
+        
+        success, data, status = await self.make_request('POST', '/social/live/live_test_001/pin-product', product_data)
+        
+        if success and 'product' in data:
+            product = data.get('product', {})
+            self.log_test(
+                "Pin Product to Live",
+                True,
+                f"Product pinned successfully - {product.get('title')} for {product.get('currency')} {product.get('price')}",
+                {'product_id': product.get('id')}
+            )
+        else:
+            self.log_test(
+                "Pin Product to Live",
+                False,
+                f"Pin product to live failed with status {status}: {data}",
+                data
+            )
+            
+    async def test_live_stream_stats(self):
+        """Test getting live stream statistics"""
+        success, data, status = await self.make_request('GET', '/social/live/live_test_001/stats')
+        
+        if success and 'stats' in data:
+            stats = data.get('stats', {})
+            family_safety_score = stats.get('family_safety_score', 0)
+            
+            self.log_test(
+                "Live Stream Stats",
+                True,
+                f"Live stats retrieved - Viewers: {stats.get('viewer_count')}, Sales: {stats.get('sales_count')}, Safety score: {family_safety_score}",
+                {'viewer_count': stats.get('viewer_count'), 'family_safety_score': family_safety_score}
+            )
+        else:
+            self.log_test(
+                "Live Stream Stats",
+                False,
+                f"Live stream stats failed with status {status}: {data}",
+                data
+            )
+            
+    async def test_trending_content(self):
+        """Test trending content discovery"""
+        success, data, status = await self.make_request('GET', '/social/explore/trending', params={
+            'family_safe_only': True,
+            'limit': 10
+        })
+        
+        if success and 'trending' in data:
+            trending = data.get('trending', [])
+            all_family_safe = all(item.get('family_safe', False) for item in trending)
+            
+            self.log_test(
+                "Trending Content",
+                True,
+                f"Retrieved {len(trending)} family-safe trending items",
+                {'trending_count': len(trending), 'all_family_safe': all_family_safe}
+            )
+        else:
+            self.log_test(
+                "Trending Content",
+                False,
+                f"Trending content failed with status {status}: {data}",
+                data
+            )
+            
+    async def test_search_content(self):
+        """Test content search functionality"""
+        success, data, status = await self.make_request('GET', '/social/search', params={
+            'query': 'family',
+            'family_safe_only': True,
+            'limit': 10
+        })
+        
+        if success and 'search_results' in data:
+            search_results = data.get('search_results', {})
+            total_results = search_results.get('total_results', 0)
+            family_safe_filter = search_results.get('family_safe_filter', False)
+            
+            self.log_test(
+                "Search Content",
+                True,
+                f"Search completed with {total_results} family-safe results for query 'family'",
+                {'total_results': total_results, 'family_safe_filter': family_safe_filter}
+            )
+        else:
+            self.log_test(
+                "Search Content",
+                False,
+                f"Search content failed with status {status}: {data}",
+                data
+            )
+            
+    async def test_report_content(self):
+        """Test content reporting for family safety"""
+        report_data = {
+            'content_id': 'fyp_001',
+            'user_id': 'test_user_005',
+            'reason': 'inappropriate content',
+            'description': 'This content may not be suitable for children'
+        }
+        
+        success, data, status = await self.make_request('POST', '/social/content/report', params=report_data)
+        
+        if success and 'report' in data:
+            report = data.get('report', {})
+            self.log_test(
+                "Report Content",
+                True,
+                f"Content reported successfully - Report ID: {report.get('id')}, Priority: {report.get('priority')}",
+                {'report_id': report.get('id'), 'priority': report.get('priority')}
+            )
+        else:
+            self.log_test(
+                "Report Content",
+                False,
+                f"Report content failed with status {status}: {data}",
+                data
+            )
+            
+    async def test_family_controls(self):
+        """Test family control settings retrieval"""
+        success, data, status = await self.make_request('GET', '/social/moderation/family-controls/test_user_006')
+        
+        if success and 'family_controls' in data:
+            family_controls = data.get('family_controls', {})
+            parental_supervision = family_controls.get('parental_supervision', {})
+            content_filtering = family_controls.get('content_filtering', {})
+            bluewave_protection = data.get('bluewave_protection')
+            
+            self.log_test(
+                "Family Controls",
+                True,
+                f"Family controls retrieved - Parental supervision: {parental_supervision.get('enabled')}, Family safe only: {content_filtering.get('family_safe_only')}, BlueWave protection: {bluewave_protection}",
+                {'parental_supervision': parental_supervision.get('enabled'), 'bluewave_protection': bluewave_protection}
+            )
+        else:
+            self.log_test(
+                "Family Controls",
+                False,
+                f"Family controls failed with status {status}: {data}",
+                data
+            )
+
+    # ============================================================================
     # ERROR HANDLING & EDGE CASES TESTS
     # ============================================================================
     
