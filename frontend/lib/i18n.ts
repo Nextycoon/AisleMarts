@@ -395,46 +395,60 @@ const detectionOptions = {
   checkWhitelist: true
 };
 
-i18n
-  .use(Backend)
-  .use(LanguageDetector)
-  .use(initReactI18next)
-  .init({
-    resources,
-    fallbackLng: 'en',
-    debug: __DEV__,
-    
-    // Language detection
-    detection: detectionOptions,
-    
-    // Interpolation
-    interpolation: {
-      escapeValue: false, // React already escapes
-    },
-    
-    // React specific
-    react: {
-      useSuspense: false,
-    },
-    
-    // Additional supported languages for expansion
-    supportedLngs: ['en', 'es', 'fr', 'de', 'zh', 'ja', 'ar', 'pt', 'ru', 'it', 'ko', 'hi', 'th', 'vi'],
-    
-    // Namespace configuration
-    defaultNS: 'translation',
-    ns: ['translation'],
-    
-    // Backend configuration for future external loading
-    backend: {
-      loadPath: '/locales/{{lng}}/{{ns}}.json',
-    },
-    
-    // Cache configuration
-    cache: {
-      enabled: true,
-      prefix: 'i18next_res_',
-      expirationTime: 7 * 24 * 60 * 60 * 1000, // 7 days
-    }
-  });
+// HOTFIX: Lazy load optimization - EN first, others stream
+const initI18n = async () => {
+  return i18n
+    .use(LanguageDetector)
+    .use(initReactI18next)
+    .init({
+      resources: {
+        en: resources.en, // Load English immediately
+      },
+      fallbackLng: 'en',
+      lng: 'en', // Start with English to prevent loading delays
+      debug: false, // Disable debug for performance
+      
+      // Optimized detection - priority to fast methods
+      detection: {
+        order: ['localStorage', 'navigator', 'htmlTag'],
+        caches: ['localStorage'],
+        lookupLocalStorage: 'i18nextLng',
+      },
+      
+      // Performance optimizations
+      interpolation: {
+        escapeValue: false,
+      },
+      
+      react: {
+        useSuspense: false,
+      },
+      
+      // Minimal supported languages for initial load
+      supportedLngs: ['en', 'es', 'fr', 'de', 'zh', 'ja', 'ar'],
+      
+      defaultNS: 'translation',
+      ns: ['translation'],
+    });
+};
+
+// Stream additional languages after initial load
+const loadAdditionalLanguages = () => {
+  setTimeout(() => {
+    // Add other languages progressively
+    const additionalLangs = ['es', 'fr', 'de', 'zh', 'ja', 'ar'];
+    additionalLangs.forEach(lang => {
+      if (resources[lang]) {
+        i18n.addResources(lang, 'translation', resources[lang].translation);
+      }
+    });
+    console.log('🌍 Additional languages loaded');
+  }, 1000);
+};
+
+// Initialize with performance optimization
+initI18n().then(() => {
+  loadAdditionalLanguages();
+}).catch(console.error);
 
 export default i18n;
