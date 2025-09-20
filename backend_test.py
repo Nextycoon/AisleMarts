@@ -1,24 +1,30 @@
 #!/usr/bin/env python3
 """
-Universal Commerce AI Hub Backend Testing Suite
-==============================================
-Comprehensive testing for the AisleMarts Universal Commerce AI Hub backend system.
+AisleMarts Universal Commerce AI Hub - Production Systems Testing
+================================================================
+Comprehensive testing for A/B Testing Framework, Executive Dashboard, 
+and Production Monitoring endpoints for Series A investment readiness.
 
 Test Coverage:
-- Universal Commerce AI Hub endpoints
-- AI Product Recommendations
-- Predictive Analytics
-- System Integration
-- Error handling and performance
+- A/B Testing Framework endpoints
+- Executive Dashboard endpoints  
+- Production Monitoring endpoints
+- Integration Testing
+- Performance Testing
 """
 
 import asyncio
 import aiohttp
 import json
 import time
-from typing import Dict, List, Any
-import os
+import uuid
 from datetime import datetime
+from typing import Dict, List, Any, Optional
+import sys
+import os
+
+# Add backend directory to path for imports
+sys.path.append('/app/backend')
 
 # Get backend URL from environment
 BACKEND_URL = os.getenv('REACT_APP_BACKEND_URL', 'https://lifestyle-universe.preview.emergentagent.com')
