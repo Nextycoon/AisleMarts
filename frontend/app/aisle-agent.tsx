@@ -15,6 +15,7 @@ import { LinearGradient } from 'expo-linear-gradient';
 import { router } from 'expo-router';
 import EnhancedProductCard from '../src/components/EnhancedProductCard';
 import RatesHealthTile from '../components/currency/RatesHealthTile';
+import TabNavigator from './navigation/TabNavigator';
 
 const { width, height } = Dimensions.get('window');
 
