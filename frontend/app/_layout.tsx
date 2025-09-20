@@ -5,14 +5,16 @@ import { View, StyleSheet } from 'react-native';
 import { AuthProvider } from '@/src/context/AuthContext'; 
 import { UserRolesProvider } from '@/src/context/UserRolesContext';
 import { ErrorBoundary } from '../src/components/ErrorBoundary';
-import { AwarenessProvider } from '../lib/awarenessContext';
+// Temporarily disabled due to cache artifact - will re-enable post cache purge
+// import { AwarenessProvider } from '../lib/awarenessContext';
 
 export default function RootLayout() {
   return (
     <View style={styles.container}>
       <StatusBar style="light" backgroundColor="transparent" translucent={true} hidden={false} />
       <ErrorBoundary>
-        <AwarenessProvider>
+        {/* Temporarily disabled - cache purge in progress */}
+        {/* <AwarenessProvider> */}
           <AuthProvider>
             <UserRolesProvider>
               <Stack 
@@ -24,7 +26,7 @@ export default function RootLayout() {
               />
             </UserRolesProvider>
           </AuthProvider>
-        </AwarenessProvider>
+        {/* </AwarenessProvider> */}
       </ErrorBoundary>
     </View>
   );
