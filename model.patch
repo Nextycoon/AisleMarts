@@ -1,100 +1,172 @@
 diff --git a/frontend/app/_layout.tsx b/frontend/app/_layout.tsx
-index ba212e9..d2adb49 100644
+index bac82dba..9fe79f7a 100644
 --- a/frontend/app/_layout.tsx
 +++ b/frontend/app/_layout.tsx
-@@ -35,32 +35,39 @@ function AppProviders({ children }: { children: React.ReactNode }) {
+@@ -33,39 +33,31 @@ function AppProviders({ children }: { children: React.ReactNode }) {
  
  export default function RootLayout() {
    return (
--    <View style={styles.container}>
--      <StatusBar style="light" backgroundColor="transparent" translucent={true} hidden={false} />
--      
--      {/* Digital Lifestyle Universe Badge */}
--      <View style={styles.networkBadge}>
--        <Text style={styles.networkText}>
--          🌍 AisleMarts • The Digital Lifestyle Universe
--        </Text>
-+    <GlobalLanguageProvider>
-+      <View style={styles.container}>
-+        {/* Language Switcher - Global Access */}
-+        <View style={styles.languageToggle}>
-+          <LanguageSwitcher compact={true} />
-+        </View>
-+        
-+        <StatusBar style="light" backgroundColor="transparent" translucent={true} hidden={false} />
-+        
-+        {/* Digital Lifestyle Universe Badge */}
-+        <View style={styles.networkBadge}>
-+          <Text style={styles.networkText}>
-+            🌍 AisleMarts • The Digital Lifestyle Universe
-+          </Text>
-+        </View>
-+        
-+        <ErrorBoundary>
-+          <AppProviders>
-+            <AuthProvider>
-+              <UserRolesProvider>
-+                <Stack 
-+                  screenOptions={{ 
-+                    headerShown: false,
-+                    contentStyle: styles.screen,
-+                    animation: 'fade',
-+                  }} 
-+                />
-+              </UserRolesProvider>
-+            </AuthProvider>
-+          </AppProviders>
-+        </ErrorBoundary>
-       </View>
--      
--      <ErrorBoundary>
--        <AppProviders>
--          <AuthProvider>
--            <UserRolesProvider>
--              <Stack 
--                screenOptions={{ 
--                  headerShown: false,
--                  contentStyle: styles.screen,
--                  animation: 'fade',
--                }} 
--              />
--            </UserRolesProvider>
--          </AuthProvider>
--        </AppProviders>
--      </ErrorBoundary>
--    </View>
-+    </GlobalLanguageProvider>
+-    <GlobalLanguageProvider>
+-      <View style={styles.container}>
+-        {/* Language Switcher - Global Access */}
+-        <View style={styles.languageToggle}>
+-          <LanguageSwitcher compact={true} />
+-        </View>
+-        
+-        <StatusBar style="light" backgroundColor="transparent" translucent={true} hidden={false} />
+-        
+-        {/* Digital Lifestyle Universe Badge */}
+-        <View style={styles.networkBadge}>
+-          <Text style={styles.networkText}>
+-            🌍 AisleMarts • The Digital Lifestyle Universe
+-          </Text>
+-        </View>
+-        
+-        <ErrorBoundary>
++    <ErrorBoundary>
++      <AuthProvider>
++        <UserRolesProvider>
+           <AppProviders>
+-            <AuthProvider>
+-              <UserRolesProvider>
+-                <Stack 
+-                  screenOptions={{ 
+-                    headerShown: false,
+-                    contentStyle: styles.screen,
+-                    animation: 'fade',
+-                  }} 
+-                />
+-              </UserRolesProvider>
+-            </AuthProvider>
++            <View style={styles.container}>
++              <StatusBar style="light" />
++              <Stack
++                screenOptions={{
++                  headerShown: false,
++                  contentStyle: { backgroundColor: '#0f0f23' },
++                  animation: 'slide_from_right',
++                }}
++              />
++
++              {/* Digital Lifestyle Universe Badge */}
++              <View style={styles.networkBadge}>
++                <Text style={styles.networkText}>
++                  🌍 AisleMarts • The Digital Lifestyle Universe
++                </Text>
++              </View>
++            </View>
+           </AppProviders>
+-        </ErrorBoundary>
+-      </View>
+-    </GlobalLanguageProvider>
++        </UserRolesProvider>
++      </AuthProvider>
++    </ErrorBoundary>
    );
  }
  
-@@ -77,6 +84,12 @@ const styles = StyleSheet.create({
-     margin: 0,
-     padding: 0,
-   },
-+  languageToggle: {
-+    position: 'absolute',
-+    top: 50,
-+    right: 12,
-+    zIndex: 10000,
-+  },
-   networkBadge: {
-     position: 'absolute',
-     right: 12,
 diff --git a/model.patch b/model.patch
-index 7bc4351..e69de29 100644
+index f3716bb0..e69de29b 100644
 --- a/model.patch
 +++ b/model.patch
-@@ -1,13 +0,0 @@
+@@ -1,100 +0,0 @@
 -diff --git a/frontend/app/_layout.tsx b/frontend/app/_layout.tsx
--index 2c83ee5..ba212e9 100644
+-index ba212e9..d2adb49 100644
 ---- a/frontend/app/_layout.tsx
 -+++ b/frontend/app/_layout.tsx
--@@ -5,6 +5,8 @@ import { View, StyleSheet, Text } from 'react-native';
-- import { AuthProvider } from '@/src/context/AuthContext'; 
-- import { UserRolesProvider } from '@/src/context/UserRolesContext';
-- import { ErrorBoundary } from '../src/components/ErrorBoundary';
--+import GlobalLanguageProvider from '../components/GlobalLanguageProvider';
--+import LanguageSwitcher from '../components/LanguageSwitcher';
+-@@ -35,32 +35,39 @@ function AppProviders({ children }: { children: React.ReactNode }) {
 - 
-- // Environment-based Configuration - FULL MODE GO-LIVE with Safety Rails
-- const safeMode = process.env.NEXT_PUBLIC_SAFE_MODE === 'true';
+- export default function RootLayout() {
+-   return (
+--    <View style={styles.container}>
+--      <StatusBar style="light" backgroundColor="transparent" translucent={true} hidden={false} />
+--      
+--      {/* Digital Lifestyle Universe Badge */}
+--      <View style={styles.networkBadge}>
+--        <Text style={styles.networkText}>
+--          🌍 AisleMarts • The Digital Lifestyle Universe
+--        </Text>
+-+    <GlobalLanguageProvider>
+-+      <View style={styles.container}>
+-+        {/* Language Switcher - Global Access */}
+-+        <View style={styles.languageToggle}>
+-+          <LanguageSwitcher compact={true} />
+-+        </View>
+-+        
+-+        <StatusBar style="light" backgroundColor="transparent" translucent={true} hidden={false} />
+-+        
+-+        {/* Digital Lifestyle Universe Badge */}
+-+        <View style={styles.networkBadge}>
+-+          <Text style={styles.networkText}>
+-+            🌍 AisleMarts • The Digital Lifestyle Universe
+-+          </Text>
+-+        </View>
+-+        
+-+        <ErrorBoundary>
+-+          <AppProviders>
+-+            <AuthProvider>
+-+              <UserRolesProvider>
+-+                <Stack 
+-+                  screenOptions={{ 
+-+                    headerShown: false,
+-+                    contentStyle: styles.screen,
+-+                    animation: 'fade',
+-+                  }} 
+-+                />
+-+              </UserRolesProvider>
+-+            </AuthProvider>
+-+          </AppProviders>
+-+        </ErrorBoundary>
+-       </View>
+--      
+--      <ErrorBoundary>
+--        <AppProviders>
+--          <AuthProvider>
+--            <UserRolesProvider>
+--              <Stack 
+--                screenOptions={{ 
+--                  headerShown: false,
+--                  contentStyle: styles.screen,
+--                  animation: 'fade',
+--                }} 
+--              />
+--            </UserRolesProvider>
+--          </AuthProvider>
+--        </AppProviders>
+--      </ErrorBoundary>
+--    </View>
+-+    </GlobalLanguageProvider>
+-   );
+- }
+- 
+-@@ -77,6 +84,12 @@ const styles = StyleSheet.create({
+-     margin: 0,
+-     padding: 0,
+-   },
+-+  languageToggle: {
+-+    position: 'absolute',
+-+    top: 50,
+-+    right: 12,
+-+    zIndex: 10000,
+-+  },
+-   networkBadge: {
+-     position: 'absolute',
+-     right: 12,
+-diff --git a/model.patch b/model.patch
+-index 7bc4351..e69de29 100644
+---- a/model.patch
+-+++ b/model.patch
+-@@ -1,13 +0,0 @@
+--diff --git a/frontend/app/_layout.tsx b/frontend/app/_layout.tsx
+--index 2c83ee5..ba212e9 100644
+----- a/frontend/app/_layout.tsx
+--+++ b/frontend/app/_layout.tsx
+--@@ -5,6 +5,8 @@ import { View, StyleSheet, Text } from 'react-native';
+-- import { AuthProvider } from '@/src/context/AuthContext'; 
+-- import { UserRolesProvider } from '@/src/context/UserRolesContext';
+-- import { ErrorBoundary } from '../src/components/ErrorBoundary';
+--+import GlobalLanguageProvider from '../components/GlobalLanguageProvider';
+--+import LanguageSwitcher from '../components/LanguageSwitcher';
+-- 
+-- // Environment-based Configuration - FULL MODE GO-LIVE with Safety Rails
+-- const safeMode = process.env.NEXT_PUBLIC_SAFE_MODE === 'true';
