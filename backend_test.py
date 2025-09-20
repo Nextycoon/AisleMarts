@@ -1,33 +1,34 @@
 #!/usr/bin/env python3
 """
-AisleMarts Backend Testing Suite - E2EE & KMS Security Systems + Total Domination Features
-========================================================================================
-Comprehensive testing for:
-1. End-to-End Encryption (E2EE) System (/api/e2ee/*)
-2. Key Management System (KMS) (/api/kms/*)
-3. Total Domination Features Integration Verification
-4. System Stability and Performance
+BlueWave Backend Systems Comprehensive Test Suite
+===============================================
+Testing newly implemented BlueWave Family Safety and Business Console systems.
 
-Focus: E2EE security implementation, KMS enterprise key management, router integration, system stability
+Test Coverage:
+1. Family Safety System (/api/family/*)
+2. Business Console System (/api/business/*)
+3. System Integration and Error Handling
 """
 
 import asyncio
 import aiohttp
 import json
 import time
-import os
-from typing import Dict, List, Any
 from datetime import datetime
+from typing import Dict, List, Any, Optional
+import os
 
-# Configuration
-BACKEND_URL = os.getenv('REACT_APP_BACKEND_URL', 'https://bluewave-family.preview.emergentagent.com')
-API_BASE = f"{BACKEND_URL}/api"
+# Get backend URL from environment
+BACKEND_URL = os.getenv('EXPO_PUBLIC_BACKEND_URL', 'https://bluewave-family.preview.emergentagent.com')
+BASE_URL = f"{BACKEND_URL}/api"
 
-class TotalDominationTester:
+class BlueWaveTestSuite:
     def __init__(self):
         self.session = None
         self.test_results = []
-        self.auth_token = None
+        self.total_tests = 0
+        self.passed_tests = 0
+        self.failed_tests = 0
         
     async def setup(self):
         """Initialize test session"""
@@ -36,649 +37,863 @@ class TotalDominationTester:
             headers={'Content-Type': 'application/json'}
         )
         
-    async def cleanup(self):
+    async def teardown(self):
         """Cleanup test session"""
         if self.session:
             await self.session.close()
             
-    def log_result(self, test_name: str, success: bool, details: str = "", response_data: Any = None):
+    def log_test(self, test_name: str, success: bool, details: str = "", response_data: Any = None):
         """Log test result"""
+        self.total_tests += 1
+        if success:
+            self.passed_tests += 1
+            status = "✅ PASS"
+        else:
+            self.failed_tests += 1
+            status = "❌ FAIL"
+            
         result = {
             "test": test_name,
+            "status": status,
             "success": success,
             "details": details,
-            "timestamp": datetime.now().isoformat(),
-            "response_data": response_data
+            "response_data": response_data,
+            "timestamp": datetime.now().isoformat()
         }
         self.test_results.append(result)
-        status = "✅ PASS" if success else "❌ FAIL"
         print(f"{status}: {test_name}")
         if details:
-            print(f"   Details: {details}")
-        if not success and response_data:
-            print(f"   Response: {response_data}")
-        print()
-
-    async def test_endpoint(self, endpoint: str, method: str = "GET", data: Dict = None, 
-                          auth_required: bool = False, expected_status: int = 200) -> Dict:
-        """Generic endpoint testing method"""
-        url = f"{API_BASE}{endpoint}"
-        headers = {}
-        
-        if auth_required and self.auth_token:
-            headers['Authorization'] = f"Bearer {self.auth_token}"
+            print(f"    Details: {details}")
             
+    async def make_request(self, method: str, endpoint: str, data: Dict = None, params: Dict = None) -> tuple:
+        """Make HTTP request and return (success, response_data, status_code)"""
         try:
-            if method == "GET":
-                async with self.session.get(url, headers=headers) as response:
+            url = f"{BASE_URL}{endpoint}"
+            
+            if method.upper() == 'GET':
+                async with self.session.get(url, params=params) as response:
                     response_data = await response.json()
-                    return {
-                        "success": response.status == expected_status,
-                        "status": response.status,
-                        "data": response_data
-                    }
-            elif method == "POST":
-                async with self.session.post(url, headers=headers, json=data) as response:
+                    return response.status < 400, response_data, response.status
+            elif method.upper() == 'POST':
+                async with self.session.post(url, json=data, params=params) as response:
                     response_data = await response.json()
-                    return {
-                        "success": response.status == expected_status,
-                        "status": response.status,
-                        "data": response_data
-                    }
+                    return response.status < 400, response_data, response.status
+            elif method.upper() == 'PUT':
+                async with self.session.put(url, json=data, params=params) as response:
+                    response_data = await response.json()
+                    return response.status < 400, response_data, response.status
+            else:
+                return False, {"error": f"Unsupported method: {method}"}, 400
+                
         except Exception as e:
-            return {
-                "success": False,
-                "status": 0,
-                "data": {"error": str(e)}
-            }
+            return False, {"error": str(e)}, 500
 
     # ============================================================================
-    # ENHANCED FEATURES ROUTER TESTS (/api/enhanced/*)
+    # FAMILY SAFETY SYSTEM TESTS
     # ============================================================================
     
-    async def test_enhanced_features_health(self):
-        """Test Enhanced Features Router health check"""
-        result = await self.test_endpoint("/enhanced/health")
+    async def test_family_safety_health(self):
+        """Test Family Safety system health check"""
+        success, data, status = await self.make_request('GET', '/family/health')
         
-        if result["success"]:
-            data = result["data"]
-            expected_components = ["dynamic_pricing", "llm_router", "trust_scoring", "market_intelligence"]
-            has_components = all(comp in str(data) for comp in expected_components)
+        if success and 'service' in data:
+            self.log_test(
+                "Family Safety Health Check",
+                True,
+                f"Service operational with status: {data.get('status', 'unknown')}",
+                data
+            )
+        else:
+            self.log_test(
+                "Family Safety Health Check",
+                False,
+                f"Health check failed with status {status}: {data}",
+                data
+            )
             
-            self.log_result(
-                "Enhanced Features Health Check",
-                has_components and data.get("status") == "operational",
-                f"Service: {data.get('service', 'unknown')}, Components: {data.get('components', {})}"
-            )
-        else:
-            self.log_result(
-                "Enhanced Features Health Check",
-                False,
-                f"HTTP {result['status']}: {result['data']}"
-            )
-
-    async def test_dynamic_pricing_health(self):
-        """Test Dynamic Pricing AI Engine health"""
-        result = await self.test_endpoint("/enhanced/pricing/health")
-        
-        if result["success"]:
-            data = result["data"]
-            self.log_result(
-                "Dynamic Pricing AI Health",
-                data.get("service") == "dynamic-pricing-ai" and data.get("status") == "operational",
-                f"Accuracy: {data.get('accuracy')}, Response Time: {data.get('response_time')}"
-            )
-        else:
-            self.log_result(
-                "Dynamic Pricing AI Health",
-                False,
-                f"HTTP {result['status']}: {result['data']}"
-            )
-
-    async def test_pricing_recommendation(self):
-        """Test Dynamic Pricing recommendation endpoint"""
+    async def test_screen_time_tracking(self):
+        """Test screen time tracking functionality"""
         test_data = {
-            "product_id": "TEST-PROD-001",
-            "platform": "amazon",
-            "strategy": "competitive",
-            "min_margin": 0.15,
-            "max_discount": 0.30
+            "user_id": "user_test_001",
+            "app_name": "AisleMarts",
+            "minutes": 45,
+            "category": "shopping"
         }
         
-        result = await self.test_endpoint("/enhanced/pricing/recommend", "POST", test_data)
+        success, data, status = await self.make_request('POST', '/family/screen-time/track', test_data)
         
-        if result["success"]:
-            data = result["data"]
-            has_required_fields = all(field in data for field in 
-                ["product_id", "current_price", "recommended_price", "confidence_score"])
+        if success:
+            self.log_test(
+                "Screen Time Tracking",
+                True,
+                f"Successfully tracked 45 minutes for user_test_001",
+                data
+            )
+        else:
+            self.log_test(
+                "Screen Time Tracking",
+                False,
+                f"Screen time tracking failed with status {status}: {data}",
+                data
+            )
             
-            self.log_result(
-                "Dynamic Pricing Recommendation",
-                has_required_fields,
-                f"Price: ${data.get('current_price')} → ${data.get('recommended_price')}, Confidence: {data.get('confidence_score')}"
+    async def test_screen_time_summary(self):
+        """Test screen time summary retrieval"""
+        success, data, status = await self.make_request('GET', '/family/screen-time/user_test_001', params={'period': 'today'})
+        
+        if success:
+            self.log_test(
+                "Screen Time Summary",
+                True,
+                f"Retrieved screen time summary for user_test_001",
+                data
             )
         else:
-            self.log_result(
-                "Dynamic Pricing Recommendation",
+            self.log_test(
+                "Screen Time Summary",
                 False,
-                f"HTTP {result['status']}: {result['data']}"
+                f"Screen time summary failed with status {status}: {data}",
+                data
             )
-
-    async def test_llm_router_health(self):
-        """Test Multi-LLM Router health"""
-        result = await self.test_endpoint("/enhanced/llm-router/health")
-        
-        if result["success"]:
-            data = result["data"]
-            expected_providers = ["openai", "anthropic", "google", "emergent"]
-            has_providers = all(provider in data.get("providers", {}) for provider in expected_providers)
             
-            self.log_result(
-                "Multi-LLM Router Health",
-                has_providers and data.get("status") == "operational",
-                f"Cost Savings: {data.get('cost_savings')}, Total Requests: {data.get('total_requests')}"
-            )
-        else:
-            self.log_result(
-                "Multi-LLM Router Health",
-                False,
-                f"HTTP {result['status']}: {result['data']}"
-            )
-
-    async def test_trust_scoring_health(self):
-        """Test Vendor Trust Scoring Engine health"""
-        result = await self.test_endpoint("/enhanced/trust/health")
+    async def test_screen_time_limit_setting(self):
+        """Test setting screen time limits"""
+        test_data = {
+            "user_id": "user_test_001",
+            "daily_limit_minutes": 120,
+            "set_by_user_id": "parent_test_001"
+        }
         
-        if result["success"]:
-            data = result["data"]
-            self.log_result(
-                "Vendor Trust Scoring Health",
-                data.get("service") == "vendor-trust-engine" and data.get("status") == "operational",
-                f"Vendors Scored: {data.get('vendors_scored')}, Accuracy: {data.get('accuracy')}"
-            )
-        else:
-            self.log_result(
-                "Vendor Trust Scoring Health",
-                False,
-                f"HTTP {result['status']}: {result['data']}"
-            )
-
-    async def test_market_intelligence_health(self):
-        """Test Real-time Market Intelligence health"""
-        result = await self.test_endpoint("/enhanced/market-intel/health")
+        success, data, status = await self.make_request('POST', '/family/screen-time/limit', test_data)
         
-        if result["success"]:
-            data = result["data"]
-            self.log_result(
-                "Market Intelligence Health",
-                data.get("service") == "market-intelligence" and data.get("status") == "operational",
-                f"Data Sources: {data.get('data_sources')}, Markets: {data.get('markets_tracked')}"
+        if success:
+            self.log_test(
+                "Screen Time Limit Setting",
+                True,
+                f"Set 120-minute daily limit for user_test_001",
+                data
             )
         else:
-            self.log_result(
-                "Market Intelligence Health",
+            self.log_test(
+                "Screen Time Limit Setting",
                 False,
-                f"HTTP {result['status']}: {result['data']}"
+                f"Screen time limit setting failed with status {status}: {data}",
+                data
+            )
+            
+    async def test_family_creation(self):
+        """Test family group creation"""
+        test_data = {
+            "parent_user_id": "parent_test_001",
+            "family_name": "Johnson Family"
+        }
+        
+        success, data, status = await self.make_request('POST', '/family/create', test_data)
+        
+        if success:
+            self.log_test(
+                "Family Creation",
+                True,
+                f"Successfully created Johnson Family",
+                data
+            )
+            # Store family_id for subsequent tests
+            if 'family_id' in data:
+                self.test_family_id = data['family_id']
+        else:
+            self.log_test(
+                "Family Creation",
+                False,
+                f"Family creation failed with status {status}: {data}",
+                data
+            )
+            
+    async def test_family_invite_generation(self):
+        """Test family invitation generation"""
+        test_data = {
+            "family_id": getattr(self, 'test_family_id', 'family_test_001'),
+            "inviter_user_id": "parent_test_001",
+            "invite_type": "general"
+        }
+        
+        success, data, status = await self.make_request('POST', '/family/invite/generate', test_data)
+        
+        if success:
+            self.log_test(
+                "Family Invite Generation",
+                True,
+                f"Generated family invite successfully",
+                data
+            )
+            # Store invite code for subsequent tests
+            if 'invite_code' in data:
+                self.test_invite_code = data['invite_code']
+        else:
+            self.log_test(
+                "Family Invite Generation",
+                False,
+                f"Family invite generation failed with status {status}: {data}",
+                data
+            )
+            
+    async def test_family_join(self):
+        """Test joining family with invite code"""
+        test_data = {
+            "invite_code": getattr(self, 'test_invite_code', 'INVITE123'),
+            "user_id": "user_test_002",
+            "user_name": "Emma Johnson",
+            "user_age": 16
+        }
+        
+        success, data, status = await self.make_request('POST', '/family/join', test_data)
+        
+        if success:
+            self.log_test(
+                "Family Join",
+                True,
+                f"Emma Johnson successfully joined family",
+                data
+            )
+        else:
+            self.log_test(
+                "Family Join",
+                False,
+                f"Family join failed with status {status}: {data}",
+                data
+            )
+            
+    async def test_family_dashboard(self):
+        """Test family dashboard retrieval"""
+        family_id = getattr(self, 'test_family_id', 'family_test_001')
+        success, data, status = await self.make_request('GET', f'/family/dashboard/{family_id}', params={'requesting_user_id': 'parent_test_001'})
+        
+        if success:
+            self.log_test(
+                "Family Dashboard",
+                True,
+                f"Retrieved family dashboard for {family_id}",
+                data
+            )
+        else:
+            self.log_test(
+                "Family Dashboard",
+                False,
+                f"Family dashboard failed with status {status}: {data}",
+                data
+            )
+            
+    async def test_purchase_approval_check(self):
+        """Test purchase approval checking"""
+        test_data = {
+            "user_id": "user_test_001",
+            "amount": 89.99,
+            "item_description": "Designer Handbag"
+        }
+        
+        success, data, status = await self.make_request('POST', '/family/purchase/check-approval', test_data)
+        
+        if success:
+            self.log_test(
+                "Purchase Approval Check",
+                True,
+                f"Purchase approval check completed for €89.99 item",
+                data
+            )
+        else:
+            self.log_test(
+                "Purchase Approval Check",
+                False,
+                f"Purchase approval check failed with status {status}: {data}",
+                data
+            )
+            
+    async def test_purchase_approval_request(self):
+        """Test requesting purchase approval"""
+        test_data = {
+            "user_id": "user_test_001",
+            "amount": 89.99,
+            "item_description": "Designer Handbag",
+            "merchant": "LuxeFashion"
+        }
+        
+        success, data, status = await self.make_request('POST', '/family/purchase/request-approval', test_data)
+        
+        if success:
+            self.log_test(
+                "Purchase Approval Request",
+                True,
+                f"Purchase approval requested for €89.99 Designer Handbag",
+                data
+            )
+        else:
+            self.log_test(
+                "Purchase Approval Request",
+                False,
+                f"Purchase approval request failed with status {status}: {data}",
+                data
+            )
+            
+    async def test_safety_insights(self):
+        """Test safety insights generation"""
+        success, data, status = await self.make_request('GET', '/family/insights/user_test_001')
+        
+        if success and 'insights' in data:
+            insights_count = len(data['insights'])
+            self.log_test(
+                "Safety Insights",
+                True,
+                f"Generated {insights_count} safety insights for user_test_001",
+                data
+            )
+        else:
+            self.log_test(
+                "Safety Insights",
+                False,
+                f"Safety insights failed with status {status}: {data}",
+                data
+            )
+            
+    async def test_user_badges(self):
+        """Test user badges retrieval"""
+        success, data, status = await self.make_request('GET', '/family/badges/user_test_001')
+        
+        if success and 'badges' in data:
+            total_badges = data.get('total_badges', 0)
+            earned_badges = data.get('earned_badges', 0)
+            self.log_test(
+                "User Badges",
+                True,
+                f"Retrieved {earned_badges}/{total_badges} badges for user_test_001",
+                data
+            )
+        else:
+            self.log_test(
+                "User Badges",
+                False,
+                f"User badges failed with status {status}: {data}",
+                data
+            )
+            
+    async def test_user_missions(self):
+        """Test user missions retrieval"""
+        success, data, status = await self.make_request('GET', '/family/missions/user_test_001')
+        
+        if success and 'missions' in data:
+            active_missions = data.get('active_missions', 0)
+            self.log_test(
+                "User Missions",
+                True,
+                f"Retrieved {active_missions} active missions for user_test_001",
+                data
+            )
+        else:
+            self.log_test(
+                "User Missions",
+                False,
+                f"User missions failed with status {status}: {data}",
+                data
+            )
+            
+    async def test_family_notifications(self):
+        """Test family notifications retrieval"""
+        success, data, status = await self.make_request('GET', '/family/notifications/user_test_001')
+        
+        if success and 'notifications' in data:
+            total_notifications = data.get('total_notifications', 0)
+            unread_count = data.get('unread_count', 0)
+            self.log_test(
+                "Family Notifications",
+                True,
+                f"Retrieved {total_notifications} notifications ({unread_count} unread) for user_test_001",
+                data
+            )
+        else:
+            self.log_test(
+                "Family Notifications",
+                False,
+                f"Family notifications failed with status {status}: {data}",
+                data
             )
 
     # ============================================================================
-    # BUSINESS TOOLS ROUTER TESTS (/api/business/*)
+    # BUSINESS CONSOLE SYSTEM TESTS
     # ============================================================================
     
-    async def test_business_tools_health(self):
-        """Test Business Tools Router health check"""
-        result = await self.test_endpoint("/business/health")
+    async def test_business_console_health(self):
+        """Test Business Console system health check"""
+        success, data, status = await self.make_request('GET', '/business/health')
         
-        if result["success"]:
-            data = result["data"]
-            expected_components = ["vendor_analytics", "buyer_lifestyle", "compliance_toolkit", "revenue_optimization"]
-            has_components = all(comp in data.get("components", {}) for comp in expected_components)
+        if success and 'service' in data:
+            features_count = len(data.get('features', []))
+            active_businesses = data.get('active_businesses', 0)
+            self.log_test(
+                "Business Console Health Check",
+                True,
+                f"Service operational with {features_count} features, {active_businesses} active businesses",
+                data
+            )
+        else:
+            self.log_test(
+                "Business Console Health Check",
+                False,
+                f"Health check failed with status {status}: {data}",
+                data
+            )
             
-            self.log_result(
-                "Business Tools Health Check",
-                has_components and data.get("status") == "operational",
-                f"Service: {data.get('service')}, Components: {list(data.get('components', {}).keys())}"
-            )
-        else:
-            self.log_result(
-                "Business Tools Health Check",
-                False,
-                f"HTTP {result['status']}: {result['data']}"
-            )
-
-    async def test_vendor_tools_health(self):
-        """Test Vendor Business Tools health"""
-        result = await self.test_endpoint("/business/vendor/health")
+    async def test_business_analytics(self):
+        """Test business analytics retrieval"""
+        success, data, status = await self.make_request('GET', '/business/analytics/business_test_001', params={'period': '7d'})
         
-        if result["success"]:
-            data = result["data"]
-            self.log_result(
-                "Vendor Business Tools Health",
-                data.get("service") == "vendor-business-tools" and data.get("status") == "operational",
-                f"Active Vendors: {data.get('vendors_active')}, Insights: {data.get('insights_generated')}"
+        if success and 'kpis' in data:
+            kpis_count = len(data['kpis'])
+            revenue = data['kpis'].get('revenue', {}).get('value', 0)
+            self.log_test(
+                "Business Analytics",
+                True,
+                f"Retrieved analytics with {kpis_count} KPIs, revenue: €{revenue}",
+                data
             )
         else:
-            self.log_result(
-                "Vendor Business Tools Health",
+            self.log_test(
+                "Business Analytics",
                 False,
-                f"HTTP {result['status']}: {result['data']}"
+                f"Business analytics failed with status {status}: {data}",
+                data
             )
-
-    async def test_buyer_tools_health(self):
-        """Test Buyer Lifestyle Tools health"""
-        result = await self.test_endpoint("/business/buyer/health")
+            
+    async def test_business_alerts(self):
+        """Test business alerts retrieval"""
+        success, data, status = await self.make_request('GET', '/business/alerts/business_test_001')
         
-        if result["success"]:
-            data = result["data"]
-            self.log_result(
-                "Buyer Lifestyle Tools Health",
-                data.get("service") == "buyer-lifestyle-tools" and data.get("status") == "operational",
-                f"Active Users: {data.get('active_users')}, Satisfaction: {data.get('avg_satisfaction')}"
+        if success and 'alerts' in data:
+            total_alerts = data.get('total_alerts', 0)
+            critical_alerts = data.get('critical_alerts', 0)
+            self.log_test(
+                "Business Alerts",
+                True,
+                f"Retrieved {total_alerts} alerts ({critical_alerts} critical) for business_test_001",
+                data
             )
         else:
-            self.log_result(
-                "Buyer Lifestyle Tools Health",
+            self.log_test(
+                "Business Alerts",
                 False,
-                f"HTTP {result['status']}: {result['data']}"
+                f"Business alerts failed with status {status}: {data}",
+                data
             )
-
-    async def test_compliance_health(self):
-        """Test Cross-border Compliance Toolkit health"""
-        result = await self.test_endpoint("/business/compliance/health")
+            
+    async def test_business_products(self):
+        """Test business products catalog retrieval"""
+        success, data, status = await self.make_request('GET', '/business/products/business_test_001', params={'limit': 10, 'offset': 0})
         
-        if result["success"]:
-            data = result["data"]
-            self.log_result(
-                "Cross-border Compliance Health",
-                data.get("service") == "cross-border-compliance" and data.get("status") == "operational",
-                f"Countries: {data.get('countries_covered')}, Accuracy: {data.get('accuracy')}"
+        if success and 'products' in data:
+            total_products = data.get('total_products', 0)
+            products_returned = len(data['products'])
+            self.log_test(
+                "Business Products",
+                True,
+                f"Retrieved {products_returned}/{total_products} products for business_test_001",
+                data
             )
         else:
-            self.log_result(
-                "Cross-border Compliance Health",
+            self.log_test(
+                "Business Products",
                 False,
-                f"HTTP {result['status']}: {result['data']}"
+                f"Business products failed with status {status}: {data}",
+                data
             )
-
-    async def test_revenue_optimization_health(self):
-        """Test Revenue Optimization Suite health"""
-        result = await self.test_endpoint("/business/revenue/health")
+            
+    async def test_create_business_product(self):
+        """Test creating new business product"""
+        test_data = {
+            "title": "Test Product",
+            "description": "A test product for BlueWave testing",
+            "price": 99.99,
+            "currency": "EUR",
+            "category": "Test Category",
+            "images": ["https://example.com/test-image.jpg"],
+            "stock": 50,
+            "sku": "TEST-001"
+        }
         
-        if result["success"]:
-            data = result["data"]
-            self.log_result(
-                "Revenue Optimization Health",
-                data.get("service") == "revenue-optimization" and data.get("status") == "operational",
-                f"Optimizations: {data.get('optimizations_run')}, Avg Improvement: {data.get('avg_improvement')}"
+        success, data, status = await self.make_request('POST', '/business/products', test_data)
+        
+        if success and 'product' in data:
+            product_id = data['product'].get('id', 'unknown')
+            self.log_test(
+                "Create Business Product",
+                True,
+                f"Created product {product_id}: {test_data['title']}",
+                data
             )
         else:
-            self.log_result(
-                "Revenue Optimization Health",
+            self.log_test(
+                "Create Business Product",
                 False,
-                f"HTTP {result['status']}: {result['data']}"
+                f"Product creation failed with status {status}: {data}",
+                data
+            )
+            
+    async def test_business_orders(self):
+        """Test business orders retrieval"""
+        success, data, status = await self.make_request('GET', '/business/orders/business_test_001', params={'limit': 10})
+        
+        if success and 'orders' in data:
+            total_orders = data.get('total_orders', 0)
+            orders_returned = len(data['orders'])
+            self.log_test(
+                "Business Orders",
+                True,
+                f"Retrieved {orders_returned}/{total_orders} orders for business_test_001",
+                data
+            )
+        else:
+            self.log_test(
+                "Business Orders",
+                False,
+                f"Business orders failed with status {status}: {data}",
+                data
+            )
+            
+    async def test_update_order_status(self):
+        """Test updating order status"""
+        test_data = {
+            "order_id": "ORD-8472",
+            "status": "shipped",
+            "tracking_number": "TRK-TEST-001",
+            "notes": "Test shipment update"
+        }
+        
+        success, data, status = await self.make_request('PUT', '/business/orders/ORD-8472', test_data)
+        
+        if success:
+            new_status = data.get('new_status', 'unknown')
+            self.log_test(
+                "Update Order Status",
+                True,
+                f"Updated order ORD-8472 to status: {new_status}",
+                data
+            )
+        else:
+            self.log_test(
+                "Update Order Status",
+                False,
+                f"Order status update failed with status {status}: {data}",
+                data
+            )
+            
+    async def test_business_customers(self):
+        """Test business customers retrieval"""
+        success, data, status = await self.make_request('GET', '/business/customers/business_test_001')
+        
+        if success and 'customers' in data:
+            total_customers = data.get('total_customers', 0)
+            tier_breakdown = data.get('tier_breakdown', {})
+            self.log_test(
+                "Business Customers",
+                True,
+                f"Retrieved {total_customers} customers with tier breakdown: {tier_breakdown}",
+                data
+            )
+        else:
+            self.log_test(
+                "Business Customers",
+                False,
+                f"Business customers failed with status {status}: {data}",
+                data
+            )
+            
+    async def test_business_campaigns(self):
+        """Test business campaigns retrieval"""
+        success, data, status = await self.make_request('GET', '/business/campaigns/business_test_001')
+        
+        if success and 'campaigns' in data:
+            total_campaigns = data.get('total_campaigns', 0)
+            active_campaigns = data.get('active_campaigns', 0)
+            total_budget = data.get('total_budget', 0)
+            self.log_test(
+                "Business Campaigns",
+                True,
+                f"Retrieved {active_campaigns}/{total_campaigns} campaigns, total budget: €{total_budget}",
+                data
+            )
+        else:
+            self.log_test(
+                "Business Campaigns",
+                False,
+                f"Business campaigns failed with status {status}: {data}",
+                data
+            )
+            
+    async def test_create_campaign(self):
+        """Test creating new advertising campaign"""
+        test_data = {
+            "name": "Test Campaign",
+            "type": "conversion",
+            "budget": 500.0,
+            "duration_days": 14,
+            "target_audience": {
+                "age_range": "25-45",
+                "interests": ["fashion", "luxury"],
+                "location": "Germany"
+            },
+            "creative_assets": ["https://example.com/creative1.jpg"]
+        }
+        
+        success, data, status = await self.make_request('POST', '/business/campaigns', test_data)
+        
+        if success and 'campaign' in data:
+            campaign_id = data['campaign'].get('id', 'unknown')
+            self.log_test(
+                "Create Campaign",
+                True,
+                f"Created campaign {campaign_id}: {test_data['name']}",
+                data
+            )
+        else:
+            self.log_test(
+                "Create Campaign",
+                False,
+                f"Campaign creation failed with status {status}: {data}",
+                data
+            )
+            
+    async def test_business_settings(self):
+        """Test business settings retrieval"""
+        success, data, status = await self.make_request('GET', '/business/settings/business_test_001')
+        
+        if success and 'settings' in data:
+            settings = data['settings']
+            verification = settings.get('verification', {})
+            trust_score = verification.get('trust_score', 0)
+            self.log_test(
+                "Business Settings",
+                True,
+                f"Retrieved business settings, trust score: {trust_score}",
+                data
+            )
+        else:
+            self.log_test(
+                "Business Settings",
+                False,
+                f"Business settings failed with status {status}: {data}",
+                data
             )
 
     # ============================================================================
-    # OPERATIONAL SYSTEMS ROUTER TESTS (/api/ops/*)
+    # ERROR HANDLING & EDGE CASES TESTS
     # ============================================================================
     
-    async def test_operational_systems_health(self):
-        """Test Operational Systems Router health check"""
-        result = await self.test_endpoint("/ops/health")
-        
-        if result["success"]:
-            data = result["data"]
-            expected_components = ["e2ee_management", "fraud_prevention", "observability_v2", "cost_optimization"]
-            has_components = all(comp in data.get("components", {}) for comp in expected_components)
-            
-            self.log_result(
-                "Operational Systems Health Check",
-                has_components and data.get("status") == "operational",
-                f"Service: {data.get('service')}, Security Level: {data.get('security_level')}"
-            )
-        else:
-            self.log_result(
-                "Operational Systems Health Check",
-                False,
-                f"HTTP {result['status']}: {result['data']}"
-            )
-
-    async def test_e2ee_health(self):
-        """Test End-to-End Encryption health"""
-        result = await self.test_endpoint("/ops/e2ee/health")
-        
-        if result["success"]:
-            data = result["data"]
-            self.log_result(
-                "E2EE Management Health",
-                data.get("service") == "e2ee-management" and data.get("status") == "operational",
-                f"Encryption: {data.get('encryption_level')}, Standards: {len(data.get('security_standards', []))}"
-            )
-        else:
-            self.log_result(
-                "E2EE Management Health",
-                False,
-                f"HTTP {result['status']}: {result['data']}"
-            )
-
-    async def test_fraud_prevention_health(self):
-        """Test Fraud Prevention AI Engine health"""
-        result = await self.test_endpoint("/ops/fraud/health")
-        
-        if result["success"]:
-            data = result["data"]
-            self.log_result(
-                "Fraud Prevention Health",
-                data.get("service") == "fraud-prevention-ai" and data.get("status") == "operational",
-                f"Accuracy: {data.get('detection_accuracy')}, Fraud Prevented: {data.get('fraud_prevented')}"
-            )
-        else:
-            self.log_result(
-                "Fraud Prevention Health",
-                False,
-                f"HTTP {result['status']}: {result['data']}"
-            )
-
-    async def test_observability_health(self):
-        """Test Production Observability v2 health"""
-        result = await self.test_endpoint("/ops/observability/health")
-        
-        if result["success"]:
-            data = result["data"]
-            self.log_result(
-                "Production Observability Health",
-                data.get("service") == "production-observability-v2" and data.get("status") == "operational",
-                f"Components: {len(data.get('monitoring_components', []))}, Dashboards: {data.get('dashboards')}"
-            )
-        else:
-            self.log_result(
-                "Production Observability Health",
-                False,
-                f"HTTP {result['status']}: {result['data']}"
-            )
-
-    async def test_optimization_health(self):
-        """Test Cost & Performance Optimization health"""
-        result = await self.test_endpoint("/ops/optimization/health")
-        
-        if result["success"]:
-            data = result["data"]
-            self.log_result(
-                "Cost & Performance Optimization Health",
-                data.get("service") == "cost-performance-optimization" and data.get("status") == "operational",
-                f"Monthly Savings: {data.get('monthly_savings')}, Performance Improvements: {data.get('performance_improvements')}"
-            )
-        else:
-            self.log_result(
-                "Cost & Performance Optimization Health",
-                False,
-                f"HTTP {result['status']}: {result['data']}"
-            )
-
-    # ============================================================================
-    # INTERNATIONAL EXPANSION ROUTER TESTS (/api/international/*)
-    # ============================================================================
-    
-    async def test_international_expansion_health(self):
-        """Test International Expansion Router health check"""
-        result = await self.test_endpoint("/international/health")
-        
-        if result["success"]:
-            data = result["data"]
-            expected_components = ["market_expansion", "compliance_engine", "localization", "partnership_management"]
-            has_components = all(comp in data.get("components", {}) for comp in expected_components)
-            
-            self.log_result(
-                "International Expansion Health Check",
-                has_components and data.get("status") == "operational",
-                f"Service: {data.get('service')}, Active Markets: {data.get('global_coverage', {}).get('active_markets')}"
-            )
-        else:
-            self.log_result(
-                "International Expansion Health Check",
-                False,
-                f"HTTP {result['status']}: {result['data']}"
-            )
-
-    async def test_expansion_health(self):
-        """Test Market Expansion health"""
-        result = await self.test_endpoint("/international/expansion/health")
-        
-        if result["success"]:
-            data = result["data"]
-            self.log_result(
-                "Market Expansion Health",
-                data.get("service") == "international-expansion" and data.get("status") == "operational",
-                f"Active Markets: {data.get('active_markets')}, Success Rate: {data.get('success_rate')}"
-            )
-        else:
-            self.log_result(
-                "Market Expansion Health",
-                False,
-                f"HTTP {result['status']}: {result['data']}"
-            )
-
-    async def test_international_compliance_health(self):
-        """Test Regional Compliance Engine health"""
-        result = await self.test_endpoint("/international/compliance/health")
-        
-        if result["success"]:
-            data = result["data"]
-            self.log_result(
-                "Regional Compliance Health",
-                data.get("service") == "regional-compliance" and data.get("status") == "operational",
-                f"Regions: {data.get('regions_covered')}, Compliance Score: {data.get('compliance_score')}"
-            )
-        else:
-            self.log_result(
-                "Regional Compliance Health",
-                False,
-                f"HTTP {result['status']}: {result['data']}"
-            )
-
-    async def test_localization_health(self):
-        """Test Currency & Tax Localization health"""
-        result = await self.test_endpoint("/international/localization/health")
-        
-        if result["success"]:
-            data = result["data"]
-            self.log_result(
-                "Localization Engine Health",
-                data.get("service") == "localization-engine" and data.get("status") == "operational",
-                f"Countries: {data.get('supported_countries')}, Currencies: {data.get('supported_currencies')}"
-            )
-        else:
-            self.log_result(
-                "Localization Engine Health",
-                False,
-                f"HTTP {result['status']}: {result['data']}"
-            )
-
-    async def test_partnerships_health(self):
-        """Test Global Partnership Management health"""
-        result = await self.test_endpoint("/international/partnerships/health")
-        
-        if result["success"]:
-            data = result["data"]
-            self.log_result(
-                "Partnership Management Health",
-                data.get("service") == "partnership-management" and data.get("status") == "operational",
-                f"Active Partnerships: {data.get('active_partnerships')}, Revenue: {data.get('partnership_revenue')}"
-            )
-        else:
-            self.log_result(
-                "Partnership Management Health",
-                False,
-                f"HTTP {result['status']}: {result['data']}"
-            )
-
-    # ============================================================================
-    # SYSTEM INTEGRATION TESTS
-    # ============================================================================
-    
-    async def test_main_health_endpoint(self):
-        """Test main API health endpoint"""
-        result = await self.test_endpoint("/health")
-        
-        if result["success"]:
-            data = result["data"]
-            self.log_result(
-                "Main API Health Check",
-                data.get("ok") == True and "AisleMarts" in data.get("service", ""),
-                f"Service: {data.get('service')}, Status: {data.get('status')}"
-            )
-        else:
-            self.log_result(
-                "Main API Health Check",
-                False,
-                f"HTTP {result['status']}: {result['data']}"
-            )
-
-    async def test_router_accessibility(self):
-        """Test that all routers are accessible and not returning 404s"""
-        router_endpoints = [
-            "/enhanced/health",
-            "/business/health", 
-            "/ops/health",
-            "/international/health"
+    async def test_invalid_endpoints(self):
+        """Test error handling for invalid endpoints"""
+        invalid_endpoints = [
+            '/family/nonexistent',
+            '/business/invalid',
+            '/family/screen-time/invalid_user',
+            '/business/analytics/nonexistent_business'
         ]
         
-        accessible_count = 0
-        for endpoint in router_endpoints:
-            result = await self.test_endpoint(endpoint)
-            if result["success"]:
-                accessible_count += 1
+        for endpoint in invalid_endpoints:
+            success, data, status = await self.make_request('GET', endpoint)
+            
+            # We expect these to fail (404 or similar)
+            if not success and status >= 400:
+                self.log_test(
+                    f"Error Handling - {endpoint}",
+                    True,
+                    f"Correctly returned error status {status}",
+                    data
+                )
+            else:
+                self.log_test(
+                    f"Error Handling - {endpoint}",
+                    False,
+                    f"Expected error but got success or unexpected status {status}",
+                    data
+                )
+                
+    async def test_invalid_data_validation(self):
+        """Test data validation for invalid inputs"""
+        # Test invalid screen time tracking data
+        invalid_data = {
+            "user_id": "",  # Empty user_id
+            "app_name": "AisleMarts",
+            "minutes": -10,  # Negative minutes
+            "category": "invalid_category"  # Invalid category
+        }
         
-        self.log_result(
-            "Router Accessibility Test",
-            accessible_count == len(router_endpoints),
-            f"Accessible routers: {accessible_count}/{len(router_endpoints)}"
-        )
+        success, data, status = await self.make_request('POST', '/family/screen-time/track', invalid_data)
+        
+        if not success and status >= 400:
+            self.log_test(
+                "Data Validation - Invalid Screen Time",
+                True,
+                f"Correctly rejected invalid data with status {status}",
+                data
+            )
+        else:
+            self.log_test(
+                "Data Validation - Invalid Screen Time",
+                False,
+                f"Should have rejected invalid data but got status {status}",
+                data
+            )
+
+    # ============================================================================
+    # PERFORMANCE & CONCURRENT TESTING
+    # ============================================================================
+    
+    async def test_concurrent_requests(self):
+        """Test system performance under concurrent load"""
+        start_time = time.time()
+        
+        # Create 10 concurrent requests to health endpoints
+        tasks = []
+        for i in range(10):
+            tasks.append(self.make_request('GET', '/family/health'))
+            tasks.append(self.make_request('GET', '/business/health'))
+        
+        results = await asyncio.gather(*tasks, return_exceptions=True)
+        
+        end_time = time.time()
+        duration = end_time - start_time
+        
+        successful_requests = sum(1 for result in results if not isinstance(result, Exception) and result[0])
+        total_requests = len(results)
+        
+        if successful_requests >= total_requests * 0.8:  # 80% success rate
+            self.log_test(
+                "Concurrent Requests Performance",
+                True,
+                f"{successful_requests}/{total_requests} requests successful in {duration:.2f}s",
+                {"duration": duration, "success_rate": successful_requests/total_requests}
+            )
+        else:
+            self.log_test(
+                "Concurrent Requests Performance",
+                False,
+                f"Only {successful_requests}/{total_requests} requests successful in {duration:.2f}s",
+                {"duration": duration, "success_rate": successful_requests/total_requests}
+            )
 
     # ============================================================================
     # MAIN TEST EXECUTION
     # ============================================================================
     
     async def run_all_tests(self):
-        """Run all Total Domination feature tests"""
-        print("🚀 Starting AisleMarts Total Domination Features Backend Testing")
+        """Execute all test suites"""
+        print("🚀 Starting BlueWave Backend Systems Comprehensive Test Suite")
+        print(f"🌐 Testing against: {BASE_URL}")
         print("=" * 80)
         
         await self.setup()
         
         try:
-            # Main system health
-            await self.test_main_health_endpoint()
-            await self.test_router_accessibility()
+            # Family Safety System Tests
+            print("\n📱 FAMILY SAFETY SYSTEM TESTS")
+            print("-" * 40)
+            await self.test_family_safety_health()
+            await self.test_screen_time_tracking()
+            await self.test_screen_time_summary()
+            await self.test_screen_time_limit_setting()
+            await self.test_family_creation()
+            await self.test_family_invite_generation()
+            await self.test_family_join()
+            await self.test_family_dashboard()
+            await self.test_purchase_approval_check()
+            await self.test_purchase_approval_request()
+            await self.test_safety_insights()
+            await self.test_user_badges()
+            await self.test_user_missions()
+            await self.test_family_notifications()
             
-            # Enhanced Features Router Tests
-            print("\n🎯 ENHANCED FEATURES ROUTER TESTS")
-            print("-" * 50)
-            await self.test_enhanced_features_health()
-            await self.test_dynamic_pricing_health()
-            await self.test_pricing_recommendation()
-            await self.test_llm_router_health()
-            await self.test_trust_scoring_health()
-            await self.test_market_intelligence_health()
+            # Business Console System Tests
+            print("\n💼 BUSINESS CONSOLE SYSTEM TESTS")
+            print("-" * 40)
+            await self.test_business_console_health()
+            await self.test_business_analytics()
+            await self.test_business_alerts()
+            await self.test_business_products()
+            await self.test_create_business_product()
+            await self.test_business_orders()
+            await self.test_update_order_status()
+            await self.test_business_customers()
+            await self.test_business_campaigns()
+            await self.test_create_campaign()
+            await self.test_business_settings()
             
-            # Business Tools Router Tests
-            print("\n💼 BUSINESS TOOLS ROUTER TESTS")
-            print("-" * 50)
-            await self.test_business_tools_health()
-            await self.test_vendor_tools_health()
-            await self.test_buyer_tools_health()
-            await self.test_compliance_health()
-            await self.test_revenue_optimization_health()
+            # Error Handling & Edge Cases
+            print("\n⚠️ ERROR HANDLING & VALIDATION TESTS")
+            print("-" * 40)
+            await self.test_invalid_endpoints()
+            await self.test_invalid_data_validation()
             
-            # Operational Systems Router Tests
-            print("\n⚙️ OPERATIONAL SYSTEMS ROUTER TESTS")
-            print("-" * 50)
-            await self.test_operational_systems_health()
-            await self.test_e2ee_health()
-            await self.test_fraud_prevention_health()
-            await self.test_observability_health()
-            await self.test_optimization_health()
-            
-            # International Expansion Router Tests
-            print("\n🌍 INTERNATIONAL EXPANSION ROUTER TESTS")
-            print("-" * 50)
-            await self.test_international_expansion_health()
-            await self.test_expansion_health()
-            await self.test_international_compliance_health()
-            await self.test_localization_health()
-            await self.test_partnerships_health()
+            # Performance Tests
+            print("\n⚡ PERFORMANCE & CONCURRENT TESTS")
+            print("-" * 40)
+            await self.test_concurrent_requests()
             
         finally:
-            await self.cleanup()
+            await self.teardown()
+            
+        # Print final results
+        self.print_summary()
         
-        # Generate summary
-        self.generate_summary()
-
-    def generate_summary(self):
-        """Generate test summary"""
-        total_tests = len(self.test_results)
-        passed_tests = sum(1 for result in self.test_results if result["success"])
-        failed_tests = total_tests - passed_tests
-        success_rate = (passed_tests / total_tests * 100) if total_tests > 0 else 0
-        
+    def print_summary(self):
+        """Print comprehensive test summary"""
         print("\n" + "=" * 80)
-        print("🏆 TOTAL DOMINATION FEATURES TEST SUMMARY")
+        print("🏁 BLUEWAVE BACKEND SYSTEMS TEST SUMMARY")
         print("=" * 80)
-        print(f"Total Tests: {total_tests}")
-        print(f"✅ Passed: {passed_tests}")
-        print(f"❌ Failed: {failed_tests}")
-        print(f"📊 Success Rate: {success_rate:.1f}%")
         
-        if failed_tests > 0:
+        success_rate = (self.passed_tests / self.total_tests * 100) if self.total_tests > 0 else 0
+        
+        print(f"📊 OVERALL RESULTS:")
+        print(f"   Total Tests: {self.total_tests}")
+        print(f"   ✅ Passed: {self.passed_tests}")
+        print(f"   ❌ Failed: {self.failed_tests}")
+        print(f"   📈 Success Rate: {success_rate:.1f}%")
+        
+        # Categorize results
+        family_tests = [r for r in self.test_results if 'Family' in r['test'] or 'Screen Time' in r['test'] or 'Safety' in r['test'] or 'Purchase' in r['test'] or 'User' in r['test']]
+        business_tests = [r for r in self.test_results if 'Business' in r['test'] or 'Campaign' in r['test'] or 'Order' in r['test'] or 'Customer' in r['test']]
+        system_tests = [r for r in self.test_results if 'Error' in r['test'] or 'Performance' in r['test'] or 'Concurrent' in r['test'] or 'Validation' in r['test']]
+        
+        print(f"\n📱 FAMILY SAFETY SYSTEM:")
+        family_passed = sum(1 for t in family_tests if t['success'])
+        print(f"   {family_passed}/{len(family_tests)} tests passed ({family_passed/len(family_tests)*100:.1f}%)" if family_tests else "   No tests found")
+        
+        print(f"\n💼 BUSINESS CONSOLE SYSTEM:")
+        business_passed = sum(1 for t in business_tests if t['success'])
+        print(f"   {business_passed}/{len(business_tests)} tests passed ({business_passed/len(business_tests)*100:.1f}%)" if business_tests else "   No tests found")
+        
+        print(f"\n🔧 SYSTEM INTEGRATION:")
+        system_passed = sum(1 for t in system_tests if t['success'])
+        print(f"   {system_passed}/{len(system_tests)} tests passed ({system_passed/len(system_tests)*100:.1f}%)" if system_tests else "   No tests found")
+        
+        # Show failed tests
+        failed_tests = [r for r in self.test_results if not r['success']]
+        if failed_tests:
             print(f"\n❌ FAILED TESTS:")
-            for result in self.test_results:
-                if not result["success"]:
-                    print(f"   • {result['test']}: {result['details']}")
+            for test in failed_tests:
+                print(f"   • {test['test']}: {test['details']}")
         
-        # Router-specific summary
-        router_results = {
-            "Enhanced Features": [r for r in self.test_results if "Enhanced" in r["test"] or "Dynamic" in r["test"] or "LLM" in r["test"] or "Trust" in r["test"] or "Market" in r["test"]],
-            "Business Tools": [r for r in self.test_results if "Business" in r["test"] or "Vendor" in r["test"] or "Buyer" in r["test"] or "Compliance" in r["test"] or "Revenue" in r["test"]],
-            "Operational Systems": [r for r in self.test_results if "Operational" in r["test"] or "E2EE" in r["test"] or "Fraud" in r["test"] or "Observability" in r["test"] or "Optimization" in r["test"]],
-            "International Expansion": [r for r in self.test_results if "International" in r["test"] or "Expansion" in r["test"] or "Regional" in r["test"] or "Localization" in r["test"] or "Partnership" in r["test"]]
-        }
-        
-        print(f"\n📋 ROUTER-SPECIFIC RESULTS:")
-        for router_name, router_tests in router_results.items():
-            if router_tests:
-                router_passed = sum(1 for t in router_tests if t["success"])
-                router_total = len(router_tests)
-                router_rate = (router_passed / router_total * 100) if router_total > 0 else 0
-                status = "✅" if router_rate >= 80 else "⚠️" if router_rate >= 60 else "❌"
-                print(f"   {status} {router_name}: {router_passed}/{router_total} ({router_rate:.1f}%)")
-        
-        print(f"\n🎯 CRITICAL ISSUES IDENTIFIED:")
-        critical_failures = [r for r in self.test_results if not r["success"] and "Health" in r["test"]]
-        if critical_failures:
-            for failure in critical_failures:
-                print(f"   🚨 {failure['test']}: {failure['details']}")
+        # Production readiness assessment
+        print(f"\n🎯 PRODUCTION READINESS ASSESSMENT:")
+        if success_rate >= 95:
+            print("   🟢 EXCELLENT - Production ready with outstanding performance")
+        elif success_rate >= 85:
+            print("   🟡 GOOD - Production ready with minor issues to address")
+        elif success_rate >= 70:
+            print("   🟠 FAIR - Needs improvement before production deployment")
         else:
-            print("   ✅ No critical health check failures detected")
-        
-        print(f"\n🔧 ROUTER IMPORT STATUS:")
-        router_health_tests = [r for r in self.test_results if r["test"].endswith("Health Check")]
-        for test in router_health_tests:
-            status = "✅ LOADED" if test["success"] else "❌ FAILED"
-            print(f"   {status}: {test['test'].replace(' Health Check', '')}")
-        
-        if success_rate >= 90:
-            print(f"\n🎉 EXCELLENT: Total Domination features are fully operational!")
-        elif success_rate >= 80:
-            print(f"\n👍 GOOD: Total Domination features are mostly operational with minor issues")
-        elif success_rate >= 60:
-            print(f"\n⚠️ WARNING: Total Domination features have significant issues requiring attention")
-        else:
-            print(f"\n🚨 CRITICAL: Total Domination features have major failures requiring immediate fix")
+            print("   🔴 POOR - Significant issues require immediate attention")
+            
+        print("\n" + "=" * 80)
 
 async def main():
-    """Main test execution"""
-    tester = TotalDominationTester()
-    await tester.run_all_tests()
+    """Main test execution function"""
+    test_suite = BlueWaveTestSuite()
+    await test_suite.run_all_tests()
 
 if __name__ == "__main__":
     asyncio.run(main())
