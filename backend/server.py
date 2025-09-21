@@ -544,6 +544,10 @@ try:
     from routers.aisle_ai_routes import router as aisle_ai_router
     app.include_router(aisle_ai_router, tags=["aisle_ai"])
     
+    # Import and include Rewards router
+    from routers.rewards_routes import router as rewards_router
+    app.include_router(rewards_router, tags=["rewards"])
+    
     print("✅ UNIVERSAL COMMERCE AI HUB + ALL-IN MICRO-SPRINT + PHASE 2 LUXURY COMMUNICATION SUITE + ADVANCED AI + PERFORMANCE ANALYTICS + AWARENESS ENGINE + INVESTOR DEMO MANAGEMENT + CURRENCY-INFINITY ENGINE + A/B TESTING + EXECUTIVE DASHBOARD + PRODUCTION MONITORING + ENHANCED FEATURES + BUSINESS TOOLS + OPERATIONAL SYSTEMS + INTERNATIONAL EXPANSION + E2EE + KMS + BLUEWAVE FAMILY SAFETY + BUSINESS CONSOLE + TIKTOK SOCIAL COMMERCE + AISLE AI routers loaded successfully")
 except ImportError as e:
     print(f"⚠️ Routers not available: {e}")
