@@ -458,7 +458,7 @@ test_plan:
     implemented: true
     working: true
     file: "/app/backend/services/websocket_service.py, /app/backend/routers/websocket_routes.py"
-    stuck_count: 1
+    stuck_count: 0
     priority: "critical"
     needs_retesting: false
     status_history:
