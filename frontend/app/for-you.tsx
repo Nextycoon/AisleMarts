@@ -7,10 +7,9 @@ import {
   SafeAreaView,
   TouchableOpacity,
   Animated,
-  PanGestureHandler,
-  State,
   ScrollView,
 } from 'react-native';
+import { PanGestureHandler, State } from 'react-native-gesture-handler';
 import { StatusBar } from 'expo-status-bar';
 import { useRouter } from 'expo-router';
 import { Video, ResizeMode } from 'expo-av';
