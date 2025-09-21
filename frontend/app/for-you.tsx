@@ -449,10 +449,12 @@ export default function ForYouScreen() {
 
           {/* Shopping Action - AisleMarts Unique */}
           <TouchableOpacity 
-            style={styles.shoppingButton}
+            style={styles.actionButton}
             onPress={() => setShowProducts(!showProducts)}
           >
-            <Text style={styles.shoppingIcon}>🛍️</Text>
+            <View style={[styles.actionCircle, { backgroundColor: 'rgba(212, 175, 55, 0.3)' }]}>
+              <Text style={styles.actionIcon}>🛍️</Text>
+            </View>
             <Text style={styles.actionText}>{currentVideo.stats.saves.toLocaleString()}</Text>
           </TouchableOpacity>
 
@@ -461,7 +463,9 @@ export default function ForYouScreen() {
             style={styles.actionButton}
             onPress={() => router.push('/cart')}
           >
-            <Text style={styles.actionIcon}>🛒</Text>
+            <View style={[styles.actionCircle, { backgroundColor: 'rgba(212, 175, 55, 0.3)' }]}>
+              <Text style={styles.actionIcon}>🛒</Text>
+            </View>
             <Text style={styles.actionText}>{currentVideo.products.length}</Text>
           </TouchableOpacity>
 
