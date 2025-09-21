@@ -239,11 +239,8 @@ class AisleAIService:
         """
         Localize messages based on template type and language
         """
-        templates = {
-            "shopper_thank_you": {
-                "en": {
-                    "subject": "🛍️ Thank you for your AisleMarts purchase!",
-                    "body": f"""Dear {data.get('name')},
+        def format_shopper_thank_you_body(data):
+            return f"""Dear {data.get('name')},
 
 Thank you for choosing AisleMarts! 🎉
 
@@ -252,14 +249,13 @@ Your order for {data.get('items_count')} items totaling {data.get('currency')} {
 Aisle AI 🤖 is here to help with any questions about your order or to discover more amazing products!
 
 Happy Shopping!
-The AisleMarts Team""",
-                    "whatsapp_text": f"🛍️ Hi {data.get('name')}! Thanks for your AisleMarts purchase of {data.get('currency')} {data.get('order_total')}. Aisle AI 🤖 is here to help! Happy shopping! 🎉"
-                }
-            },
-            "vendor_thank_you": {
-                "en": {
-                    "subject": "🙏 Thank you for serving our AisleMarts customer!",
-                    "body": f"""Dear {data.get('business_name')},
+The AisleMarts Team"""
+
+        def format_shopper_thank_you_whatsapp(data):
+            return f"🛍️ Hi {data.get('name')}! Thanks for your AisleMarts purchase of {data.get('currency')} {data.get('order_total')}. Aisle AI 🤖 is here to help! Happy shopping! 🎉"
+
+        def format_vendor_thank_you_body(data):
+            return f"""Dear {data.get('business_name')},
 
 Thank you for successfully fulfilling an order for {data.get('customer_name')}! 
 
@@ -269,19 +265,21 @@ Your excellent service helps make AisleMarts the preferred shopping destination 
 
 Best regards,
 Aisle AI 🤖
-AisleMarts Team""",
-                    "whatsapp_text": f"🙏 Hello {data.get('business_name')}! Thanks for the great service to our customer. Order: {data.get('currency')} {data.get('order_value')}. - Aisle AI 🤖"
-                }
-            },
-            "vendor_onboarding_email": {
-                "en": f"""Dear {data.get('business_name')},
+AisleMarts Team"""
+
+        def format_vendor_thank_you_whatsapp(data):
+            return f"🙏 Hello {data.get('business_name')}! Thanks for the great service to our customer. Order: {data.get('currency')} {data.get('order_value')}. - Aisle AI 🤖"
+
+        def format_vendor_onboarding_email(data):
+            benefits_text = '\n'.join(data.get('benefits', []))
+            return f"""Dear {data.get('business_name')},
 
 Congratulations on your recent sale of {data.get('currency')} {data.get('order_value')}! 🎉
 
 I'm Aisle AI 🤖, and I'm excited to invite you to join AisleMarts — the fastest-growing online sales platform 🛜!
 
 🌟 Why join AisleMarts?
-{chr(10).join(data.get('benefits', []))}
+{benefits_text}
 
 🚀 Ready to grow your business globally?
 Join thousands of successful merchants already thriving on AisleMarts.
@@ -298,9 +296,9 @@ Your AI Business Companion
 AisleMarts
 
 P.S. Join within 48 hours and get priority onboarding + exclusive launch benefits! ⚡"""
-            },
-            "vendor_onboarding_whatsapp": {
-                "en": f"""🚀 Hello {data.get('business_name')}!
+
+        def format_vendor_onboarding_whatsapp(data):
+            return f"""🚀 Hello {data.get('business_name')}!
 
 Congrats on your {data.get('currency')} {data.get('order_value')} sale! 
 
@@ -311,6 +309,27 @@ Benefits: Global reach, AI insights, auto-localization, integrated logistics, ma
 👉 Join now: {data.get('onboarding_link')}
 
 - Aisle AI 🤖 (Your AI Business Companion)"""
+
+        templates = {
+            "shopper_thank_you": {
+                "en": {
+                    "subject": "🛍️ Thank you for your AisleMarts purchase!",
+                    "body": format_shopper_thank_you_body(data),
+                    "whatsapp_text": format_shopper_thank_you_whatsapp(data)
+                }
+            },
+            "vendor_thank_you": {
+                "en": {
+                    "subject": "🙏 Thank you for serving our AisleMarts customer!",
+                    "body": format_vendor_thank_you_body(data),
+                    "whatsapp_text": format_vendor_thank_you_whatsapp(data)
+                }
+            },
+            "vendor_onboarding_email": {
+                "en": format_vendor_onboarding_email(data)
+            },
+            "vendor_onboarding_whatsapp": {
+                "en": format_vendor_onboarding_whatsapp(data)
             }
         }
         
