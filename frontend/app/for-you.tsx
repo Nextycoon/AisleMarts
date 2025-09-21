@@ -460,7 +460,7 @@ const styles = StyleSheet.create({
   },
   video: {
     width: width,
-    height: height - 100, // Account for tab navigator
+    height: height - 160, // Account for tab navigator (60px) + top navigation (100px)
   },
   swipeUpArea: {
     position: 'absolute',
