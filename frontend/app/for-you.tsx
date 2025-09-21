@@ -416,28 +416,22 @@ export default function ForYouScreen() {
             </View>
           </TouchableOpacity>
 
-          {/* Like Button */}
-          <TouchableOpacity style={styles.actionButton} onPress={handleLike}>
-            <View style={[styles.actionCircle, { backgroundColor: 'rgba(255, 255, 255, 0.2)' }]}>
-              <Text style={styles.actionIcon}>❤️</Text>
-            </View>
-            <Text style={styles.actionText}>{currentVideo.stats.likes.toLocaleString()}</Text>
+          {/* Like Button - Clean TikTok Style */}
+          <TouchableOpacity style={styles.tiktokActionButton} onPress={handleLike}>
+            <Text style={styles.tiktokActionIcon}>🤍</Text>
+            <Text style={styles.tiktokActionText}>{currentVideo.stats.likes.toLocaleString()}</Text>
           </TouchableOpacity>
 
-          {/* Comment Button */}
-          <TouchableOpacity style={styles.actionButton} onPress={handleComment}>
-            <View style={[styles.actionCircle, { backgroundColor: 'rgba(255, 255, 255, 0.2)' }]}>
-              <Text style={styles.actionIcon}>💬</Text>
-            </View>
-            <Text style={styles.actionText}>{currentVideo.stats.comments.toLocaleString()}</Text>
+          {/* Comment Button - Clean TikTok Style */}
+          <TouchableOpacity style={styles.tiktokActionButton} onPress={handleComment}>
+            <Text style={styles.tiktokActionIcon}>💬</Text>
+            <Text style={styles.tiktokActionText}>{currentVideo.stats.comments.toLocaleString()}</Text>
           </TouchableOpacity>
 
-          {/* Share Button */}
-          <TouchableOpacity style={styles.actionButton} onPress={handleShare}>
-            <View style={[styles.actionCircle, { backgroundColor: 'rgba(255, 255, 255, 0.2)' }]}>
-              <Text style={styles.actionIcon}>↗️</Text>
-            </View>
-            <Text style={styles.actionText}>{currentVideo.stats.shares.toLocaleString()}</Text>
+          {/* Share Button - Clean TikTok Style */}
+          <TouchableOpacity style={styles.tiktokActionButton} onPress={handleShare}>
+            <Text style={styles.tiktokActionIcon}>➤</Text>
+            <Text style={styles.tiktokActionText}>{currentVideo.stats.shares.toLocaleString()}</Text>
           </TouchableOpacity>
 
           {/* Save Button */}
