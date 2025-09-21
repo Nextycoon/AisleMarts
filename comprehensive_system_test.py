@@ -14,7 +14,7 @@ from typing import Dict, List, Any, Optional
 import os
 
 # Backend URL from environment
-BACKEND_URL = os.getenv('EXPO_PUBLIC_BACKEND_URL', 'https://smart-shop-rewards.preview.emergentagent.com')
+BACKEND_URL = os.getenv('EXPO_PUBLIC_BACKEND_URL', 'https://unified-retail-ai.preview.emergentagent.com')
 BASE_URL = f"{BACKEND_URL}/api"
 
 class ComprehensiveSystemValidator:

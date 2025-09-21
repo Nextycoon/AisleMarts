@@ -21,7 +21,7 @@ import os
 from datetime import datetime
 
 # Use production URL from frontend/.env
-BACKEND_URL = "https://smart-shop-rewards.preview.emergentagent.com/api"
+BACKEND_URL = "https://unified-retail-ai.preview.emergentagent.com/api"
 
 class NextGenAisleMartsValidator:
     def __init__(self):

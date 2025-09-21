@@ -4,7 +4,7 @@
 
 **Command Executed**: AWARENESS-PERSONALIZED INVESTOR DEMOS (BLUE WAVE)  
 **Completion Date**: June 15, 2025  
-**Environment**: Dev Preview (`https://smart-shop-rewards.preview.emergentagent.com`)  
+**Environment**: Dev Preview (`https://unified-retail-ai.preview.emergentagent.com`)  
 **Status**: All 8 investor bundles provisioned and operational
 
 ---

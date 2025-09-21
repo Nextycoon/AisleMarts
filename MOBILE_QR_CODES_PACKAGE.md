@@ -4,7 +4,7 @@
 
 ### Web Preview (Desktop/Mobile Browser)
 ```
-🌐 Live Preview: https://smart-shop-rewards.preview.emergentagent.com
+🌐 Live Preview: https://unified-retail-ai.preview.emergentagent.com
 ```
 
 ### Mobile App Testing (Expo Go)
