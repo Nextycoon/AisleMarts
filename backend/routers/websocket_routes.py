@@ -180,6 +180,97 @@ async def websocket_notifications_endpoint(websocket: WebSocket, user_id: str):
     finally:
         connection_manager.disconnect(websocket, user_id, connection_id)
 
+# HTTP trigger endpoints for testing WebSocket functionality
+@router.post("/trigger/mission-update")
+async def trigger_mission_update(payload: dict):
+    """
+    🎯 HTTP endpoint to trigger mission update notifications
+    """
+    try:
+        user_id = payload.get("user_id", "test_user")
+        mission_data = payload.get("mission_data", {
+            "mission_id": "daily_streak_001",
+            "progress": 0.8,
+            "reward": "50 AisleCoins",
+            "completion_status": "in_progress"
+        })
+        
+        # Broadcast mission update to user's connections
+        await connection_manager.send_to_user(user_id, {
+            "type": "mission_update",
+            "mission": mission_data,
+            "timestamp": datetime.utcnow().isoformat()
+        })
+        
+        return {
+            "success": True,
+            "message": "Mission update triggered successfully",
+            "user_id": user_id,
+            "mission_data": mission_data
+        }
+    except Exception as e:
+        raise HTTPException(status_code=500, detail=f"Failed to trigger mission update: {str(e)}")
+
+@router.post("/trigger/reward-claimed")
+async def trigger_reward_claimed(payload: dict):
+    """
+    🎁 HTTP endpoint to trigger reward claimed notifications
+    """
+    try:
+        user_id = payload.get("user_id", "test_user")
+        reward_data = payload.get("reward_data", {
+            "reward_type": "AisleCoins",
+            "amount": 100,
+            "source": "Daily Mission Completion",
+            "balance_update": 1250
+        })
+        
+        # Broadcast reward notification to user's connections
+        await connection_manager.send_to_user(user_id, {
+            "type": "reward_claimed",
+            "reward": reward_data,
+            "timestamp": datetime.utcnow().isoformat()
+        })
+        
+        return {
+            "success": True,
+            "message": "Reward claimed notification triggered",
+            "user_id": user_id,
+            "reward_data": reward_data
+        }
+    except Exception as e:
+        raise HTTPException(status_code=500, detail=f"Failed to trigger reward notification: {str(e)}")
+
+@router.post("/trigger/league-advancement")
+async def trigger_league_advancement(payload: dict):
+    """
+    🏆 HTTP endpoint to trigger league advancement notifications
+    """
+    try:
+        user_id = payload.get("user_id", "test_user")
+        league_data = payload.get("league_data", {
+            "old_league": "Silver",
+            "new_league": "Gold",
+            "bonus_reward": "200 BlueWave Points",
+            "next_milestone": "Platinum League"
+        })
+        
+        # Broadcast league advancement to user's connections
+        await connection_manager.send_to_user(user_id, {
+            "type": "league_advancement",
+            "league": league_data,
+            "timestamp": datetime.utcnow().isoformat()
+        })
+        
+        return {
+            "success": True,
+            "message": "League advancement triggered successfully",
+            "user_id": user_id,
+            "league_data": league_data
+        }
+    except Exception as e:
+        raise HTTPException(status_code=500, detail=f"Failed to trigger league advancement: {str(e)}")
+
 @router.websocket("/live/{room_id}")
 async def websocket_live_endpoint(websocket: WebSocket, room_id: str):
     """
