@@ -440,26 +440,22 @@ export default function ForYouScreen() {
             <Text style={styles.actionText}>{currentVideo.stats.saves.toLocaleString()}</Text>
           </TouchableOpacity>
 
-          {/* Shopping Action - AisleMarts Unique */}
+          {/* Shopping Action - AisleMarts Unique Clean Style */}
           <TouchableOpacity 
-            style={styles.actionButton}
+            style={styles.aisleShoppingButton}
             onPress={() => setShowProducts(!showProducts)}
           >
-            <View style={[styles.actionCircle, { backgroundColor: 'rgba(212, 175, 55, 0.3)' }]}>
-              <Text style={styles.actionIcon}>🛍️</Text>
-            </View>
-            <Text style={styles.actionText}>{currentVideo.stats.saves.toLocaleString()}</Text>
+            <Text style={styles.aisleShoppingIcon}>🛍️</Text>
+            <Text style={styles.aisleShoppingText}>{currentVideo.stats.saves.toLocaleString()}</Text>
           </TouchableOpacity>
 
-          {/* Shopping Cart - AisleMarts Unique */}
+          {/* Shopping Cart - AisleMarts Unique Clean Style */}
           <TouchableOpacity 
-            style={styles.actionButton}
+            style={styles.aisleShoppingButton}
             onPress={() => router.push('/cart')}
           >
-            <View style={[styles.actionCircle, { backgroundColor: 'rgba(212, 175, 55, 0.3)' }]}>
-              <Text style={styles.actionIcon}>🛒</Text>
-            </View>
-            <Text style={styles.actionText}>{currentVideo.products.length}</Text>
+            <Text style={styles.aisleShoppingIcon}>🛒</Text>
+            <Text style={styles.aisleShoppingText}>{currentVideo.products.length}</Text>
           </TouchableOpacity>
 
           {/* Music/Sound Button */}
