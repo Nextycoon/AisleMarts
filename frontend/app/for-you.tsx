@@ -712,7 +712,7 @@ const styles = StyleSheet.create({
   // AisleMarts Shopping Button Styles (Clean Golden Style)
   aisleShoppingButton: {
     alignItems: 'center',
-    marginBottom: 18,
+    marginBottom: 12, // Reduced from 18 to match TikTok compact spacing
     width: 48,
     height: 48,
     justifyContent: 'center',
