@@ -267,10 +267,14 @@ export default function ForYouScreen() {
       {/* Left Side - Video Info */}
       <View style={styles.leftSide}>
         <View style={styles.bottomCreatorInfo}>
-          <Text style={styles.creatorName}>
-            {currentVideo.creator.name}
-            {currentVideo.creator.verified && <Text style={styles.verifiedIcon}> ✓</Text>}
-          </Text>
+          <View style={styles.creatorNameContainer}>
+            <Text style={styles.creatorName}>{currentVideo.creator.name}</Text>
+            {currentVideo.creator.verified && (
+              <View style={styles.xVerifiedBadge}>
+                <Text style={styles.xVerifiedCheckmark}>✓</Text>
+              </View>
+            )}
+          </View>
           <Text style={styles.caption}>{currentVideo.caption}</Text>
           <Text style={styles.hashtags}>{currentVideo.hashtags}</Text>
           <View style={styles.musicInfo}>
