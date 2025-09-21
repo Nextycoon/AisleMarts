@@ -15,6 +15,7 @@ import { StatusBar } from 'expo-status-bar';
 import { useRouter } from 'expo-router';
 import { Video, ResizeMode } from 'expo-av';
 import TabNavigator from './navigation/TabNavigator';
+import FloatingAIAssistant from '../src/components/FloatingAIAssistant';
 
 const { width, height } = Dimensions.get('window');
 
