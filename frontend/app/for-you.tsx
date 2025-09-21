@@ -307,6 +307,9 @@ export default function ForYouScreen() {
     <SafeAreaView style={styles.container}>
       <StatusBar style="light" />
       
+      {/* Top Navigation - Explore | Following | For You */}
+      <TopNavigation />
+      
       {/* Video Player */}
       <View style={styles.videoContainer}>
         <Video
