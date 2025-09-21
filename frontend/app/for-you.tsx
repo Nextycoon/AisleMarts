@@ -335,12 +335,7 @@ export default function ForYouScreen() {
           activeOpacity={1}
         />
 
-        {/* Family Safety Badge */}
-        {currentVideo.safety.familySafe && (
-          <View style={styles.safetyBadge}>
-            <Text style={styles.safetyBadgeText}>🛡️ Family Safe</Text>
-          </View>
-        )}
+        {/* Family Safety Badge - Removed from UI, functionality preserved in backend */}
 
         {/* Left Side - Video Info */}
         <View style={styles.leftSide}>
