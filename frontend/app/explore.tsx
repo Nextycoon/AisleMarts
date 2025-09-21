@@ -694,4 +694,9 @@ const styles = StyleSheet.create({
     left: 8,
     right: 8,
   },
+  exploreGrid: {
+    flexDirection: 'row',
+    flexWrap: 'wrap',
+    paddingHorizontal: 16,
+  },
 });
