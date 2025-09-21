@@ -614,10 +614,10 @@ const styles = StyleSheet.create({
   rightSide: {
     position: 'absolute',
     right: 16,
-    bottom: 180,
+    bottom: 80,
     alignItems: 'center',
     justifyContent: 'flex-end',
-    height: 320,
+    height: 280,
     zIndex: 2,
   },
   avatarContainer: {
