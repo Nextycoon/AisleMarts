@@ -79,6 +79,12 @@ export default function ForYouScreen() {
   const translateY = useRef(new Animated.Value(0)).current;
   const api = useTikTokAPI();
   
+  // Full Screen Animation - Hide/Show Top Navigation and Trending on Scroll
+  const scrollY = useRef(new Animated.Value(0)).current;
+  const [isFullScreen, setIsFullScreen] = useState(false);
+  const topNavTranslateY = useRef(new Animated.Value(0)).current;
+  const trendingTranslateY = useRef(new Animated.Value(0)).current;
+  
   // Use TikTok API hook for feed data with mock user ID
   const { data: feedData, loading: isLoading, error, refresh, loadMore } = useForYouFeed('test_user_001', true);
   
