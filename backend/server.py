@@ -548,6 +548,10 @@ try:
     from routers.rewards_routes import router as rewards_router
     app.include_router(rewards_router, tags=["rewards"])
     
+    # Import and include WebSocket router
+    from routers.websocket_routes import router as websocket_router
+    app.include_router(websocket_router, tags=["websockets"])
+    
     print("✅ UNIVERSAL COMMERCE AI HUB + ALL-IN MICRO-SPRINT + PHASE 2 LUXURY COMMUNICATION SUITE + ADVANCED AI + PERFORMANCE ANALYTICS + AWARENESS ENGINE + INVESTOR DEMO MANAGEMENT + CURRENCY-INFINITY ENGINE + A/B TESTING + EXECUTIVE DASHBOARD + PRODUCTION MONITORING + ENHANCED FEATURES + BUSINESS TOOLS + OPERATIONAL SYSTEMS + INTERNATIONAL EXPANSION + E2EE + KMS + BLUEWAVE FAMILY SAFETY + BUSINESS CONSOLE + TIKTOK SOCIAL COMMERCE + AISLE AI routers loaded successfully")
 except ImportError as e:
     print(f"⚠️ Routers not available: {e}")
