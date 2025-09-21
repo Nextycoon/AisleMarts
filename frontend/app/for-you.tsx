@@ -660,6 +660,24 @@ const styles = StyleSheet.create({
     zIndex: 15, // Higher z-index to appear on top of video
   },
   // ==================================================================================
+  // AI ASSISTANT AND BOTTOM NAVIGATION OVERLAYS
+  // ==================================================================================
+  aiAssistantOverlay: {
+    position: 'absolute',
+    top: 50,
+    right: 20,
+    zIndex: 20, // Highest z-index for AI assistant
+  },
+  bottomNavOverlay: {
+    position: 'absolute',
+    bottom: 0,
+    left: 0,
+    right: 0,
+    zIndex: 100, // Highest z-index for navigation
+    backgroundColor: 'rgba(0, 0, 0, 0.9)', // Semi-transparent background
+  },
+
+  // ==================================================================================
   // LUXURY AISLEMARTS WORLD-CLASS ICON DESIGN SYSTEM
   // ==================================================================================
   
