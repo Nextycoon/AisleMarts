@@ -15,6 +15,7 @@ import { useRouter } from 'expo-router';
 import { Video, ResizeMode } from 'expo-av';
 import TabNavigator from './navigation/TabNavigator';
 import TopNavigation from '../src/components/TopNavigation';
+import FloatingAIAssistant from '../src/components/FloatingAIAssistant';
 import { useForYouFeed, useTikTokAPI } from '../src/hooks/useTikTokAPI';
 
 const { width, height } = Dimensions.get('window');
