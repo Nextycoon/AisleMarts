@@ -1,19 +1,15 @@
 #!/usr/bin/env python3
 """
-🎬🚀 FINAL TIKTOK BACKEND VALIDATION - SERIES A PRODUCTION READINESS TEST
-========================================================================
-Comprehensive testing of TikTok-inspired social commerce features and complete BlueWave system health check.
+🤖⚡ AISLE AI SERVICE COMPREHENSIVE BACKEND TESTING
 
-FINAL VALIDATION FOCUS:
-1. TikTok Features Health Check (6 social commerce features)
-2. For You Feed API with family safety filters  
-3. Following Feed API - Content from followed creators
-4. Content Interaction APIs with family moderation
-5. Live Commerce APIs with streaming and product pinning
-6. Discovery & Search APIs with safety filters
-7. Family Safety & Moderation systems
-8. Complete BlueWave System Health Check
-9. Production Readiness Verification
+Testing all Aisle AI endpoints and functionality as requested:
+1. Health Check (/api/aisle-ai/health)
+2. Capabilities (/api/aisle-ai/capabilities) 
+3. AI Chat (/api/aisle-ai/chat)
+4. Purchase Processing (/api/aisle-ai/process-purchase)
+5. Vendor Outreach (/api/aisle-ai/vendor-outreach)
+6. AI Statistics (/api/aisle-ai/stats)
+7. Feedback System (/api/aisle-ai/feedback)
 """
 
 import asyncio
@@ -21,12 +17,10 @@ import aiohttp
 import json
 import time
 from datetime import datetime
-from typing import Dict, List, Any, Optional
-import os
+from typing import Dict, List, Any
 
-# Get backend URL from environment
-BACKEND_URL = os.getenv('EXPO_PUBLIC_BACKEND_URL', 'https://bluewave-aisle.preview.emergentagent.com')
-BASE_URL = f"{BACKEND_URL}/api"
+# Backend URL from frontend/.env
+BACKEND_URL = "https://bluewave-aisle.preview.emergentagent.com/api"
 
 class BlueWaveTestSuite:
     def __init__(self):
