@@ -410,7 +410,7 @@ async def unlock_achievement(
 @router.get("/social/activity-feed")
 async def get_social_activity_feed(
     user_id: str = "current_user",
-    limit: int = Field(20, ge=1, le=100)
+    limit: int = Query(20, ge=1, le=100)
 ):
     """
     🔔 Get social activity feed for rewards
