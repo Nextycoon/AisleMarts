@@ -258,6 +258,14 @@ export default function AisleAgentScreen() {
       gradient: ['#fa709a', '#fee140'],
     },
     {
+      icon: '🤖',
+      title: 'AI Super Agent',
+      subtitle: '6 AI capabilities in one interface',
+      onPress: () => router.push('/ai-super-agent'),
+      badge: 'SUPER AI',
+      gradient: ['#667eea', '#764ba2'],
+    },
+    {
       icon: '💰',
       title: '0% Commission',
       subtitle: 'Pay-per-lead only - Keep 100%',
