@@ -23,7 +23,7 @@ from dotenv import load_dotenv
 load_dotenv()
 
 # Get backend URL from environment
-BACKEND_URL = os.getenv('REACT_APP_BACKEND_URL', 'https://bluewave-aisle.preview.emergentagent.com')
+BACKEND_URL = os.getenv('REACT_APP_BACKEND_URL', 'https://smart-shop-rewards.preview.emergentagent.com')
 if not BACKEND_URL.endswith('/api'):
     API_BASE = f"{BACKEND_URL}/api"
 else:

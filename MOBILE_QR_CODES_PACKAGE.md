@@ -4,7 +4,7 @@
 
 ### Web Preview (Desktop/Mobile Browser)
 ```
-🌐 Live Preview: https://bluewave-aisle.preview.emergentagent.com
+🌐 Live Preview: https://smart-shop-rewards.preview.emergentagent.com
 ```
 
 ### Mobile App Testing (Expo Go)
