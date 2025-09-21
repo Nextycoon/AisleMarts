@@ -408,13 +408,30 @@ export default function ForYouScreen() {
             <Text style={styles.actionText}>{currentVideo.stats.saves.toLocaleString()}</Text>
           </TouchableOpacity>
 
-          {/* Shopping Bag */}
+          {/* Shopping Action - AisleMarts Unique */}
           <TouchableOpacity 
             style={styles.shoppingButton}
             onPress={() => setShowProducts(!showProducts)}
           >
             <Text style={styles.shoppingIcon}>🛍️</Text>
+            <Text style={styles.actionText}>{currentVideo.stats.saves.toLocaleString()}</Text>
+          </TouchableOpacity>
+
+          {/* Shopping Cart - AisleMarts Unique */}
+          <TouchableOpacity 
+            style={styles.actionButton}
+            onPress={() => router.push('/cart')}
+          >
+            <Text style={styles.actionIcon}>🛒</Text>
             <Text style={styles.actionText}>{currentVideo.products.length}</Text>
+          </TouchableOpacity>
+
+          {/* Music/Sound Button */}
+          <TouchableOpacity 
+            style={styles.musicButton}
+            onPress={() => console.log('Music pressed:', currentVideo.sound.title)}
+          >
+            <Text style={styles.musicIcon}>🎵</Text>
           </TouchableOpacity>
         </View>
 
