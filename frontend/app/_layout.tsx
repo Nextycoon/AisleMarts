@@ -88,15 +88,7 @@ export default function RootLayout() {
             }}
           />
           
-          {/* Rewards System */}
-          <Stack.Screen 
-            name="rewards" 
-            options={{
-              headerShown: false,
-              presentation: 'card',
-              animation: 'slide_from_right',
-            }}
-          />
+          {/* Rewards System - Note: removed duplicate "rewards" screen to avoid conflicts with /rewards/ directory */}
           <Stack.Screen 
             name="notifications" 
             options={{
