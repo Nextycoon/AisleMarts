@@ -161,13 +161,9 @@ class AisleMartsComprehensiveTester:
         print("\n3️⃣ GLOBAL LANGUAGE SYSTEM - 89 LANGUAGE SUPPORT")
         tests = [
             ("GET", "/global-languages/health", None, 200),
-            ("GET", "/global-languages/supported", None, 200),
-            ("GET", "/global-languages/cultural-adaptation", None, 200),
-            ("POST", "/global-languages/translate", {
-                "text": "Welcome to AisleMarts luxury shopping experience",
-                "target_language": "es",
-                "context": "luxury_commerce"
-            }, 200),
+            ("GET", "/global-languages/all-supported", None, 200),
+            ("GET", "/global-languages/regions", None, 200),
+            ("GET", "/global-languages/analytics", None, 200),
         ]
         
         for method, endpoint, data, expected_status in tests:
