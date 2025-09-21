@@ -365,17 +365,17 @@ export default function ForYouScreen() {
         <TopNavigation />
       </Animated.View>
         
-        {/* Touch Areas for Navigation */}
-        <TouchableOpacity 
-          style={styles.swipeUpArea} 
-          onPress={handleSwipeUp}
-          activeOpacity={1}
-        />
-        <TouchableOpacity 
-          style={styles.swipeDownArea} 
-          onPress={handleSwipeDown}
-          activeOpacity={1}
-        />
+      {/* Touch Areas for Navigation */}
+      <TouchableOpacity 
+        style={styles.swipeUpArea} 
+        onPress={handleSwipeUp}
+        activeOpacity={1}
+      />
+      <TouchableOpacity 
+        style={styles.swipeDownArea} 
+        onPress={handleSwipeDown}
+        activeOpacity={1}
+      />
         <TouchableOpacity 
           style={styles.playPauseArea} 
           onPress={togglePlayPause}
