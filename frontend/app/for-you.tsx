@@ -641,7 +641,7 @@ const styles = StyleSheet.create({
     alignItems: 'center',
     justifyContent: 'flex-end',
     height: 320, // Keep height for all 7 icons
-    zIndex: 2,
+    zIndex: 15, // Higher z-index to appear on top of video
   },
   // ==================================================================================
   // LUXURY AISLEMARTS WORLD-CLASS ICON DESIGN SYSTEM
