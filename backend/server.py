@@ -429,6 +429,9 @@ app.include_router(nearby_router)
 app.include_router(inventory_sync_router)
 app.include_router(pickup_windows_router)
 
+# Include AI Super Agent router
+app.include_router(ai_super_agent_router)
+
 # Include the commerce (federated search) router
 app.include_router(commerce_router)
 
