@@ -241,6 +241,22 @@ export default function AisleAgentScreen() {
       badge: '89 LANGS',
       gradient: ['#667eea', '#764ba2'],
     },
+    {
+      icon: '📱',
+      title: 'Digital Commerce',
+      subtitle: 'Apps, E-books, Software, NFTs',
+      onPress: () => router.push('/digital-commerce'),
+      badge: '22 STORES',
+      gradient: ['#4facfe', '#00f2fe'],
+    },
+    {
+      icon: '🏙️',
+      title: 'City Experience',
+      subtitle: 'Lovable in 4M+ cities',
+      onPress: () => router.push('/city-experience'),
+      badge: 'LOVABLE',
+      gradient: ['#fa709a', '#fee140'],
+    },
   ];
 
   const dashboardStats: DashboardStat[] = [
