@@ -116,7 +116,7 @@ export const oneColorTheme = {
 ## 🚀 **LIVE SYSTEM STATUS**
 
 ### **✅ Frontend (Expo)**
-- **URL**: https://unified-retail-ai.preview.emergentagent.com
+- **URL**: https://aislemart-global.preview.emergentagent.com
 - **Status**: Fully operational with one-color UI
 - **Features**: Role selection, adaptive Aisle AI, federated search
 - **Theme**: Dynamic single-color per user type

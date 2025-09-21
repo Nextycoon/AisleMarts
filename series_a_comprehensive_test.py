@@ -27,7 +27,7 @@ import concurrent.futures
 from dataclasses import dataclass
 
 # Get backend URL from environment
-BACKEND_URL = os.getenv('REACT_APP_BACKEND_URL', 'https://unified-retail-ai.preview.emergentagent.com')
+BACKEND_URL = os.getenv('REACT_APP_BACKEND_URL', 'https://aislemart-global.preview.emergentagent.com')
 API_BASE = f"{BACKEND_URL}/api"
 
 @dataclass

@@ -45,7 +45,7 @@ import os
 import sys
 
 # Get backend URL from environment
-BACKEND_URL = os.getenv('EXPO_PUBLIC_BACKEND_URL', 'https://unified-retail-ai.preview.emergentagent.com')
+BACKEND_URL = os.getenv('EXPO_PUBLIC_BACKEND_URL', 'https://aislemart-global.preview.emergentagent.com')
 API_BASE = f"{BACKEND_URL}/api"
 
 class AisleMartsProductionTester:
