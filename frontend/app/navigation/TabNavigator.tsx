@@ -19,11 +19,13 @@ interface TabItem {
 }
 
 const tabs: TabItem[] = [
-  { name: 'home', icon: '🏠', route: '/for-you', label: 'Home' },
-  { name: 'friends', icon: '👥', route: '/friends', label: 'Friends' },
-  { name: 'create', icon: '➕', route: '/create', label: '' },
-  { name: 'inbox', icon: '✉️', route: '/notifications', label: 'Inbox' },
   { name: 'profile', icon: '👤', route: '/profile', label: 'Profile' },
+  { name: 'aisle', icon: '🛍️', route: '/aisle-agent', label: 'Aisle' },
+  { name: 'inbox', icon: '✉️', route: '/notifications', label: 'Inbox' },
+  { name: 'create', icon: '➕', route: '/create', label: '' },
+  { name: 'brands', icon: '🏷️', route: '/brands', label: 'Brands' },
+  { name: 'friends', icon: '👥', route: '/friends', label: 'Friends' },
+  { name: 'home', icon: '🏠', route: '/for-you', label: 'Home' },
 ];
 
 export default function TabNavigator() {
