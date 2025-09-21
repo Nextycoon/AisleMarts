@@ -404,8 +404,7 @@ test_plan:
   current_focus:
     - "Real-time WebSocket Integration and Services"
     - "Frontend Real-time Service Integration"
-  stuck_tasks:
-    - "Real-time WebSocket Integration and Services"
+  stuck_tasks: []
   test_all: false
   test_priority: "websocket_integration_fix"
 
