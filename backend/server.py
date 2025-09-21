@@ -552,7 +552,23 @@ try:
     from routers.websocket_routes import router as websocket_router
     app.include_router(websocket_router, prefix="/api", tags=["websockets"])
     
-    print("✅ UNIVERSAL COMMERCE AI HUB + ALL-IN MICRO-SPRINT + PHASE 2 LUXURY COMMUNICATION SUITE + ADVANCED AI + PERFORMANCE ANALYTICS + AWARENESS ENGINE + INVESTOR DEMO MANAGEMENT + CURRENCY-INFINITY ENGINE + A/B TESTING + EXECUTIVE DASHBOARD + PRODUCTION MONITORING + ENHANCED FEATURES + BUSINESS TOOLS + OPERATIONAL SYSTEMS + INTERNATIONAL EXPANSION + E2EE + KMS + BLUEWAVE FAMILY SAFETY + BUSINESS CONSOLE + TIKTOK SOCIAL COMMERCE + AISLE AI routers loaded successfully")
+    # Import and include Advanced Features - Next Generation
+    from routers.voice_ai_routes import router as voice_ai_router
+    app.include_router(voice_ai_router, prefix="/api", tags=["voice_ai"])
+    
+    from routers.ar_visualization_routes import router as ar_visualization_router
+    app.include_router(ar_visualization_router, prefix="/api", tags=["ar_visualization"])
+    
+    from routers.creator_economy_routes import router as creator_economy_router
+    app.include_router(creator_economy_router, prefix="/api", tags=["creator_economy"])
+    
+    from routers.sustainability_routes import router as sustainability_router
+    app.include_router(sustainability_router, prefix="/api", tags=["sustainability"])
+    
+    from routers.premium_membership_routes import router as premium_membership_router
+    app.include_router(premium_membership_router, prefix="/api", tags=["premium_membership"])
+    
+    print("✅ NEXT-GENERATION LUXURY COMMERCE PLATFORM COMPLETE: Universal Commerce AI Hub + WebSocket Real-time + Voice AI Assistant + AR/VR Visualization + Creator Economy + Sustainability ESG + Premium Membership + All Advanced Features Operational")
 except ImportError as e:
     print(f"⚠️ Routers not available: {e}")
 except Exception as e:
