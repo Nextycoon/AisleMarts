@@ -541,87 +541,494 @@ const styles = StyleSheet.create({
   },
 
   // ==================================================================================
-  // AISLEMARTS VERIFICATION & SUBSCRIPTION SYSTEM (BlueWave, GoldWave, GreyWave)
+  // STYLISH MODERN REDESIGN - CREATOR INFO & VERIFICATION SYSTEM
   // ==================================================================================
-  creatorNameContainer: {
+  stylishCreatorNameContainer: {
     flexDirection: 'row',
     alignItems: 'center',
-    marginBottom: 8,
+    marginBottom: 12,
     flexWrap: 'wrap',
+    backgroundColor: 'rgba(0, 0, 0, 0.4)',
+    paddingHorizontal: 16,
+    paddingVertical: 10,
+    borderRadius: 25,
+    borderWidth: 1,
+    borderColor: 'rgba(255, 255, 255, 0.1)',
+    shadowColor: '#000000',
+    shadowOffset: { width: 0, height: 4 },
+    shadowOpacity: 0.3,
+    shadowRadius: 8,
+    elevation: 8,
   },
-  creatorName: {
+  stylishCreatorName: {
+    color: '#FFFFFF',
+    fontSize: 18,
+    fontWeight: '800',
+    textShadowColor: 'rgba(212, 175, 55, 0.4)',
+    textShadowOffset: { width: 0, height: 2 },
+    textShadowRadius: 4,
+    letterSpacing: 0.5,
+  },
+  
+  // Modern Verification Badge System
+  modernVerifiedBadge: {
+    width: 24,
+    height: 24,
+    alignItems: 'center',
+    justifyContent: 'center',
+    marginLeft: 8,
+    shadowOffset: { width: 0, height: 3 },
+    shadowOpacity: 0.6,
+    shadowRadius: 6,
+    elevation: 10,
+  },
+
+  // Modern BlueWave Badge
+  modernbluewaveBadge: {
+    borderRadius: 12,
+  },
+  blueWaveContainer: {
+    width: 24,
+    height: 24,
+    borderRadius: 12,
+    backgroundColor: '#1E90FF',
+    alignItems: 'center',
+    justifyContent: 'center',
+    shadowColor: '#1E90FF',
+    borderWidth: 2,
+    borderColor: 'rgba(255, 255, 255, 0.3)',
+  },
+  modernBlueCheckmark: {
+    color: '#FFFFFF',
+    fontSize: 14,
+    fontWeight: '900',
+    textAlign: 'center',
+  },
+
+  // Modern GoldWave Badge (Square Diamond)
+  moderngoldwaveBadge: {
+    borderRadius: 6,
+  },
+  goldWaveContainer: {
+    width: 24,
+    height: 24,
+    borderRadius: 6,
+    backgroundColor: 'linear-gradient(135deg, #D4AF37 0%, #FFD700 50%, #FFA500 100%)',
+    alignItems: 'center',
+    justifyContent: 'center',
+    shadowColor: '#D4AF37',
+    borderWidth: 2,
+    borderColor: 'rgba(255, 255, 255, 0.4)',
+  },
+  modernGoldIcon: {
     color: '#FFFFFF',
     fontSize: 16,
+    fontWeight: '900',
+    textAlign: 'center',
+    textShadowColor: 'rgba(0, 0, 0, 0.3)',
+    textShadowOffset: { width: 0, height: 1 },
+    textShadowRadius: 2,
+  },
+
+  // Modern GreyWave Badge
+  moderngreywaveBadge: {
+    borderRadius: 12,
+  },
+  greyWaveContainer: {
+    width: 24,
+    height: 24,
+    borderRadius: 12,
+    backgroundColor: '#696969',
+    alignItems: 'center',
+    justifyContent: 'center',
+    shadowColor: '#696969',
+    borderWidth: 2,
+    borderColor: 'rgba(255, 255, 255, 0.3)',
+  },
+  modernGreyCheckmark: {
+    color: '#FFFFFF',
+    fontSize: 14,
+    fontWeight: '900',
+    textAlign: 'center',
+  },
+
+  // Modern Affiliation Badge
+  modernAffiliationBadge: {
+    backgroundColor: 'rgba(212, 175, 55, 0.2)',
+    paddingHorizontal: 12,
+    paddingVertical: 4,
+    borderRadius: 15,
+    marginLeft: 8,
+    borderWidth: 1,
+    borderColor: 'rgba(212, 175, 55, 0.4)',
+  },
+  modernAffiliationText: {
+    color: '#D4AF37',
+    fontSize: 11,
     fontWeight: '700',
+    letterSpacing: 0.3,
+  },
+
+  // Stylish Caption and Content
+  stylishCaption: {
+    color: '#FFFFFF',
+    fontSize: 16,
+    fontWeight: '500',
+    lineHeight: 22,
+    marginBottom: 12,
+    textShadowColor: 'rgba(0, 0, 0, 0.8)',
+    textShadowOffset: { width: 0, height: 2 },
+    textShadowRadius: 4,
+    letterSpacing: 0.3,
+  },
+  stylishHashtags: {
+    color: '#1E90FF',
+    fontSize: 16,
+    fontWeight: '700',
+    marginBottom: 16,
+    textShadowColor: 'rgba(0, 0, 0, 0.8)',
+    textShadowOffset: { width: 0, height: 2 },
+    textShadowRadius: 4,
+    letterSpacing: 0.5,
+  },
+
+  // Modern Music Info with Visualizer
+  modernMusicInfo: {
+    flexDirection: 'row',
+    alignItems: 'center',
+    backgroundColor: 'rgba(0, 0, 0, 0.6)',
+    paddingHorizontal: 16,
+    paddingVertical: 12,
+    borderRadius: 30,
+    alignSelf: 'flex-start',
+    borderWidth: 1,
+    borderColor: 'rgba(255, 255, 255, 0.2)',
+    shadowColor: '#000000',
+    shadowOffset: { width: 0, height: 4 },
+    shadowOpacity: 0.4,
+    shadowRadius: 8,
+    elevation: 10,
+  },
+  musicIconContainer: {
+    width: 28,
+    height: 28,
+    borderRadius: 14,
+    backgroundColor: 'rgba(30, 144, 255, 0.3)',
+    alignItems: 'center',
+    justifyContent: 'center',
+    marginRight: 12,
+  },
+  modernMusicIcon: {
+    fontSize: 16,
+    color: '#1E90FF',
+    fontWeight: '700',
+  },
+  stylishMusicText: {
+    color: '#FFFFFF',
+    fontSize: 14,
+    fontWeight: '600',
+    flex: 1,
     textShadowColor: 'rgba(0, 0, 0, 0.8)',
     textShadowOffset: { width: 0, height: 1 },
     textShadowRadius: 3,
   },
-  
-  // Base AisleMarts Verified Badge
-  aisleMartsVerifiedBadge: {
-    width: 20,
-    height: 20,
-    borderRadius: 10,
+  musicVisualizerContainer: {
+    flexDirection: 'row',
+    alignItems: 'center',
+    marginLeft: 12,
+  },
+  musicBar: {
+    width: 3,
+    backgroundColor: '#1E90FF',
+    marginHorizontal: 1,
+    borderRadius: 2,
+  },
+  bar1: { height: 8 },
+  bar2: { height: 12 },
+  bar3: { height: 6 },
+  bar4: { height: 10 },
+
+  // ==================================================================================
+  // STYLISH MODERN RIGHT-SIDE ACTIONS - PREMIUM REDESIGN
+  // ==================================================================================
+  modernRightSide: {
+    position: 'absolute',
+    right: 16,
+    bottom: 2,
+    alignItems: 'center',
+    justifyContent: 'flex-end',
+    height: 350,
+    zIndex: 15,
+  },
+
+  // Modern Avatar Container
+  modernAvatarContainer: {
+    alignItems: 'center',
+    marginBottom: 16,
+    position: 'relative',
+  },
+  modernAvatar: {
+    width: 56,
+    height: 56,
+    borderRadius: 28,
+    backgroundColor: 'linear-gradient(135deg, #D4AF37 0%, #FFD700 50%, #FFA500 100%)',
     alignItems: 'center',
     justifyContent: 'center',
-    marginLeft: 6,
-    shadowOffset: { width: 0, height: 2 },
-    shadowOpacity: 0.4,
-    shadowRadius: 4,
-    elevation: 6,
-  },
-
-  // BlueWave Badge (Premium Shoppers + Verified Sellers)
-  bluewaveBadge: {
-    backgroundColor: '#1E90FF', // AisleMarts BlueWave color
-    shadowColor: '#1E90FF',
-  },
-  blueWaveCheckmark: {
-    color: '#FFFFFF',
-    fontSize: 12,
-    fontWeight: '900',
-    textAlign: 'center',
-    lineHeight: 14,
-  },
-
-  // GoldWave Badge (Brands & Businesses)
-  goldwaveBadge: {
-    backgroundColor: '#D4AF37', // AisleMarts signature gold
+    borderWidth: 3,
+    borderColor: 'rgba(255, 255, 255, 0.4)',
     shadowColor: '#D4AF37',
-    borderRadius: 4, // Square for brands
+    shadowOffset: { width: 0, height: 6 },
+    shadowOpacity: 0.8,
+    shadowRadius: 12,
+    elevation: 15,
+    position: 'relative',
   },
-  goldWaveIcon: {
+  avatarGlowEffect: {
+    position: 'absolute',
+    width: 66,
+    height: 66,
+    borderRadius: 33,
+    backgroundColor: 'rgba(212, 175, 55, 0.2)',
+    top: -5,
+    left: -5,
+    zIndex: -1,
+  },
+  modernAvatarText: {
     color: '#FFFFFF',
-    fontSize: 12,
+    fontSize: 22,
     fontWeight: '900',
-    textAlign: 'center',
-    lineHeight: 14,
+    textShadowColor: 'rgba(0, 0, 0, 0.4)',
+    textShadowOffset: { width: 0, height: 2 },
+    textShadowRadius: 4,
   },
-
-  // GreyWave Badge (Government/Institutions)
-  greywaveBadge: {
-    backgroundColor: '#696969', // Professional grey
-    shadowColor: '#696969',
+  modernFollowButton: {
+    position: 'absolute',
+    bottom: -8,
+    backgroundColor: 'linear-gradient(135deg, #FF0050 0%, #FF3B30 50%, #DC143C 100%)',
+    width: 28,
+    height: 28,
+    borderRadius: 14,
+    alignItems: 'center',
+    justifyContent: 'center',
+    borderWidth: 3,
+    borderColor: '#FFFFFF',
+    shadowColor: '#FF0050',
+    shadowOffset: { width: 0, height: 4 },
+    shadowOpacity: 0.8,
+    shadowRadius: 8,
+    elevation: 12,
   },
-  greyWaveCheckmark: {
+  modernFollowPlus: {
     color: '#FFFFFF',
-    fontSize: 12,
+    fontSize: 20,
     fontWeight: '900',
-    textAlign: 'center',
-    lineHeight: 14,
-  },
-
-  // Affiliation Tag
-  affiliationTag: {
-    color: '#D4AF37',
-    fontSize: 11,
-    fontWeight: '600',
-    marginLeft: 8,
-    fontStyle: 'italic',
-    textShadowColor: 'rgba(0, 0, 0, 0.8)',
+    textShadowColor: 'rgba(0, 0, 0, 0.5)',
     textShadowOffset: { width: 0, height: 1 },
     textShadowRadius: 2,
+  },
+
+  // Modern Action Button Base
+  modernActionButton: {
+    alignItems: 'center',
+    marginBottom: 14,
+    width: 60,
+    height: 60,
+    justifyContent: 'center',
+  },
+  modernIconContainer: {
+    width: 52,
+    height: 52,
+    borderRadius: 26,
+    backgroundColor: 'rgba(0, 0, 0, 0.4)',
+    alignItems: 'center',
+    justifyContent: 'center',
+    borderWidth: 2,
+    borderColor: 'rgba(255, 255, 255, 0.2)',
+    shadowColor: '#000000',
+    shadowOffset: { width: 0, height: 6 },
+    shadowOpacity: 0.4,
+    shadowRadius: 10,
+    elevation: 12,
+    position: 'relative',
+  },
+
+  // Modern Glow Effects for Each Action
+  modernLikeGlow: {
+    position: 'absolute',
+    width: 62,
+    height: 62,
+    borderRadius: 31,
+    backgroundColor: 'rgba(255, 0, 80, 0.15)',
+    top: -5,
+    left: -5,
+  },
+  modernCommentGlow: {
+    position: 'absolute',
+    width: 62,
+    height: 62,
+    borderRadius: 31,
+    backgroundColor: 'rgba(30, 144, 255, 0.15)',
+    top: -5,
+    left: -5,
+  },
+  modernSaveGlow: {
+    position: 'absolute',
+    width: 62,
+    height: 62,
+    borderRadius: 31,
+    backgroundColor: 'rgba(255, 193, 7, 0.15)',
+    top: -5,
+    left: -5,
+  },
+  modernShareGlow: {
+    position: 'absolute',
+    width: 62,
+    height: 62,
+    borderRadius: 31,
+    backgroundColor: 'rgba(76, 175, 80, 0.15)',
+    top: -5,
+    left: -5,
+  },
+
+  // Modern Action Icons
+  modernLikeIcon: {
+    fontSize: 32,
+    color: '#FFFFFF',
+    textShadowColor: 'rgba(255, 0, 80, 0.8)',
+    textShadowOffset: { width: 0, height: 3 },
+    textShadowRadius: 8,
+  },
+  modernCommentIcon: {
+    fontSize: 28,
+    color: '#FFFFFF',
+    textShadowColor: 'rgba(30, 144, 255, 0.8)',
+    textShadowOffset: { width: 0, height: 3 },
+    textShadowRadius: 8,
+  },
+  modernSaveIcon: {
+    fontSize: 30,
+    color: '#FFFFFF',
+    textShadowColor: 'rgba(255, 193, 7, 0.8)',
+    textShadowOffset: { width: 0, height: 3 },
+    textShadowRadius: 8,
+  },
+  modernShareIcon: {
+    fontSize: 32,
+    color: '#FFFFFF',
+    fontWeight: '700',
+    textShadowColor: 'rgba(76, 175, 80, 0.8)',
+    textShadowOffset: { width: 0, height: 3 },
+    textShadowRadius: 8,
+  },
+
+  // Modern Action Text
+  modernActionText: {
+    color: '#FFFFFF',
+    fontSize: 13,
+    fontWeight: '800',
+    marginTop: 6,
+    textAlign: 'center',
+    textShadowColor: 'rgba(0, 0, 0, 0.9)',
+    textShadowOffset: { width: 0, height: 2 },
+    textShadowRadius: 4,
+    letterSpacing: 0.5,
+  },
+
+  // ==================================================================================
+  // AISLEMARTS SIGNATURE SHOPPING BUTTON - ULTRA PREMIUM REDESIGN
+  // ==================================================================================
+  aisleMartsSignatureButton: {
+    alignItems: 'center',
+    marginBottom: 14,
+    width: 60,
+    height: 60,
+    justifyContent: 'center',
+  },
+  signatureShoppingContainer: {
+    width: 54,
+    height: 54,
+    borderRadius: 27,
+    backgroundColor: 'rgba(212, 175, 55, 0.95)',
+    alignItems: 'center',
+    justifyContent: 'center',
+    borderWidth: 3,
+    borderColor: 'rgba(255, 215, 0, 0.8)',
+    shadowColor: '#D4AF37',
+    shadowOffset: { width: 0, height: 8 },
+    shadowOpacity: 0.9,
+    shadowRadius: 16,
+    elevation: 20,
+    position: 'relative',
+  },
+  signatureGoldenGlow: {
+    position: 'absolute',
+    width: 64,
+    height: 64,
+    borderRadius: 32,
+    backgroundColor: 'rgba(212, 175, 55, 0.3)',
+    top: -5,
+    left: -5,
+  },
+  signatureShoppingIcon: {
+    fontSize: 28,
+    color: '#FFFFFF',
+    fontWeight: '900',
+    textShadowColor: 'rgba(0, 0, 0, 0.6)',
+    textShadowOffset: { width: 0, height: 2 },
+    textShadowRadius: 6,
+  },
+  signatureShoppingText: {
+    color: '#D4AF37',
+    fontSize: 13,
+    fontWeight: '900',
+    marginTop: 6,
+    textAlign: 'center',
+    textShadowColor: 'rgba(0, 0, 0, 0.9)',
+    textShadowOffset: { width: 0, height: 2 },
+    textShadowRadius: 4,
+    letterSpacing: 1,
+  },
+
+  // Modern Music Button
+  modernMusicButton: {
+    alignItems: 'center',
+    marginBottom: 14,
+    width: 54,
+    height: 54,
+    justifyContent: 'center',
+  },
+  modernMusicContainer: {
+    width: 52,
+    height: 52,
+    borderRadius: 26,
+    backgroundColor: 'rgba(0, 0, 0, 0.6)',
+    alignItems: 'center',
+    justifyContent: 'center',
+    borderWidth: 2,
+    borderColor: 'rgba(255, 255, 255, 0.3)',
+    shadowColor: '#FFFFFF',
+    shadowOffset: { width: 0, height: 6 },
+    shadowOpacity: 0.4,
+    shadowRadius: 10,
+    elevation: 12,
+    position: 'relative',
+  },
+  musicButtonGlow: {
+    position: 'absolute',
+    width: 62,
+    height: 62,
+    borderRadius: 31,
+    backgroundColor: 'rgba(255, 255, 255, 0.1)',
+    top: -5,
+    left: -5,
+  },
+  modernMusicButtonIcon: {
+    fontSize: 26,
+    color: '#FFFFFF',
+    fontWeight: '700',
+    textShadowColor: 'rgba(0, 0, 0, 0.7)',
+    textShadowOffset: { width: 0, height: 2 },
+    textShadowRadius: 6,
   },
 
   // ==================================================================================
