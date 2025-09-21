@@ -265,6 +265,23 @@ export default function ForYouScreen() {
         loadMore();
       }
     }
+    
+    // Toggle full screen mode on swipe up - hide top navigation and trending
+    if (!isFullScreen) {
+      setIsFullScreen(true);
+      Animated.parallel([
+        Animated.timing(topNavTranslateY, {
+          toValue: -100,
+          duration: 300,
+          useNativeDriver: true,
+        }),
+        Animated.timing(trendingTranslateY, {
+          toValue: -150,
+          duration: 300,
+          useNativeDriver: true,
+        }),
+      ]).start();
+    }
   };
 
   const handleSwipeDown = () => {
@@ -275,6 +292,23 @@ export default function ForYouScreen() {
       setTimeout(() => {
         videoRefs.current[currentIndex - 1]?.playAsync();
       }, 100);
+    }
+    
+    // Show navigation and trending on swipe down
+    if (isFullScreen) {
+      setIsFullScreen(false);
+      Animated.parallel([
+        Animated.timing(topNavTranslateY, {
+          toValue: 0,
+          duration: 300,
+          useNativeDriver: true,
+        }),
+        Animated.timing(trendingTranslateY, {
+          toValue: 0,
+          duration: 300,
+          useNativeDriver: true,
+        }),
+      ]).start();
     }
   };
 
