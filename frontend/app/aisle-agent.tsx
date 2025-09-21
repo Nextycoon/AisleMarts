@@ -233,6 +233,14 @@ export default function AisleAgentScreen() {
       badge: 'LUXURY',
       gradient: ['#ffecd2', '#fcb69f'],
     },
+    {
+      icon: '🌍',
+      title: 'Global Languages',
+      subtitle: '89 languages worldwide',
+      onPress: () => router.push('/global-languages'),
+      badge: '89 LANGS',
+      gradient: ['#667eea', '#764ba2'],
+    },
   ];
 
   const dashboardStats: DashboardStat[] = [
