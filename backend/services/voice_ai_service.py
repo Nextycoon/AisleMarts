@@ -58,26 +58,121 @@ class VoiceAIService:
             }
     
     async def _speech_to_text(self, audio_data: bytes) -> str:
-        """Convert audio to text (mock implementation)"""
+        """Convert audio to text with global language support (73+ languages)"""
         # In production: Use OpenAI Whisper, Google Speech-to-Text, or Azure Speech
         await asyncio.sleep(0.1)  # Simulate processing time
         
-        # Mock transcripts for demo
-        mock_transcripts = [
+        # Mock transcripts for demo across different languages
+        global_mock_transcripts = [
+            # English
             "Find me luxury watches under $5000",
             "Show me sustainable fashion brands",
             "What's trending in home decor?",
             "I need a gift for my mother's birthday",
-            "Compare iPhone 15 Pro vs Samsung Galaxy S24",
-            "Where can I find organic skincare products?",
-            "Book a virtual shopping appointment",
-            "What are the best deals today?",
-            "I want to return my recent order",
-            "Tell me about the AisleMarts rewards program"
+            
+            # Spanish
+            "Busca relojes de lujo por menos de $5000",
+            "Muéstrame marcas de moda sostenible",
+            "¿Qué está de moda en decoración del hogar?",
+            
+            # French  
+            "Trouve-moi des montres de luxe à moins de 5000 $",
+            "Montre-moi des marques de mode durable",
+            "Qu'est-ce qui est tendance en décoration ?",
+            
+            # German
+            "Finde Luxusuhren unter 5000 $",
+            "Zeige mir nachhaltige Modemarken",
+            "Was ist bei Wohndekor im Trend?",
+            
+            # Chinese
+            "找5000美元以下的奢侈手表",
+            "给我看看可持续时尚品牌",
+            "家居装饰有什么流行趋势？",
+            
+            # Japanese
+            "5000ドル未満の高級時計を探して",
+            "持続可能なファッションブランドを見せて",
+            "ホームデコレーションのトレンドは？",
+            
+            # Arabic (RTL)
+            "اعثر لي على ساعات فاخرة بأقل من 5000 دولار",
+            "أرني علامات الموضة المستدامة",
+            "ما الذي يتجه في ديكور المنزل؟",
+            
+            # Hindi
+            "$5000 से कम की लक्जरी घड़ियां खोजें",
+            "मुझे टिकाऊ फैशन ब्रांड दिखाएं",
+            "होम डेकोर में क्या ट्रेंड है?",
+            
+            # Portuguese
+            "Encontre relógios de luxo por menos de $5000",
+            "Mostre-me marcas de moda sustentável",
+            "O que está em alta na decoração?",
+            
+            # Russian
+            "Найди роскошные часы дешевле $5000",
+            "Покажи мне устойчивые модные бренды", 
+            "Что в тренде в домашнем декоре?",
+            
+            # Korean
+            "5000달러 미만의 럭셔리 시계를 찾아줘",
+            "지속 가능한 패션 브랜드를 보여줘",
+            "홈 데코 트렌드가 뭐야?",
+            
+            # Italian
+            "Trova orologi di lusso sotto i $5000",
+            "Mostrami brand di moda sostenibile",
+            "Cosa va di moda nell'arredamento?",
+            
+            # Dutch
+            "Vind luxe horloges onder $5000",
+            "Toon me duurzame modemerken",
+            "Wat is trendy in woondecoratie?",
+            
+            # Swedish
+            "Hitta lyxklockor under $5000",
+            "Visa hållbara modevarumärken",
+            "Vad trendar inom heminredning?",
+            
+            # Turkish
+            "$5000'ın altında lüks saatler bulun",
+            "Sürdürülebilir moda markalarını gösterin",
+            "Ev dekorasyonunda trend nedir?",
+            
+            # Thai
+            "หานาฬิกาหรูราคาต่ำกว่า $5000",
+            "แสดงแบรนด์แฟชั่นที่ยั่งยืน",
+            "อะไรเป็นเทรนด์ในการตักแต่งบ้าน?",
+            
+            # Vietnamese
+            "Tìm đồng hồ xa xỉ dưới $5000",
+            "Cho xem thương hiệu thời trang bền vững",
+            "Xu hướng trang trí nhà là gì?",
+            
+            # Indonesian
+            "Cari jam tangan mewah di bawah $5000",
+            "Tunjukkan merek fashion berkelanjutan",
+            "Apa yang sedang tren di dekorasi rumah?",
+            
+            # Malay
+            "Cari jam tangan mewah bawah $5000",
+            "Tunjukkan jenama fesyen lestari",
+            "Apa yang trending dalam hiasan rumah?",
+            
+            # Bengali
+            "$5000 এর কম দামে বিলাসবহুল ঘড়ি খুঁজুন",
+            "টেকসই ফ্যাশন ব্র্যান্ড দেখান",
+            "হোম ডেকরে কী ট্রেন্ড আছে?",
+            
+            # Urdu (RTL)
+            "$5000 سے کم میں لکچری گھڑیاں تلاش کریں",
+            "مجھے پائیدار فیشن برانڈز دکھائیں",
+            "گھر کی سجاوٹ میں کیا ٹرینڈ ہے؟"
         ]
         
         import random
-        return random.choice(mock_transcripts)
+        return random.choice(global_mock_transcripts)
     
     async def _analyze_intent(self, transcript: str, user_id: str) -> Dict[str, Any]:
         """Analyze natural language intent"""
