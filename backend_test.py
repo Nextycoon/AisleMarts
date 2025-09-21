@@ -124,14 +124,8 @@ class AisleMartsComprehensiveTester:
         tests = [
             ("GET", "/lead-economy/health", None, 200),
             ("GET", "/lead-economy/packages", None, 200),
-            ("GET", "/lead-economy/ai-qualification", None, 200),
-            ("POST", "/lead-economy/create-lead", {
-                "business_name": "Luxury Fashion Boutique",
-                "category": "fashion",
-                "budget_range": "premium",
-                "target_audience": "luxury_shoppers",
-                "location": "New York, NY"
-            }, 200),
+            ("GET", "/lead-economy/business-model", None, 200),
+            ("GET", "/lead-economy/competitive-analysis", None, 200),
         ]
         
         for method, endpoint, data, expected_status in tests:
