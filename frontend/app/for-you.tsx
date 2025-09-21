@@ -760,6 +760,15 @@ const styles = StyleSheet.create({
     height: 44, // Smaller height
     justifyContent: 'center',
   },
+
+  // Spaced version with increased margin
+  compactActionButtonSpaced: {
+    alignItems: 'center',
+    marginBottom: 16, // Increased spacing from 8 to 16
+    width: 44, // Same width
+    height: 44, // Same height
+    justifyContent: 'center',
+  },
   sharpIconContainer: {
     width: 38, // Smaller container
     height: 38,
