@@ -376,18 +376,18 @@ export default function ForYouScreen() {
         onPress={handleSwipeDown}
         activeOpacity={1}
       />
-        <TouchableOpacity 
-          style={styles.playPauseArea} 
-          onPress={togglePlayPause}
-          activeOpacity={1}
-        />
+      <TouchableOpacity 
+        style={styles.playPauseArea} 
+        onPress={togglePlayPause}
+        activeOpacity={1}
+      />
 
-        {/* Family Safety Badge - Removed from UI, functionality preserved in backend */}
+      {/* Family Safety Badge - Removed from UI, functionality preserved in backend */}
 
-        {/* Left Side - Video Info */}
-        <View style={styles.leftSide}>
-          {/* Creator Info - Moved to Bottom */}
-          <View style={styles.bottomCreatorInfo}>
+      {/* Left Side - Video Info */}
+      <View style={styles.leftSide}>
+        {/* Creator Info - Moved to Bottom */}
+        <View style={styles.bottomCreatorInfo}>
             <Text style={styles.creatorUsername}>
               {currentVideo.creator.username}
               {currentVideo.creator.verified && (
