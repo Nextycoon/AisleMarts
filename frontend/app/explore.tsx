@@ -17,7 +17,17 @@ import TabNavigator from './navigation/TabNavigator';
 import TopNavigation from '../src/components/TopNavigation';
 
 const { width } = Dimensions.get('window');
-const itemWidth = (width - 60) / 2; // 2 columns with margins
+// TikTok-style variable grid layout - Dynamic sizing like reference images
+const getItemDimensions = (index: number) => {
+  const baseWidth = (width - 32) / 3; // 3 columns base
+  const variations = [
+    { width: baseWidth, height: baseWidth * 1.5 }, // Tall rectangle
+    { width: baseWidth, height: baseWidth }, // Square
+    { width: baseWidth * 2 + 8, height: baseWidth }, // Wide rectangle
+    { width: baseWidth, height: baseWidth * 1.2 }, // Medium rectangle
+  ];
+  return variations[index % variations.length];
+};
 
 interface TrendingItem {
   id: string;
