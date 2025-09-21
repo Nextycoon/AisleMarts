@@ -614,10 +614,10 @@ const styles = StyleSheet.create({
   rightSide: {
     position: 'absolute',
     right: 20,
-    bottom: 100,
+    bottom: 120, // Moved lower to match TikTok positioning
     alignItems: 'center',
     justifyContent: 'flex-end',
-    height: 280,
+    height: 320, // Increased height to accommodate all 7 icons
     zIndex: 2,
   },
   avatarContainer: {
