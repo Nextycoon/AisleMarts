@@ -1159,24 +1159,23 @@ const styles = StyleSheet.create({
     fontSize: 16,
   },
   // ==================================================================================
-  // FULL SCREEN VIDEO CONTAINER - EDGE TO EDGE EXPERIENCE
+  // FULL SCREEN BACKGROUND VIDEO - EVERYTHING OVERLAID ON TOP
   // ==================================================================================
-  fullScreenVideoContainer: {
+  fullScreenContainer: {
     flex: 1,
-    position: 'relative',
     backgroundColor: '#000000',
   },
-  fullScreenVideo: {
+  backgroundVideo: {
     position: 'absolute',
     top: 0,
     left: 0,
     width: width,
     height: height,
-    backgroundColor: '#000000',
+    zIndex: 1,
   },
 
   // ==================================================================================
-  // ANIMATED CONTAINERS FOR NAVIGATION ONLY
+  // OVERLAY NAVIGATION - FLOATING ON TOP OF VIDEO
   // ==================================================================================
   animatedTopNav: {
     position: 'absolute',
@@ -1184,6 +1183,7 @@ const styles = StyleSheet.create({
     left: 0,
     right: 0,
     zIndex: 10,
+    backgroundColor: 'rgba(0, 0, 0, 0.3)', // Semi-transparent overlay
   },
 
   // ==================================================================================
