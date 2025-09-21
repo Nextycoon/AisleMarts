@@ -615,9 +615,11 @@ const styles = StyleSheet.create({
   },
   rightSide: {
     position: 'absolute',
-    right: 16,
-    bottom: 120,
+    right: 12,
+    bottom: 140,
     alignItems: 'center',
+    justifyContent: 'space-between',
+    height: 280,
     zIndex: 2,
   },
   avatarContainer: {
