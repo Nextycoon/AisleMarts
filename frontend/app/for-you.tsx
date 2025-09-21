@@ -687,7 +687,7 @@ const styles = StyleSheet.create({
   // Clean TikTok Action Button Styles (No Background Circles)
   tiktokActionButton: {
     alignItems: 'center',
-    marginBottom: 16,
+    marginBottom: 12, // Reduced from 16 to match TikTok compact spacing
     width: 48,
     height: 48,
     justifyContent: 'center',
