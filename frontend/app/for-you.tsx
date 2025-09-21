@@ -847,7 +847,9 @@ const styles = StyleSheet.create({
     marginBottom: 12,
   },
   trendingCreators: {
-    paddingLeft: 20,
+    flexDirection: 'row',
+    paddingHorizontal: 20,
+    paddingVertical: 8,
   },
   creatorItem: {
     alignItems: 'center',
