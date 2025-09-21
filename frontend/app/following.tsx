@@ -350,6 +350,9 @@ export default function FollowingScreen() {
     <SafeAreaView style={styles.container}>
       <StatusBar style="light" />
       
+      {/* Top Navigation - Explore | Following | For You */}
+      <TopNavigation />
+      
       {/* Header */}
       <View style={styles.header}>
         <Text style={styles.headerTitle}>Following</Text>
