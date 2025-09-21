@@ -5,6 +5,7 @@ import {
   Text,
   StyleSheet,
   Dimensions,
+  StatusBar,
 } from 'react-native';
 import { useRouter, usePathname } from 'expo-router';
 
@@ -34,30 +35,52 @@ export default function TopNavigation() {
     router.push(route as any);
   };
 
+  const handleLivePress = () => {
+    router.push('/live-streaming');
+  };
+
+  const handleSearchPress = () => {
+    router.push('/search');
+  };
+
   return (
     <View style={styles.container}>
+      {/* Status Bar */}
+      <StatusBar barStyle="light-content" backgroundColor="#000000" />
+      
       <View style={styles.navBar}>
-        {topNavTabs.map((tab, index) => {
-          const active = isActive(tab.route);
-          
-          return (
-            <TouchableOpacity
-              key={tab.name}
-              style={[
-                styles.navItem,
-                active && styles.navItemActive,
-                { width: width / topNavTabs.length }
-              ]}
-              onPress={() => handleTabPress(tab.route)}
-              activeOpacity={0.7}
-            >
-              <Text style={[styles.navLabel, active && styles.navLabelActive]}>
-                {tab.label}
-              </Text>
-              {active && <View style={styles.activeIndicator} />}
-            </TouchableOpacity>
-          );
-        })}
+        {/* LIVE Button */}
+        <TouchableOpacity style={styles.liveButton} onPress={handleLivePress}>
+          <View style={styles.liveContainer}>
+            <Text style={styles.liveText}>LIVE</Text>
+          </View>
+        </TouchableOpacity>
+
+        {/* Navigation Tabs */}
+        <View style={styles.tabsContainer}>
+          {topNavTabs.map((tab, index) => {
+            const active = isActive(tab.route);
+            
+            return (
+              <TouchableOpacity
+                key={tab.name}
+                style={styles.navItem}
+                onPress={() => handleTabPress(tab.route)}
+                activeOpacity={0.7}
+              >
+                <Text style={[styles.navLabel, active && styles.navLabelActive]}>
+                  {tab.label}
+                </Text>
+                {active && <View style={styles.activeIndicator} />}
+              </TouchableOpacity>
+            );
+          })}
+        </View>
+
+        {/* Search Button */}
+        <TouchableOpacity style={styles.searchButton} onPress={handleSearchPress}>
+          <Text style={styles.searchIcon}>🔍</Text>
+        </TouchableOpacity>
       </View>
     </View>
   );
