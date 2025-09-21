@@ -655,4 +655,48 @@ const styles = StyleSheet.create({
     color: '#666666',
     fontSize: 12,
   },
+  exploreItemContent: {
+    position: 'relative',
+    borderRadius: 12,
+    overflow: 'hidden',
+  },
+  exploreThumbnail: {
+    flex: 1,
+    alignItems: 'center',
+    justifyContent: 'center',
+    borderRadius: 12,
+  },
+  thumbnailText: {
+    fontSize: 32,
+    color: '#FFFFFF',
+  },
+  durationOverlay: {
+    position: 'absolute',
+    bottom: 8,
+    right: 8,
+    backgroundColor: 'rgba(0, 0, 0, 0.7)',
+    paddingHorizontal: 6,
+    paddingVertical: 3,
+    borderRadius: 6,
+  },
+  liveIndicator: {
+    position: 'absolute',
+    top: 8,
+    left: 8,
+    backgroundColor: '#FF3B30',
+    paddingHorizontal: 8,
+    paddingVertical: 4,
+    borderRadius: 12,
+  },
+  liveText: {
+    color: '#FFFFFF',
+    fontSize: 10,
+    fontWeight: '600',
+  },
+  creatorOverlay: {
+    position: 'absolute',
+    bottom: 8,
+    left: 8,
+    right: 8,
+  },
 });
