@@ -110,7 +110,7 @@ class NextGenAisleMartsValidator:
                 "user_id": "test_user_voice_ai",
                 "session_context": {}
             }, 200),
-            ("POST", "/voice-ai/start-session", None, 200),
+            ("POST", "/voice-ai/start-session?user_id=test_user_voice_ai", None, 200),
         ]
         
         for method, endpoint, data, expected_status in tests:
@@ -124,27 +124,23 @@ class NextGenAisleMartsValidator:
         
         tests = [
             ("GET", "/ar-visualization/health", None, 200),
-            ("GET", "/ar-visualization/status", None, 200),
-            ("POST", "/ar-visualization/generate-ar-model", {
-                "product_id": "luxury_handbag_001",
-                "model_type": "3d_mesh",
-                "quality": "high"
-            }, 200),
-            ("GET", "/ar-visualization/ar-models/luxury_handbag_001", None, 200),
-            ("POST", "/ar-visualization/virtual-try-on", {
-                "product_id": "luxury_watch_001",
-                "user_image": "mock_user_image_base64",
-                "body_measurements": {
-                    "wrist_size": "medium"
-                }
-            }, 200),
             ("GET", "/ar-visualization/supported-categories", None, 200),
-            ("POST", "/ar-visualization/room-placement", {
-                "product_id": "luxury_furniture_001",
-                "room_image": "mock_room_image_base64",
-                "placement_coordinates": {"x": 100, "y": 200}
+            ("GET", "/ar-visualization/analytics", None, 200),
+            ("POST", "/ar-visualization/create-session", {
+                "user_id": "test_user_ar",
+                "product_id": "luxury_handbag_001",
+                "device_type": "mobile"
             }, 200),
-            ("GET", "/ar-visualization/analytics", None, 200)
+            ("GET", "/ar-visualization/vr-experience/luxury_handbag_001?experience_type=showroom", None, 200),
+            ("POST", "/ar-visualization/generate-3d-model", {
+                "category": "fashion",
+                "product_name": "Luxury Handbag",
+                "image_urls": [
+                    "https://example.com/img1.jpg",
+                    "https://example.com/img2.jpg", 
+                    "https://example.com/img3.jpg"
+                ]
+            }, 200),
         ]
         
         for method, endpoint, data, expected_status in tests:
@@ -158,32 +154,27 @@ class NextGenAisleMartsValidator:
         
         tests = [
             ("GET", "/creator-economy/health", None, 200),
-            ("GET", "/creator-economy/status", None, 200),
-            ("POST", "/creator-economy/creator/register", {
-                "creator_name": "LuxuryLifestyle_Emma",
-                "email": "emma@luxurylifestyle.com",
-                "category": "fashion",
-                "social_handles": {
+            ("GET", "/creator-economy/tier-requirements", None, 200),
+            ("GET", "/creator-economy/trending-opportunities", None, 200),
+            ("POST", "/creator-economy/create-profile?user_id=test_creator", {
+                "display_name": "LuxuryLifestyle Emma",
+                "bio": "Luxury lifestyle content creator specializing in high-end fashion and beauty",
+                "categories": ["fashion", "beauty"],
+                "social_links": {
                     "instagram": "@luxurylifestyle_emma",
                     "tiktok": "@emma_luxury"
-                }
+                },
+                "experience_level": "intermediate"
             }, 200),
-            ("GET", "/creator-economy/creator/profile/LuxuryLifestyle_Emma", None, 200),
-            ("POST", "/creator-economy/content/create", {
-                "creator_id": "LuxuryLifestyle_Emma",
-                "content_type": "product_showcase",
-                "product_ids": ["luxury_handbag_001", "luxury_watch_001"],
-                "title": "My Top Luxury Picks for Fall 2024"
+            ("POST", "/creator-economy/publish-content?creator_id=test_creator", {
+                "title": "My Top Luxury Picks for Fall 2024",
+                "description": "Showcasing the most elegant pieces for the upcoming season",
+                "type": "video",
+                "category": "fashion",
+                "tags": ["luxury", "fashion", "fall2024"],
+                "featured_products": ["luxury_handbag_001", "luxury_watch_001"],
+                "sponsored": False
             }, 200),
-            ("GET", "/creator-economy/content/trending", None, 200),
-            ("POST", "/creator-economy/collaboration/request", {
-                "creator_id": "LuxuryLifestyle_Emma",
-                "brand_id": "luxury_brand_001",
-                "campaign_type": "product_placement",
-                "budget": 5000
-            }, 200),
-            ("GET", "/creator-economy/analytics/creator/LuxuryLifestyle_Emma", None, 200),
-            ("GET", "/creator-economy/marketplace/opportunities", None, 200)
         ]
         
         for method, endpoint, data, expected_status in tests:
@@ -197,31 +188,25 @@ class NextGenAisleMartsValidator:
         
         tests = [
             ("GET", "/sustainability/health", None, 200),
-            ("GET", "/sustainability/status", None, 200),
-            ("GET", "/sustainability/carbon-footprint/product/luxury_handbag_001", None, 200),
-            ("POST", "/sustainability/carbon-offset/calculate", {
+            ("GET", "/sustainability/sustainability-rankings", None, 200),
+            ("GET", "/sustainability/eco-certifications", None, 200),
+            ("GET", "/sustainability/sustainability-trends", None, 200),
+            ("POST", "/sustainability/calculate-carbon", {
                 "order_id": "order_001",
+                "items": [
+                    {"product_id": "luxury_handbag_001", "category": "fashion", "quantity": 1}
+                ],
                 "shipping_method": "express",
-                "destination": "New York, NY"
+                "shipping_distance": 500.0,
+                "user_preferences": {"eco_friendly": True}
             }, 200),
-            ("GET", "/sustainability/sustainable-brands", None, 200),
-            ("POST", "/sustainability/esg-score/brand", {
-                "brand_id": "luxury_brand_001",
-                "metrics": {
-                    "environmental_score": 85,
-                    "social_score": 90,
-                    "governance_score": 88
-                }
+            ("POST", "/sustainability/purchase-offset", {
+                "carbon_kg": 15.5,
+                "offset_provider": "Carbon Trust",
+                "user_id": "eco_conscious_user_001"
             }, 200),
-            ("GET", "/sustainability/certifications/product/luxury_handbag_001", None, 200),
-            ("POST", "/sustainability/impact-tracking/user", {
-                "user_id": "eco_conscious_user_001",
-                "purchase_data": {
-                    "sustainable_purchases": 15,
-                    "carbon_saved": 45.2
-                }
-            }, 200),
-            ("GET", "/sustainability/green-alternatives/luxury_handbag_001", None, 200)
+            ("GET", "/sustainability/vendor-sustainability/luxury_brand_001", None, 200),
+            ("GET", "/sustainability/sustainability-report/eco_conscious_user_001?period=monthly", None, 200),
         ]
         
         for method, endpoint, data, expected_status in tests:
@@ -235,26 +220,23 @@ class NextGenAisleMartsValidator:
         
         tests = [
             ("GET", "/premium-membership/health", None, 200),
-            ("GET", "/premium-membership/status", None, 200),
             ("GET", "/premium-membership/tiers", None, 200),
-            ("POST", "/premium-membership/subscribe", {
-                "user_id": "premium_user_001",
-                "tier": "platinum",
-                "payment_method": "stripe_pm_123"
+            ("GET", "/premium-membership/exclusive-access", None, 200),
+            ("POST", "/premium-membership/upgrade?user_id=premium_user_001", {
+                "target_tier": "premium",
+                "billing_cycle": "monthly",
+                "payment_method_id": "stripe_pm_123",
+                "promotional_code": None
             }, 200),
-            ("GET", "/premium-membership/benefits/platinum", None, 200),
-            ("POST", "/premium-membership/concierge/request", {
-                "user_id": "premium_user_001",
-                "service_type": "personal_shopping",
-                "request_details": "Looking for luxury evening wear for gala event"
+            ("GET", "/premium-membership/benefits/premium_user_001", None, 200),
+            ("POST", "/premium-membership/process-monthly-benefits?user_id=premium_user_001", None, 200),
+            ("PUT", "/premium-membership/preferences?user_id=premium_user_001", {
+                "communication_preferences": {"email": True, "push": False},
+                "luxury_categories": ["fashion", "jewelry"],
+                "shopping_style": "balanced",
+                "concierge_availability": "business_hours"
             }, 200),
-            ("GET", "/premium-membership/exclusive-products", None, 200),
-            ("POST", "/premium-membership/early-access/reserve", {
-                "user_id": "premium_user_001",
-                "product_id": "limited_edition_001",
-                "quantity": 1
-            }, 200),
-            ("GET", "/premium-membership/analytics/user/premium_user_001", None, 200)
+            ("GET", "/premium-membership/member-analytics/premium_user_001?period=monthly", None, 200),
         ]
         
         for method, endpoint, data, expected_status in tests:
