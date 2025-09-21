@@ -1,19 +1,35 @@
 #!/usr/bin/env python3
 """
-🎯 AisleMarts Rewards System Comprehensive Backend Testing
-BlueWave-themed rewards and gamification system testing
+🚀 FINAL COMPREHENSIVE SYSTEM TESTING - COMPLETE AISLEMARTS PLATFORM
+Backend API Testing for AisleMarts Rewards System and Advanced Features
+
+Testing Focus:
+1. Complete Rewards System (13+ endpoints plus advanced features)
+2. Advanced Analytics (revenue analytics, engagement metrics, real-time features)  
+3. Enhanced Gamification (competitions, achievements, social activity feeds)
+4. Real-time Features (mission progress updates, live notifications)
+5. Integration Validation (all systems working together harmoniously)
 """
 
 import asyncio
 import aiohttp
 import json
+import time
 import os
-from datetime import datetime
+from datetime import datetime, timedelta
 from typing import Dict, List, Any, Optional
+from dotenv import load_dotenv
+
+load_dotenv()
 
 # Get backend URL from environment
 BACKEND_URL = os.getenv('REACT_APP_BACKEND_URL', 'https://bluewave-aisle.preview.emergentagent.com')
-API_BASE = f"{BACKEND_URL}/api"
+if not BACKEND_URL.endswith('/api'):
+    API_BASE = f"{BACKEND_URL}/api"
+else:
+    API_BASE = BACKEND_URL
+
+print(f"🔗 Testing Backend URL: {API_BASE}")
 
 class RewardsSystemTester:
     def __init__(self):
