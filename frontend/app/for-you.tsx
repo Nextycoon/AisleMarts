@@ -669,15 +669,15 @@ const styles = StyleSheet.create({
   },
 
   // ==================================================================================
-  // ELEGANT COMPACT RIGHT-SIDE ACTIONS - ALL 7 ICONS VISIBLE
+  // ELEGANT COMPACT RIGHT-SIDE ACTIONS - ALL 7 ICONS FULLY VISIBLE
   // ==================================================================================
   elegantRightSide: {
     position: 'absolute',
     right: 14,
-    bottom: 80, // Moved up significantly to ensure all 7 icons are visible
+    bottom: 120, // Moved up significantly more to ensure all 7 icons are fully visible
     alignItems: 'center',
     justifyContent: 'flex-end',
-    height: 300, // Increased height to accommodate all 7 icons properly
+    height: 320, // Increased height to ensure all 7 icons fit properly
     zIndex: 15,
   },
 
