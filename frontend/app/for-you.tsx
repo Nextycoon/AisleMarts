@@ -306,9 +306,9 @@ export default function ForYouScreen() {
         </View>
       </View>
 
-      {/* Right Side Actions - Elegant Compact Design */}
-      <View style={styles.elegantRightSide}>
-        {/* Elegant Profile Button - Compact Premium Design */}
+      {/* Right Side Actions - Profile stays, others spaced out */}
+      <View style={styles.elegantRightSideWithSpacing}>
+        {/* Profile Avatar - Keep in same position */}
         <TouchableOpacity 
           style={styles.elegantAvatarContainer}
           onPress={() => router.push(`/profile/${currentVideo.creator.id}`)}
@@ -321,38 +321,37 @@ export default function ForYouScreen() {
           </View>
         </TouchableOpacity>
 
-        {/* Compact Action Icons - Sharp & Organized */}
-        <TouchableOpacity style={styles.compactActionButton} onPress={handleLike}>
+        {/* Other 6 Icons with increased spacing */}
+        <TouchableOpacity style={styles.compactActionButtonSpaced} onPress={handleLike}>
           <View style={styles.sharpIconContainer}>
             <Text style={styles.sharpLikeIcon}>♡</Text>
           </View>
           <Text style={styles.compactActionText}>{currentVideo.stats.likes.toLocaleString()}</Text>
         </TouchableOpacity>
 
-        <TouchableOpacity style={styles.compactActionButton} onPress={handleComment}>
+        <TouchableOpacity style={styles.compactActionButtonSpaced} onPress={handleComment}>
           <View style={styles.sharpIconContainer}>
             <Text style={styles.sharpCommentIcon}>💬</Text>
           </View>
           <Text style={styles.compactActionText}>{currentVideo.stats.comments.toLocaleString()}</Text>
         </TouchableOpacity>
 
-        <TouchableOpacity style={styles.compactActionButton} onPress={() => console.log('Save pressed')}>
+        <TouchableOpacity style={styles.compactActionButtonSpaced} onPress={() => console.log('Save pressed')}>
           <View style={styles.sharpIconContainer}>
             <Text style={styles.sharpSaveIcon}>📌</Text>
           </View>
           <Text style={styles.compactActionText}>{currentVideo.stats.saves.toLocaleString()}</Text>
         </TouchableOpacity>
 
-        <TouchableOpacity style={styles.compactActionButton} onPress={handleShare}>
+        <TouchableOpacity style={styles.compactActionButtonSpaced} onPress={handleShare}>
           <View style={styles.sharpIconContainer}>
             <Text style={styles.sharpShareIcon}>↗</Text>
           </View>
           <Text style={styles.compactActionText}>{currentVideo.stats.shares.toLocaleString()}</Text>
         </TouchableOpacity>
 
-        {/* AisleMarts Signature Shopping - Compact Elegant Design */}
         <TouchableOpacity 
-          style={styles.elegantShoppingButton}
+          style={styles.elegantShoppingButtonSpaced}
           onPress={() => setShowProducts(!showProducts)}
         >
           <View style={styles.elegantShoppingContainer}>
@@ -361,9 +360,9 @@ export default function ForYouScreen() {
           <Text style={styles.elegantShoppingText}>Shop</Text>
         </TouchableOpacity>
 
-        {/* Compact Music Button - Sharp Design */}
+        {/* Music button - positioned to stay above bottom nav */}
         <TouchableOpacity 
-          style={styles.compactMusicButton}
+          style={styles.compactMusicButtonFinal}
           onPress={() => console.log('Music pressed:', currentVideo.sound.title)}
         >
           <View style={styles.sharpMusicContainer}>
