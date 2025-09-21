@@ -1,26 +1,19 @@
 #!/usr/bin/env python3
 """
-🤖⚡ AISLE AI SERVICE COMPREHENSIVE BACKEND TESTING
-
-Testing all Aisle AI endpoints and functionality as requested:
-1. Health Check (/api/aisle-ai/health)
-2. Capabilities (/api/aisle-ai/capabilities) 
-3. AI Chat (/api/aisle-ai/chat)
-4. Purchase Processing (/api/aisle-ai/process-purchase)
-5. Vendor Outreach (/api/aisle-ai/vendor-outreach)
-6. AI Statistics (/api/aisle-ai/stats)
-7. Feedback System (/api/aisle-ai/feedback)
+🎯 AisleMarts Rewards System Comprehensive Backend Testing
+BlueWave-themed rewards and gamification system testing
 """
 
 import asyncio
 import aiohttp
 import json
-import time
+import os
 from datetime import datetime
-from typing import Dict, List, Any
+from typing import Dict, List, Any, Optional
 
-# Backend URL from frontend/.env
-BACKEND_URL = "https://bluewave-aisle.preview.emergentagent.com/api"
+# Get backend URL from environment
+BACKEND_URL = os.getenv('REACT_APP_BACKEND_URL', 'https://bluewave-aisle.preview.emergentagent.com')
+API_BASE = f"{BACKEND_URL}/api"
 
 class AisleAITester:
     def __init__(self):
