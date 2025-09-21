@@ -311,6 +311,25 @@ export default function ForYouScreen() {
       {/* Top Navigation - Explore | Following | For You */}
       <TopNavigation />
       
+      {/* Trending Creators Section - TikTok Style */}
+      <View style={styles.trendingSection}>
+        <Text style={styles.trendingSectionTitle}>Trending AisleMarts Creators</Text>
+        <ScrollView horizontal showsHorizontalScrollIndicator={false} style={styles.trendingCreators}>
+          {mockTrendingCreators.map((creator, index) => (
+            <TouchableOpacity key={index} style={styles.creatorItem}>
+              <View style={styles.creatorAvatar}>
+                <Text style={styles.creatorAvatarText}>{creator.name.charAt(0)}</Text>
+                {creator.isLive && <View style={styles.liveIndicator} />}
+              </View>
+              <Text style={styles.creatorName}>{creator.name}</Text>
+              <TouchableOpacity style={styles.followButton}>
+                <Text style={styles.followButtonText}>Follow</Text>
+              </TouchableOpacity>
+            </TouchableOpacity>
+          ))}
+        </ScrollView>
+      </View>
+      
       {/* Video Player */}
       <View style={styles.videoContainer}>
         <Video
