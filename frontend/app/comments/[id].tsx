@@ -124,7 +124,7 @@ export default function CommentsScreen() {
         {
           id: 'comment_005',
           username: '@style_mom',
-          text: 'Love that this is family-approved! BlueWave safety is so important 🛡️',
+          text: 'Love that this is family-approved! Family safety is so important 🛡️',
           likes: 89,
           replies_count: 5,
           created_at: '2024-01-16T12:00:00Z',
