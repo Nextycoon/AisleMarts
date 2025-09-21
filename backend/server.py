@@ -577,7 +577,10 @@ try:
     from routers.city_scale_routes import router as city_scale_router
     app.include_router(city_scale_router, prefix="/api", tags=["city_scale"])
     
-    print("🌍❤️🚀 AISLEMARTS GLOBAL DOMINATION COMPLETE: Most Lovable App in 4M+ Cities | 89 Languages | Physical+Digital Commerce | Voice AI | AR/VR | Creator Economy | Sustainability | Premium Membership | Universal Global Platform Ready for Series A")
+    from routers.lead_economy_routes import router as lead_economy_router
+    app.include_router(lead_economy_router, prefix="/api", tags=["lead_economy"])
+    
+    print("💰🚀 WORLD'S FIRST 0% COMMISSION COMMERCE PLATFORM: AisleMarts Lead Economy | Vendors Keep 100% Revenue | Pay-Per-Lead Only | Most Lovable App in 4M+ Cities | 89 Languages | Physical+Digital Commerce | Voice AI | AR/VR | Creator Economy | Series A Ready")
 except ImportError as e:
     print(f"⚠️ Routers not available: {e}")
 except Exception as e:
