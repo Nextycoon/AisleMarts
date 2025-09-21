@@ -569,10 +569,13 @@ const styles = StyleSheet.create({
     right: 100,
     zIndex: 2,
   },
+  // ==================================================================================
+  // OVERLAY CONTENT - FLOATING ON TOP OF VIDEO
+  // ==================================================================================
   creatorInfo: {
     flexDirection: 'row',
     alignItems: 'center',
-    marginBottom: 8,
+    marginBottom: 12,
   },
   bottomCreatorInfo: {
     flexDirection: 'column',
@@ -584,10 +587,10 @@ const styles = StyleSheet.create({
     color: '#FFFFFF',
     fontSize: 16,
     fontWeight: '700',
-    marginBottom: 6,
-    textShadowColor: 'rgba(0, 0, 0, 0.5)',
+    marginBottom: 8,
+    textShadowColor: 'rgba(0, 0, 0, 0.8)',
     textShadowOffset: { width: 0, height: 1 },
-    textShadowRadius: 2,
+    textShadowRadius: 3,
   },
   verifiedBadge: {
     color: '#25f4ee',
@@ -597,11 +600,12 @@ const styles = StyleSheet.create({
   caption: {
     color: '#FFFFFF',
     fontSize: 15,
+    fontWeight: '400',
     lineHeight: 20,
     marginBottom: 8,
-    textShadowColor: 'rgba(0, 0, 0, 0.4)',
+    textShadowColor: 'rgba(0, 0, 0, 0.8)',
     textShadowOffset: { width: 0, height: 1 },
-    textShadowRadius: 1,
+    textShadowRadius: 3,
   },
   hashtags: {
     flexDirection: 'row',
@@ -615,15 +619,18 @@ const styles = StyleSheet.create({
   hashtagText: {
     color: '#D4AF37',
     fontSize: 14,
-    fontWeight: '500',
+    fontWeight: '600',
+    textShadowColor: 'rgba(0, 0, 0, 0.8)',
+    textShadowOffset: { width: 0, height: 1 },
+    textShadowRadius: 3,
   },
   soundInfo: {
     flexDirection: 'row',
     alignItems: 'center',
     backgroundColor: 'rgba(0, 0, 0, 0.3)',
-    paddingHorizontal: 8,
-    paddingVertical: 4,
-    borderRadius: 12,
+    paddingHorizontal: 12,
+    paddingVertical: 6,
+    borderRadius: 20,
     alignSelf: 'flex-start',
   },
   soundIcon: {
@@ -632,7 +639,11 @@ const styles = StyleSheet.create({
   },
   soundText: {
     color: '#FFFFFF',
-    fontSize: 12,
+    fontSize: 13,
+    fontWeight: '600',
+    textShadowColor: 'rgba(0, 0, 0, 0.8)',
+    textShadowOffset: { width: 0, height: 1 },
+    textShadowRadius: 3,
   },
   rightSide: {
     position: 'absolute',
