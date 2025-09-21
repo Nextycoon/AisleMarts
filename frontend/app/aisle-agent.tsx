@@ -257,6 +257,14 @@ export default function AisleAgentScreen() {
       badge: 'LOVABLE',
       gradient: ['#fa709a', '#fee140'],
     },
+    {
+      icon: '💰',
+      title: '0% Commission',
+      subtitle: 'Pay-per-lead only - Keep 100%',
+      onPress: () => router.push('/lead-economy'),
+      badge: '0% FEES',
+      gradient: ['#667eea', '#764ba2'],
+    },
   ];
 
   const dashboardStats: DashboardStat[] = [
