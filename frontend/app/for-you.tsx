@@ -1160,15 +1160,31 @@ const styles = StyleSheet.create({
     fontSize: 16,
   },
   // ==================================================================================
-  // ANIMATED CONTAINERS FOR FULL SCREEN VIDEO EXPERIENCE
+  // FULL SCREEN VIDEO CONTAINER - EDGE TO EDGE EXPERIENCE
+  // ==================================================================================
+  fullScreenVideoContainer: {
+    flex: 1,
+    position: 'relative',
+    backgroundColor: '#000000',
+  },
+  fullScreenVideo: {
+    position: 'absolute',
+    top: 0,
+    left: 0,
+    width: width,
+    height: height,
+    backgroundColor: '#000000',
+  },
+
+  // ==================================================================================
+  // ANIMATED CONTAINERS FOR NAVIGATION ONLY
   // ==================================================================================
   animatedTopNav: {
-    position: 'relative',
+    position: 'absolute',
+    top: 0,
+    left: 0,
+    right: 0,
     zIndex: 10,
-  },
-  animatedTrendingSection: {
-    position: 'relative',
-    zIndex: 9,
   },
 
   // ==================================================================================
