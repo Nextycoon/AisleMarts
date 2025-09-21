@@ -403,13 +403,11 @@ metadata:
 test_plan:
   current_focus:
     - "Real-time WebSocket Integration and Services"
-    - "AI Personalization Service Implementation"
-    - "Performance Optimization Service Implementation"
-    - "AisleMarts Rewards System Integration"
     - "Frontend Real-time Service Integration"
-  stuck_tasks: []
-  test_all: true
-  test_priority: "comprehensive_final_validation"
+  stuck_tasks:
+    - "Real-time WebSocket Integration and Services"
+  test_all: false
+  test_priority: "websocket_integration_fix"
 
   - task: "End-to-End Encryption (E2EE) System Implementation"
     implemented: true
