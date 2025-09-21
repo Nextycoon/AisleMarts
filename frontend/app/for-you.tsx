@@ -358,27 +358,41 @@ export default function ForYouScreen() {
     <SafeAreaView style={styles.container}>
       <StatusBar style="light" />
       
-      {/* Top Navigation - Explore | Following | For You */}
-      <TopNavigation />
+      {/* Animated Top Navigation - Hide/Show on Scroll */}
+      <Animated.View 
+        style={[
+          styles.animatedTopNav,
+          { transform: [{ translateY: topNavTranslateY }] }
+        ]}
+      >
+        <TopNavigation />
+      </Animated.View>
       
-      {/* Trending Creators Section - TikTok Style */}
-      <View style={styles.trendingSection}>
-        <Text style={styles.trendingSectionTitle}>Trending AisleMarts Creators</Text>
-        <View style={styles.trendingCreators}>
-          {mockTrendingCreators.map((creator, index) => (
-            <TouchableOpacity key={index} style={styles.creatorItem}>
-              <View style={styles.creatorAvatar}>
-                <Text style={styles.creatorAvatarText}>{creator.name.charAt(0)}</Text>
-                {creator.isLive && <View style={styles.liveIndicator} />}
-              </View>
-              <Text style={styles.creatorName}>{creator.name}</Text>
-              <TouchableOpacity style={styles.followButton}>
-                <Text style={styles.followButtonText}>Follow</Text>
+      {/* Animated Trending Creators Section - Hide/Show on Scroll */}
+      <Animated.View 
+        style={[
+          styles.animatedTrendingSection,
+          { transform: [{ translateY: trendingTranslateY }] }
+        ]}
+      >
+        <View style={styles.trendingSection}>
+          <Text style={styles.trendingSectionTitle}>Trending AisleMarts Creators</Text>
+          <View style={styles.trendingCreators}>
+            {mockTrendingCreators.map((creator, index) => (
+              <TouchableOpacity key={index} style={styles.creatorItem}>
+                <View style={styles.creatorAvatar}>
+                  <Text style={styles.creatorAvatarText}>{creator.name.charAt(0)}</Text>
+                  {creator.isLive && <View style={styles.liveIndicator} />}
+                </View>
+                <Text style={styles.creatorName}>{creator.name}</Text>
+                <TouchableOpacity style={styles.followButton}>
+                  <Text style={styles.followButtonText}>Follow</Text>
+                </TouchableOpacity>
               </TouchableOpacity>
-            </TouchableOpacity>
-          ))}
+            ))}
+          </View>
         </View>
-      </View>
+      </Animated.View>
       
       {/* Video Player */}
       <View style={styles.videoContainer}>
