@@ -9,6 +9,7 @@ import {
   Animated,
   PanGestureHandler,
   State,
+  ScrollView,
 } from 'react-native';
 import { StatusBar } from 'expo-status-bar';
 import { useRouter } from 'expo-router';
