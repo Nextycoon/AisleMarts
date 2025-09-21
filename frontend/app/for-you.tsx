@@ -469,15 +469,6 @@ export default function ForYouScreen() {
             </View>
           </TouchableOpacity>
         ))}
-
-        {/* Parental Control Indicator */}
-        {currentVideo.safety.parentalApproval && (
-          <View style={styles.parentalControl}>
-            <Text style={styles.parentalControlText}>
-              👨‍👩‍👧‍👦 Parental Controls Active
-            </Text>
-          </View>
-        )}
       </View>
 
       {/* Floating AI Assistant */}
