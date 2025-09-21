@@ -482,21 +482,7 @@ const styles = StyleSheet.create({
     right: 100,
     zIndex: 1,
   },
-  safetyBadge: {
-    position: 'absolute',
-    top: 60,
-    left: 20,
-    backgroundColor: 'rgba(52, 199, 89, 0.9)',
-    paddingHorizontal: 12,
-    paddingVertical: 6,
-    borderRadius: 20,
-    zIndex: 2,
-  },
-  safetyBadgeText: {
-    color: '#FFFFFF',
-    fontSize: 12,
-    fontWeight: '600',
-  },
+  // Safety badge styles removed - family safety functionality preserved in backend only
   leftSide: {
     position: 'absolute',
     bottom: 120,
