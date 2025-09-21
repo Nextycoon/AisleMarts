@@ -341,10 +341,21 @@ export default function ForYouScreen() {
   };
 
   return (
-    <SafeAreaView style={styles.container}>
+    <View style={styles.fullScreenContainer}>
       <StatusBar style="light" />
       
-      {/* Animated Top Navigation - Hide/Show on Scroll */}
+      {/* Full Screen Video Background - Covers Entire Screen */}
+      <Video
+        ref={(ref) => videoRefs.current[currentIndex] = ref}
+        source={{ uri: currentVideo.uri }}
+        style={styles.backgroundVideo}
+        resizeMode={ResizeMode.COVER}
+        shouldPlay={isPlaying}
+        isLooping
+        isMuted={false}
+      />
+      
+      {/* Animated Top Navigation - Overlay on Video */}
       <Animated.View 
         style={[
           styles.animatedTopNav,
@@ -353,18 +364,6 @@ export default function ForYouScreen() {
       >
         <TopNavigation />
       </Animated.View>
-      
-      {/* Full Screen Video Player - Edge to Edge */}
-      <View style={styles.fullScreenVideoContainer}>
-        <Video
-          ref={(ref) => videoRefs.current[currentIndex] = ref}
-          source={{ uri: currentVideo.uri }}
-          style={styles.fullScreenVideo}
-          resizeMode={ResizeMode.COVER}
-          shouldPlay={isPlaying}
-          isLooping
-          isMuted={false}
-        />
         
         {/* Touch Areas for Navigation */}
         <TouchableOpacity 
