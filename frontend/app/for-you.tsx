@@ -270,35 +270,51 @@ export default function ForYouScreen() {
       {/* Left Side - Video Info */}
       <View style={styles.leftSide}>
         <View style={styles.bottomCreatorInfo}>
-          <View style={styles.creatorNameContainer}>
-            <Text style={styles.creatorName}>{currentVideo.creator.name}</Text>
+          <View style={styles.stylishCreatorNameContainer}>
+            <Text style={styles.stylishCreatorName}>{currentVideo.creator.name}</Text>
             {currentVideo.creator.verified && (
               <View style={[
-                styles.aisleMartsVerifiedBadge,
-                styles[`${currentVideo.creator.verificationTier}Badge`]
+                styles.modernVerifiedBadge,
+                styles[`modern${currentVideo.creator.verificationTier}Badge`]
               ]}>
                 {currentVideo.creator.verificationTier === 'goldwave' && (
-                  <Text style={styles.goldWaveIcon}>⬛</Text>
+                  <View style={styles.goldWaveContainer}>
+                    <Text style={styles.modernGoldIcon}>◆</Text>
+                  </View>
                 )}
                 {currentVideo.creator.verificationTier === 'bluewave' && (
-                  <Text style={styles.blueWaveCheckmark}>✓</Text>
+                  <View style={styles.blueWaveContainer}>
+                    <Text style={styles.modernBlueCheckmark}>✓</Text>
+                  </View>
                 )}
                 {currentVideo.creator.verificationTier === 'greywave' && (
-                  <Text style={styles.greyWaveCheckmark}>✓</Text>
+                  <View style={styles.greyWaveContainer}>
+                    <Text style={styles.modernGreyCheckmark}>✓</Text>
+                  </View>
                 )}
               </View>
             )}
             {currentVideo.creator.isAffiliated && (
-              <Text style={styles.affiliationTag}>
-                Verified by {currentVideo.creator.affiliatedWith}
-              </Text>
+              <View style={styles.modernAffiliationBadge}>
+                <Text style={styles.modernAffiliationText}>
+                  Verified by {currentVideo.creator.affiliatedWith}
+                </Text>
+              </View>
             )}
           </View>
-          <Text style={styles.caption}>{currentVideo.caption}</Text>
-          <Text style={styles.hashtags}>{currentVideo.hashtags}</Text>
-          <View style={styles.musicInfo}>
-            <Text style={styles.musicIcon}>🎵</Text>
-            <Text style={styles.musicText}>{currentVideo.sound.title}</Text>
+          <Text style={styles.stylishCaption}>{currentVideo.caption}</Text>
+          <Text style={styles.stylishHashtags}>{currentVideo.hashtags}</Text>
+          <View style={styles.modernMusicInfo}>
+            <View style={styles.musicIconContainer}>
+              <Text style={styles.modernMusicIcon}>♪</Text>
+            </View>
+            <Text style={styles.stylishMusicText}>{currentVideo.sound.title}</Text>
+            <View style={styles.musicVisualizerContainer}>
+              <View style={[styles.musicBar, styles.bar1]} />
+              <View style={[styles.musicBar, styles.bar2]} />
+              <View style={[styles.musicBar, styles.bar3]} />
+              <View style={[styles.musicBar, styles.bar4]} />
+            </View>
           </View>
         </View>
       </View>
