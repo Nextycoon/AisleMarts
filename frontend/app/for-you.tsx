@@ -403,18 +403,17 @@ export default function ForYouScreen() {
 
         {/* Right Side - Actions */}
         <View style={styles.rightSide}>
-          {/* Creator Avatar with Follow */}
-          <TouchableOpacity style={styles.avatarContainer} onPress={handleFollow}>
-            <View style={styles.avatar}>
-              <Text style={styles.avatarText}>
-                {currentVideo.creator.username.charAt(1).toUpperCase()}
-              </Text>
+          {/* Profile Button - Exact TikTok Style */}
+          <TouchableOpacity 
+            style={styles.avatarContainer}
+            onPress={() => router.push(`/profile/${currentVideo.creator.id}`)}
+          >
+            <View style={styles.tiktokAvatar}>
+              <Text style={styles.avatarText}>L</Text>
             </View>
-            {!currentVideo.creator.isFollowing && (
-              <View style={styles.followButton}>
-                <Text style={styles.followButtonText}>+</Text>
-              </View>
-            )}
+            <View style={styles.tiktokFollowButton}>
+              <Text style={styles.tiktokFollowPlus}>+</Text>
+            </View>
           </TouchableOpacity>
 
           {/* Like Button */}
