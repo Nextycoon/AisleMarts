@@ -254,7 +254,7 @@ export default function FloatingAIAssistant({ style }: FloatingAIAssistantProps)
 const styles = StyleSheet.create({
   floatingButton: {
     position: 'absolute',
-    bottom: 100,
+    top: 120,
     right: 20,
     zIndex: 1000,
   },
