@@ -87,46 +87,58 @@ const styles = StyleSheet.create({
   tabBar: {
     flexDirection: 'row',
     backgroundColor: '#000000',
-    borderTopWidth: 1,
-    borderTopColor: 'rgba(212, 175, 55, 0.3)',
-    paddingTop: 8,
-    paddingBottom: 4,
-    paddingHorizontal: 4,
+    paddingTop: 10,
+    paddingBottom: 34, // Account for home indicator on iPhone
+    paddingHorizontal: 8,
+    height: 80,
   },
   tabItem: {
     alignItems: 'center',
     justifyContent: 'center',
-    paddingVertical: 8,
-    paddingHorizontal: 4,
+    paddingVertical: 4,
   },
-  tabItemActive: {
-    // Active tab styling handled by individual elements
+  createButton: {
+    alignItems: 'center',
+    justifyContent: 'center',
   },
   tabIconContainer: {
-    width: 32,
-    height: 32,
-    borderRadius: 16,
     alignItems: 'center',
     justifyContent: 'center',
     marginBottom: 4,
   },
   tabIconContainerActive: {
-    backgroundColor: 'rgba(212, 175, 55, 0.2)',
+    // No special active container styling like TikTok
   },
   tabIcon: {
-    fontSize: 18,
+    fontSize: 24,
+    color: '#FFFFFF',
   },
   tabIconActive: {
-    fontSize: 20,
+    fontSize: 24,
+    color: '#FFFFFF',
+  },
+  createIconContainer: {
+    width: 48,
+    height: 32,
+    backgroundColor: '#FFFFFF',
+    borderRadius: 8,
+    alignItems: 'center',
+    justifyContent: 'center',
+    marginBottom: 4,
+  },
+  createIcon: {
+    fontSize: 18,
+    color: '#000000',
+    fontWeight: '600',
   },
   tabLabel: {
     fontSize: 10,
-    color: '#999999',
-    fontWeight: '500',
+    color: '#FFFFFF',
+    fontWeight: '400',
     textAlign: 'center',
   },
   tabLabelActive: {
-    color: '#D4AF37',
-    fontWeight: '600',
+    color: '#FFFFFF',
+    fontWeight: '500',
   },
 });
