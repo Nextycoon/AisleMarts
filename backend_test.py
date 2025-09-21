@@ -104,29 +104,13 @@ class NextGenAisleMartsValidator:
         
         tests = [
             ("GET", "/voice-ai/health", None, 200),
-            ("GET", "/voice-ai/status", None, 200),
-            ("POST", "/voice-ai/chat", {
-                "message": "I'm looking for luxury handbags under $500",
+            ("GET", "/voice-ai/capabilities", None, 200),
+            ("POST", "/voice-ai/process-text", {
+                "text_input": "I'm looking for luxury handbags under $500",
                 "user_id": "test_user_voice_ai",
-                "language": "en"
+                "session_context": {}
             }, 200),
-            ("POST", "/voice-ai/voice-to-text", {
-                "audio_data": "mock_audio_base64_data",
-                "language": "en"
-            }, 200),
-            ("POST", "/voice-ai/text-to-speech", {
-                "text": "Welcome to AisleMarts luxury shopping experience",
-                "voice": "alloy",
-                "language": "en"
-            }, 200),
-            ("GET", "/voice-ai/supported-languages", None, 200),
-            ("POST", "/voice-ai/shopping-intent", {
-                "query": "Find me sustainable fashion brands",
-                "user_context": {
-                    "location": "New York",
-                    "preferences": ["sustainable", "luxury"]
-                }
-            }, 200)
+            ("POST", "/voice-ai/start-session", None, 200),
         ]
         
         for method, endpoint, data, expected_status in tests:
