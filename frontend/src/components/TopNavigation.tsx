@@ -144,11 +144,14 @@ const styles = StyleSheet.create({
   },
   searchButton: {
     width: 50,
+    height: 40,
     alignItems: 'center',
     justifyContent: 'center',
+    backgroundColor: 'rgba(255, 255, 255, 0.1)',
+    borderRadius: 20,
   },
   searchIcon: {
-    fontSize: 20,
+    fontSize: 18,
     color: '#FFFFFF',
   },
 });
