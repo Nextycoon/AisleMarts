@@ -14,6 +14,7 @@ import {
 import { StatusBar } from 'expo-status-bar';
 import { useRouter } from 'expo-router';
 import TabNavigator from './navigation/TabNavigator';
+import TopNavigation from '../src/components/TopNavigation';
 
 const { width } = Dimensions.get('window');
 const itemWidth = (width - 60) / 2; // 2 columns with margins
