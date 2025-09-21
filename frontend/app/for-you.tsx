@@ -202,6 +202,8 @@ export default function ForYouScreen() {
     },
   ];
 
+  // Use API data if available, otherwise fall back to mock content
+  const forYouFeed = feedData && feedData.length > 0 ? feedData : mockContent;
   const currentVideo = forYouFeed[currentIndex];
 
   const handleSwipeUp = () => {
