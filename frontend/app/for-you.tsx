@@ -613,8 +613,8 @@ const styles = StyleSheet.create({
   },
   rightSide: {
     position: 'absolute',
-    right: 16,
-    bottom: 80,
+    right: 20,
+    bottom: 100,
     alignItems: 'center',
     justifyContent: 'flex-end',
     height: 280,
