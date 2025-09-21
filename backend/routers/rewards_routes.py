@@ -99,7 +99,7 @@ async def get_streaks(user_id: str = "current_user"):
 @router.get("/leaderboard")
 async def get_leaderboard(
     league: Optional[str] = None,
-    limit: int = Field(20, ge=1, le=100)
+    limit: int = Query(20, ge=1, le=100)
 ):
     """
     🎯 Get vendor leaderboard (league-aware)
