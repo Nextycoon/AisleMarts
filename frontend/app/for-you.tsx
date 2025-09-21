@@ -622,7 +622,7 @@ const styles = StyleSheet.create({
   },
   avatarContainer: {
     alignItems: 'center',
-    marginBottom: 20,
+    marginBottom: 16, // Reduced spacing to match TikTok
     position: 'relative',
   },
   avatar: {
