@@ -128,7 +128,7 @@ export default function ForYouScreen() {
         isFollowing: true,
       },
       caption: 'Unboxing the latest family-safe tech! 📱✨ Perfect for teens with parental controls',
-      hashtags: ['#TechReview', '#FamilyTech', '#BlueWaveSafe', '#ParentalControls'],
+      hashtags: ['#TechReview', '#Innovation', '#TechLife', '#SmartTech'],
       sound: {
         id: 'sound_2',
         title: 'Tech Unbox Beat',
