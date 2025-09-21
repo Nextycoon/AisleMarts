@@ -7,6 +7,10 @@ from jose import jwt, JWTError
 import uuid
 from typing import List, Optional
 import asyncio
+import logging
+
+# Configure logger
+logger = logging.getLogger(__name__)
 
 from config import settings
 from db import db
