@@ -660,7 +660,10 @@ const styles = StyleSheet.create({
   },
   actionButton: {
     alignItems: 'center',
-    marginBottom: 24,
+    marginBottom: 16,
+    width: 48,
+    height: 48,
+    justifyContent: 'center',
   },
   actionIcon: {
     fontSize: 32,
