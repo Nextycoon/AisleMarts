@@ -51,7 +51,6 @@ export default function TabNavigator() {
               style={[
                 styles.tabItem,
                 tab.name === 'create' && styles.createButton,
-                { width: width / tabs.length }
               ]}
               onPress={() => handleTabPress(tab.route)}
               activeOpacity={0.7}
