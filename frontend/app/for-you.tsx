@@ -622,11 +622,11 @@ const styles = StyleSheet.create({
   },
   rightSide: {
     position: 'absolute',
-    right: 12,
-    bottom: 140,
+    right: 16,
+    bottom: 120,
     alignItems: 'center',
-    justifyContent: 'space-between',
-    height: 280,
+    justifyContent: 'flex-end',
+    height: 350,
     zIndex: 2,
   },
   avatarContainer: {
