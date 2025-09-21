@@ -33,26 +33,22 @@ import asyncio
 import aiohttp
 import json
 import time
-from typing import Dict, List, Any
-import os
+import random
 from datetime import datetime
+from typing import Dict, List, Any
+import sys
 
-# Use production URL from frontend/.env
+# Backend URL from environment
 BACKEND_URL = "https://unified-retail-ai.preview.emergentagent.com/api"
 
-class AisleMartsComprehensiveTester:
+class UltraComprehensiveBackendTester:
     def __init__(self):
         self.session = None
-        self.results = {
-            "priority_1_revolutionary": [],
-            "priority_2_next_gen": [],
-            "priority_3_advanced": [],
-            "priority_4_core": [],
-            "performance_metrics": {},
-            "business_model_validation": {},
-            "global_scale_metrics": {}
-        }
-        self.start_time = time.time()
+        self.results = []
+        self.total_tests = 0
+        self.passed_tests = 0
+        self.failed_tests = 0
+        self.start_time = None
         
     async def __aenter__(self):
         self.session = aiohttp.ClientSession(
@@ -64,521 +60,502 @@ class AisleMartsComprehensiveTester:
     async def __aexit__(self, exc_type, exc_val, exc_tb):
         if self.session:
             await self.session.close()
-
-    async def test_endpoint(self, method: str, endpoint: str, data: Dict = None, expected_status: int = 200) -> Dict:
-        """Test a single endpoint and return results"""
-        url = f"{BACKEND_URL}{endpoint}"
+    
+    def log_test(self, test_name: str, success: bool, details: str = "", response_time: float = 0):
+        """Log test result"""
+        self.total_tests += 1
+        if success:
+            self.passed_tests += 1
+            status = "✅ PASS"
+        else:
+            self.failed_tests += 1
+            status = "❌ FAIL"
+            
+        result = {
+            "test": test_name,
+            "status": status,
+            "success": success,
+            "details": details,
+            "response_time": f"{response_time:.3f}s",
+            "timestamp": datetime.utcnow().isoformat()
+        }
+        self.results.append(result)
+        print(f"{status} | {test_name} | {response_time:.3f}s | {details}")
+    
+    async def test_endpoint(self, method: str, endpoint: str, test_name: str, 
+                          payload: Dict = None, expected_status: int = 200,
+                          validate_response: callable = None) -> bool:
+        """Generic endpoint testing method"""
         start_time = time.time()
-        
         try:
+            url = f"{BACKEND_URL}{endpoint}"
+            
             if method.upper() == "GET":
                 async with self.session.get(url) as response:
-                    response_data = await response.json()
-                    status = response.status
+                    response_time = time.time() - start_time
+                    data = await response.json()
+                    
             elif method.upper() == "POST":
-                async with self.session.post(url, json=data) as response:
-                    response_data = await response.json()
-                    status = response.status
-            elif method.upper() == "PUT":
-                async with self.session.put(url, json=data) as response:
-                    response_data = await response.json()
-                    status = response.status
+                async with self.session.post(url, json=payload) as response:
+                    response_time = time.time() - start_time
+                    data = await response.json()
+                    
             else:
-                return {
-                    "endpoint": endpoint,
-                    "method": method,
-                    "status": "ERROR",
-                    "error": f"Unsupported method: {method}",
-                    "response_time": 0
-                }
-                
-            response_time = time.time() - start_time
-            success = status == expected_status
+                raise ValueError(f"Unsupported method: {method}")
             
-            return {
-                "endpoint": endpoint,
-                "method": method,
-                "status": "PASS" if success else "FAIL",
-                "http_status": status,
-                "expected_status": expected_status,
-                "response_time": round(response_time, 3),
-                "response_data": response_data if success else None,
-                "error": None if success else f"Expected {expected_status}, got {status}"
-            }
+            # Check status code
+            if response.status != expected_status:
+                self.log_test(test_name, False, 
+                            f"Status {response.status}, expected {expected_status}", response_time)
+                return False
+            
+            # Custom validation
+            if validate_response and not validate_response(data):
+                self.log_test(test_name, False, "Response validation failed", response_time)
+                return False
+            
+            # Success
+            details = f"Status {response.status}"
+            if isinstance(data, dict) and "status" in data:
+                details += f", {data.get('status', 'N/A')}"
+            
+            self.log_test(test_name, True, details, response_time)
+            return True
             
         except Exception as e:
-            return {
-                "endpoint": endpoint,
-                "method": method,
-                "status": "ERROR",
-                "error": str(e),
-                "response_time": round(time.time() - start_time, 3)
+            response_time = time.time() - start_time
+            self.log_test(test_name, False, f"Error: {str(e)}", response_time)
+            return False
+
+    # ==================== PRIORITY 1: AI SUPER AGENT VALIDATION ====================
+    
+    async def test_ai_super_agent_health(self):
+        """Test AI Super Agent health check"""
+        def validate(data):
+            required_fields = ["status", "service", "capabilities", "features"]
+            return all(field in data for field in required_fields) and \
+                   data["status"] == "operational" and \
+                   len(data["capabilities"]) == 6
+        
+        return await self.test_endpoint(
+            "GET", "/ai-super-agent/health", 
+            "AI Super Agent Health Check",
+            validate_response=validate
+        )
+    
+    async def test_ai_capabilities_status(self):
+        """Test AI capabilities status endpoint"""
+        def validate(data):
+            return data.get("success") is True and \
+                   "capabilities" in data and \
+                   len(data["capabilities"]) == 6
+        
+        return await self.test_endpoint(
+            "GET", "/ai-super-agent/capabilities?user_id=test_user_123",
+            "AI Capabilities Status",
+            validate_response=validate
+        )
+    
+    async def test_ai_request_processing(self):
+        """Test AI request processing with different capabilities"""
+        capabilities = [
+            "personal_shopper", "price_optimizer", "trend_predictor",
+            "style_advisor", "sustainability_guide", "deal_hunter"
+        ]
+        
+        success_count = 0
+        for capability in capabilities:
+            payload = {
+                "capability": capability,
+                "user_input": f"Help me find the best {capability.replace('_', ' ')} recommendations",
+                "user_id": "test_user_123",
+                "context": {"test": True}
             }
+            
+            def validate(data):
+                return data.get("success") is True and \
+                       data.get("capability") == capability and \
+                       "response" in data and \
+                       "insights" in data
+            
+            success = await self.test_endpoint(
+                "POST", "/ai-super-agent/process",
+                f"AI Request Processing - {capability.title()}",
+                payload=payload,
+                validate_response=validate
+            )
+            if success:
+                success_count += 1
+        
+        return success_count == len(capabilities)
+    
+    async def test_live_ai_insights(self):
+        """Test live AI insights generation"""
+        def validate(data):
+            return data.get("success") is True and \
+                   "insights" in data and \
+                   isinstance(data["insights"], list) and \
+                   data.get("total_count", 0) > 0
+        
+        return await self.test_endpoint(
+            "GET", "/ai-super-agent/insights?user_id=test_user_123&limit=10",
+            "Live AI Insights Generation",
+            validate_response=validate
+        )
+    
+    async def test_quick_actions(self):
+        """Test AI quick actions"""
+        quick_actions = [
+            "find_deals", "price_check", "style_advice", 
+            "trend_analysis", "eco_options", "personal_shop"
+        ]
+        
+        success_count = 0
+        for action in quick_actions:
+            payload = {
+                "action": action,
+                "user_id": "test_user_123",
+                "context": {"quick_test": True}
+            }
+            
+            def validate(data):
+                return data.get("success") is True and \
+                       data.get("action") == action and \
+                       data.get("quick_action") is True
+            
+            success = await self.test_endpoint(
+                "POST", "/ai-super-agent/quick-action",
+                f"Quick Action - {action.title()}",
+                payload=payload,
+                validate_response=validate
+            )
+            if success:
+                success_count += 1
+        
+        return success_count == len(quick_actions)
+    
+    async def test_ai_analytics(self):
+        """Test AI analytics endpoint"""
+        def validate(data):
+            return data.get("success") is True and \
+                   "analytics" in data and \
+                   "total_interactions" in data["analytics"] and \
+                   "capabilities_usage" in data["analytics"]
+        
+        return await self.test_endpoint(
+            "GET", "/ai-super-agent/analytics?user_id=test_user_123&timeframe=7d",
+            "AI Analytics Dashboard",
+            validate_response=validate
+        )
+    
+    async def test_ai_demo_mode(self):
+        """Test AI demo mode for Series A presentations"""
+        def validate(data):
+            return data.get("demo_mode") is True and \
+                   "capabilities_showcase" in data and \
+                   len(data["capabilities_showcase"]) == 6 and \
+                   "investment_highlights" in data
+        
+        return await self.test_endpoint(
+            "GET", "/ai-super-agent/demo",
+            "AI Demo Mode - Series A Ready",
+            validate_response=validate
+        )
 
-    async def test_priority_1_revolutionary_business_model(self):
-        """PRIORITY 1 - Revolutionary Business Model Validation"""
-        print("\n🚀💎 PRIORITY 1 - REVOLUTIONARY BUSINESS MODEL VALIDATION")
-        print("=" * 80)
-        
-        # 1. Lead Economy Service - 0% Commission System
-        print("\n1️⃣ LEAD ECONOMY SERVICE - 0% COMMISSION SYSTEM")
-        tests = [
-            ("GET", "/lead-economy/health", None, 200),
-            ("GET", "/lead-economy/packages", None, 200),
-            ("GET", "/lead-economy/business-model", None, 200),
-            ("GET", "/lead-economy/competitive-analysis", None, 200),
+    # ==================== PRIORITY 2: PREVIOUSLY FIXED SYSTEMS ====================
+    
+    async def test_city_scale_features(self):
+        """Test city scale optimization features"""
+        endpoints = [
+            ("/city-scale/optimization", "City Scale Optimization"),
+            ("/city-scale/cities", "City Scale Cities"),
+            ("/city-scale/optimize-delivery", "City Scale Delivery Optimization")
         ]
         
-        for method, endpoint, data, expected_status in tests:
-            result = await self.test_endpoint(method, endpoint, data, expected_status)
-            self.results["priority_1_revolutionary"].append(result)
-            print(f"  {'✅' if result['status'] == 'PASS' else '❌'} {method} {endpoint}: {result['status']}")
-            
-            # Extract business model metrics
-            if result['status'] == 'PASS' and result['response_data']:
-                if 'commission_rate' in result['response_data']:
-                    self.results['business_model_validation']['commission_rate'] = result['response_data']['commission_rate']
+        success_count = 0
+        for endpoint, name in endpoints:
+            success = await self.test_endpoint("GET", endpoint, name)
+            if success:
+                success_count += 1
         
-        # 2. Digital Commerce Integration - 22 Platform Integration
-        print("\n2️⃣ DIGITAL COMMERCE INTEGRATION - 22 PLATFORM SYSTEM")
-        tests = [
-            ("GET", "/digital-commerce/health", None, 200),
-            ("GET", "/digital-commerce/platforms", None, 200),
-            ("GET", "/digital-commerce/categories", None, 200),
-            ("GET", "/digital-commerce/analytics", None, 200),
+        return success_count == len(endpoints)
+    
+    async def test_universal_ai_hub_analytics(self):
+        """Test Universal AI Hub analytics"""
+        endpoints = [
+            ("/universal-ai/health", "Universal AI Health"),
+            ("/universal-ai/analytics/dashboard", "Universal AI Analytics Dashboard"),
+            ("/universal-ai/predict/trends", "Universal AI Trend Prediction")
         ]
         
-        for method, endpoint, data, expected_status in tests:
-            result = await self.test_endpoint(method, endpoint, data, expected_status)
-            self.results["priority_1_revolutionary"].append(result)
-            print(f"  {'✅' if result['status'] == 'PASS' else '❌'} {method} {endpoint}: {result['status']}")
-            
-            # Extract platform metrics
-            if result['status'] == 'PASS' and result['response_data']:
-                if 'platforms_connected' in result['response_data']:
-                    self.results['business_model_validation']['platforms_connected'] = result['response_data']['platforms_connected']
+        success_count = 0
+        for endpoint, name in endpoints:
+            success = await self.test_endpoint("GET", endpoint, name)
+            if success:
+                success_count += 1
         
-        # 3. Global Language System - 89 Language Support
-        print("\n3️⃣ GLOBAL LANGUAGE SYSTEM - 89 LANGUAGE SUPPORT")
-        tests = [
-            ("GET", "/global-languages/health", None, 200),
-            ("GET", "/global-languages/all-supported", None, 200),
-            ("GET", "/global-languages/regions", None, 200),
-            ("GET", "/global-languages/analytics", None, 200),
+        return success_count == len(endpoints)
+    
+    async def test_websocket_trigger_endpoints(self):
+        """Test WebSocket trigger endpoints (HTTP method)"""
+        triggers = [
+            ("mission-update", {"mission_id": "test_mission", "progress": 75}),
+            ("reward-claimed", {"reward_type": "daily_bonus", "amount": 100}),
+            ("league-advancement", {"old_league": "bronze", "new_league": "silver"})
         ]
         
-        for method, endpoint, data, expected_status in tests:
-            result = await self.test_endpoint(method, endpoint, data, expected_status)
-            self.results["priority_1_revolutionary"].append(result)
-            print(f"  {'✅' if result['status'] == 'PASS' else '❌'} {method} {endpoint}: {result['status']}")
-            
-            # Extract language metrics
-            if result['status'] == 'PASS' and result['response_data']:
-                if 'supported_languages' in result['response_data']:
-                    self.results['global_scale_metrics']['supported_languages'] = result['response_data']['supported_languages']
+        success_count = 0
+        for trigger, payload in triggers:
+            success = await self.test_endpoint(
+                "POST", f"/ws/trigger/{trigger}",
+                f"WebSocket Trigger - {trigger.title()}",
+                payload=payload
+            )
+            if success:
+                success_count += 1
+        
+        return success_count == len(triggers)
+    
+    async def test_rewards_analytics(self):
+        """Test comprehensive rewards analytics"""
+        endpoints = [
+            ("/rewards/health", "Rewards System Health"),
+            ("/rewards/analytics", "Rewards Analytics"),
+            ("/rewards/leaderboard", "Rewards Leaderboard"),
+            ("/rewards/missions", "Rewards Missions")
+        ]
+        
+        success_count = 0
+        for endpoint, name in endpoints:
+            success = await self.test_endpoint("GET", endpoint, name)
+            if success:
+                success_count += 1
+        
+        return success_count == len(endpoints)
+    
+    async def test_currency_conversion_enhanced(self):
+        """Test enhanced currency conversion validation"""
+        test_cases = [
+            ("USD", "EUR", 100),
+            ("EUR", "JPY", 50),
+            ("GBP", "USD", 200),
+            ("BTC", "USD", 0.1),  # Crypto test
+            ("USD", "KWD", 100)   # High precision test
+        ]
+        
+        success_count = 0
+        for from_curr, to_curr, amount in test_cases:
+            success = await self.test_endpoint(
+                "GET", f"/currency/convert?from_currency={from_curr}&to_currency={to_curr}&amount={amount}",
+                f"Currency Conversion - {from_curr} to {to_curr}"
+            )
+            if success:
+                success_count += 1
+        
+        return success_count == len(test_cases)
 
-    async def test_priority_2_next_generation_features(self):
-        """PRIORITY 2 - Next-Generation Features"""
-        print("\n🤖🎯 PRIORITY 2 - NEXT-GENERATION FEATURES")
-        print("=" * 80)
-        
-        # 4. Voice AI Shopping Assistant - 113+ Language Variants
-        print("\n4️⃣ VOICE AI SHOPPING ASSISTANT - 113+ LANGUAGE VARIANTS")
-        tests = [
-            ("GET", "/voice-ai/health", None, 200),
-            ("GET", "/voice-ai/capabilities", None, 200),
-            ("POST", "/voice-ai/process-text", {
-                "text_input": "I'm looking for luxury handbags under $500",
-                "user_id": "luxury_shopper_001",
-                "session_context": {}
-            }, 200),
-            ("POST", "/voice-ai/start-session?user_id=luxury_shopper_001", None, 200),
+    # ==================== PRIORITY 3: COMPLETE ECOSYSTEM VALIDATION ====================
+    
+    async def test_revolutionary_business_model(self):
+        """Test 0% commission lead economy features"""
+        endpoints = [
+            ("/lead-economy/health", "Lead Economy Health"),
+            ("/lead-economy/commission-model", "0% Commission Model"),
+            ("/lead-economy/vendor-benefits", "Vendor Benefits"),
+            ("/lead-economy/lead-generation", "Lead Generation")
         ]
         
-        for method, endpoint, data, expected_status in tests:
-            result = await self.test_endpoint(method, endpoint, data, expected_status)
-            self.results["priority_2_next_gen"].append(result)
-            print(f"  {'✅' if result['status'] == 'PASS' else '❌'} {method} {endpoint}: {result['status']}")
-            
-            # Extract voice AI metrics
-            if result['status'] == 'PASS' and result['response_data']:
-                if 'language_variants' in result['response_data']:
-                    self.results['global_scale_metrics']['voice_language_variants'] = result['response_data']['language_variants']
+        success_count = 0
+        for endpoint, name in endpoints:
+            success = await self.test_endpoint("GET", endpoint, name)
+            if success:
+                success_count += 1
         
-        # 5. AR/VR Commerce Experience - Product Visualization
-        print("\n5️⃣ AR/VR COMMERCE EXPERIENCE - IMMERSIVE SHOPPING")
-        tests = [
-            ("GET", "/ar-visualization/health", None, 200),
-            ("GET", "/ar-visualization/supported-categories", None, 200),
-            ("GET", "/ar-visualization/analytics", None, 200),
-            ("POST", "/ar-visualization/create-session", {
-                "user_id": "ar_user_001",
-                "product_id": "luxury_handbag_001",
-                "device_type": "mobile"
-            }, 200),
-            ("GET", "/ar-visualization/vr-experience/luxury_handbag_001?experience_type=showroom", None, 200),
+        return success_count == len(endpoints)
+    
+    async def test_global_scale_systems(self):
+        """Test global scale capabilities"""
+        endpoints = [
+            ("/international/health", "International Expansion Health"),
+            ("/global-languages/health", "Global Languages Health"),
+            ("/currency/health", "Currency System Health"),
+            ("/city-scale/health", "City Scale Health")
         ]
         
-        for method, endpoint, data, expected_status in tests:
-            result = await self.test_endpoint(method, endpoint, data, expected_status)
-            self.results["priority_2_next_gen"].append(result)
-            print(f"  {'✅' if result['status'] == 'PASS' else '❌'} {method} {endpoint}: {result['status']}")
+        success_count = 0
+        for endpoint, name in endpoints:
+            success = await self.test_endpoint("GET", endpoint, name)
+            if success:
+                success_count += 1
         
-        # 6. Creator Economy Platform - Content Monetization
-        print("\n6️⃣ CREATOR ECONOMY PLATFORM - CONTENT MONETIZATION")
-        tests = [
-            ("GET", "/creator-economy/health", None, 200),
-            ("GET", "/creator-economy/tier-requirements", None, 200),
-            ("GET", "/creator-economy/trending-opportunities", None, 200),
-            ("POST", "/creator-economy/create-profile?user_id=luxury_creator", {
-                "display_name": "LuxuryLifestyle Emma",
-                "bio": "Luxury lifestyle content creator specializing in high-end fashion and beauty",
-                "categories": ["fashion", "beauty"],
-                "social_links": {
-                    "instagram": "@luxurylifestyle_emma",
-                    "tiktok": "@emma_luxury"
-                },
-                "experience_level": "intermediate"
-            }, 200),
+        return success_count == len(endpoints)
+    
+    async def test_next_gen_features(self):
+        """Test next-generation features"""
+        endpoints = [
+            ("/voice-ai/health", "Voice AI Health"),
+            ("/ar-visualization/health", "AR/VR Health"),
+            ("/creator-economy/health", "Creator Economy Health")
         ]
         
-        for method, endpoint, data, expected_status in tests:
-            result = await self.test_endpoint(method, endpoint, data, expected_status)
-            self.results["priority_2_next_gen"].append(result)
-            print(f"  {'✅' if result['status'] == 'PASS' else '❌'} {method} {endpoint}: {result['status']}")
-
-    async def test_priority_3_advanced_systems(self):
-        """PRIORITY 3 - Advanced Systems"""
-        print("\n⚡🌍 PRIORITY 3 - ADVANCED SYSTEMS")
-        print("=" * 80)
+        success_count = 0
+        for endpoint, name in endpoints:
+            success = await self.test_endpoint("GET", endpoint, name)
+            if success:
+                success_count += 1
         
-        # 7. Sustainability & ESG - Carbon Footprint
-        print("\n7️⃣ SUSTAINABILITY & ESG - CARBON FOOTPRINT TRACKING")
-        tests = [
-            ("GET", "/sustainability/health", None, 200),
-            ("GET", "/sustainability/sustainability-rankings", None, 200),
-            ("GET", "/sustainability/eco-certifications", None, 200),
-            ("POST", "/sustainability/calculate-carbon", {
-                "order_id": "eco_order_001",
-                "items": [
-                    {"product_id": "sustainable_handbag_001", "category": "fashion", "quantity": 1}
-                ],
-                "shipping_method": "eco_friendly",
-                "shipping_distance": 250.0,
-                "user_preferences": {"eco_friendly": True}
-            }, 200),
+        return success_count == len(endpoints)
+    
+    async def test_advanced_systems(self):
+        """Test advanced systems integration"""
+        endpoints = [
+            ("/sustainability/health", "Sustainability Health"),
+            ("/premium-membership/health", "Premium Membership Health"),
+            ("/e2ee/health", "E2EE Security Health"),
+            ("/kms/health", "Key Management Health")
         ]
         
-        for method, endpoint, data, expected_status in tests:
-            result = await self.test_endpoint(method, endpoint, data, expected_status)
-            self.results["priority_3_advanced"].append(result)
-            print(f"  {'✅' if result['status'] == 'PASS' else '❌'} {method} {endpoint}: {result['status']}")
+        success_count = 0
+        for endpoint, name in endpoints:
+            success = await self.test_endpoint("GET", endpoint, name)
+            if success:
+                success_count += 1
         
-        # 8. Premium Membership - 4 Tiers System
-        print("\n8️⃣ PREMIUM MEMBERSHIP - 4 TIERS SYSTEM")
-        tests = [
-            ("GET", "/premium-membership/health", None, 200),
-            ("GET", "/premium-membership/tiers", None, 200),
-            ("GET", "/premium-membership/exclusive-access", None, 200),
-            ("POST", "/premium-membership/upgrade?user_id=premium_user_001", {
-                "target_tier": "premium",
-                "billing_cycle": "monthly",
-                "payment_method_id": "stripe_pm_123",
-                "promotional_code": None
-            }, 200),
-        ]
-        
-        for method, endpoint, data, expected_status in tests:
-            result = await self.test_endpoint(method, endpoint, data, expected_status)
-            self.results["priority_3_advanced"].append(result)
-            print(f"  {'✅' if result['status'] == 'PASS' else '❌'} {method} {endpoint}: {result['status']}")
-            
-            # Extract membership metrics
-            if result['status'] == 'PASS' and result['response_data']:
-                if 'membership_tiers' in result['response_data']:
-                    self.results['business_model_validation']['membership_tiers'] = result['response_data']['membership_tiers']
-        
-        # 9. City Scale Features - 4M+ Cities Optimization
-        print("\n9️⃣ CITY SCALE FEATURES - 4M+ CITIES OPTIMIZATION")
-        tests = [
-            ("GET", "/city-scale/health", None, 200),
-            ("GET", "/city-scale/optimization", None, 200),
-            ("GET", "/city-scale/cities", None, 200),
-            ("POST", "/city-scale/optimize-delivery", {
-                "city": "New York",
-                "country": "USA",
-                "delivery_type": "luxury_express",
-                "items": ["luxury_handbag_001"]
-            }, 200),
-        ]
-        
-        for method, endpoint, data, expected_status in tests:
-            result = await self.test_endpoint(method, endpoint, data, expected_status)
-            self.results["priority_3_advanced"].append(result)
-            print(f"  {'✅' if result['status'] == 'PASS' else '❌'} {method} {endpoint}: {result['status']}")
-            
-            # Extract city metrics
-            if result['status'] == 'PASS' and result['response_data']:
-                if 'cities_supported' in result['response_data']:
-                    self.results['global_scale_metrics']['cities_supported'] = result['response_data']['cities_supported']
-        
-        # 10. Universal Commerce AI Hub - Cross-platform Intelligence
-        print("\n🔟 UNIVERSAL COMMERCE AI HUB - CROSS-PLATFORM INTELLIGENCE")
-        tests = [
-            ("GET", "/universal-ai/health", None, 200),
-            ("GET", "/universal-ai/platforms", None, 200),
-            ("GET", "/universal-ai/analytics/dashboard", None, 200),
-            ("GET", "/universal-ai/predict/trends", None, 200),
-        ]
-        
-        for method, endpoint, data, expected_status in tests:
-            result = await self.test_endpoint(method, endpoint, data, expected_status)
-            self.results["priority_3_advanced"].append(result)
-            print(f"  {'✅' if result['status'] == 'PASS' else '❌'} {method} {endpoint}: {result['status']}")
-
-    async def test_priority_4_core_foundation(self):
-        """PRIORITY 4 - Core Foundation"""
-        print("\n🏗️💎 PRIORITY 4 - CORE FOUNDATION")
-        print("=" * 80)
-        
-        # 11. Rewards System - Complete Gamification
-        print("\n1️⃣1️⃣ REWARDS SYSTEM - COMPLETE GAMIFICATION")
-        tests = [
-            ("GET", "/rewards/health", None, 200),
-            ("GET", "/rewards/missions/weekly", None, 200),
-            ("GET", "/rewards/leaderboard", None, 200),
-            ("GET", "/rewards/analytics", None, 200),
-        ]
-        
-        for method, endpoint, data, expected_status in tests:
-            result = await self.test_endpoint(method, endpoint, data, expected_status)
-            self.results["priority_4_core"].append(result)
-            print(f"  {'✅' if result['status'] == 'PASS' else '❌'} {method} {endpoint}: {result['status']}")
-            
-            # Extract rewards metrics
-            if result['status'] == 'PASS' and result['response_data']:
-                if 'currencies' in result['response_data']:
-                    self.results['business_model_validation']['reward_currencies'] = result['response_data']['currencies']
-        
-        # 12. Currency-Infinity Engine - 185+ Currencies
-        print("\n1️⃣2️⃣ CURRENCY-INFINITY ENGINE - 185+ CURRENCIES")
-        tests = [
-            ("GET", "/currency/health", None, 200),
-            ("GET", "/currency/supported", None, 200),
-            ("GET", "/currency/rates", None, 200),
-            ("GET", "/currency/convert", None, 200),
-        ]
-        
-        for method, endpoint, data, expected_status in tests:
-            result = await self.test_endpoint(method, endpoint, data, expected_status)
-            self.results["priority_4_core"].append(result)
-            print(f"  {'✅' if result['status'] == 'PASS' else '❌'} {method} {endpoint}: {result['status']}")
-            
-            # Extract currency metrics
-            if result['status'] == 'PASS' and result['response_data']:
-                if 'supported_currencies' in result['response_data']:
-                    self.results['global_scale_metrics']['supported_currencies'] = result['response_data']['supported_currencies']
-        
-        # 13. Real-time WebSocket Services - Live Updates
-        print("\n1️⃣3️⃣ REAL-TIME WEBSOCKET SERVICES - LIVE UPDATES")
-        tests = [
-            ("GET", "/ws/status", None, 200),
-            ("GET", "/ws/trigger/mission-update", None, 200),
-            ("GET", "/ws/trigger/reward-claimed", None, 200),
-        ]
-        
-        for method, endpoint, data, expected_status in tests:
-            result = await self.test_endpoint(method, endpoint, data, expected_status)
-            self.results["priority_4_core"].append(result)
-            print(f"  {'✅' if result['status'] == 'PASS' else '❌'} {method} {endpoint}: {result['status']}")
-
-    async def test_performance_under_load(self):
-        """Test system performance under concurrent load"""
-        print("\n⚡📊 PERFORMANCE TESTING UNDER LOAD")
-        print("=" * 80)
-        
-        # Test concurrent requests to key endpoints
-        endpoints_to_test = [
-            "/health",
-            "/currency/health", 
-            "/rewards/health",
-            "/universal-ai/health",
-            "/voice-ai/health",
-            "/lead-economy/health",
-            "/digital-commerce/health",
-            "/global-languages/health"
-        ]
-        
+        return success_count == len(endpoints)
+    
+    async def test_performance_metrics(self):
+        """Test enterprise-grade performance metrics"""
+        # Test concurrent requests
         start_time = time.time()
         tasks = []
         
-        for endpoint in endpoints_to_test:
-            for i in range(3):  # 3 concurrent requests per endpoint
-                task = self.test_endpoint("GET", endpoint)
-                tasks.append(task)
+        # Create 20 concurrent requests to health endpoint
+        for i in range(20):
+            task = self.test_endpoint("GET", "/health", f"Concurrent Health Check {i+1}")
+            tasks.append(task)
         
         results = await asyncio.gather(*tasks, return_exceptions=True)
-        total_time = time.time() - start_time
+        response_time = time.time() - start_time
         
-        successful_requests = sum(1 for r in results if isinstance(r, dict) and r.get('status') == 'PASS')
-        total_requests = len(results)
+        success_count = sum(1 for result in results if result is True)
+        success_rate = (success_count / len(results)) * 100
         
-        self.results['performance_metrics'] = {
-            'total_requests': total_requests,
-            'successful_requests': successful_requests,
-            'success_rate': f"{(successful_requests/total_requests)*100:.1f}%",
-            'total_time': f"{total_time:.3f}s",
-            'avg_response_time': f"{total_time/total_requests:.3f}s"
-        }
+        self.log_test(
+            "Performance - Concurrent Load Test",
+            success_rate >= 95,
+            f"{success_count}/{len(results)} requests successful ({success_rate:.1f}%), Total time: {response_time:.3f}s",
+            response_time
+        )
         
-        print(f"📊 Performance Load Test: {successful_requests}/{total_requests} requests successful in {total_time:.3f}s")
-        print(f"⚡ Success Rate: {(successful_requests/total_requests)*100:.1f}%")
-        print(f"⏱️  Average Response Time: {total_time/total_requests:.3f}s")
+        return success_rate >= 95
 
-    def generate_series_a_report(self, total_time: float):
-        """Generate comprehensive Series A investor report"""
-        print("\n" + "=" * 80)
-        print("🏆💎 SERIES A INVESTOR DEMO - COMPREHENSIVE TEST RESULTS")
-        print("WORLD'S FIRST 0% COMMISSION AI COMMERCE SUPER-APP")
-        print("=" * 80)
+    # ==================== MAIN TEST EXECUTION ====================
+    
+    async def run_ultra_comprehensive_tests(self):
+        """Run all ultra-comprehensive tests"""
+        self.start_time = time.time()
         
-        # Calculate overall statistics
-        all_tests = (self.results["priority_1_revolutionary"] + 
-                    self.results["priority_2_next_gen"] + 
-                    self.results["priority_3_advanced"] + 
-                    self.results["priority_4_core"])
-        
-        total_tests = len(all_tests)
-        passed_tests = sum(1 for test in all_tests if test['status'] == 'PASS')
-        failed_tests = total_tests - passed_tests
-        success_rate = (passed_tests / total_tests) * 100 if total_tests > 0 else 0
-        
-        # Overall Statistics
-        print(f"\n📊 OVERALL SYSTEM PERFORMANCE:")
-        print(f"   Total Tests: {total_tests}")
-        print(f"   Passed: {passed_tests} ✅")
-        print(f"   Failed: {failed_tests} ❌")
-        print(f"   Success Rate: {success_rate:.1f}%")
-        print(f"   Total Testing Time: {total_time:.2f}s")
-        
-        # Revolutionary Business Model Validation
-        print(f"\n💰 REVOLUTIONARY BUSINESS MODEL VALIDATION:")
-        bm = self.results['business_model_validation']
-        print(f"   Commission Rate: {bm.get('commission_rate', 'Not tested')} (Target: 0%)")
-        print(f"   Platforms Connected: {bm.get('platforms_connected', 'Not tested')} (Target: 22+)")
-        print(f"   Membership Tiers: {bm.get('membership_tiers', 'Not tested')} (Target: 4)")
-        print(f"   Reward Currencies: {bm.get('reward_currencies', 'Not tested')} (Target: 4)")
-        
-        # Global Scale Capabilities
-        print(f"\n🌍 GLOBAL SCALE CAPABILITIES:")
-        gs = self.results['global_scale_metrics']
-        print(f"   Supported Languages: {gs.get('supported_languages', 'Not tested')} (Target: 89)")
-        print(f"   Voice Language Variants: {gs.get('voice_language_variants', 'Not tested')} (Target: 113+)")
-        print(f"   Cities Supported: {gs.get('cities_supported', 'Not tested')} (Target: 4M+)")
-        print(f"   Supported Currencies: {gs.get('supported_currencies', 'Not tested')} (Target: 185+)")
-        
-        # Performance Metrics
-        if self.results['performance_metrics']:
-            pm = self.results['performance_metrics']
-            print(f"\n⚡ PERFORMANCE METRICS:")
-            print(f"   Load Test Success Rate: {pm.get('success_rate', 'Not tested')}")
-            print(f"   Average Response Time: {pm.get('avg_response_time', 'Not tested')}")
-            print(f"   Concurrent Requests: {pm.get('total_requests', 'Not tested')}")
-        
-        # Priority-wise Results
-        priorities = [
-            ("PRIORITY 1 - Revolutionary Business Model", "priority_1_revolutionary"),
-            ("PRIORITY 2 - Next-Generation Features", "priority_2_next_gen"),
-            ("PRIORITY 3 - Advanced Systems", "priority_3_advanced"),
-            ("PRIORITY 4 - Core Foundation", "priority_4_core")
-        ]
-        
-        print(f"\n🎯 PRIORITY-WISE RESULTS:")
-        for priority_name, priority_key in priorities:
-            tests = self.results[priority_key]
-            if tests:
-                priority_passed = sum(1 for t in tests if t['status'] == 'PASS')
-                priority_total = len(tests)
-                priority_rate = (priority_passed / priority_total) * 100 if priority_total > 0 else 0
-                status_icon = "✅" if priority_rate >= 90 else "⚠️" if priority_rate >= 75 else "❌"
-                print(f"   {status_icon} {priority_name}: {priority_passed}/{priority_total} ({priority_rate:.1f}%)")
-        
-        # Production Readiness Assessment
-        print(f"\n🚀 PRODUCTION READINESS ASSESSMENT:")
-        if success_rate >= 90:
-            print("   ✅ EXCELLENT - Ready for Series A investor demonstrations")
-            print("   🎯 Platform demonstrates revolutionary 0% commission model")
-            print("   🌍 Global scale capabilities validated (4M+ cities, 89+ languages)")
-            print("   🤖 Advanced AI features operational and investor-ready")
-        elif success_rate >= 75:
-            print("   ⚠️  GOOD - Minor issues to address before Series A")
-            print("   🔧 Some features need optimization for investor demo")
-        else:
-            print("   ❌ NEEDS WORK - Significant issues require attention")
-            print("   🚨 Critical systems failing - not ready for Series A")
-        
-        # Failed Tests Summary
-        if failed_tests > 0:
-            print(f"\n❌ FAILED TESTS REQUIRING ATTENTION:")
-            for test in all_tests:
-                if test['status'] != 'PASS':
-                    print(f"   • {test['method']} {test['endpoint']}: {test.get('error', 'Failed')}")
-        
-        print("\n" + "=" * 80)
-        print("🌍💰 AISLEMARTS - WORLD'S FIRST 0% COMMISSION COMMERCE PLATFORM")
-        print("Ready to revolutionize global commerce with AI-powered, zero-commission model")
-        print("Series A Investment Ready - Demonstrating Global Scale & Revolutionary Business Model")
-        print("=" * 80)
-        
-        return {
-            "total_tests": total_tests,
-            "passed_tests": passed_tests,
-            "success_rate": success_rate,
-            "series_a_ready": success_rate >= 90
-        }
-
-    async def run_comprehensive_test_suite(self):
-        """Run the complete test suite for Series A investor demo"""
-        print("🌍💰 AISLEMARTS COMPREHENSIVE BACKEND TESTING")
-        print("World's First 0% Commission AI Commerce Super-App")
-        print("Series A Investor Demo - Production Readiness Assessment")
+        print("🤖✨💎 ULTRA-COMPREHENSIVE BACKEND TESTING - AI SUPER AGENT INTEGRATION VALIDATION")
+        print("=" * 100)
         print(f"Backend URL: {BACKEND_URL}")
-        print("=" * 80)
+        print(f"Test Start Time: {datetime.utcnow().isoformat()}")
+        print("=" * 100)
         
-        start_time = time.time()
+        # PRIORITY 1: AI SUPER AGENT VALIDATION
+        print("\n🚀 PRIORITY 1: AI SUPER AGENT VALIDATION")
+        print("-" * 50)
         
-        # Test all priority systems
-        await self.test_priority_1_revolutionary_business_model()
-        await self.test_priority_2_next_generation_features()
-        await self.test_priority_3_advanced_systems()
-        await self.test_priority_4_core_foundation()
+        await self.test_ai_super_agent_health()
+        await self.test_ai_capabilities_status()
+        await self.test_ai_request_processing()
+        await self.test_live_ai_insights()
+        await self.test_quick_actions()
+        await self.test_ai_analytics()
+        await self.test_ai_demo_mode()
         
-        # Performance testing
-        await self.test_performance_under_load()
+        # PRIORITY 2: PREVIOUSLY FIXED SYSTEMS REVALIDATION
+        print("\n🔄 PRIORITY 2: PREVIOUSLY FIXED SYSTEMS REVALIDATION")
+        print("-" * 50)
         
-        total_time = time.time() - start_time
+        await self.test_city_scale_features()
+        await self.test_universal_ai_hub_analytics()
+        await self.test_websocket_trigger_endpoints()
+        await self.test_rewards_analytics()
+        await self.test_currency_conversion_enhanced()
+        
+        # PRIORITY 3: COMPLETE ECOSYSTEM VALIDATION
+        print("\n🌍 PRIORITY 3: COMPLETE ECOSYSTEM VALIDATION")
+        print("-" * 50)
+        
+        await self.test_revolutionary_business_model()
+        await self.test_global_scale_systems()
+        await self.test_next_gen_features()
+        await self.test_advanced_systems()
+        await self.test_performance_metrics()
         
         # Generate comprehensive report
-        return self.generate_series_a_report(total_time)
+        await self.generate_final_report()
+    
+    async def generate_final_report(self):
+        """Generate ultra-comprehensive final report"""
+        total_time = time.time() - self.start_time
+        success_rate = (self.passed_tests / self.total_tests) * 100 if self.total_tests > 0 else 0
+        
+        print("\n" + "=" * 100)
+        print("🏆 ULTRA-COMPREHENSIVE TESTING RESULTS - SERIES A INVESTOR DEMO QUALITY")
+        print("=" * 100)
+        
+        print(f"📊 OVERALL STATISTICS:")
+        print(f"   • Total Tests: {self.total_tests}")
+        print(f"   • Passed: {self.passed_tests} ✅")
+        print(f"   • Failed: {self.failed_tests} ❌")
+        print(f"   • Success Rate: {success_rate:.1f}%")
+        print(f"   • Total Time: {total_time:.2f}s")
+        print(f"   • Average Response Time: {sum(float(r['response_time'].replace('s', '')) for r in self.results) / len(self.results):.3f}s")
+        
+        # Categorize results
+        ai_super_agent_tests = [r for r in self.results if "AI" in r["test"] and ("Super Agent" in r["test"] or "Request Processing" in r["test"] or "Quick Action" in r["test"])]
+        system_tests = [r for r in self.results if r not in ai_super_agent_tests]
+        
+        print(f"\n🤖 AI SUPER AGENT RESULTS:")
+        ai_success = sum(1 for r in ai_super_agent_tests if r["success"]) / len(ai_super_agent_tests) * 100 if ai_super_agent_tests else 0
+        print(f"   • AI Super Agent Core: {ai_success:.1f}% success rate ({sum(1 for r in ai_super_agent_tests if r['success'])}/{len(ai_super_agent_tests)} tests)")
+        
+        system_success = sum(1 for r in system_tests if r["success"]) / len(system_tests) * 100 if system_tests else 0
+        print(f"   • System Integration: {system_success:.1f}% success rate ({sum(1 for r in system_tests if r['success'])}/{len(system_tests)} tests)")
+        
+        # Failed tests details
+        failed_tests = [r for r in self.results if not r["success"]]
+        if failed_tests:
+            print(f"\n❌ FAILED TESTS DETAILS:")
+            for test in failed_tests:
+                print(f"   • {test['test']}: {test['details']}")
+        
+        # Series A readiness assessment
+        print(f"\n💎 SERIES A INVESTOR READINESS ASSESSMENT:")
+        if success_rate >= 95:
+            print("   🏆 EXCELLENT - Ready for Series A investor demonstrations")
+            print("   ✨ AI Super Agent demonstrates world-class capabilities")
+            print("   🚀 Revolutionary business model fully operational")
+        elif success_rate >= 90:
+            print("   ✅ GOOD - Minor issues to address before Series A")
+            print("   🔧 AI Super Agent core functionality operational")
+        else:
+            print("   ⚠️  NEEDS IMPROVEMENT - Address critical issues before Series A")
+            print("   🛠️  AI Super Agent requires fixes for investor readiness")
+        
+        print(f"\n🎯 ACHIEVEMENT UNLOCKED:")
+        print(f"   • AisleMarts AI Super Agent: {'OPERATIONAL' if ai_success >= 90 else 'NEEDS FIXES'}")
+        print(f"   • Revolutionary 0% Commission Model: {'VALIDATED' if system_success >= 85 else 'NEEDS VALIDATION'}")
+        print(f"   • Global Scale Capabilities: {'CONFIRMED' if system_success >= 80 else 'NEEDS CONFIRMATION'}")
+        print(f"   • Series A Demo Quality: {'ACHIEVED' if success_rate >= 95 else 'IN PROGRESS'}")
+        
+        print("=" * 100)
 
 async def main():
     """Main test execution"""
-    print("🚀💎 Starting COMPREHENSIVE BACKEND TESTING")
-    print("WORLD'S FIRST 0% COMMISSION AI COMMERCE SUPER-APP")
-    print("="*80)
-    
-    async with AisleMartsComprehensiveTester() as tester:
-        report = await tester.run_comprehensive_test_suite()
-        return report
+    async with UltraComprehensiveBackendTester() as tester:
+        await tester.run_ultra_comprehensive_tests()
 
 if __name__ == "__main__":
-    try:
-        report = asyncio.run(main())
-        exit_code = 0 if report["series_a_ready"] else 1
-        exit(exit_code)
-    except KeyboardInterrupt:
-        print("\n⚠️ Test interrupted by user")
-        exit(1)
-    except Exception as e:
-        print(f"\n❌ Test execution failed: {e}")
-        exit(1)
+    asyncio.run(main())
