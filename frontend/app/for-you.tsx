@@ -338,7 +338,7 @@ export default function ForYouScreen() {
         {/* Family Safety Badge */}
         {currentVideo.safety.familySafe && (
           <View style={styles.safetyBadge}>
-            <Text style={styles.safetyBadgeText}>🛡️ BlueWave Safe</Text>
+            <Text style={styles.safetyBadgeText}>🛡️ Family Safe</Text>
           </View>
         )}
 
