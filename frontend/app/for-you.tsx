@@ -832,4 +832,70 @@ const styles = StyleSheet.create({
   wishlistIcon: {
     fontSize: 16,
   },
+  // TikTok-style Trending Creators Section
+  trendingSection: {
+    backgroundColor: '#000000',
+    paddingVertical: 16,
+    borderBottomWidth: 1,
+    borderBottomColor: 'rgba(255, 255, 255, 0.1)',
+  },
+  trendingSectionTitle: {
+    color: '#FFFFFF',
+    fontSize: 18,
+    fontWeight: '700',
+    paddingHorizontal: 20,
+    marginBottom: 12,
+  },
+  trendingCreators: {
+    paddingLeft: 20,
+  },
+  creatorItem: {
+    alignItems: 'center',
+    marginRight: 16,
+    width: 80,
+  },
+  creatorAvatar: {
+    width: 56,
+    height: 56,
+    borderRadius: 28,
+    backgroundColor: '#FFFFFF',
+    alignItems: 'center',
+    justifyContent: 'center',
+    marginBottom: 8,
+    position: 'relative',
+  },
+  creatorAvatarText: {
+    color: '#000000',
+    fontSize: 18,
+    fontWeight: '700',
+  },
+  liveIndicator: {
+    position: 'absolute',
+    bottom: -2,
+    right: -2,
+    width: 20,
+    height: 20,
+    borderRadius: 10,
+    backgroundColor: '#25f4ee',
+    borderWidth: 2,
+    borderColor: '#000000',
+  },
+  creatorName: {
+    color: '#FFFFFF',
+    fontSize: 12,
+    fontWeight: '600',
+    textAlign: 'center',
+    marginBottom: 6,
+  },
+  followButton: {
+    backgroundColor: '#ff0050',
+    paddingHorizontal: 16,
+    paddingVertical: 6,
+    borderRadius: 20,
+  },
+  followButtonText: {
+    color: '#FFFFFF',
+    fontSize: 12,
+    fontWeight: '700',
+  },
 });
