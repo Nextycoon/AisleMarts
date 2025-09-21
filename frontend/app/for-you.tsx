@@ -507,6 +507,15 @@ const styles = StyleSheet.create({
     zIndex: 12,
   },
 
+  // Creator info moved down to above bottom navigation
+  leftSideMovedDown: {
+    position: 'absolute',
+    bottom: 80, // Moved down to be just above bottom navigation
+    left: 20,
+    right: 100,
+    zIndex: 12,
+  },
+
   rightSide: {
     position: 'absolute',
     right: 20,
