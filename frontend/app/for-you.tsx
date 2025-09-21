@@ -166,7 +166,7 @@ export default function ForYouScreen() {
         isFollowing: false,
       },
       caption: 'Quick healthy snacks for busy families! 🥗🍎 Nutrition made simple',
-      hashtags: ['#HealthyEating', '#FamilyNutrition', '#QuickSnacks', '#BlueWaveApproved'],
+      hashtags: ['#HealthyEating', '#Nutrition', '#QuickSnacks', '#HealthyLife'],
       sound: {
         id: 'sound_3',
         title: 'Cooking Fun',
