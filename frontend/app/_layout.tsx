@@ -18,6 +18,8 @@ export default function RootLayout() {
       >
           <Stack.Screen name="index" />
           <Stack.Screen name="(tabs)" />
+          
+          {/* Main Dashboard and Core Features */}
           <Stack.Screen 
             name="aisle-agent" 
             options={{
@@ -27,6 +29,170 @@ export default function RootLayout() {
               animation: 'slide_from_right',
             }}
           />
+          <Stack.Screen 
+            name="for-you" 
+            options={{
+              headerShown: false,
+              presentation: 'card',
+              animation: 'slide_from_right',
+            }}
+          />
+          <Stack.Screen 
+            name="following" 
+            options={{
+              headerShown: false,
+              presentation: 'card',
+              animation: 'slide_from_right',
+            }}
+          />
+          <Stack.Screen 
+            name="explore" 
+            options={{
+              headerShown: false,
+              presentation: 'card',
+              animation: 'slide_from_right',
+            }}
+          />
+          
+          {/* AI and Advanced Features */}
+          <Stack.Screen 
+            name="ai-super-agent" 
+            options={{
+              headerShown: false,
+              presentation: 'card',
+              animation: 'slide_from_right',
+            }}
+          />
+          <Stack.Screen 
+            name="live-marketplace" 
+            options={{
+              headerShown: false,
+              presentation: 'card',
+              animation: 'slide_from_right',
+            }}
+          />
+          <Stack.Screen 
+            name="voice-assistant" 
+            options={{
+              headerShown: false,
+              presentation: 'card',
+              animation: 'slide_from_right',
+            }}
+          />
+          <Stack.Screen 
+            name="ar-vr-experience" 
+            options={{
+              headerShown: false,
+              presentation: 'card',
+              animation: 'slide_from_right',
+            }}
+          />
+          
+          {/* Rewards System */}
+          <Stack.Screen 
+            name="rewards" 
+            options={{
+              headerShown: false,
+              presentation: 'card',
+              animation: 'slide_from_right',
+            }}
+          />
+          <Stack.Screen 
+            name="notifications" 
+            options={{
+              headerShown: false,
+              presentation: 'card',
+              animation: 'slide_from_right',
+            }}
+          />
+          
+          {/* Creator and Business Features */}
+          <Stack.Screen 
+            name="creator-studio" 
+            options={{
+              headerShown: false,
+              presentation: 'card',
+              animation: 'slide_from_right',
+            }}
+          />
+          <Stack.Screen 
+            name="creator-studio-hub" 
+            options={{
+              headerShown: false,
+              presentation: 'card',
+              animation: 'slide_from_right',
+            }}
+          />
+          <Stack.Screen 
+            name="live-streaming" 
+            options={{
+              headerShown: false,
+              presentation: 'card',
+              animation: 'slide_from_right',
+            }}
+          />
+          <Stack.Screen 
+            name="duet-creator" 
+            options={{
+              headerShown: false,
+              presentation: 'card',
+              animation: 'slide_from_right',
+            }}
+          />
+          <Stack.Screen 
+            name="stitch-creator" 
+            options={{
+              headerShown: false,
+              presentation: 'card',
+              animation: 'slide_from_right',
+            }}
+          />
+          
+          {/* Premium and Membership */}
+          <Stack.Screen 
+            name="premium-membership" 
+            options={{
+              headerShown: false,
+              presentation: 'card',
+              animation: 'slide_from_right',
+            }}
+          />
+          <Stack.Screen 
+            name="sustainability-dashboard" 
+            options={{
+              headerShown: false,
+              presentation: 'card',
+              animation: 'slide_from_right',
+            }}
+          />
+          <Stack.Screen 
+            name="global-languages" 
+            options={{
+              headerShown: false,
+              presentation: 'card',
+              animation: 'slide_from_right',
+            }}
+          />
+          
+          {/* Lifestyle and Marketplace */}
+          <Stack.Screen 
+            name="lifestyle-hub" 
+            options={{
+              headerShown: false,
+              presentation: 'card',
+              animation: 'slide_from_right',
+            }}
+          />
+          <Stack.Screen 
+            name="ai-marketplace" 
+            options={{
+              headerShown: false,
+              presentation: 'card',
+              animation: 'slide_from_right',
+            }}
+          />
+          
+          {/* E-commerce Features */}
           <Stack.Screen 
             name="cart" 
             options={{
@@ -45,6 +211,8 @@ export default function RootLayout() {
               animation: 'slide_from_right',
             }}
           />
+          
+          {/* Legacy Dashboard Screens */}
           <Stack.Screen 
             name="fusion-dashboard" 
             options={{
