@@ -419,19 +419,25 @@ export default function ForYouScreen() {
 
           {/* Like Button */}
           <TouchableOpacity style={styles.actionButton} onPress={handleLike}>
-            <Text style={styles.actionIcon}>❤️</Text>
+            <View style={[styles.actionCircle, { backgroundColor: 'rgba(255, 255, 255, 0.2)' }]}>
+              <Text style={styles.actionIcon}>❤️</Text>
+            </View>
             <Text style={styles.actionText}>{currentVideo.stats.likes.toLocaleString()}</Text>
           </TouchableOpacity>
 
           {/* Comment Button */}
           <TouchableOpacity style={styles.actionButton} onPress={handleComment}>
-            <Text style={styles.actionIcon}>💬</Text>
+            <View style={[styles.actionCircle, { backgroundColor: 'rgba(255, 255, 255, 0.2)' }]}>
+              <Text style={styles.actionIcon}>💬</Text>
+            </View>
             <Text style={styles.actionText}>{currentVideo.stats.comments.toLocaleString()}</Text>
           </TouchableOpacity>
 
           {/* Share Button */}
           <TouchableOpacity style={styles.actionButton} onPress={handleShare}>
-            <Text style={styles.actionIcon}>↗️</Text>
+            <View style={[styles.actionCircle, { backgroundColor: 'rgba(255, 255, 255, 0.2)' }]}>
+              <Text style={styles.actionIcon}>↗️</Text>
+            </View>
             <Text style={styles.actionText}>{currentVideo.stats.shares.toLocaleString()}</Text>
           </TouchableOpacity>
 
