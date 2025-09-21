@@ -267,8 +267,8 @@ export default function ForYouScreen() {
         activeOpacity={1}
       />
 
-      {/* Left Side - Video Info */}
-      <View style={styles.leftSide}>
+      {/* Left Side - Creator Info moved down to above bottom navigation */}
+      <View style={styles.leftSideMovedDown}>
         <View style={styles.elegantCreatorInfo}>
           <View style={styles.refinedCreatorNameContainer}>
             <Text style={styles.refinedCreatorName}>{currentVideo.creator.name}</Text>
