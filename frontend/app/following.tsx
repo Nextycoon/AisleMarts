@@ -373,13 +373,13 @@ export default function FollowingScreen() {
         </TouchableOpacity>
       </View>
 
-      {/* Trending Creators Section - TikTok Style */}
+      {/* Trending AisleMarts Creators Section - Premium Luxury Design */}
       <View style={styles.trendingSection}>
-        <Text style={styles.trendingSectionTitle}>Trending creators</Text>
-        <View style={styles.trendingCreators}>
+        <Text style={styles.trendingSectionTitle}>Trending AisleMarts Creators</Text>
+        <ScrollView horizontal showsHorizontalScrollIndicator={false} style={styles.trendingCreators}>
           {mockTrendingCreators.map((creator, index) => (
             <TouchableOpacity key={index} style={styles.creatorItem}>
-              <View style={[styles.creatorAvatar, creator.isLive && styles.liveCreatorAvatar]}>
+              <View style={styles.creatorAvatar}>
                 <Text style={styles.creatorAvatarText}>{creator.name.charAt(0)}</Text>
                 {creator.isLive && <View style={styles.liveIndicator} />}
               </View>
@@ -389,7 +389,7 @@ export default function FollowingScreen() {
               </TouchableOpacity>
             </TouchableOpacity>
           ))}
-        </View>
+        </ScrollView>
       </View>
 
       {/* Content List */}
