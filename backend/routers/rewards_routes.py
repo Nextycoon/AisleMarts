@@ -324,6 +324,7 @@ async def update_mission_progress(
     """
     try:
         # Mock real-time progress update
+        progress = progress_data.progress
         result = {
             "ok": True,
             "missionId": mission_id,
