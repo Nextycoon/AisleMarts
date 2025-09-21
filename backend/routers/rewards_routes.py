@@ -3,7 +3,7 @@
 BlueWave-themed rewards, gamification, missions, and notifications
 """
 
-from fastapi import APIRouter, HTTPException, BackgroundTasks
+from fastapi import APIRouter, HTTPException, BackgroundTasks, Query
 from pydantic import BaseModel, Field
 from typing import Optional, Dict, List, Any, Literal
 from datetime import datetime
