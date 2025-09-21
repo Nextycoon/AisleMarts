@@ -168,7 +168,7 @@ export default function ExploreScreen() {
     }
   };
 
-  const handleContentPress = (content: ExploreContent) => {
+  const handleExplorePress = (content: ExploreContent) => {
     if (content.isLive) {
       router.push(`/live/${content.id}`);
     } else {
