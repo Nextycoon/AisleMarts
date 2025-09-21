@@ -94,6 +94,7 @@ const styles = StyleSheet.create({
     justifyContent: 'space-around',
   },
   tabItem: {
+    flex: 1,
     alignItems: 'center',
     justifyContent: 'center',
     paddingVertical: 4,
