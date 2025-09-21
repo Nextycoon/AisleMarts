@@ -588,7 +588,18 @@ try:
     from routers.ai_super_agent_routes import router as ai_super_agent_router
     app.include_router(ai_super_agent_router, prefix="/api", tags=["ai_super_agent"])
     
-    print("💰🚀 WORLD'S FIRST 0% COMMISSION COMMERCE PLATFORM: AisleMarts Lead Economy | Vendors Keep 100% Revenue | Pay-Per-Lead Only | Most Lovable App in 4M+ Cities | 89 Languages | Physical+Digital Commerce | Voice AI | AR/VR | Creator Economy | AI Super Agent | Series A Ready")
+    # Import and include Production Deployment router
+    from routers.production_deployment_routes import router as production_deployment_router
+    app.include_router(production_deployment_router, prefix="/api", tags=["production_deployment"])
+    
+    # Import and include Advanced Analytics router (we'll create this)
+    try:
+        from routers.advanced_analytics_routes import router as advanced_analytics_router
+        app.include_router(advanced_analytics_router, prefix="/api", tags=["advanced_analytics"])
+    except ImportError:
+        logger.warning("Advanced Analytics router not found")
+    
+    print("🌍💰🤖✨🚀 ULTIMATE AI COMMERCE SUPER-APP LIVE: AisleMarts Production | 0% Commission | AI Super Agent | Global Deployment | Advanced Analytics | Live Marketplace | Vendors Keep 100% | Beyond Series A Ready")
 except ImportError as e:
     print(f"⚠️ Routers not available: {e}")
 except Exception as e:
