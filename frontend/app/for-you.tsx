@@ -630,10 +630,208 @@ const styles = StyleSheet.create({
     height: 320, // Keep height for all 7 icons
     zIndex: 2,
   },
-  avatarContainer: {
+  // ==================================================================================
+  // LUXURY AISLEMARTS WORLD-CLASS ICON DESIGN SYSTEM
+  // ==================================================================================
+  
+  // Luxury Avatar Container - Premium Profile Design
+  luxuryAvatarContainer: {
     alignItems: 'center',
-    marginBottom: 16, // Reduced spacing to match TikTok
+    marginBottom: 16,
     position: 'relative',
+  },
+  luxuryAvatar: {
+    width: 52,
+    height: 52,
+    borderRadius: 26,
+    backgroundColor: 'linear-gradient(135deg, #D4AF37 0%, #FFD700 50%, #B8860B 100%)',
+    alignItems: 'center',
+    justifyContent: 'center',
+    borderWidth: 3,
+    borderColor: '#FFFFFF',
+    shadowColor: '#D4AF37',
+    shadowOffset: { width: 0, height: 4 },
+    shadowOpacity: 0.6,
+    shadowRadius: 8,
+    elevation: 12,
+  },
+  luxuryAvatarText: {
+    color: '#000000',
+    fontSize: 20,
+    fontWeight: '900',
+    textShadowColor: 'rgba(255, 255, 255, 0.3)',
+    textShadowOffset: { width: 0, height: 1 },
+    textShadowRadius: 2,
+  },
+  luxuryFollowButton: {
+    position: 'absolute',
+    bottom: -6,
+    backgroundColor: 'linear-gradient(135deg, #FF0050 0%, #FF3B30 50%, #DC143C 100%)',
+    width: 26,
+    height: 26,
+    borderRadius: 13,
+    alignItems: 'center',
+    justifyContent: 'center',
+    borderWidth: 3,
+    borderColor: '#FFFFFF',
+    shadowColor: '#FF0050',
+    shadowOffset: { width: 0, height: 3 },
+    shadowOpacity: 0.7,
+    shadowRadius: 6,
+    elevation: 10,
+  },
+  luxuryFollowPlus: {
+    color: '#FFFFFF',
+    fontSize: 18,
+    fontWeight: '900',
+    textShadowColor: 'rgba(0, 0, 0, 0.5)',
+    textShadowOffset: { width: 0, height: 1 },
+    textShadowRadius: 2,
+  },
+
+  // Luxury Action Button Base - World-Class Interactive Design
+  luxuryActionButton: {
+    alignItems: 'center',
+    marginBottom: 12,
+    width: 56,
+    height: 56,
+    justifyContent: 'center',
+  },
+  luxuryIconContainer: {
+    width: 48,
+    height: 48,
+    borderRadius: 24,
+    backgroundColor: 'rgba(255, 255, 255, 0.15)',
+    alignItems: 'center',
+    justifyContent: 'center',
+    borderWidth: 1,
+    borderColor: 'rgba(255, 255, 255, 0.3)',
+    shadowColor: '#000000',
+    shadowOffset: { width: 0, height: 4 },
+    shadowOpacity: 0.3,
+    shadowRadius: 8,
+    elevation: 8,
+  },
+
+  // Premium Like Icon - Luxury Heart Design
+  luxuryLikeIcon: {
+    fontSize: 28,
+    color: '#FFFFFF',
+    textShadowColor: 'rgba(255, 0, 80, 0.8)',
+    textShadowOffset: { width: 0, height: 2 },
+    textShadowRadius: 6,
+  },
+
+  // Premium Comment Icon - Sophisticated Chat Design
+  luxuryCommentIcon: {
+    fontSize: 26,
+    color: '#FFFFFF',
+    textShadowColor: 'rgba(66, 165, 245, 0.8)',
+    textShadowOffset: { width: 0, height: 2 },
+    textShadowRadius: 6,
+  },
+
+  // Premium Save Icon - Elegant Bookmark Design
+  luxurySaveIcon: {
+    fontSize: 26,
+    color: '#FFFFFF',
+    textShadowColor: 'rgba(255, 193, 7, 0.8)',
+    textShadowOffset: { width: 0, height: 2 },
+    textShadowRadius: 6,
+  },
+
+  // Premium Share Icon - Modern Arrow Design
+  luxuryShareIcon: {
+    fontSize: 28,
+    color: '#FFFFFF',
+    fontWeight: '700',
+    textShadowColor: 'rgba(76, 175, 80, 0.8)',
+    textShadowOffset: { width: 0, height: 2 },
+    textShadowRadius: 6,
+  },
+
+  // Luxury Action Text - Premium Typography
+  luxuryActionText: {
+    color: '#FFFFFF',
+    fontSize: 13,
+    fontWeight: '700',
+    marginTop: 4,
+    textAlign: 'center',
+    textShadowColor: 'rgba(0, 0, 0, 0.8)',
+    textShadowOffset: { width: 0, height: 1 },
+    textShadowRadius: 3,
+    letterSpacing: 0.5,
+  },
+
+  // ==================================================================================
+  // AISLEMARTS SIGNATURE SHOPPING BUTTON - LUXURY GOLDEN DESIGN
+  // ==================================================================================
+  aisleMartsLuxuryShoppingButton: {
+    alignItems: 'center',
+    marginBottom: 12,
+    width: 56,
+    height: 56,
+    justifyContent: 'center',
+  },
+  aisleMartsShoppingContainer: {
+    width: 50,
+    height: 50,
+    borderRadius: 25,
+    backgroundColor: 'rgba(212, 175, 55, 0.9)',
+    alignItems: 'center',
+    justifyContent: 'center',
+    borderWidth: 2,
+    borderColor: '#FFD700',
+    shadowColor: '#D4AF37',
+    shadowOffset: { width: 0, height: 6 },
+    shadowOpacity: 0.8,
+    shadowRadius: 12,
+    elevation: 15,
+  },
+  aisleMartsShoppingIcon: {
+    fontSize: 28,
+    textShadowColor: 'rgba(0, 0, 0, 0.5)',
+    textShadowOffset: { width: 0, height: 2 },
+    textShadowRadius: 4,
+  },
+  aisleMartsShoppingText: {
+    color: '#D4AF37',
+    fontSize: 13,
+    fontWeight: '900',
+    marginTop: 4,
+    textAlign: 'center',
+    textShadowColor: 'rgba(0, 0, 0, 0.8)',
+    textShadowOffset: { width: 0, height: 1 },
+    textShadowRadius: 3,
+    letterSpacing: 1,
+  },
+
+  // ==================================================================================
+  // LUXURY MUSIC BUTTON - PREMIUM AUDIO EXPERIENCE
+  // ==================================================================================
+  luxuryMusicButton: {
+    alignItems: 'center',
+    marginBottom: 12,
+    width: 50,
+    height: 50,
+    borderRadius: 25,
+    backgroundColor: 'rgba(255, 255, 255, 0.2)',
+    justifyContent: 'center',
+    borderWidth: 2,
+    borderColor: 'rgba(255, 255, 255, 0.4)',
+    shadowColor: '#FFFFFF',
+    shadowOffset: { width: 0, height: 4 },
+    shadowOpacity: 0.4,
+    shadowRadius: 8,
+    elevation: 10,
+  },
+  luxuryMusicIcon: {
+    fontSize: 24,
+    color: '#FFFFFF',
+    fontWeight: '600',
+    textShadowColor: 'rgba(0, 0, 0, 0.6)',
+    textShadowOffset: { width: 0, height: 2 },
+    textShadowRadius: 4,
   },
   avatar: {
     width: 50,
