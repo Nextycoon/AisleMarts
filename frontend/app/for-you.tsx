@@ -497,6 +497,44 @@ const styles = StyleSheet.create({
   },
 
   // ==================================================================================
+  // X (TWITTER) VERIFIED BADGE STYLING
+  // ==================================================================================
+  creatorNameContainer: {
+    flexDirection: 'row',
+    alignItems: 'center',
+    marginBottom: 8,
+  },
+  creatorName: {
+    color: '#FFFFFF',
+    fontSize: 16,
+    fontWeight: '700',
+    textShadowColor: 'rgba(0, 0, 0, 0.8)',
+    textShadowOffset: { width: 0, height: 1 },
+    textShadowRadius: 3,
+  },
+  xVerifiedBadge: {
+    width: 20,
+    height: 20,
+    borderRadius: 10,
+    backgroundColor: '#1DA1F2', // X/Twitter blue
+    alignItems: 'center',
+    justifyContent: 'center',
+    marginLeft: 6,
+    shadowColor: '#1DA1F2',
+    shadowOffset: { width: 0, height: 2 },
+    shadowOpacity: 0.4,
+    shadowRadius: 4,
+    elevation: 6,
+  },
+  xVerifiedCheckmark: {
+    color: '#FFFFFF',
+    fontSize: 12,
+    fontWeight: '900',
+    textAlign: 'center',
+    lineHeight: 14,
+  },
+
+  // ==================================================================================
   // OVERLAY CONTENT - FLOATING ON TOP OF VIDEO
   // ==================================================================================
   bottomContent: {
