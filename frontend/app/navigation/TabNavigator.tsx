@@ -19,12 +19,10 @@ interface TabItem {
 }
 
 const tabs: TabItem[] = [
-  { name: 'home', icon: '🏠', route: '/for-you', label: 'For You' },
-  { name: 'following', icon: '👥', route: '/following', label: 'Following' },
-  { name: 'explore', icon: '🔍', route: '/explore', label: 'Explore' },
-  { name: 'create', icon: '➕', route: '/creator-studio', label: 'Create' },
-  { name: 'live', icon: '🔴', route: '/live-streaming', label: 'Live' },
-  { name: 'aisle', icon: '🛍️', route: '/aisle', label: 'Aisle' },
+  { name: 'home', icon: '🏠', route: '/for-you', label: 'Home' },
+  { name: 'friends', icon: '👥', route: '/friends', label: 'Friends' },
+  { name: 'create', icon: '➕', route: '/create', label: '' },
+  { name: 'inbox', icon: '✉️', route: '/notifications', label: 'Inbox' },
   { name: 'profile', icon: '👤', route: '/profile', label: 'Profile' },
 ];
 
