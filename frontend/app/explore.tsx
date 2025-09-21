@@ -566,7 +566,6 @@ const styles = StyleSheet.create({
     justifyContent: 'space-between',
   },
   exploreItem: {
-    width: itemWidth,
     marginBottom: 20,
   },
   exploreImageContainer: {
