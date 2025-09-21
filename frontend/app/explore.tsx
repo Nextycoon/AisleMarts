@@ -366,17 +366,12 @@ export default function ExploreScreen() {
                 }
               </Text>
             </View>
-            <FlatList
-              data={activeTab === 'live' 
+            <View style={styles.exploreGrid}>
+              {(activeTab === 'live' 
                 ? exploreContent.filter(item => item.isLive)
                 : exploreContent
-              }
-              renderItem={renderExploreItem}
-              keyExtractor={(item) => item.id}
-              numColumns={2}
-              scrollEnabled={false}
-              columnWrapperStyle={styles.exploreRow}
-            />
+              ).map((item, index) => renderExploreItem({ item, index }))}
+            </View>
           </View>
         )}
       </ScrollView>
