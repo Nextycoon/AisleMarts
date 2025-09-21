@@ -69,8 +69,9 @@ export default function ForYouScreen() {
   
   // Use TikTok API hook for feed data with mock user ID
   const { data: feedData, loading: isLoading, error, refresh, loadMore } = useForYouFeed('test_user_001', true);
-
-  const forYouFeed: VideoContent[] = [
+  
+  // Fallback mock content for development
+  const mockContent: VideoContent[] = [
     {
       id: '1',
       uri: 'https://commondatastorage.googleapis.com/gtv-videos-bucket/sample/BigBuckBunny.mp4',
