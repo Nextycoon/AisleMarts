@@ -696,6 +696,31 @@ const styles = StyleSheet.create({
     fontSize: 16,
     fontWeight: '600',
   },
+  // Clean TikTok Action Button Styles (No Background Circles)
+  tiktokActionButton: {
+    alignItems: 'center',
+    marginBottom: 24,
+    width: 48,
+    height: 48,
+    justifyContent: 'center',
+  },
+  tiktokActionIcon: {
+    fontSize: 32,
+    color: '#FFFFFF',
+    textShadowColor: 'rgba(0, 0, 0, 0.5)',
+    textShadowOffset: { width: 0, height: 2 },
+    textShadowRadius: 4,
+  },
+  tiktokActionText: {
+    color: '#FFFFFF',
+    fontSize: 12,
+    fontWeight: '600',
+    marginTop: 2,
+    textAlign: 'center',
+    textShadowColor: 'rgba(0, 0, 0, 0.7)',
+    textShadowOffset: { width: 0, height: 1 },
+    textShadowRadius: 2,
+  },
   actionButton: {
     alignItems: 'center',
     marginBottom: 20,
