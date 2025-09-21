@@ -17,6 +17,7 @@ import TabNavigator from './navigation/TabNavigator';
 import TopNavigation from '../src/components/TopNavigation';
 
 const { width } = Dimensions.get('window');
+const itemWidth = (width - 60) / 2; // For trending items grid
 // TikTok-style variable grid layout - Dynamic sizing like reference images
 const getItemDimensions = (index: number) => {
   const baseWidth = (width - 32) / 3; // 3 columns base
