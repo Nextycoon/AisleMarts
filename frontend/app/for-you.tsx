@@ -428,34 +428,25 @@ export default function ForYouScreen() {
             <Text style={styles.tiktokActionText}>{currentVideo.stats.comments.toLocaleString()}</Text>
           </TouchableOpacity>
 
+          {/* Save Button - TikTok Style */}
+          <TouchableOpacity style={styles.tiktokActionButton} onPress={() => console.log('Save pressed')}>
+            <Text style={styles.tiktokActionIcon}>📌</Text>
+            <Text style={styles.tiktokActionText}>{currentVideo.stats.saves.toLocaleString()}</Text>
+          </TouchableOpacity>
+
           {/* Share Button - Clean TikTok Style */}
           <TouchableOpacity style={styles.tiktokActionButton} onPress={handleShare}>
             <Text style={styles.tiktokActionIcon}>➤</Text>
             <Text style={styles.tiktokActionText}>{currentVideo.stats.shares.toLocaleString()}</Text>
           </TouchableOpacity>
 
-          {/* Save Button */}
-          <TouchableOpacity style={styles.actionButton} onPress={handleSave}>
-            <Text style={styles.actionIcon}>📂</Text>
-            <Text style={styles.actionText}>{currentVideo.stats.saves.toLocaleString()}</Text>
-          </TouchableOpacity>
-
-          {/* Shopping Action - AisleMarts Unique Clean Style */}
+          {/* Shop Button - AisleMarts Unique Feature */}
           <TouchableOpacity 
             style={styles.aisleShoppingButton}
             onPress={() => setShowProducts(!showProducts)}
           >
             <Text style={styles.aisleShoppingIcon}>🛍️</Text>
-            <Text style={styles.aisleShoppingText}>{currentVideo.stats.saves.toLocaleString()}</Text>
-          </TouchableOpacity>
-
-          {/* Shopping Cart - AisleMarts Unique Clean Style */}
-          <TouchableOpacity 
-            style={styles.aisleShoppingButton}
-            onPress={() => router.push('/cart')}
-          >
-            <Text style={styles.aisleShoppingIcon}>🛒</Text>
-            <Text style={styles.aisleShoppingText}>{currentVideo.products.length}</Text>
+            <Text style={styles.aisleShoppingText}>Shop</Text>
           </TouchableOpacity>
 
           {/* Music/Sound Button */}
