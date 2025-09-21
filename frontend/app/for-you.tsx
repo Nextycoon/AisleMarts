@@ -516,11 +516,16 @@ export default function ForYouScreen() {
         ))}
       </View>
 
-      {/* Floating AI Assistant */}
-      <FloatingAIAssistant />
+      {/* Floating AI Assistant - Overlay on Video */}
+      <View style={styles.aiAssistantOverlay}>
+        <FloatingAIAssistant />
+      </View>
 
-      <TabNavigator />
-    </SafeAreaView>
+      {/* Bottom Navigation - Overlay on Video */}
+      <View style={styles.bottomNavOverlay}>
+        <TabNavigator />
+      </View>
+    </View>
   );
 }
 
