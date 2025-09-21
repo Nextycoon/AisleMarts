@@ -261,6 +261,9 @@ export default function ExploreScreen() {
     <SafeAreaView style={styles.container}>
       <StatusBar style="light" />
       
+      {/* Top Navigation - Explore | Following | For You */}
+      <TopNavigation />
+      
       {/* Header with Search */}
       <View style={styles.header}>
         <Text style={styles.headerTitle}>Explore</Text>
