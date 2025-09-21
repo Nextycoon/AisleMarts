@@ -319,78 +319,68 @@ export default function ForYouScreen() {
         </View>
       </View>
 
-      {/* Right Side Actions - Stylish Modern Design */}
-      <View style={styles.modernRightSide}>
-        {/* Stylish Profile Button - Elevated Modern Design */}
+      {/* Right Side Actions - Elegant Compact Design */}
+      <View style={styles.elegantRightSide}>
+        {/* Elegant Profile Button - Compact Premium Design */}
         <TouchableOpacity 
-          style={styles.modernAvatarContainer}
+          style={styles.elegantAvatarContainer}
           onPress={() => router.push(`/profile/${currentVideo.creator.id}`)}
         >
-          <View style={styles.modernAvatar}>
-            <Text style={styles.modernAvatarText}>L</Text>
-            <View style={styles.avatarGlowEffect} />
+          <View style={styles.elegantAvatar}>
+            <Text style={styles.elegantAvatarText}>L</Text>
           </View>
-          <View style={styles.modernFollowButton}>
-            <Text style={styles.modernFollowPlus}>+</Text>
+          <View style={styles.elegantFollowButton}>
+            <Text style={styles.elegantFollowPlus}>+</Text>
           </View>
         </TouchableOpacity>
 
-        {/* Stylish Like Button - Animated Heart Design */}
-        <TouchableOpacity style={styles.modernActionButton} onPress={handleLike}>
-          <View style={styles.modernIconContainer}>
-            <View style={styles.modernLikeGlow} />
-            <Text style={styles.modernLikeIcon}>♡</Text>
+        {/* Compact Action Icons - Sharp & Organized */}
+        <TouchableOpacity style={styles.compactActionButton} onPress={handleLike}>
+          <View style={styles.sharpIconContainer}>
+            <Text style={styles.sharpLikeIcon}>♡</Text>
           </View>
-          <Text style={styles.modernActionText}>{currentVideo.stats.likes.toLocaleString()}</Text>
+          <Text style={styles.compactActionText}>{currentVideo.stats.likes.toLocaleString()}</Text>
         </TouchableOpacity>
 
-        {/* Stylish Comment Button - Elevated Chat Design */}
-        <TouchableOpacity style={styles.modernActionButton} onPress={handleComment}>
-          <View style={styles.modernIconContainer}>
-            <View style={styles.modernCommentGlow} />
-            <Text style={styles.modernCommentIcon}>💬</Text>
+        <TouchableOpacity style={styles.compactActionButton} onPress={handleComment}>
+          <View style={styles.sharpIconContainer}>
+            <Text style={styles.sharpCommentIcon}>💬</Text>
           </View>
-          <Text style={styles.modernActionText}>{currentVideo.stats.comments.toLocaleString()}</Text>
+          <Text style={styles.compactActionText}>{currentVideo.stats.comments.toLocaleString()}</Text>
         </TouchableOpacity>
 
-        {/* Stylish Save Button - Modern Bookmark Design */}
-        <TouchableOpacity style={styles.modernActionButton} onPress={() => console.log('Save pressed')}>
-          <View style={styles.modernIconContainer}>
-            <View style={styles.modernSaveGlow} />
-            <Text style={styles.modernSaveIcon}>⚐</Text>
+        <TouchableOpacity style={styles.compactActionButton} onPress={() => console.log('Save pressed')}>
+          <View style={styles.sharpIconContainer}>
+            <Text style={styles.sharpSaveIcon}>📌</Text>
           </View>
-          <Text style={styles.modernActionText}>{currentVideo.stats.saves.toLocaleString()}</Text>
+          <Text style={styles.compactActionText}>{currentVideo.stats.saves.toLocaleString()}</Text>
         </TouchableOpacity>
 
-        {/* Stylish Share Button - Elevated Arrow Design */}
-        <TouchableOpacity style={styles.modernActionButton} onPress={handleShare}>
-          <View style={styles.modernIconContainer}>
-            <View style={styles.modernShareGlow} />
-            <Text style={styles.modernShareIcon}>↗</Text>
+        <TouchableOpacity style={styles.compactActionButton} onPress={handleShare}>
+          <View style={styles.sharpIconContainer}>
+            <Text style={styles.sharpShareIcon}>↗</Text>
           </View>
-          <Text style={styles.modernActionText}>{currentVideo.stats.shares.toLocaleString()}</Text>
+          <Text style={styles.compactActionText}>{currentVideo.stats.shares.toLocaleString()}</Text>
         </TouchableOpacity>
 
-        {/* AisleMarts Signature Shopping Button - Ultra Premium Design */}
+        {/* AisleMarts Signature Shopping - Compact Elegant Design */}
         <TouchableOpacity 
-          style={styles.aisleMartsSignatureButton}
+          style={styles.elegantShoppingButton}
           onPress={() => setShowProducts(!showProducts)}
         >
-          <View style={styles.signatureShoppingContainer}>
-            <View style={styles.signatureGoldenGlow} />
-            <Text style={styles.signatureShoppingIcon}>◆</Text>
+          <View style={styles.elegantShoppingContainer}>
+            <Text style={styles.elegantShoppingIcon}>🛍</Text>
           </View>
-          <Text style={styles.signatureShoppingText}>Shop</Text>
+          <Text style={styles.elegantShoppingText}>Shop</Text>
         </TouchableOpacity>
 
-        {/* Stylish Music Button - Premium Audio Experience */}
+        {/* Compact Music Button - Sharp Design */}
         <TouchableOpacity 
-          style={styles.modernMusicButton}
+          style={styles.compactMusicButton}
           onPress={() => console.log('Music pressed:', currentVideo.sound.title)}
         >
-          <View style={styles.modernMusicContainer}>
-            <View style={styles.musicButtonGlow} />
-            <Text style={styles.modernMusicButtonIcon}>♪</Text>
+          <View style={styles.sharpMusicContainer}>
+            <Text style={styles.sharpMusicIcon}>♪</Text>
           </View>
         </TouchableOpacity>
       </View>
