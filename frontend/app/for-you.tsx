@@ -468,7 +468,7 @@ export default function ForYouScreen() {
               )}
             </View>
           </TouchableOpacity>
-        ))
+        ))}
 
         {/* Parental Control Indicator */}
         {currentVideo.safety.parentalApproval && (
