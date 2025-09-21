@@ -516,12 +516,10 @@ export default function ForYouScreen() {
         ))}
       </View>
 
-      {/* AI Assistant Overlay */}
       <View style={styles.aiAssistantOverlay}>
         <FloatingAIAssistant />
       </View>
 
-      {/* Bottom Navigation Overlay */}
       <View style={styles.bottomNavOverlay}>
         <TabNavigator />
       </View>
