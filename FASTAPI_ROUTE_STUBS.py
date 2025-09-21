@@ -1,6 +1,6 @@
 <file>
       <absolute_file_name>/app/FASTAPI_ROUTE_STUBS.py</absolute_file_name>
-      <content"># 🚀💎 FASTAPI ROUTE STUBS & PYDANTIC MODELS
+      <content># 🚀💎 FASTAPI ROUTE STUBS & PYDANTIC MODELS
 # BlueWave AisleMarts - TikTok-Grade Family-Safe Commerce Platform
 # Complete backend API implementation stubs
 
