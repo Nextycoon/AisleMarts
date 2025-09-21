@@ -706,4 +706,19 @@ const styles = StyleSheet.create({
     fontSize: 16,
     fontWeight: '600',
   },
+  musicButton: {
+    alignItems: 'center',
+    marginBottom: 24,
+    width: 48,
+    height: 48,
+    borderRadius: 24,
+    backgroundColor: 'rgba(255, 255, 255, 0.2)',
+    justifyContent: 'center',
+    borderWidth: 2,
+    borderColor: 'rgba(255, 255, 255, 0.3)',
+  },
+  musicIcon: {
+    fontSize: 20,
+    color: '#FFFFFF',
+  },
 });
