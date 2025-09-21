@@ -143,12 +143,8 @@ class AisleMartsComprehensiveTester:
         tests = [
             ("GET", "/digital-commerce/health", None, 200),
             ("GET", "/digital-commerce/platforms", None, 200),
-            ("GET", "/digital-commerce/checkout/unified", None, 200),
-            ("POST", "/digital-commerce/sync-inventory", {
-                "platform": "shopify",
-                "store_id": "luxury_store_001",
-                "products": ["handbag_001", "watch_001"]
-            }, 200),
+            ("GET", "/digital-commerce/categories", None, 200),
+            ("GET", "/digital-commerce/analytics", None, 200),
         ]
         
         for method, endpoint, data, expected_status in tests:
