@@ -888,6 +888,15 @@ const styles = StyleSheet.create({
     height: 40,
     justifyContent: 'center',
   },
+
+  // Final music button positioned to stay above bottom nav
+  compactMusicButtonFinal: {
+    alignItems: 'center',
+    marginBottom: 20, // Increased spacing to stay above bottom nav
+    width: 40, // Same size as original
+    height: 40,
+    justifyContent: 'center',
+  },
   sharpMusicContainer: {
     width: 36,
     height: 36,
