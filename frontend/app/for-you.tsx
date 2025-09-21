@@ -480,6 +480,9 @@ export default function ForYouScreen() {
         )}
       </View>
 
+      {/* Floating AI Assistant */}
+      <FloatingAIAssistant />
+
       <TabNavigator />
     </SafeAreaView>
   );
