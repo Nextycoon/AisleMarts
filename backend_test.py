@@ -325,13 +325,9 @@ class AisleMartsComprehensiveTester:
         print("\n🔟 UNIVERSAL COMMERCE AI HUB - CROSS-PLATFORM INTELLIGENCE")
         tests = [
             ("GET", "/universal-ai/health", None, 200),
-            ("GET", "/universal-ai/discover/products", None, 200),
-            ("GET", "/universal-ai/market/intelligence", None, 200),
-            ("POST", "/universal-ai/ai/communicate", {
-                "platform": "amazon",
-                "message": "Find luxury handbags under $500",
-                "context": {"user_preferences": "luxury", "budget": 500}
-            }, 200),
+            ("GET", "/universal-ai/platforms", None, 200),
+            ("GET", "/universal-ai/analytics/dashboard", None, 200),
+            ("GET", "/universal-ai/predict/trends", None, 200),
         ]
         
         for method, endpoint, data, expected_status in tests:
