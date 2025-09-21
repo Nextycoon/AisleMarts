@@ -214,58 +214,68 @@ export default function ExploreScreen() {
     </TouchableOpacity>
   );
 
-  const renderExploreItem = ({ item, index }: { item: ExploreContent; index: number }) => (
-    <TouchableOpacity
-      style={styles.exploreItem}
-      onPress={() => handleContentPress(item)}
-    >
-      <View style={styles.exploreImageContainer}>
-        <View style={styles.exploreImagePlaceholder}>
-          <Text style={styles.exploreImageText}>
-            {item.type === 'live' ? '🔴' : item.type === 'image' ? '📷' : '▶️'}
-          </Text>
+  const renderExploreItem = ({ item, index }: { item: ExploreContent; index: number }) => {
+    const dimensions = getItemDimensions(index);
+    
+    return (
+      <TouchableOpacity
+        style={[
+          styles.exploreItem, 
+          { 
+            width: dimensions.width, 
+            height: dimensions.height,
+            marginBottom: 8,
+            marginRight: index % 3 === 2 ? 0 : 8, // No margin for last column item
+          }
+        ]}
+        onPress={() => handleExplorePress(item)}
+      >
+        <View style={[styles.exploreItemContent, { height: '100%' }]}>
+          {/* Placeholder image - TikTok style background */}
+          <View style={[styles.exploreThumbnail, { 
+            backgroundColor: `hsl(${(index * 137.5) % 360}, 70%, 20%)`,
+            height: '100%'
+          }]}>
+            <Text style={styles.thumbnailText}>📸</Text>
+          </View>
+          
+          {/* Duration overlay - TikTok style */}
+          {item.duration && (
+            <View style={styles.durationOverlay}>
+              <Text style={styles.durationText}>
+                {Math.floor(item.duration / 60)}:{(item.duration % 60).toString().padStart(2, '0')}
+              </Text>
+            </View>
+          )}
+          
+          {/* Live indicator - TikTok pink style */}
+          {item.isLive && (
+            <View style={styles.liveIndicator}>
+              <Text style={styles.liveText}>LIVE</Text>
+            </View>
+          )}
+          
+          {/* AisleMarts Shopping indicator */}
+          {item.products > 0 && (
+            <View style={styles.productsIndicator}>
+              <Text style={styles.productsIndicatorText}>🛍️ {item.products}</Text>
+            </View>
+          )}
+
+          {/* Creator info overlay - TikTok style */}
+          <View style={styles.creatorOverlay}>
+            <Text style={styles.exploreCreator}>
+              {item.creator.username}
+              {item.creator.verified && ' ✓'}
+            </Text>
+            <Text style={styles.exploreViews}>
+              {item.views > 1000 ? `${(item.views / 1000).toFixed(1)}K` : item.views} views
+            </Text>
+          </View>
         </View>
-        
-        {/* Duration badge */}
-        {item.duration && (
-          <View style={styles.durationBadge}>
-            <Text style={styles.durationText}>{item.duration}s</Text>
-          </View>
-        )}
-        
-        {/* Live badge */}
-        {item.isLive && (
-          <View style={styles.liveBadge}>
-            <Text style={styles.liveBadgeText}>LIVE</Text>
-          </View>
-        )}
-        
-        {/* Family safe indicator */}
-        {item.familySafe && (
-          <View style={styles.explorefamilySafe}>
-            <Text style={styles.familySafeIcon}>🛡️</Text>
-          </View>
-        )}
-        
-        {/* Products indicator */}
-        {item.products > 0 && (
-          <View style={styles.productsIndicator}>
-            <Text style={styles.productsIndicatorText}>🛍️ {item.products}</Text>
-          </View>
-        )}
-      </View>
-      
-      <View style={styles.exploreInfo}>
-        <Text style={styles.exploreCreator}>
-          {item.creator.username}
-          {item.creator.verified && ' ✓'}
-        </Text>
-        <Text style={styles.exploreViews}>
-          {item.views > 1000 ? `${(item.views / 1000).toFixed(1)}K` : item.views} views
-        </Text>
-      </View>
-    </TouchableOpacity>
-  );
+      </TouchableOpacity>
+    );
+  };
 
   return (
     <SafeAreaView style={styles.container}>
