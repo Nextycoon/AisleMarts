@@ -170,12 +170,28 @@ export default function AisleAgentScreen() {
       gradient: ['#ff9a9e', '#fecfef'],
     },
     {
+      icon: '🎯',
+      title: 'Rewards System',
+      subtitle: 'Missions, streaks & gamification',
+      onPress: () => router.push('/rewards'),
+      badge: 'NEW',
+      gradient: ['#0066CC', '#4A90E2'],
+    },
+    {
+      icon: '🔔',
+      title: 'Notifications',
+      subtitle: 'Alerts & preferences',
+      onPress: () => router.push('/notifications'),
+      badge: 5,
+      gradient: ['#667eea', '#764ba2'],
+    },
+    {
       icon: '🎬',
       title: 'Series A Demo Mode',
       subtitle: 'Investor presentation ready',
       onPress: () => router.push('/demo-mode'),
       badge: 'INVESTOR',
-      gradient: ['#667eea', '#764ba2'],
+      gradient: ['#ff9a9e', '#fecfef'],
     },
   ];
 
