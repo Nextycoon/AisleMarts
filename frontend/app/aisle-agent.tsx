@@ -198,8 +198,8 @@ export default function AisleAgentScreen() {
   const dashboardStats: DashboardStat[] = [
     { label: 'Orders', value: '12', change: '+2', isPositive: true },
     { label: 'Wishlist', value: '47', change: '+5', isPositive: true },
-    { label: 'Rewards', value: '2,450', change: '+120', isPositive: true },
-    { label: 'Level', value: 'Gold', change: '92%', isPositive: true },
+    { label: 'AisleCoins', value: '1,250', change: '+75', isPositive: true },
+    { label: 'League', value: 'Gold', change: '92%', isPositive: true },
   ];
 
   // Global luxury products showcasing Currency-Infinity Engine
