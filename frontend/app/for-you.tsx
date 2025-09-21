@@ -428,7 +428,7 @@ const styles = StyleSheet.create({
   },
   
   // ==================================================================================
-  // FULL SCREEN BACKGROUND VIDEO - EVERYTHING OVERLAID ON TOP
+  // FULL SCREEN BACKGROUND VIDEO - COMPLETE EDGE TO EDGE
   // ==================================================================================
   fullScreenContainer: {
     flex: 1,
