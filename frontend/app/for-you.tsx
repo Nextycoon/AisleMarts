@@ -83,7 +83,7 @@ export default function ForYouScreen() {
         isFollowing: false,
       },
       caption: 'New winter collection is here! ❄️ Stay warm and stylish 🔥',
-      hashtags: ['#WinterFashion', '#LuxeStyle', '#BlueWaveSafe', '#FamilyApproved'],
+      hashtags: ['#WinterFashion', '#LuxeStyle', '#TrendingNow', '#ShopNow'],
       sound: {
         id: 'sound_1',
         title: 'Winter Vibes',
