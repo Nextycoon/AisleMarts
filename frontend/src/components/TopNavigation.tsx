@@ -88,24 +88,46 @@ export default function TopNavigation() {
 
 const styles = StyleSheet.create({
   container: {
-    backgroundColor: '#1A1A1A',
-    borderBottomWidth: 1,
-    borderBottomColor: 'rgba(212, 175, 55, 0.2)',
+    backgroundColor: '#000000',
+    paddingTop: StatusBar.currentHeight || 44, // Account for status bar
   },
   navBar: {
     flexDirection: 'row',
-    paddingTop: 16,
-    paddingBottom: 12,
-    paddingHorizontal: 20,
+    alignItems: 'center',
+    justifyContent: 'space-between',
+    paddingHorizontal: 16,
+    paddingVertical: 12,
+    height: 50,
+  },
+  liveButton: {
+    width: 50,
+  },
+  liveContainer: {
+    backgroundColor: 'rgba(255, 255, 255, 0.2)',
+    paddingHorizontal: 8,
+    paddingVertical: 4,
+    borderRadius: 4,
+    borderWidth: 1,
+    borderColor: 'rgba(255, 255, 255, 0.3)',
+  },
+  liveText: {
+    color: '#FFFFFF',
+    fontSize: 12,
+    fontWeight: '600',
+    textAlign: 'center',
+  },
+  tabsContainer: {
+    flexDirection: 'row',
+    flex: 1,
+    justifyContent: 'center',
+    alignItems: 'center',
   },
   navItem: {
     alignItems: 'center',
     justifyContent: 'center',
-    paddingVertical: 12,
+    paddingHorizontal: 20,
+    paddingVertical: 8,
     position: 'relative',
-  },
-  navItemActive: {
-    // Active styling handled by individual elements
   },
   navLabel: {
     fontSize: 16,
@@ -114,17 +136,25 @@ const styles = StyleSheet.create({
     textAlign: 'center',
   },
   navLabelActive: {
-    color: '#D4AF37',
+    color: '#FFFFFF',
     fontWeight: '700',
   },
   activeIndicator: {
     position: 'absolute',
-    bottom: -12,
+    bottom: -8,
     left: '50%',
-    marginLeft: -20,
-    width: 40,
-    height: 3,
-    backgroundColor: '#D4AF37',
-    borderRadius: 2,
+    marginLeft: -15,
+    width: 30,
+    height: 2,
+    backgroundColor: '#FFFFFF',
+  },
+  searchButton: {
+    width: 50,
+    alignItems: 'center',
+    justifyContent: 'center',
+  },
+  searchIcon: {
+    fontSize: 20,
+    color: '#FFFFFF',
   },
 });
