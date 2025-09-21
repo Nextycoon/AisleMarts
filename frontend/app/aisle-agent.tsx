@@ -266,6 +266,14 @@ export default function AisleAgentScreen() {
       gradient: ['#667eea', '#764ba2'],
     },
     {
+      icon: '🌍',
+      title: 'Live Marketplace',
+      subtitle: 'Real-time global deals streaming now',
+      onPress: () => router.push('/live-marketplace'),
+      badge: 'LIVE',
+      gradient: ['#FF6B6B', '#4ECDC4'],
+    },
+    {
       icon: '💰',
       title: '0% Commission',
       subtitle: 'Pay-per-lead only - Keep 100%',
