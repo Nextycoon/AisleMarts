@@ -206,6 +206,33 @@ export default function ForYouScreen() {
   const forYouFeed = feedData && feedData.length > 0 ? feedData : mockContent;
   const currentVideo = forYouFeed[currentIndex];
 
+  // Show loading state
+  if (isLoading) {
+    return (
+      <SafeAreaView style={styles.container}>
+        <View style={styles.loadingContainer}>
+          <Text style={styles.loadingText}>Loading your feed...</Text>
+        </View>
+        <TabNavigator />
+      </SafeAreaView>
+    );
+  }
+
+  // Show error state
+  if (error) {
+    return (
+      <SafeAreaView style={styles.container}>
+        <View style={styles.errorContainer}>
+          <Text style={styles.errorText}>Failed to load feed</Text>
+          <TouchableOpacity style={styles.retryButton} onPress={refresh}>
+            <Text style={styles.retryButtonText}>Retry</Text>
+          </TouchableOpacity>
+        </View>
+        <TabNavigator />
+      </SafeAreaView>
+    );
+  }
+
   const handleSwipeUp = () => {
     if (currentIndex < forYouFeed.length - 1) {
       setCurrentIndex(currentIndex + 1);
