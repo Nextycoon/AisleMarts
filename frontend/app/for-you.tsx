@@ -273,9 +273,25 @@ export default function ForYouScreen() {
           <View style={styles.creatorNameContainer}>
             <Text style={styles.creatorName}>{currentVideo.creator.name}</Text>
             {currentVideo.creator.verified && (
-              <View style={styles.xVerifiedBadge}>
-                <Text style={styles.xVerifiedCheckmark}>✓</Text>
+              <View style={[
+                styles.aisleMartsVerifiedBadge,
+                styles[`${currentVideo.creator.verificationTier}Badge`]
+              ]}>
+                {currentVideo.creator.verificationTier === 'goldwave' && (
+                  <Text style={styles.goldWaveIcon}>⬛</Text>
+                )}
+                {currentVideo.creator.verificationTier === 'bluewave' && (
+                  <Text style={styles.blueWaveCheckmark}>✓</Text>
+                )}
+                {currentVideo.creator.verificationTier === 'greywave' && (
+                  <Text style={styles.greyWaveCheckmark}>✓</Text>
+                )}
               </View>
+            )}
+            {currentVideo.creator.isAffiliated && (
+              <Text style={styles.affiliationTag}>
+                Verified by {currentVideo.creator.affiliatedWith}
+              </Text>
             )}
           </View>
           <Text style={styles.caption}>{currentVideo.caption}</Text>
