@@ -88,10 +88,10 @@ const styles = StyleSheet.create({
   tabBar: {
     flexDirection: 'row',
     backgroundColor: '#000000',
-    paddingTop: 8,
-    paddingBottom: 20, // Account for home indicator on iPhone
-    paddingHorizontal: 0,
-    minHeight: 70,
+    paddingTop: 6,
+    paddingBottom: 18,
+    paddingHorizontal: 4,
+    minHeight: 65,
     alignItems: 'center',
     justifyContent: 'space-around',
   },
