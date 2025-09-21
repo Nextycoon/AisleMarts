@@ -518,494 +518,361 @@ const styles = StyleSheet.create({
   },
 
   // ==================================================================================
-  // STYLISH MODERN REDESIGN - CREATOR INFO & VERIFICATION SYSTEM
+  // ELEGANT REFINED REDESIGN - COMPACT & SOPHISTICATED
   // ==================================================================================
-  stylishCreatorNameContainer: {
+  
+  // Elegant Creator Info
+  elegantCreatorInfo: {
+    marginBottom: 16,
+  },
+  refinedCreatorNameContainer: {
     flexDirection: 'row',
     alignItems: 'center',
-    marginBottom: 12,
-    flexWrap: 'wrap',
-    backgroundColor: 'rgba(0, 0, 0, 0.4)',
-    paddingHorizontal: 16,
-    paddingVertical: 10,
-    borderRadius: 25,
+    marginBottom: 10,
+    backgroundColor: 'rgba(0, 0, 0, 0.75)',
+    paddingHorizontal: 14,
+    paddingVertical: 8,
+    borderRadius: 20,
+    alignSelf: 'flex-start',
     borderWidth: 1,
-    borderColor: 'rgba(255, 255, 255, 0.1)',
-    shadowColor: '#000000',
-    shadowOffset: { width: 0, height: 4 },
-    shadowOpacity: 0.3,
-    shadowRadius: 8,
-    elevation: 8,
+    borderColor: 'rgba(255, 255, 255, 0.15)',
   },
-  stylishCreatorName: {
+  refinedCreatorName: {
     color: '#FFFFFF',
-    fontSize: 18,
-    fontWeight: '800',
-    textShadowColor: 'rgba(212, 175, 55, 0.4)',
-    textShadowOffset: { width: 0, height: 2 },
-    textShadowRadius: 4,
-    letterSpacing: 0.5,
+    fontSize: 16,
+    fontWeight: '700',
+    textShadowColor: 'rgba(0, 0, 0, 0.8)',
+    textShadowOffset: { width: 0, height: 1 },
+    textShadowRadius: 2,
+    letterSpacing: 0.3,
   },
   
-  // Modern Verification Badge System
-  modernVerifiedBadge: {
-    width: 24,
-    height: 24,
+  // Refined Verification Badges - Smaller & Sharper
+  refinedVerifiedBadge: {
+    width: 18,
+    height: 18,
     alignItems: 'center',
     justifyContent: 'center',
-    marginLeft: 8,
-    shadowOffset: { width: 0, height: 3 },
-    shadowOpacity: 0.6,
-    shadowRadius: 6,
-    elevation: 10,
+    marginLeft: 6,
+    shadowOffset: { width: 0, height: 1 },
+    shadowOpacity: 0.4,
+    shadowRadius: 3,
+    elevation: 5,
   },
 
-  // Modern BlueWave Badge
-  modernbluewaveBadge: {
-    borderRadius: 12,
+  // Refined Verification Containers
+  refinedGoldContainer: {
+    width: 18,
+    height: 18,
+    borderRadius: 4,
+    backgroundColor: '#D4AF37',
+    alignItems: 'center',
+    justifyContent: 'center',
+    borderWidth: 1,
+    borderColor: 'rgba(255, 255, 255, 0.3)',
   },
-  blueWaveContainer: {
-    width: 24,
-    height: 24,
-    borderRadius: 12,
+  refinedGoldIcon: {
+    color: '#FFFFFF',
+    fontSize: 10,
+    fontWeight: '900',
+    textAlign: 'center',
+  },
+
+  refinedBlueContainer: {
+    width: 18,
+    height: 18,
+    borderRadius: 9,
     backgroundColor: '#1E90FF',
     alignItems: 'center',
     justifyContent: 'center',
-    shadowColor: '#1E90FF',
-    borderWidth: 2,
+    borderWidth: 1,
     borderColor: 'rgba(255, 255, 255, 0.3)',
   },
-  modernBlueCheckmark: {
+  refinedBlueCheckmark: {
     color: '#FFFFFF',
-    fontSize: 14,
+    fontSize: 10,
     fontWeight: '900',
     textAlign: 'center',
   },
 
-  // Modern GoldWave Badge (Square Diamond)
-  moderngoldwaveBadge: {
-    borderRadius: 6,
-  },
-  goldWaveContainer: {
-    width: 24,
-    height: 24,
-    borderRadius: 6,
-    backgroundColor: 'linear-gradient(135deg, #D4AF37 0%, #FFD700 50%, #FFA500 100%)',
-    alignItems: 'center',
-    justifyContent: 'center',
-    shadowColor: '#D4AF37',
-    borderWidth: 2,
-    borderColor: 'rgba(255, 255, 255, 0.4)',
-  },
-  modernGoldIcon: {
-    color: '#FFFFFF',
-    fontSize: 16,
-    fontWeight: '900',
-    textAlign: 'center',
-    textShadowColor: 'rgba(0, 0, 0, 0.3)',
-    textShadowOffset: { width: 0, height: 1 },
-    textShadowRadius: 2,
-  },
-
-  // Modern GreyWave Badge
-  moderngreywaveBadge: {
-    borderRadius: 12,
-  },
-  greyWaveContainer: {
-    width: 24,
-    height: 24,
-    borderRadius: 12,
+  refinedGreyContainer: {
+    width: 18,
+    height: 18,
+    borderRadius: 9,
     backgroundColor: '#696969',
     alignItems: 'center',
     justifyContent: 'center',
-    shadowColor: '#696969',
-    borderWidth: 2,
+    borderWidth: 1,
     borderColor: 'rgba(255, 255, 255, 0.3)',
   },
-  modernGreyCheckmark: {
+  refinedGreyCheckmark: {
     color: '#FFFFFF',
-    fontSize: 14,
+    fontSize: 10,
     fontWeight: '900',
     textAlign: 'center',
   },
 
-  // Modern Affiliation Badge
-  modernAffiliationBadge: {
-    backgroundColor: 'rgba(212, 175, 55, 0.2)',
-    paddingHorizontal: 12,
-    paddingVertical: 4,
-    borderRadius: 15,
-    marginLeft: 8,
-    borderWidth: 1,
-    borderColor: 'rgba(212, 175, 55, 0.4)',
-  },
-  modernAffiliationText: {
-    color: '#D4AF37',
-    fontSize: 11,
-    fontWeight: '700',
-    letterSpacing: 0.3,
-  },
-
-  // Stylish Caption and Content
-  stylishCaption: {
+  // Refined Content Styling
+  refinedCaption: {
     color: '#FFFFFF',
-    fontSize: 16,
+    fontSize: 15,
     fontWeight: '500',
-    lineHeight: 22,
-    marginBottom: 12,
-    textShadowColor: 'rgba(0, 0, 0, 0.8)',
-    textShadowOffset: { width: 0, height: 2 },
-    textShadowRadius: 4,
-    letterSpacing: 0.3,
-  },
-  stylishHashtags: {
-    color: '#1E90FF',
-    fontSize: 16,
-    fontWeight: '700',
-    marginBottom: 16,
-    textShadowColor: 'rgba(0, 0, 0, 0.8)',
-    textShadowOffset: { width: 0, height: 2 },
-    textShadowRadius: 4,
-    letterSpacing: 0.5,
-  },
-
-  // Modern Music Info with Visualizer
-  modernMusicInfo: {
-    flexDirection: 'row',
-    alignItems: 'center',
-    backgroundColor: 'rgba(0, 0, 0, 0.6)',
-    paddingHorizontal: 16,
-    paddingVertical: 12,
-    borderRadius: 30,
-    alignSelf: 'flex-start',
-    borderWidth: 1,
-    borderColor: 'rgba(255, 255, 255, 0.2)',
-    shadowColor: '#000000',
-    shadowOffset: { width: 0, height: 4 },
-    shadowOpacity: 0.4,
-    shadowRadius: 8,
-    elevation: 10,
-  },
-  musicIconContainer: {
-    width: 28,
-    height: 28,
-    borderRadius: 14,
-    backgroundColor: 'rgba(30, 144, 255, 0.3)',
-    alignItems: 'center',
-    justifyContent: 'center',
-    marginRight: 12,
-  },
-  modernMusicIcon: {
-    fontSize: 16,
-    color: '#1E90FF',
-    fontWeight: '700',
-  },
-  stylishMusicText: {
-    color: '#FFFFFF',
-    fontSize: 14,
-    fontWeight: '600',
-    flex: 1,
+    lineHeight: 20,
+    marginBottom: 8,
     textShadowColor: 'rgba(0, 0, 0, 0.8)',
     textShadowOffset: { width: 0, height: 1 },
-    textShadowRadius: 3,
+    textShadowRadius: 2,
   },
-  musicVisualizerContainer: {
-    flexDirection: 'row',
-    alignItems: 'center',
-    marginLeft: 12,
-  },
-  musicBar: {
-    width: 3,
-    backgroundColor: '#1E90FF',
-    marginHorizontal: 1,
-    borderRadius: 2,
-  },
-  bar1: { height: 8 },
-  bar2: { height: 12 },
-  bar3: { height: 6 },
-  bar4: { height: 10 },
-
-  // ==================================================================================
-  // STYLISH MODERN RIGHT-SIDE ACTIONS - PREMIUM REDESIGN
-  // ==================================================================================
-  modernRightSide: {
-    position: 'absolute',
-    right: 16,
-    bottom: 2,
-    alignItems: 'center',
-    justifyContent: 'flex-end',
-    height: 350,
-    zIndex: 15,
-  },
-
-  // Modern Avatar Container
-  modernAvatarContainer: {
-    alignItems: 'center',
-    marginBottom: 16,
-    position: 'relative',
-  },
-  modernAvatar: {
-    width: 56,
-    height: 56,
-    borderRadius: 28,
-    backgroundColor: 'linear-gradient(135deg, #D4AF37 0%, #FFD700 50%, #FFA500 100%)',
-    alignItems: 'center',
-    justifyContent: 'center',
-    borderWidth: 3,
-    borderColor: 'rgba(255, 255, 255, 0.4)',
-    shadowColor: '#D4AF37',
-    shadowOffset: { width: 0, height: 6 },
-    shadowOpacity: 0.8,
-    shadowRadius: 12,
-    elevation: 15,
-    position: 'relative',
-  },
-  avatarGlowEffect: {
-    position: 'absolute',
-    width: 66,
-    height: 66,
-    borderRadius: 33,
-    backgroundColor: 'rgba(212, 175, 55, 0.2)',
-    top: -5,
-    left: -5,
-    zIndex: -1,
-  },
-  modernAvatarText: {
-    color: '#FFFFFF',
-    fontSize: 22,
-    fontWeight: '900',
-    textShadowColor: 'rgba(0, 0, 0, 0.4)',
-    textShadowOffset: { width: 0, height: 2 },
-    textShadowRadius: 4,
-  },
-  modernFollowButton: {
-    position: 'absolute',
-    bottom: -8,
-    backgroundColor: 'linear-gradient(135deg, #FF0050 0%, #FF3B30 50%, #DC143C 100%)',
-    width: 28,
-    height: 28,
-    borderRadius: 14,
-    alignItems: 'center',
-    justifyContent: 'center',
-    borderWidth: 3,
-    borderColor: '#FFFFFF',
-    shadowColor: '#FF0050',
-    shadowOffset: { width: 0, height: 4 },
-    shadowOpacity: 0.8,
-    shadowRadius: 8,
-    elevation: 12,
-  },
-  modernFollowPlus: {
-    color: '#FFFFFF',
-    fontSize: 20,
-    fontWeight: '900',
-    textShadowColor: 'rgba(0, 0, 0, 0.5)',
+  refinedHashtags: {
+    color: '#1E90FF',
+    fontSize: 15,
+    fontWeight: '600',
+    marginBottom: 12,
+    textShadowColor: 'rgba(0, 0, 0, 0.8)',
     textShadowOffset: { width: 0, height: 1 },
     textShadowRadius: 2,
   },
 
-  // Modern Action Button Base
-  modernActionButton: {
+  // Elegant Music Info - Compact Design
+  elegantMusicInfo: {
+    flexDirection: 'row',
     alignItems: 'center',
-    marginBottom: 14,
-    width: 60,
-    height: 60,
-    justifyContent: 'center',
+    backgroundColor: 'rgba(0, 0, 0, 0.75)',
+    paddingHorizontal: 12,
+    paddingVertical: 8,
+    borderRadius: 18,
+    alignSelf: 'flex-start',
+    borderWidth: 1,
+    borderColor: 'rgba(255, 255, 255, 0.15)',
   },
-  modernIconContainer: {
-    width: 52,
-    height: 52,
-    borderRadius: 26,
-    backgroundColor: 'rgba(0, 0, 0, 0.4)',
+  refinedMusicIconContainer: {
+    width: 20,
+    height: 20,
+    borderRadius: 10,
+    backgroundColor: 'rgba(30, 144, 255, 0.3)',
+    alignItems: 'center',
+    justifyContent: 'center',
+    marginRight: 8,
+  },
+  refinedMusicIcon: {
+    fontSize: 12,
+    color: '#1E90FF',
+    fontWeight: '600',
+  },
+  refinedMusicText: {
+    color: '#FFFFFF',
+    fontSize: 13,
+    fontWeight: '500',
+    textShadowColor: 'rgba(0, 0, 0, 0.8)',
+    textShadowOffset: { width: 0, height: 1 },
+    textShadowRadius: 2,
+  },
+
+  // ==================================================================================
+  // ELEGANT COMPACT RIGHT-SIDE ACTIONS - SHARP & ORGANIZED
+  // ==================================================================================
+  elegantRightSide: {
+    position: 'absolute',
+    right: 14,
+    bottom: 4,
+    alignItems: 'center',
+    justifyContent: 'flex-end',
+    height: 280, // Reduced height for compact design
+    zIndex: 15,
+  },
+
+  // Elegant Avatar - Compact Premium Design
+  elegantAvatarContainer: {
+    alignItems: 'center',
+    marginBottom: 10, // Reduced spacing
+    position: 'relative',
+  },
+  elegantAvatar: {
+    width: 44, // Smaller size
+    height: 44,
+    borderRadius: 22,
+    backgroundColor: '#D4AF37',
     alignItems: 'center',
     justifyContent: 'center',
     borderWidth: 2,
-    borderColor: 'rgba(255, 255, 255, 0.2)',
-    shadowColor: '#000000',
-    shadowOffset: { width: 0, height: 6 },
-    shadowOpacity: 0.4,
-    shadowRadius: 10,
-    elevation: 12,
-    position: 'relative',
-  },
-
-  // Modern Glow Effects for Each Action
-  modernLikeGlow: {
-    position: 'absolute',
-    width: 62,
-    height: 62,
-    borderRadius: 31,
-    backgroundColor: 'rgba(255, 0, 80, 0.15)',
-    top: -5,
-    left: -5,
-  },
-  modernCommentGlow: {
-    position: 'absolute',
-    width: 62,
-    height: 62,
-    borderRadius: 31,
-    backgroundColor: 'rgba(30, 144, 255, 0.15)',
-    top: -5,
-    left: -5,
-  },
-  modernSaveGlow: {
-    position: 'absolute',
-    width: 62,
-    height: 62,
-    borderRadius: 31,
-    backgroundColor: 'rgba(255, 193, 7, 0.15)',
-    top: -5,
-    left: -5,
-  },
-  modernShareGlow: {
-    position: 'absolute',
-    width: 62,
-    height: 62,
-    borderRadius: 31,
-    backgroundColor: 'rgba(76, 175, 80, 0.15)',
-    top: -5,
-    left: -5,
-  },
-
-  // Modern Action Icons
-  modernLikeIcon: {
-    fontSize: 32,
-    color: '#FFFFFF',
-    textShadowColor: 'rgba(255, 0, 80, 0.8)',
-    textShadowOffset: { width: 0, height: 3 },
-    textShadowRadius: 8,
-  },
-  modernCommentIcon: {
-    fontSize: 28,
-    color: '#FFFFFF',
-    textShadowColor: 'rgba(30, 144, 255, 0.8)',
-    textShadowOffset: { width: 0, height: 3 },
-    textShadowRadius: 8,
-  },
-  modernSaveIcon: {
-    fontSize: 30,
-    color: '#FFFFFF',
-    textShadowColor: 'rgba(255, 193, 7, 0.8)',
-    textShadowOffset: { width: 0, height: 3 },
-    textShadowRadius: 8,
-  },
-  modernShareIcon: {
-    fontSize: 32,
-    color: '#FFFFFF',
-    fontWeight: '700',
-    textShadowColor: 'rgba(76, 175, 80, 0.8)',
-    textShadowOffset: { width: 0, height: 3 },
-    textShadowRadius: 8,
-  },
-
-  // Modern Action Text
-  modernActionText: {
-    color: '#FFFFFF',
-    fontSize: 13,
-    fontWeight: '800',
-    marginTop: 6,
-    textAlign: 'center',
-    textShadowColor: 'rgba(0, 0, 0, 0.9)',
-    textShadowOffset: { width: 0, height: 2 },
-    textShadowRadius: 4,
-    letterSpacing: 0.5,
-  },
-
-  // ==================================================================================
-  // AISLEMARTS SIGNATURE SHOPPING BUTTON - ULTRA PREMIUM REDESIGN
-  // ==================================================================================
-  aisleMartsSignatureButton: {
-    alignItems: 'center',
-    marginBottom: 14,
-    width: 60,
-    height: 60,
-    justifyContent: 'center',
-  },
-  signatureShoppingContainer: {
-    width: 54,
-    height: 54,
-    borderRadius: 27,
-    backgroundColor: 'rgba(212, 175, 55, 0.95)',
-    alignItems: 'center',
-    justifyContent: 'center',
-    borderWidth: 3,
-    borderColor: 'rgba(255, 215, 0, 0.8)',
+    borderColor: 'rgba(255, 255, 255, 0.4)',
     shadowColor: '#D4AF37',
-    shadowOffset: { width: 0, height: 8 },
-    shadowOpacity: 0.9,
-    shadowRadius: 16,
-    elevation: 20,
-    position: 'relative',
+    shadowOffset: { width: 0, height: 2 },
+    shadowOpacity: 0.6,
+    shadowRadius: 4,
+    elevation: 8,
   },
-  signatureGoldenGlow: {
-    position: 'absolute',
-    width: 64,
-    height: 64,
-    borderRadius: 32,
-    backgroundColor: 'rgba(212, 175, 55, 0.3)',
-    top: -5,
-    left: -5,
-  },
-  signatureShoppingIcon: {
-    fontSize: 28,
+  elegantAvatarText: {
     color: '#FFFFFF',
-    fontWeight: '900',
-    textShadowColor: 'rgba(0, 0, 0, 0.6)',
-    textShadowOffset: { width: 0, height: 2 },
-    textShadowRadius: 6,
+    fontSize: 18,
+    fontWeight: '800',
+    textShadowColor: 'rgba(0, 0, 0, 0.4)',
+    textShadowOffset: { width: 0, height: 1 },
+    textShadowRadius: 2,
   },
-  signatureShoppingText: {
-    color: '#D4AF37',
-    fontSize: 13,
-    fontWeight: '900',
-    marginTop: 6,
-    textAlign: 'center',
-    textShadowColor: 'rgba(0, 0, 0, 0.9)',
-    textShadowOffset: { width: 0, height: 2 },
-    textShadowRadius: 4,
-    letterSpacing: 1,
+  elegantFollowButton: {
+    position: 'absolute',
+    bottom: -6,
+    backgroundColor: '#FF0050',
+    width: 20, // Smaller follow button
+    height: 20,
+    borderRadius: 10,
+    alignItems: 'center',
+    justifyContent: 'center',
+    borderWidth: 2,
+    borderColor: '#FFFFFF',
+    shadowColor: '#FF0050',
+    shadowOffset: { width: 0, height: 2 },
+    shadowOpacity: 0.6,
+    shadowRadius: 3,
+    elevation: 6,
+  },
+  elegantFollowPlus: {
+    color: '#FFFFFF',
+    fontSize: 14,
+    fontWeight: '800',
   },
 
-  // Modern Music Button
-  modernMusicButton: {
+  // Compact Sharp Action Buttons
+  compactActionButton: {
     alignItems: 'center',
-    marginBottom: 14,
-    width: 54,
-    height: 54,
+    marginBottom: 8, // Reduced spacing
+    width: 44, // Smaller width
+    height: 44, // Smaller height
     justifyContent: 'center',
   },
-  modernMusicContainer: {
-    width: 52,
-    height: 52,
-    borderRadius: 26,
+  sharpIconContainer: {
+    width: 38, // Smaller container
+    height: 38,
+    borderRadius: 19,
     backgroundColor: 'rgba(0, 0, 0, 0.6)',
     alignItems: 'center',
     justifyContent: 'center',
-    borderWidth: 2,
-    borderColor: 'rgba(255, 255, 255, 0.3)',
-    shadowColor: '#FFFFFF',
-    shadowOffset: { width: 0, height: 6 },
-    shadowOpacity: 0.4,
-    shadowRadius: 10,
-    elevation: 12,
-    position: 'relative',
+    borderWidth: 1,
+    borderColor: 'rgba(255, 255, 255, 0.25)',
+    shadowColor: '#000000',
+    shadowOffset: { width: 0, height: 2 },
+    shadowOpacity: 0.3,
+    shadowRadius: 4,
+    elevation: 6,
   },
-  musicButtonGlow: {
-    position: 'absolute',
-    width: 62,
-    height: 62,
-    borderRadius: 31,
-    backgroundColor: 'rgba(255, 255, 255, 0.1)',
-    top: -5,
-    left: -5,
-  },
-  modernMusicButtonIcon: {
-    fontSize: 26,
+
+  // Sharp Compact Icons
+  sharpLikeIcon: {
+    fontSize: 18, // Smaller icons
     color: '#FFFFFF',
+    textShadowColor: 'rgba(255, 0, 80, 0.6)',
+    textShadowOffset: { width: 0, height: 1 },
+    textShadowRadius: 2,
+  },
+  sharpCommentIcon: {
+    fontSize: 16,
+    color: '#FFFFFF',
+    textShadowColor: 'rgba(30, 144, 255, 0.6)',
+    textShadowOffset: { width: 0, height: 1 },
+    textShadowRadius: 2,
+  },
+  sharpSaveIcon: {
+    fontSize: 16,
+    color: '#FFFFFF',
+    textShadowColor: 'rgba(255, 193, 7, 0.6)',
+    textShadowOffset: { width: 0, height: 1 },
+    textShadowRadius: 2,
+  },
+  sharpShareIcon: {
+    fontSize: 18,
+    color: '#FFFFFF',
+    fontWeight: '600',
+    textShadowColor: 'rgba(76, 175, 80, 0.6)',
+    textShadowOffset: { width: 0, height: 1 },
+    textShadowRadius: 2,
+  },
+
+  // Compact Action Text
+  compactActionText: {
+    color: '#FFFFFF',
+    fontSize: 11, // Smaller text
     fontWeight: '700',
-    textShadowColor: 'rgba(0, 0, 0, 0.7)',
-    textShadowOffset: { width: 0, height: 2 },
-    textShadowRadius: 6,
+    marginTop: 2, // Reduced margin
+    textAlign: 'center',
+    textShadowColor: 'rgba(0, 0, 0, 0.8)',
+    textShadowOffset: { width: 0, height: 1 },
+    textShadowRadius: 2,
+    letterSpacing: 0.2,
+  },
+
+  // Elegant Shopping Button - Compact Signature Design
+  elegantShoppingButton: {
+    alignItems: 'center',
+    marginBottom: 8,
+    width: 44,
+    height: 44,
+    justifyContent: 'center',
+  },
+  elegantShoppingContainer: {
+    width: 40, // Smaller shopping button
+    height: 40,
+    borderRadius: 20,
+    backgroundColor: '#D4AF37',
+    alignItems: 'center',
+    justifyContent: 'center',
+    borderWidth: 2,
+    borderColor: 'rgba(255, 215, 0, 0.6)',
+    shadowColor: '#D4AF37',
+    shadowOffset: { width: 0, height: 3 },
+    shadowOpacity: 0.7,
+    shadowRadius: 6,
+    elevation: 10,
+  },
+  elegantShoppingIcon: {
+    fontSize: 18,
+    color: '#FFFFFF',
+    textShadowColor: 'rgba(0, 0, 0, 0.4)',
+    textShadowOffset: { width: 0, height: 1 },
+    textShadowRadius: 2,
+  },
+  elegantShoppingText: {
+    color: '#D4AF37',
+    fontSize: 11,
+    fontWeight: '800',
+    marginTop: 2,
+    textAlign: 'center',
+    textShadowColor: 'rgba(0, 0, 0, 0.8)',
+    textShadowOffset: { width: 0, height: 1 },
+    textShadowRadius: 2,
+    letterSpacing: 0.5,
+  },
+
+  // Compact Music Button
+  compactMusicButton: {
+    alignItems: 'center',
+    marginBottom: 8,
+    width: 40, // Smallest button
+    height: 40,
+    justifyContent: 'center',
+  },
+  sharpMusicContainer: {
+    width: 36,
+    height: 36,
+    borderRadius: 18,
+    backgroundColor: 'rgba(0, 0, 0, 0.6)',
+    alignItems: 'center',
+    justifyContent: 'center',
+    borderWidth: 1,
+    borderColor: 'rgba(255, 255, 255, 0.25)',
+    shadowColor: '#FFFFFF',
+    shadowOffset: { width: 0, height: 2 },
+    shadowOpacity: 0.3,
+    shadowRadius: 4,
+    elevation: 6,
+  },
+  sharpMusicIcon: {
+    fontSize: 16,
+    color: '#FFFFFF',
+    fontWeight: '600',
+    textShadowColor: 'rgba(0, 0, 0, 0.6)',
+    textShadowOffset: { width: 0, height: 1 },
+    textShadowRadius: 2,
   },
 
   // ==================================================================================
