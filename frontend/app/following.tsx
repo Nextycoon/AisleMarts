@@ -17,6 +17,15 @@ import TopNavigation from '../src/components/TopNavigation';
 
 const { width, height } = Dimensions.get('window');
 
+// Mock trending creators data - TikTok style
+const mockTrendingCreators = [
+  { name: 'LuxeFashion', isLive: true, followers: '2.3M', category: 'Fashion' },
+  { name: 'TechReview', isLive: false, followers: '1.8M', category: 'Tech' },
+  { name: 'FoodieLife', isLive: true, followers: '3.1M', category: 'Food' },  
+  { name: 'FitnessGuru', isLive: false, followers: '2.7M', category: 'Fitness' },
+  { name: 'HomeDecor', isLive: true, followers: '1.5M', category: 'Home' },
+];
+
 interface Creator {
   id: string;
   username: string;
