@@ -49,7 +49,7 @@ export default function ForYouScreen() {
   // Use TikTok API hook for feed data with mock user ID
   const { data: feedData, loading: isLoading, error, refresh, loadMore } = useForYouFeed('test_user_001', true);
 
-  // Mock TikTok-style feed data for demo
+  // Mock data with AisleMarts verification system
   const forYouFeed = [
     {
       id: 1,
@@ -58,6 +58,9 @@ export default function ForYouScreen() {
         id: 'luxefashion',
         name: '@LuxeFashion',
         verified: true,
+        verificationTier: 'goldwave', // bluewave, goldwave, greywave
+        isAffiliated: false,
+        affiliatedWith: null,
         avatar: 'https://via.placeholder.com/50x50',
       },
       caption: '✨ Transform your winter wardrobe with these chic layers! Perfect for staying stylish in cold weather ❄️',
