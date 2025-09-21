@@ -551,7 +551,7 @@ const styles = StyleSheet.create({
   // Safety badge styles removed - family safety functionality preserved in backend only
   leftSide: {
     position: 'absolute',
-    bottom: 120,
+    bottom: 20,
     left: 20,
     right: 100,
     zIndex: 2,
