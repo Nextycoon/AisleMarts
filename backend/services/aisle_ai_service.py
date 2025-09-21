@@ -11,8 +11,9 @@ from typing import Dict, List, Optional, Any
 from dotenv import load_dotenv
 import httpx
 import smtplib
-from email.mime.text import MimeText
-from email.mime.multipart import MimeMultipart
+# Email imports would be used in production
+# from email.mime.text import MimeText
+# from email.mime.multipart import MimeMultipart
 
 load_dotenv()
 
