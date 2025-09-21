@@ -268,10 +268,12 @@ export default function AisleAgentScreen() {
   ];
 
   const dashboardStats: DashboardStat[] = [
-    { label: 'Orders', value: '12', change: '+2', isPositive: true },
-    { label: 'Wishlist', value: '47', change: '+5', isPositive: true },
-    { label: 'AisleCoins', value: '1,250', change: '+75', isPositive: true },
-    { label: 'League', value: 'Gold', change: '92%', isPositive: true },
+    { label: 'Orders', value: '47', change: '+12', isPositive: true },
+    { label: 'Wishlist', value: '156', change: '+23', isPositive: true },
+    { label: 'AisleCoins', value: '2,847', change: '+284', isPositive: true },
+    { label: 'League', value: 'Platinum', change: '97%', isPositive: true },
+    { label: 'Savings', value: '$1,250', change: '+$340', isPositive: true },
+    { label: 'AI Score', value: '9.4', change: '+0.3', isPositive: true },
   ];
 
   // Global luxury products showcasing Currency-Infinity Engine
