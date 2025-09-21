@@ -261,3 +261,184 @@ async def rewards_health_check():
         "compliance": "family_safe",
         "timestamp": datetime.utcnow().isoformat()
     }
+
+# Advanced Analytics & Real-time Features
+
+@router.get("/analytics/revenue")
+async def get_revenue_analytics():
+    """
+    💰 Get revenue analytics for rewards system
+    """
+    try:
+        revenue_data = {
+            "totalRevenue": 125000,
+            "withdrawalFees": 8500,
+            "premiumSubscriptions": 45000,
+            "transactionFees": 71500,
+            "growthMetrics": {
+                "totalRevenueGrowth": 12.5,
+                "withdrawalFeesGrowth": 8.3,
+                "premiumSubsGrowth": 25.7,
+                "transactionFeesGrowth": 15.2
+            },
+            "period": "monthly",
+            "timestamp": datetime.utcnow().isoformat()
+        }
+        return revenue_data
+    except Exception as e:
+        logger.error(f"Revenue analytics error: {e}")
+        raise HTTPException(status_code=500, detail=str(e))
+
+@router.get("/analytics/engagement")
+async def get_engagement_analytics():
+    """
+    📊 Get user engagement analytics
+    """
+    try:
+        engagement_data = {
+            "dailyActiveUsers": 67500,
+            "weeklyActiveUsers": 85000,
+            "monthlyActiveUsers": 89000,
+            "averageSessionTime": 12.4,
+            "missionCompletionRate": 73.2,
+            "streakRetentionRate": 85.6,
+            "leagueAdvancementRate": 42.3,
+            "timestamp": datetime.utcnow().isoformat()
+        }
+        return engagement_data
+    except Exception as e:
+        logger.error(f"Engagement analytics error: {e}")
+        raise HTTPException(status_code=500, detail=str(e))
+
+@router.post("/real-time/mission-progress")
+async def update_mission_progress(
+    mission_id: str,
+    progress: float = Field(..., ge=0, le=1),
+    user_id: str = "current_user"
+):
+    """
+    ⚡ Real-time mission progress update
+    """
+    try:
+        # Mock real-time progress update
+        result = {
+            "ok": True,
+            "missionId": mission_id,
+            "userId": user_id,
+            "newProgress": progress,
+            "completed": progress >= 1.0,
+            "timestamp": datetime.utcnow().isoformat()
+        }
+        
+        if progress >= 1.0:
+            result["reward"] = {
+                "type": "aisle_coins",
+                "value": 50,
+                "message": "Mission completed! 🎉"
+            }
+        
+        return result
+    except Exception as e:
+        logger.error(f"Real-time mission update error: {e}")
+        raise HTTPException(status_code=500, detail=str(e))
+
+@router.get("/competitions/active")
+async def get_active_competitions():
+    """
+    🏆 Get currently active competitions and campaigns
+    """
+    try:
+        competitions = [
+            {
+                "id": "bluewave_winter_2025",
+                "name": "BlueWave Winter Challenge",
+                "description": "Complete missions to win exclusive rewards",
+                "startDate": datetime.utcnow().isoformat(),
+                "endDate": (datetime.utcnow() + timedelta(days=30)).isoformat(),
+                "prizes": ["1000 AisleCoins", "Premium Badge", "Early Access"],
+                "participants": 15420,
+                "userParticipating": False
+            },
+            {
+                "id": "vendor_elite_march",
+                "name": "Vendor Elite March",
+                "description": "Top vendors compete for monthly recognition",
+                "startDate": datetime.utcnow().isoformat(),
+                "endDate": (datetime.utcnow() + timedelta(days=14)).isoformat(),
+                "prizes": ["Platinum League", "5000 Vendor Stars", "Feature Spotlight"],
+                "participants": 3240,
+                "userParticipating": True
+            }
+        ]
+        return competitions
+    except Exception as e:
+        logger.error(f"Active competitions error: {e}")
+        raise HTTPException(status_code=500, detail=str(e))
+
+@router.post("/achievements/unlock")
+async def unlock_achievement(
+    achievement_id: str,
+    user_id: str = "current_user"
+):
+    """
+    🏅 Unlock user achievement
+    """
+    try:
+        achievement_data = {
+            "ok": True,
+            "achievementId": achievement_id,
+            "userId": user_id,
+            "name": "Mission Master",
+            "description": "Complete 100 missions",
+            "icon": "🎯",
+            "rarity": "epic",
+            "reward": {
+                "type": "bluewave_points",
+                "value": 500
+            },
+            "unlockedAt": datetime.utcnow().isoformat()
+        }
+        return achievement_data
+    except Exception as e:
+        logger.error(f"Achievement unlock error: {e}")
+        raise HTTPException(status_code=500, detail=str(e))
+
+@router.get("/social/activity-feed")
+async def get_social_activity_feed(
+    user_id: str = "current_user",
+    limit: int = Field(20, ge=1, le=100)
+):
+    """
+    🔔 Get social activity feed for rewards
+    """
+    try:
+        activities = [
+            {
+                "id": "activity_001",
+                "type": "achievement_unlock",
+                "user": "@TechVendor123",
+                "description": "unlocked 'Sales Star' achievement",
+                "timestamp": datetime.utcnow().isoformat(),
+                "icon": "⭐"
+            },
+            {
+                "id": "activity_002",
+                "type": "league_advancement",
+                "user": "@FashionStore",
+                "description": "advanced to Gold League",
+                "timestamp": (datetime.utcnow() - timedelta(hours=2)).isoformat(),
+                "icon": "🥇"
+            },
+            {
+                "id": "activity_003",
+                "type": "streak_milestone",
+                "user": "@HomeGoods",
+                "description": "reached 30-day selling streak",
+                "timestamp": (datetime.utcnow() - timedelta(hours=4)).isoformat(),
+                "icon": "🔥"
+            }
+        ]
+        return {"activities": activities[:limit]}
+    except Exception as e:
+        logger.error(f"Social activity feed error: {e}")
+        raise HTTPException(status_code=500, detail=str(e))
