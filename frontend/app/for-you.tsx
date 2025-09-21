@@ -516,12 +516,13 @@ const styles = StyleSheet.create({
   },
 
   // ==================================================================================
-  // X (TWITTER) VERIFIED BADGE STYLING
+  // AISLEMARTS VERIFICATION & SUBSCRIPTION SYSTEM (BlueWave, GoldWave, GreyWave)
   // ==================================================================================
   creatorNameContainer: {
     flexDirection: 'row',
     alignItems: 'center',
     marginBottom: 8,
+    flexWrap: 'wrap',
   },
   creatorName: {
     color: '#FFFFFF',
@@ -531,26 +532,71 @@ const styles = StyleSheet.create({
     textShadowOffset: { width: 0, height: 1 },
     textShadowRadius: 3,
   },
-  xVerifiedBadge: {
+  
+  // Base AisleMarts Verified Badge
+  aisleMartsVerifiedBadge: {
     width: 20,
     height: 20,
     borderRadius: 10,
-    backgroundColor: '#1DA1F2', // X/Twitter blue
     alignItems: 'center',
     justifyContent: 'center',
     marginLeft: 6,
-    shadowColor: '#1DA1F2',
     shadowOffset: { width: 0, height: 2 },
     shadowOpacity: 0.4,
     shadowRadius: 4,
     elevation: 6,
   },
-  xVerifiedCheckmark: {
+
+  // BlueWave Badge (Premium Shoppers + Verified Sellers)
+  bluewaveBadge: {
+    backgroundColor: '#1E90FF', // AisleMarts BlueWave color
+    shadowColor: '#1E90FF',
+  },
+  blueWaveCheckmark: {
     color: '#FFFFFF',
     fontSize: 12,
     fontWeight: '900',
     textAlign: 'center',
     lineHeight: 14,
+  },
+
+  // GoldWave Badge (Brands & Businesses)
+  goldwaveBadge: {
+    backgroundColor: '#D4AF37', // AisleMarts signature gold
+    shadowColor: '#D4AF37',
+    borderRadius: 4, // Square for brands
+  },
+  goldWaveIcon: {
+    color: '#FFFFFF',
+    fontSize: 12,
+    fontWeight: '900',
+    textAlign: 'center',
+    lineHeight: 14,
+  },
+
+  // GreyWave Badge (Government/Institutions)
+  greywaveBadge: {
+    backgroundColor: '#696969', // Professional grey
+    shadowColor: '#696969',
+  },
+  greyWaveCheckmark: {
+    color: '#FFFFFF',
+    fontSize: 12,
+    fontWeight: '900',
+    textAlign: 'center',
+    lineHeight: 14,
+  },
+
+  // Affiliation Tag
+  affiliationTag: {
+    color: '#D4AF37',
+    fontSize: 11,
+    fontWeight: '600',
+    marginLeft: 8,
+    fontStyle: 'italic',
+    textShadowColor: 'rgba(0, 0, 0, 0.8)',
+    textShadowOffset: { width: 0, height: 1 },
+    textShadowRadius: 2,
   },
 
   // ==================================================================================
