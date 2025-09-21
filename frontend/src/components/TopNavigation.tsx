@@ -50,14 +50,12 @@ export default function TopNavigation() {
       <StatusBar barStyle="light-content" backgroundColor="#000000" />
       
       <View style={styles.navBar}>
-        {/* LIVE Button */}
-        <TouchableOpacity style={styles.liveButton} onPress={handleLivePress}>
-          <View style={styles.liveContainer}>
-            <Text style={styles.liveText}>LIVE</Text>
-          </View>
+        {/* Search Button - First Position */}
+        <TouchableOpacity style={styles.searchButton} onPress={handleSearchPress}>
+          <Text style={styles.searchIcon}>🔍</Text>
         </TouchableOpacity>
 
-        {/* Navigation Tabs */}
+        {/* Navigation Tabs - Center */}
         <View style={styles.tabsContainer}>
           {topNavTabs.map((tab, index) => {
             const active = isActive(tab.route);
@@ -77,11 +75,6 @@ export default function TopNavigation() {
             );
           })}
         </View>
-
-        {/* Search Button */}
-        <TouchableOpacity style={styles.searchButton} onPress={handleSearchPress}>
-          <Text style={styles.searchIcon}>🔍</Text>
-        </TouchableOpacity>
       </View>
     </View>
   );
