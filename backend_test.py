@@ -15,591 +15,635 @@ from typing import Dict, List, Any, Optional
 BACKEND_URL = os.getenv('REACT_APP_BACKEND_URL', 'https://bluewave-aisle.preview.emergentagent.com')
 API_BASE = f"{BACKEND_URL}/api"
 
-class AisleAITester:
+class RewardsSystemTester:
     def __init__(self):
-        self.backend_url = BACKEND_URL
-        self.test_results = []
         self.session = None
+        self.test_results = []
+        self.total_tests = 0
+        self.passed_tests = 0
         
-    async def setup_session(self):
-        """Setup HTTP session with proper headers"""
-        connector = aiohttp.TCPConnector(ssl=False)
-        timeout = aiohttp.ClientTimeout(total=30)
+    async def __aenter__(self):
         self.session = aiohttp.ClientSession(
-            connector=connector,
-            timeout=timeout,
-            headers={
-                "Content-Type": "application/json",
-                "User-Agent": "AisleMarts-Backend-Tester/1.0"
-            }
+            timeout=aiohttp.ClientTimeout(total=30),
+            headers={'Content-Type': 'application/json'}
         )
-    
-    async def cleanup_session(self):
-        """Cleanup HTTP session"""
+        return self
+        
+    async def __aexit__(self, exc_type, exc_val, exc_tb):
         if self.session:
             await self.session.close()
     
-    def log_test(self, test_name: str, success: bool, details: str, response_data: Any = None):
-        """Log test results"""
+    def log_test(self, test_name: str, success: bool, details: str = "", response_data: Any = None):
+        """Log test result"""
+        self.total_tests += 1
+        if success:
+            self.passed_tests += 1
+            
         result = {
             "test": test_name,
             "success": success,
             "details": details,
-            "timestamp": datetime.utcnow().isoformat(),
-            "response_data": response_data
+            "timestamp": datetime.utcnow().isoformat()
         }
+        
+        if response_data:
+            result["response_data"] = response_data
+            
         self.test_results.append(result)
         
         status = "✅ PASS" if success else "❌ FAIL"
         print(f"{status} | {test_name}")
-        print(f"     Details: {details}")
-        if response_data and not success:
-            print(f"     Response: {json.dumps(response_data, indent=2)}")
+        if details:
+            print(f"    Details: {details}")
+        if not success and response_data:
+            print(f"    Response: {response_data}")
         print()
-    
-    async def test_aisle_ai_health_check(self):
-        """Test /api/aisle-ai/health endpoint"""
+
+    async def test_rewards_health_check(self):
+        """Test /api/rewards/health endpoint"""
         try:
-            url = f"{self.backend_url}/aisle-ai/health"
-            
-            async with self.session.get(url) as response:
+            async with self.session.get(f"{API_BASE}/rewards/health") as response:
                 if response.status == 200:
                     data = await response.json()
                     
-                    # Validate response structure
-                    required_fields = ["status", "ai_name", "version", "uptime", 
-                                     "capabilities_active", "vendor_outreach_active", 
-                                     "shopper_assistance_active", "localization_active"]
-                    
+                    # Validate BlueWave theme and structure
+                    required_fields = ["status", "service", "theme", "currencies", "missions", "gamification", "compliance"]
                     missing_fields = [field for field in required_fields if field not in data]
                     
-                    if not missing_fields and data.get("status") == "healthy":
-                        self.log_test(
-                            "Aisle AI Health Check",
-                            True,
-                            f"Service healthy - AI: {data.get('ai_name')}, Version: {data.get('version')}, All capabilities active",
-                            data
-                        )
-                    else:
-                        self.log_test(
-                            "Aisle AI Health Check", 
-                            False,
-                            f"Invalid response structure. Missing fields: {missing_fields}",
-                            data
-                        )
+                    if missing_fields:
+                        self.log_test("Rewards Health Check", False, f"Missing fields: {missing_fields}", data)
+                        return
+                    
+                    # Validate specific values
+                    if data.get("theme") != "BlueWave":
+                        self.log_test("Rewards Health Check", False, f"Expected theme 'BlueWave', got '{data.get('theme')}'", data)
+                        return
+                    
+                    expected_currencies = ["AisleCoins", "BlueWave Points", "Vendor Stars", "Cashback Credits"]
+                    if data.get("currencies") != expected_currencies:
+                        self.log_test("Rewards Health Check", False, f"Currency mismatch", data)
+                        return
+                    
+                    self.log_test("Rewards Health Check", True, f"Service operational with {len(data.get('currencies', []))} currencies, BlueWave theme confirmed", data)
                 else:
                     error_text = await response.text()
-                    self.log_test(
-                        "Aisle AI Health Check",
-                        False, 
-                        f"HTTP {response.status}: {error_text}"
-                    )
-                    
+                    self.log_test("Rewards Health Check", False, f"HTTP {response.status}: {error_text}")
         except Exception as e:
-            self.log_test("Aisle AI Health Check", False, f"Request failed: {str(e)}")
-    
-    async def test_aisle_ai_capabilities(self):
-        """Test /api/aisle-ai/capabilities endpoint"""
+            self.log_test("Rewards Health Check", False, f"Request failed: {str(e)}")
+
+    async def test_balances_system(self):
+        """Test /api/rewards/balances endpoint"""
         try:
-            url = f"{self.backend_url}/aisle-ai/capabilities"
-            
-            async with self.session.get(url) as response:
+            async with self.session.get(f"{API_BASE}/rewards/balances?user_id=test_user_001") as response:
                 if response.status == 200:
                     data = await response.json()
                     
-                    # Validate response structure
-                    required_fields = ["ai_name", "tagline", "personality", 
-                                     "communication_channels", "shopper_capabilities", 
-                                     "business_capabilities", "core_features"]
+                    # Validate balance structure
+                    required_currencies = ["aisleCoins", "blueWavePoints", "vendorStars", "cashbackCredits"]
+                    missing_currencies = [curr for curr in required_currencies if curr not in data]
                     
-                    missing_fields = [field for field in required_fields if field not in data]
+                    if missing_currencies:
+                        self.log_test("Balances System", False, f"Missing currencies: {missing_currencies}", data)
+                        return
                     
-                    if not missing_fields:
-                        channels_count = len(data.get("communication_channels", []))
-                        shopper_caps = len(data.get("shopper_capabilities", []))
-                        business_caps = len(data.get("business_capabilities", []))
-                        core_features = len(data.get("core_features", []))
-                        
-                        self.log_test(
-                            "Aisle AI Capabilities",
-                            True,
-                            f"Complete capabilities retrieved - {channels_count} channels, {shopper_caps} shopper features, {business_caps} business features, {core_features} core features",
-                            data
-                        )
-                    else:
-                        self.log_test(
-                            "Aisle AI Capabilities",
-                            False,
-                            f"Invalid response structure. Missing fields: {missing_fields}",
-                            data
-                        )
+                    # Validate data types
+                    for currency in required_currencies:
+                        if not isinstance(data[currency], (int, float)):
+                            self.log_test("Balances System", False, f"Invalid {currency} type: {type(data[currency])}", data)
+                            return
+                    
+                    total_value = sum([data[curr] for curr in required_currencies])
+                    self.log_test("Balances System", True, f"All 4 reward currencies retrieved, total value: {total_value:.2f}", data)
                 else:
                     error_text = await response.text()
-                    self.log_test(
-                        "Aisle AI Capabilities",
-                        False,
-                        f"HTTP {response.status}: {error_text}"
-                    )
-                    
+                    self.log_test("Balances System", False, f"HTTP {response.status}: {error_text}")
         except Exception as e:
-            self.log_test("Aisle AI Capabilities", False, f"Request failed: {str(e)}")
-    
-    async def test_aisle_ai_chat(self):
-        """Test /api/aisle-ai/chat endpoint"""
+            self.log_test("Balances System", False, f"Request failed: {str(e)}")
+
+    async def test_per_sale_missions(self):
+        """Test /api/rewards/missions/per-sale endpoint"""
         try:
-            url = f"{self.backend_url}/aisle-ai/chat"
-            
-            # Test data with realistic shopping query
-            test_messages = [
-                {
-                    "user_id": "test_user_001",
-                    "message": "Hi Aisle AI! I'm looking for luxury fashion items for a special occasion. Can you help me find something elegant?",
-                    "context": {"shopping_intent": "luxury_fashion", "occasion": "special_event"},
-                    "language": "en",
-                    "channel": "text"
-                },
-                {
-                    "user_id": "test_user_002", 
-                    "message": "What are the trending products this week?",
-                    "context": {"shopping_intent": "trending_discovery"},
-                    "language": "en",
-                    "channel": "text"
-                }
-            ]
-            
-            for i, message_data in enumerate(test_messages):
-                async with self.session.post(url, json=message_data) as response:
-                    if response.status == 200:
-                        data = await response.json()
-                        
-                        # Validate response structure
-                        required_fields = ["success", "ai_name", "personality", "response", 
-                                         "capabilities", "conversation_id", "language", "channel"]
-                        
-                        missing_fields = [field for field in required_fields if field not in data]
-                        
-                        if not missing_fields and data.get("success"):
-                            self.log_test(
-                                f"Aisle AI Chat Test {i+1}",
-                                True,
-                                f"AI responded successfully - Conversation ID: {data.get('conversation_id')}, Response length: {len(data.get('response', ''))}, Capabilities offered: {len(data.get('capabilities', []))}",
-                                {"response_preview": data.get("response", "")[:100] + "..."}
-                            )
+            async with self.session.get(f"{API_BASE}/rewards/missions/per-sale?user_id=test_user_001") as response:
+                if response.status == 200:
+                    data = await response.json()
+                    
+                    # Validate structure
+                    if "aggregatePercent" not in data or "missions" not in data:
+                        self.log_test("Per-Sale Missions", False, "Missing aggregatePercent or missions", data)
+                        return
+                    
+                    missions = data.get("missions", [])
+                    if not missions:
+                        self.log_test("Per-Sale Missions", False, "No missions found", data)
+                        return
+                    
+                    # Validate mission structure
+                    required_mission_fields = ["id", "label", "rule", "reward", "progress", "completed"]
+                    for mission in missions:
+                        missing_fields = [field for field in required_mission_fields if field not in mission]
+                        if missing_fields:
+                            self.log_test("Per-Sale Missions", False, f"Mission missing fields: {missing_fields}", mission)
+                            return
+                    
+                    # Check for interaction time missions
+                    interaction_missions = [m for m in missions if "interaction_time" in m.get("rule", "")]
+                    unique_buyer_missions = [m for m in missions if "unique_buyers" in m.get("rule", "")]
+                    
+                    self.log_test("Per-Sale Missions", True, 
+                                f"Retrieved {len(missions)} missions ({len(interaction_missions)} interaction, {len(unique_buyer_missions)} buyer missions), aggregate: {data.get('aggregatePercent', 0):.1f}%", 
+                                data)
+                else:
+                    error_text = await response.text()
+                    self.log_test("Per-Sale Missions", False, f"HTTP {response.status}: {error_text}")
+        except Exception as e:
+            self.log_test("Per-Sale Missions", False, f"Request failed: {str(e)}")
+
+    async def test_weekly_missions(self):
+        """Test /api/rewards/missions/weekly endpoint"""
+        try:
+            async with self.session.get(f"{API_BASE}/rewards/missions/weekly?user_id=test_user_001") as response:
+                if response.status == 200:
+                    data = await response.json()
+                    
+                    # Validate structure
+                    required_fields = ["aggregatePercent", "missions", "league"]
+                    missing_fields = [field for field in required_fields if field not in data]
+                    
+                    if missing_fields:
+                        self.log_test("Weekly Missions", False, f"Missing fields: {missing_fields}", data)
+                        return
+                    
+                    missions = data.get("missions", [])
+                    league = data.get("league")
+                    
+                    # Validate league
+                    valid_leagues = ["Bronze", "Silver", "Gold", "Platinum"]
+                    if league not in valid_leagues:
+                        self.log_test("Weekly Missions", False, f"Invalid league: {league}", data)
+                        return
+                    
+                    # Check for sale days and league advancement missions
+                    sale_day_missions = [m for m in missions if "sale_days" in m.get("rule", "")]
+                    league_missions = [m for m in missions if "league_advanced" in m.get("rule", "")]
+                    buyer_engagement_missions = [m for m in missions if "active_buyers" in m.get("rule", "")]
+                    
+                    self.log_test("Weekly Missions", True, 
+                                f"Retrieved {len(missions)} weekly missions, current league: {league}, types: {len(sale_day_missions)} sale days, {len(league_missions)} league, {len(buyer_engagement_missions)} engagement", 
+                                data)
+                else:
+                    error_text = await response.text()
+                    self.log_test("Weekly Missions", False, f"HTTP {response.status}: {error_text}")
+        except Exception as e:
+            self.log_test("Weekly Missions", False, f"Request failed: {str(e)}")
+
+    async def test_streaks_system(self):
+        """Test /api/rewards/streaks endpoint"""
+        try:
+            async with self.session.get(f"{API_BASE}/rewards/streaks?user_id=test_user_001") as response:
+                if response.status == 200:
+                    data = await response.json()
+                    
+                    # Validate structure
+                    if "daily" not in data or "weekly" not in data:
+                        self.log_test("Streaks System", False, "Missing daily or weekly streaks", data)
+                        return
+                    
+                    daily = data.get("daily", {})
+                    weekly = data.get("weekly", {})
+                    
+                    # Validate streak structure
+                    for streak_type, streak_data in [("daily", daily), ("weekly", weekly)]:
+                        if "days" not in streak_data and "weeks" not in streak_data:
+                            self.log_test("Streaks System", False, f"Missing streak count in {streak_type}", data)
+                            return
+                        if "nextRewardAt" not in streak_data:
+                            self.log_test("Streaks System", False, f"Missing nextRewardAt in {streak_type}", data)
+                            return
+                    
+                    daily_count = daily.get("days", 0)
+                    weekly_count = weekly.get("weeks", 0)
+                    
+                    self.log_test("Streaks System", True, 
+                                f"Daily streak: {daily_count} days, Weekly streak: {weekly_count} weeks, next rewards scheduled", 
+                                data)
+                else:
+                    error_text = await response.text()
+                    self.log_test("Streaks System", False, f"HTTP {response.status}: {error_text}")
+        except Exception as e:
+            self.log_test("Streaks System", False, f"Request failed: {str(e)}")
+
+    async def test_leaderboard(self):
+        """Test /api/rewards/leaderboard endpoint"""
+        try:
+            # Test default leaderboard
+            async with self.session.get(f"{API_BASE}/rewards/leaderboard") as response:
+                if response.status == 200:
+                    data = await response.json()
+                    
+                    if not isinstance(data, list):
+                        self.log_test("Leaderboard", False, "Expected list response", data)
+                        return
+                    
+                    if not data:
+                        self.log_test("Leaderboard", False, "Empty leaderboard", data)
+                        return
+                    
+                    # Validate leaderboard entry structure
+                    required_fields = ["rank", "vendorId", "vendorName", "league", "score"]
+                    for entry in data:
+                        missing_fields = [field for field in required_fields if field not in entry]
+                        if missing_fields:
+                            self.log_test("Leaderboard", False, f"Entry missing fields: {missing_fields}", entry)
+                            return
+                    
+                    # Test league-specific leaderboard
+                    async with self.session.get(f"{API_BASE}/rewards/leaderboard?league=Gold&limit=10") as league_response:
+                        if league_response.status == 200:
+                            league_data = await league_response.json()
+                            
+                            self.log_test("Leaderboard", True, 
+                                        f"Retrieved {len(data)} vendors in default leaderboard, {len(league_data)} in Gold league, top vendor: {data[0].get('vendorName', 'N/A')} (score: {data[0].get('score', 0)})", 
+                                        {"default": data[:3], "gold_league": league_data[:3]})
                         else:
-                            self.log_test(
-                                f"Aisle AI Chat Test {i+1}",
-                                False,
-                                f"Invalid response structure. Missing fields: {missing_fields}",
-                                data
-                            )
-                    else:
-                        error_text = await response.text()
-                        self.log_test(
-                            f"Aisle AI Chat Test {i+1}",
-                            False,
-                            f"HTTP {response.status}: {error_text}"
-                        )
-                        
+                            self.log_test("Leaderboard", False, f"League leaderboard failed: HTTP {league_response.status}")
+                else:
+                    error_text = await response.text()
+                    self.log_test("Leaderboard", False, f"HTTP {response.status}: {error_text}")
         except Exception as e:
-            self.log_test("Aisle AI Chat", False, f"Request failed: {str(e)}")
-    
-    async def test_aisle_ai_process_purchase(self):
-        """Test /api/aisle-ai/process-purchase endpoint"""
+            self.log_test("Leaderboard", False, f"Request failed: {str(e)}")
+
+    async def test_rewards_ledger(self):
+        """Test /api/rewards/ledger endpoint"""
         try:
-            url = f"{self.backend_url}/aisle-ai/process-purchase"
-            
-            # Mock purchase data with realistic information
-            purchase_data = {
-                "purchase_id": f"PUR_{int(time.time())}",
-                "shopper": {
-                    "name": "Emma Johnson",
-                    "email": "emma.johnson@example.com",
-                    "phone": "+1234567890",
-                    "language": "en"
-                },
-                "vendor": {
-                    "vendor_id": "vendor_luxury_fashion_001",
-                    "business_name": "Luxury Fashion Boutique",
-                    "email": "contact@luxuryfashion.com",
-                    "phone": "+1987654321",
-                    "is_aislemarts_vendor": False,
-                    "language": "en"
-                },
-                "order_details": {
-                    "total": 299.99,
-                    "currency": "USD",
-                    "customer_name": "Emma Johnson",
-                    "items": [
-                        {"name": "Designer Dress", "price": 199.99, "quantity": 1},
-                        {"name": "Luxury Handbag", "price": 100.00, "quantity": 1}
-                    ]
-                }
+            async with self.session.get(f"{API_BASE}/rewards/ledger?user_id=test_user_001&page=1&page_size=10") as response:
+                if response.status == 200:
+                    data = await response.json()
+                    
+                    # Validate pagination structure
+                    required_fields = ["items", "page", "pageSize", "total", "hasNext"]
+                    missing_fields = [field for field in required_fields if field not in data]
+                    
+                    if missing_fields:
+                        self.log_test("Rewards Ledger", False, f"Missing pagination fields: {missing_fields}", data)
+                        return
+                    
+                    items = data.get("items", [])
+                    if not items:
+                        self.log_test("Rewards Ledger", False, "No ledger items found", data)
+                        return
+                    
+                    # Validate ledger entry structure
+                    required_item_fields = ["id", "ts", "kind", "title", "delta"]
+                    for item in items:
+                        missing_fields = [field for field in required_item_fields if field not in item]
+                        if missing_fields:
+                            self.log_test("Rewards Ledger", False, f"Ledger item missing fields: {missing_fields}", item)
+                            return
+                    
+                    # Check transaction types
+                    transaction_types = set(item.get("kind") for item in items)
+                    
+                    self.log_test("Rewards Ledger", True, 
+                                f"Retrieved {len(items)} ledger entries, page {data.get('page')}/{data.get('total', 0)//data.get('pageSize', 1)+1}, transaction types: {list(transaction_types)}", 
+                                data)
+                else:
+                    error_text = await response.text()
+                    self.log_test("Rewards Ledger", False, f"HTTP {response.status}: {error_text}")
+        except Exception as e:
+            self.log_test("Rewards Ledger", False, f"Request failed: {str(e)}")
+
+    async def test_claim_system(self):
+        """Test /api/rewards/claim endpoint"""
+        try:
+            # Test mission claim
+            mission_claim = {"mission_id": "stay_5m"}
+            async with self.session.post(f"{API_BASE}/rewards/claim?user_id=test_user_001", 
+                                       json=mission_claim) as response:
+                if response.status == 200:
+                    data = await response.json()
+                    
+                    required_fields = ["ok", "ledgerId", "type", "reward", "message"]
+                    missing_fields = [field for field in required_fields if field not in data]
+                    
+                    if missing_fields:
+                        self.log_test("Claim System - Mission", False, f"Missing fields: {missing_fields}", data)
+                        return
+                    
+                    if not data.get("ok"):
+                        self.log_test("Claim System - Mission", False, "Claim not successful", data)
+                        return
+                    
+                    # Test streak claim
+                    streak_claim = {"streak_type": "daily"}
+                    async with self.session.post(f"{API_BASE}/rewards/claim?user_id=test_user_001", 
+                                               json=streak_claim) as streak_response:
+                        if streak_response.status == 200:
+                            streak_data = await streak_response.json()
+                            
+                            # Test campaign claim
+                            campaign_claim = {"campaign_id": "bluewave_weekly_001"}
+                            async with self.session.post(f"{API_BASE}/rewards/claim?user_id=test_user_001", 
+                                                       json=campaign_claim) as campaign_response:
+                                if campaign_response.status == 200:
+                                    campaign_data = await campaign_response.json()
+                                    
+                                    self.log_test("Claim System", True, 
+                                                f"All claim types working: mission ({data.get('type')}), streak ({streak_data.get('type')}), campaign ({campaign_data.get('type')})", 
+                                                {"mission": data, "streak": streak_data, "campaign": campaign_data})
+                                else:
+                                    self.log_test("Claim System", False, f"Campaign claim failed: HTTP {campaign_response.status}")
+                        else:
+                            self.log_test("Claim System", False, f"Streak claim failed: HTTP {streak_response.status}")
+                else:
+                    error_text = await response.text()
+                    self.log_test("Claim System", False, f"HTTP {response.status}: {error_text}")
+        except Exception as e:
+            self.log_test("Claim System", False, f"Request failed: {str(e)}")
+
+    async def test_withdrawal_system(self):
+        """Test /api/rewards/withdraw endpoint"""
+        try:
+            # Test valid withdrawal request (should validate but expect policy rejection)
+            withdrawal_request = {
+                "amount": 150.0,
+                "method": "wallet",
+                "kyc_token": "kyc_test_token_001"
             }
             
-            async with self.session.post(url, json=purchase_data) as response:
+            async with self.session.post(f"{API_BASE}/rewards/withdraw?user_id=test_user_001", 
+                                       json=withdrawal_request) as response:
                 if response.status == 200:
                     data = await response.json()
                     
-                    # Validate response structure
-                    required_fields = ["success", "message", "purchase_id", "ai_actions", "timestamp"]
-                    
+                    required_fields = ["ok", "requestId", "amount", "method", "estimatedCompletion", "status"]
                     missing_fields = [field for field in required_fields if field not in data]
                     
-                    if not missing_fields and data.get("success"):
-                        ai_actions = data.get("ai_actions", [])
-                        expected_actions = ["shopper_thank_you", "vendor_outreach", "onboarding_if_new", "follow_up_scheduling"]
-                        
-                        self.log_test(
-                            "Aisle AI Purchase Processing",
-                            True,
-                            f"Purchase processed successfully - Purchase ID: {data.get('purchase_id')}, AI Actions: {len(ai_actions)}, Background processing initiated",
-                            {"ai_actions": ai_actions}
-                        )
-                    else:
-                        self.log_test(
-                            "Aisle AI Purchase Processing",
-                            False,
-                            f"Invalid response structure. Missing fields: {missing_fields}",
-                            data
-                        )
+                    if missing_fields:
+                        self.log_test("Withdrawal System", False, f"Missing fields: {missing_fields}", data)
+                        return
+                    
+                    self.log_test("Withdrawal System", True, 
+                                f"Withdrawal request processed: {data.get('amount')} AisleCoins via {data.get('method')}, status: {data.get('status')}", 
+                                data)
+                elif response.status == 400:
+                    # Expected validation error
+                    error_data = await response.json()
+                    self.log_test("Withdrawal System", True, 
+                                f"Withdrawal validation working (expected 400): {error_data.get('detail', 'Validation error')}", 
+                                error_data)
                 else:
                     error_text = await response.text()
-                    self.log_test(
-                        "Aisle AI Purchase Processing",
-                        False,
-                        f"HTTP {response.status}: {error_text}"
-                    )
+                    self.log_test("Withdrawal System", False, f"HTTP {response.status}: {error_text}")
                     
-        except Exception as e:
-            self.log_test("Aisle AI Purchase Processing", False, f"Request failed: {str(e)}")
-    
-    async def test_aisle_ai_vendor_outreach(self):
-        """Test /api/aisle-ai/vendor-outreach endpoint"""
-        try:
-            url = f"{self.backend_url}/aisle-ai/vendor-outreach"
-            
-            # Test data for vendor outreach
-            outreach_data = {
-                "vendor_info": {
-                    "vendor_id": "vendor_electronics_002",
-                    "business_name": "Tech Innovations Store",
-                    "email": "hello@techinnovations.com",
-                    "phone": "+1555123456",
-                    "is_aislemarts_vendor": False,
-                    "language": "en"
-                },
-                "order_details": {
-                    "total": 599.99,
-                    "currency": "USD",
-                    "customer_name": "Michael Chen",
-                    "items": [
-                        {"name": "Smartphone", "price": 499.99, "quantity": 1},
-                        {"name": "Phone Case", "price": 100.00, "quantity": 1}
-                    ]
-                },
-                "outreach_type": "onboarding"
+            # Test invalid withdrawal (insufficient amount)
+            invalid_request = {
+                "amount": 50.0,  # Below minimum
+                "method": "wallet",
+                "kyc_token": "kyc_test_token_001"
             }
             
-            async with self.session.post(url, json=outreach_data) as response:
+            async with self.session.post(f"{API_BASE}/rewards/withdraw?user_id=test_user_001", 
+                                       json=invalid_request) as invalid_response:
+                if invalid_response.status == 400:
+                    error_data = await invalid_response.json()
+                    if "Minimum withdrawal" in error_data.get("detail", ""):
+                        self.log_test("Withdrawal Validation", True, 
+                                    f"Minimum withdrawal validation working: {error_data.get('detail')}")
+                    else:
+                        self.log_test("Withdrawal Validation", False, 
+                                    f"Unexpected validation error: {error_data.get('detail')}")
+                else:
+                    self.log_test("Withdrawal Validation", False, 
+                                f"Expected 400 for invalid withdrawal, got {invalid_response.status}")
+                    
+        except Exception as e:
+            self.log_test("Withdrawal System", False, f"Request failed: {str(e)}")
+
+    async def test_campaign_system(self):
+        """Test /api/rewards/campaign/enter endpoint"""
+        try:
+            campaign_id = "bluewave_weekly_competition_001"
+            async with self.session.post(f"{API_BASE}/rewards/campaign/enter?campaign_id={campaign_id}&user_id=test_user_001") as response:
                 if response.status == 200:
                     data = await response.json()
                     
-                    # Validate response structure
-                    required_fields = ["success", "message", "vendor_id", "outreach_type", "actions", "timestamp"]
-                    
+                    required_fields = ["ok", "campaignId", "entryId", "message", "drawDate"]
                     missing_fields = [field for field in required_fields if field not in data]
                     
-                    if not missing_fields and data.get("success"):
-                        actions = data.get("actions", [])
-                        expected_actions = ["thank_you_message", "onboarding_invitation", "benefits_presentation", "followup_scheduling"]
-                        
-                        self.log_test(
-                            "Aisle AI Vendor Outreach",
-                            True,
-                            f"Vendor outreach initiated successfully - Vendor ID: {data.get('vendor_id')}, Outreach Type: {data.get('outreach_type')}, Actions: {len(actions)}",
-                            {"actions": actions}
-                        )
-                    else:
-                        self.log_test(
-                            "Aisle AI Vendor Outreach",
-                            False,
-                            f"Invalid response structure. Missing fields: {missing_fields}",
-                            data
-                        )
+                    if missing_fields:
+                        self.log_test("Campaign System", False, f"Missing fields: {missing_fields}", data)
+                        return
+                    
+                    if not data.get("ok"):
+                        self.log_test("Campaign System", False, "Campaign entry not successful", data)
+                        return
+                    
+                    if data.get("campaignId") != campaign_id:
+                        self.log_test("Campaign System", False, f"Campaign ID mismatch: expected {campaign_id}, got {data.get('campaignId')}", data)
+                        return
+                    
+                    self.log_test("Campaign System", True, 
+                                f"Successfully entered campaign {campaign_id}, entry ID: {data.get('entryId')}, draw date: {data.get('drawDate')}", 
+                                data)
                 else:
                     error_text = await response.text()
-                    self.log_test(
-                        "Aisle AI Vendor Outreach",
-                        False,
-                        f"HTTP {response.status}: {error_text}"
-                    )
-                    
+                    self.log_test("Campaign System", False, f"HTTP {response.status}: {error_text}")
         except Exception as e:
-            self.log_test("Aisle AI Vendor Outreach", False, f"Request failed: {str(e)}")
-    
-    async def test_aisle_ai_stats(self):
-        """Test /api/aisle-ai/stats endpoint"""
+            self.log_test("Campaign System", False, f"Request failed: {str(e)}")
+
+    async def test_notification_preferences(self):
+        """Test GET/PUT /api/rewards/notifications/preferences endpoints"""
         try:
-            url = f"{self.backend_url}/aisle-ai/stats"
-            
-            async with self.session.get(url) as response:
+            # Test GET preferences
+            async with self.session.get(f"{API_BASE}/rewards/notifications/preferences?user_id=test_user_001") as response:
                 if response.status == 200:
                     data = await response.json()
                     
-                    # Validate response structure
-                    required_fields = ["total_interactions", "shopper_conversations", 
-                                     "vendor_outreach_messages", "onboarding_invitations_sent",
-                                     "successful_vendor_conversions", "languages_supported",
-                                     "countries_active", "average_response_time_ms",
-                                     "satisfaction_rating", "growth_metrics", "top_use_cases"]
+                    # Validate preference categories
+                    expected_categories = ["ads_support", "vendor_updates", "publisher_plans", "series_campaigns", "email", "push"]
+                    missing_categories = [cat for cat in expected_categories if cat not in data]
                     
-                    missing_fields = [field for field in required_fields if field not in data]
+                    if missing_categories:
+                        self.log_test("Notification Preferences - GET", False, f"Missing categories: {missing_categories}", data)
+                        return
                     
-                    if not missing_fields:
-                        total_interactions = data.get("total_interactions", 0)
-                        languages = data.get("languages_supported", 0)
-                        countries = data.get("countries_active", 0)
-                        satisfaction = data.get("satisfaction_rating", 0)
-                        
-                        self.log_test(
-                            "Aisle AI Statistics",
-                            True,
-                            f"Statistics retrieved successfully - {total_interactions:,} total interactions, {languages} languages, {countries} countries, {satisfaction}/5.0 satisfaction rating",
-                            {
-                                "key_metrics": {
-                                    "total_interactions": total_interactions,
-                                    "languages_supported": languages,
-                                    "countries_active": countries,
-                                    "satisfaction_rating": satisfaction
-                                }
-                            }
-                        )
-                    else:
-                        self.log_test(
-                            "Aisle AI Statistics",
-                            False,
-                            f"Invalid response structure. Missing fields: {missing_fields}",
-                            data
-                        )
-                else:
-                    error_text = await response.text()
-                    self.log_test(
-                        "Aisle AI Statistics",
-                        False,
-                        f"HTTP {response.status}: {error_text}"
-                    )
+                    # Test PUT preferences
+                    updated_prefs = {
+                        "ads_support": False,
+                        "vendor_updates": True,
+                        "publisher_plans": True,
+                        "series_campaigns": False,
+                        "email": True,
+                        "push": False
+                    }
                     
-        except Exception as e:
-            self.log_test("Aisle AI Statistics", False, f"Request failed: {str(e)}")
-    
-    async def test_aisle_ai_feedback(self):
-        """Test /api/aisle-ai/feedback endpoint"""
-        try:
-            url = f"{self.backend_url}/aisle-ai/feedback"
-            
-            # Test feedback data
-            feedback_scenarios = [
-                {
-                    "user_id": "test_user_001",
-                    "interaction_id": "conv_12345",
-                    "rating": 5,
-                    "feedback_type": "positive",
-                    "comment": "Aisle AI was incredibly helpful in finding the perfect luxury dress for my event. The recommendations were spot-on!",
-                    "category": "product_discovery"
-                },
-                {
-                    "user_id": "vendor_001",
-                    "interaction_id": "outreach_67890", 
-                    "rating": 4,
-                    "feedback_type": "constructive",
-                    "comment": "The onboarding invitation was well-crafted, but I'd like more specific information about commission rates.",
-                    "category": "vendor_outreach"
-                }
-            ]
-            
-            for i, feedback_data in enumerate(feedback_scenarios):
-                async with self.session.post(url, json=feedback_data) as response:
-                    if response.status == 200:
-                        data = await response.json()
-                        
-                        # Validate response structure
-                        required_fields = ["success", "feedback_id", "message", "ai_response", "timestamp"]
-                        
-                        missing_fields = [field for field in required_fields if field not in data]
-                        
-                        if not missing_fields and data.get("success"):
-                            self.log_test(
-                                f"Aisle AI Feedback Test {i+1}",
-                                True,
-                                f"Feedback processed successfully - Feedback ID: {data.get('feedback_id')}, AI acknowledged feedback with personalized response",
-                                {"ai_response": data.get("ai_response")}
-                            )
+                    async with self.session.put(f"{API_BASE}/rewards/notifications/preferences?user_id=test_user_001", 
+                                              json=updated_prefs) as put_response:
+                        if put_response.status == 200:
+                            put_data = await put_response.json()
+                            
+                            if not put_data.get("ok"):
+                                self.log_test("Notification Preferences", False, "Update not successful", put_data)
+                                return
+                            
+                            enabled_count = sum(1 for v in updated_prefs.values() if v)
+                            self.log_test("Notification Preferences", True, 
+                                        f"Retrieved and updated all 6 notification categories, {enabled_count}/6 enabled", 
+                                        {"get": data, "put": put_data})
                         else:
-                            self.log_test(
-                                f"Aisle AI Feedback Test {i+1}",
-                                False,
-                                f"Invalid response structure. Missing fields: {missing_fields}",
-                                data
-                            )
-                    else:
-                        error_text = await response.text()
-                        self.log_test(
-                            f"Aisle AI Feedback Test {i+1}",
-                            False,
-                            f"HTTP {response.status}: {error_text}"
-                        )
-                        
+                            error_text = await put_response.text()
+                            self.log_test("Notification Preferences", False, f"PUT failed: HTTP {put_response.status}: {error_text}")
+                else:
+                    error_text = await response.text()
+                    self.log_test("Notification Preferences", False, f"GET failed: HTTP {response.status}: {error_text}")
         except Exception as e:
-            self.log_test("Aisle AI Feedback", False, f"Request failed: {str(e)}")
-    
-    async def test_integration_validation(self):
-        """Test server integration and import resolution"""
+            self.log_test("Notification Preferences", False, f"Request failed: {str(e)}")
+
+    async def test_system_statistics(self):
+        """Test /api/rewards/stats endpoint"""
         try:
-            # Test that the main health endpoint includes Aisle AI
-            url = f"{self.backend_url}/health"
-            
-            async with self.session.get(url) as response:
+            async with self.session.get(f"{API_BASE}/rewards/stats") as response:
                 if response.status == 200:
                     data = await response.json()
                     
-                    if data.get("ok") and "AisleMarts" in data.get("service", ""):
-                        self.log_test(
-                            "Server Integration Check",
-                            True,
-                            f"Main server operational - Service: {data.get('service')}, Version: {data.get('version')}",
-                            data
-                        )
-                    else:
-                        self.log_test(
-                            "Server Integration Check",
-                            False,
-                            "Main server health check failed or invalid response",
-                            data
-                        )
+                    # Validate statistics structure
+                    required_sections = ["totalUsers", "activeRewardsUsers", "totalRewardsDistributed", 
+                                       "missionsCompleted", "currentStreaks", "leagueDistribution", 
+                                       "averageEngagement", "withdrawalRequests"]
+                    missing_sections = [section for section in required_sections if section not in data]
+                    
+                    if missing_sections:
+                        self.log_test("System Statistics", False, f"Missing sections: {missing_sections}", data)
+                        return
+                    
+                    # Validate rewards distribution
+                    rewards_dist = data.get("totalRewardsDistributed", {})
+                    expected_currencies = ["aisleCoins", "blueWavePoints", "vendorStars", "cashbackCredits"]
+                    missing_currencies = [curr for curr in expected_currencies if curr not in rewards_dist]
+                    
+                    if missing_currencies:
+                        self.log_test("System Statistics", False, f"Missing reward currencies in stats: {missing_currencies}", data)
+                        return
+                    
+                    # Validate league distribution
+                    league_dist = data.get("leagueDistribution", {})
+                    expected_leagues = ["Bronze", "Silver", "Gold", "Platinum"]
+                    missing_leagues = [league for league in expected_leagues if league not in league_dist]
+                    
+                    if missing_leagues:
+                        self.log_test("System Statistics", False, f"Missing leagues in distribution: {missing_leagues}", data)
+                        return
+                    
+                    total_users = data.get("totalUsers", 0)
+                    active_users = data.get("activeRewardsUsers", 0)
+                    engagement = data.get("averageEngagement", 0)
+                    
+                    self.log_test("System Statistics", True, 
+                                f"Complete system stats: {total_users:,} total users, {active_users:,} active, {engagement}/5.0 engagement, all currencies and leagues tracked", 
+                                data)
                 else:
                     error_text = await response.text()
-                    self.log_test(
-                        "Server Integration Check",
-                        False,
-                        f"HTTP {response.status}: {error_text}"
-                    )
+                    self.log_test("System Statistics", False, f"HTTP {response.status}: {error_text}")
+        except Exception as e:
+            self.log_test("System Statistics", False, f"Request failed: {str(e)}")
+
+    async def test_feedback_system(self):
+        """Test /api/rewards/feedback endpoint"""
+        try:
+            feedback_data = {
+                "rating": 5,
+                "comment": "The BlueWave rewards system is fantastic! Love the gamification features.",
+                "category": "general"
+            }
+            
+            async with self.session.post(f"{API_BASE}/rewards/feedback?user_id=test_user_001", 
+                                       json=feedback_data) as response:
+                if response.status == 200:
+                    data = await response.json()
                     
+                    required_fields = ["ok", "feedbackId", "message", "reward"]
+                    missing_fields = [field for field in required_fields if field not in data]
+                    
+                    if missing_fields:
+                        self.log_test("Feedback System", False, f"Missing fields: {missing_fields}", data)
+                        return
+                    
+                    if not data.get("ok"):
+                        self.log_test("Feedback System", False, "Feedback submission not successful", data)
+                        return
+                    
+                    reward = data.get("reward", {})
+                    if not reward or "type" not in reward or "value" not in reward:
+                        self.log_test("Feedback System", False, "Invalid reward structure", data)
+                        return
+                    
+                    self.log_test("Feedback System", True, 
+                                f"Feedback submitted successfully, ID: {data.get('feedbackId')}, reward: {reward.get('value')} {reward.get('type')}", 
+                                data)
+                else:
+                    error_text = await response.text()
+                    self.log_test("Feedback System", False, f"HTTP {response.status}: {error_text}")
         except Exception as e:
-            self.log_test("Server Integration Check", False, f"Request failed: {str(e)}")
-    
-    async def test_concurrent_requests(self):
-        """Test concurrent request handling"""
-        try:
-            # Test multiple concurrent requests to health endpoint
-            tasks = []
-            for i in range(5):
-                task = self.session.get(f"{self.backend_url}/aisle-ai/health")
-                tasks.append(task)
-            
-            start_time = time.time()
-            responses = await asyncio.gather(*tasks, return_exceptions=True)
-            end_time = time.time()
-            
-            successful_responses = 0
-            for response in responses:
-                if not isinstance(response, Exception):
-                    if response.status == 200:
-                        successful_responses += 1
-                    response.close()
-            
-            if successful_responses == 5:
-                self.log_test(
-                    "Concurrent Request Handling",
-                    True,
-                    f"All 5 concurrent requests successful in {end_time - start_time:.2f}s"
-                )
-            else:
-                self.log_test(
-                    "Concurrent Request Handling",
-                    False,
-                    f"Only {successful_responses}/5 concurrent requests successful"
-                )
-                
-        except Exception as e:
-            self.log_test("Concurrent Request Handling", False, f"Request failed: {str(e)}")
-    
-    async def run_all_tests(self):
-        """Run all Aisle AI tests"""
-        print("🤖⚡ AISLE AI SERVICE COMPREHENSIVE BACKEND TESTING")
-        print("=" * 60)
-        print(f"Backend URL: {self.backend_url}")
-        print(f"Test Start Time: {datetime.utcnow().isoformat()}")
+            self.log_test("Feedback System", False, f"Request failed: {str(e)}")
+
+    async def run_comprehensive_test(self):
+        """Run all rewards system tests"""
+        print("🎯 AisleMarts Rewards System Comprehensive Backend Testing")
+        print("=" * 70)
         print()
         
-        await self.setup_session()
+        # Core system tests
+        await self.test_rewards_health_check()
+        await self.test_balances_system()
         
-        try:
-            # Core Aisle AI endpoint tests
-            await self.test_aisle_ai_health_check()
-            await self.test_aisle_ai_capabilities()
-            await self.test_aisle_ai_chat()
-            await self.test_aisle_ai_process_purchase()
-            await self.test_aisle_ai_vendor_outreach()
-            await self.test_aisle_ai_stats()
-            await self.test_aisle_ai_feedback()
-            
-            # Integration and performance tests
-            await self.test_integration_validation()
-            await self.test_concurrent_requests()
-            
-        finally:
-            await self.cleanup_session()
+        # Mission system tests
+        await self.test_per_sale_missions()
+        await self.test_weekly_missions()
         
-        # Generate summary
-        self.generate_test_summary()
-    
-    def generate_test_summary(self):
-        """Generate comprehensive test summary"""
-        total_tests = len(self.test_results)
-        passed_tests = sum(1 for result in self.test_results if result["success"])
-        failed_tests = total_tests - passed_tests
-        success_rate = (passed_tests / total_tests * 100) if total_tests > 0 else 0
+        # Gamification tests
+        await self.test_streaks_system()
+        await self.test_leaderboard()
         
-        print("\n" + "=" * 60)
-        print("🤖⚡ AISLE AI SERVICE TESTING SUMMARY")
-        print("=" * 60)
-        print(f"Total Tests: {total_tests}")
-        print(f"Passed: {passed_tests} ✅")
-        print(f"Failed: {failed_tests} ❌")
-        print(f"Success Rate: {success_rate:.1f}%")
-        print()
+        # Transaction and reward tests
+        await self.test_rewards_ledger()
+        await self.test_claim_system()
+        await self.test_withdrawal_system()
+        await self.test_campaign_system()
         
-        if failed_tests > 0:
-            print("❌ FAILED TESTS:")
-            for result in self.test_results:
-                if not result["success"]:
-                    print(f"  • {result['test']}: {result['details']}")
-            print()
+        # Notification and analytics tests
+        await self.test_notification_preferences()
+        await self.test_system_statistics()
+        await self.test_feedback_system()
         
-        print("✅ SUCCESSFUL TESTS:")
-        for result in self.test_results:
-            if result["success"]:
-                print(f"  • {result['test']}: {result['details']}")
+        # Print summary
+        print("=" * 70)
+        print(f"🎯 REWARDS SYSTEM TEST SUMMARY")
+        print(f"Total Tests: {self.total_tests}")
+        print(f"Passed: {self.passed_tests}")
+        print(f"Failed: {self.total_tests - self.passed_tests}")
+        print(f"Success Rate: {(self.passed_tests/self.total_tests*100):.1f}%")
         
-        print("\n" + "=" * 60)
-        print(f"Test Completion Time: {datetime.utcnow().isoformat()}")
-        
-        # Determine overall status
-        if success_rate >= 90:
-            print("🟢 OVERALL STATUS: EXCELLENT - Aisle AI service fully operational")
-        elif success_rate >= 75:
-            print("🟡 OVERALL STATUS: GOOD - Aisle AI service mostly operational with minor issues")
-        elif success_rate >= 50:
-            print("🟠 OVERALL STATUS: FAIR - Aisle AI service partially operational, needs attention")
+        if self.passed_tests == self.total_tests:
+            print("🟢 ALL TESTS PASSED - REWARDS SYSTEM FULLY OPERATIONAL")
+        elif self.passed_tests / self.total_tests >= 0.8:
+            print("🟡 MOSTLY OPERATIONAL - MINOR ISSUES TO ADDRESS")
         else:
-            print("🔴 OVERALL STATUS: POOR - Aisle AI service has significant issues")
+            print("🔴 SIGNIFICANT ISSUES FOUND - REQUIRES ATTENTION")
         
-        print("=" * 60)
+        print("=" * 70)
+        
+        return {
+            "total_tests": self.total_tests,
+            "passed_tests": self.passed_tests,
+            "success_rate": self.passed_tests / self.total_tests if self.total_tests > 0 else 0,
+            "test_results": self.test_results
+        }
 
 async def main():
     """Main test execution"""
-    tester = AisleAITester()
-    await tester.run_all_tests()
+    async with RewardsSystemTester() as tester:
+        results = await tester.run_comprehensive_test()
+        return results
 
 if __name__ == "__main__":
     asyncio.run(main())
