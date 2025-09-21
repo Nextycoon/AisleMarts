@@ -561,6 +561,11 @@ const styles = StyleSheet.create({
     alignItems: 'center',
     marginBottom: 8,
   },
+  bottomCreatorInfo: {
+    flexDirection: 'column',
+    alignItems: 'flex-start',
+    marginBottom: 8,
+  },
   creatorUsername: {
     color: '#FFFFFF',
     fontSize: 16,
