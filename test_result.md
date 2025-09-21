@@ -395,14 +395,15 @@ metadata:
 
 test_plan:
   current_focus:
-    - "Aisle AI Service Implementation and Integration"
-    - "TikTok-Style Social Commerce Features Backend Implementation"
-    - "BlueWave Family Safety System Implementation"
-    - "Universal Commerce AI Hub Backend Implementation"
-    - "Complete System Integration Testing"
-  stuck_tasks: []
-  test_all: true
-  test_priority: "aisle_ai_first_then_comprehensive"
+    - "AisleMarts Rewards Dashboard Frontend Implementation"
+    - "AisleMarts Rewards System Implementation"
+    - "Frontend Routing and Navigation Issues"
+    - "Rewards System User Accessibility"
+  stuck_tasks:
+    - "AisleMarts Rewards Dashboard Frontend Implementation"
+    - "AisleMarts Rewards System Implementation"
+  test_all: false
+  test_priority: "critical_rewards_frontend_fixes"
 
   - task: "End-to-End Encryption (E2EE) System Implementation"
     implemented: true
