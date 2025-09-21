@@ -241,6 +241,11 @@ export default function ForYouScreen() {
       setTimeout(() => {
         videoRefs.current[currentIndex + 1]?.playAsync();
       }, 100);
+      
+      // Load more content when approaching the end
+      if (currentIndex >= forYouFeed.length - 3 && loadMore) {
+        loadMore();
+      }
     }
   };
 
