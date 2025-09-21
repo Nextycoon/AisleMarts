@@ -62,8 +62,13 @@ export default function ForYouScreen() {
   const [currentIndex, setCurrentIndex] = useState(0);
   const [isPlaying, setIsPlaying] = useState(true);
   const [showProducts, setShowProducts] = useState(false);
+  const [currentPlayingIndex, setCurrentPlayingIndex] = useState<number | null>(null);
   const videoRefs = useRef<any[]>([]);
   const translateY = useRef(new Animated.Value(0)).current;
+  const api = useTikTokAPI();
+  
+  // Use TikTok API hook for feed data with mock user ID
+  const { data: feedData, loading: isLoading, error, refresh, loadMore } = useForYouFeed('test_user_001', true);
 
   const forYouFeed: VideoContent[] = [
     {
