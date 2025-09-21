@@ -310,10 +310,13 @@ async def get_engagement_analytics():
         logger.error(f"Engagement analytics error: {e}")
         raise HTTPException(status_code=500, detail=str(e))
 
+class MissionProgressUpdate(BaseModel):
+    progress: float = Field(..., ge=0, le=1, description="Mission progress (0.0 to 1.0)")
+
 @router.post("/real-time/mission-progress")
 async def update_mission_progress(
     mission_id: str,
-    progress: float = Field(..., ge=0, le=1),
+    progress_data: MissionProgressUpdate,
     user_id: str = "current_user"
 ):
     """
