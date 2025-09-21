@@ -368,38 +368,12 @@ export default function ForYouScreen() {
         <TopNavigation />
       </Animated.View>
       
-      {/* Animated Trending Creators Section - Hide/Show on Scroll */}
-      <Animated.View 
-        style={[
-          styles.animatedTrendingSection,
-          { transform: [{ translateY: trendingTranslateY }] }
-        ]}
-      >
-        <View style={styles.trendingSection}>
-          <Text style={styles.trendingSectionTitle}>Trending AisleMarts Creators</Text>
-          <View style={styles.trendingCreators}>
-            {mockTrendingCreators.map((creator, index) => (
-              <TouchableOpacity key={index} style={styles.creatorItem}>
-                <View style={styles.creatorAvatar}>
-                  <Text style={styles.creatorAvatarText}>{creator.name.charAt(0)}</Text>
-                  {creator.isLive && <View style={styles.liveIndicator} />}
-                </View>
-                <Text style={styles.creatorName}>{creator.name}</Text>
-                <TouchableOpacity style={styles.followButton}>
-                  <Text style={styles.followButtonText}>Follow</Text>
-                </TouchableOpacity>
-              </TouchableOpacity>
-            ))}
-          </View>
-        </View>
-      </Animated.View>
-      
-      {/* Video Player */}
-      <View style={styles.videoContainer}>
+      {/* Full Screen Video Player - Edge to Edge */}
+      <View style={styles.fullScreenVideoContainer}>
         <Video
           ref={(ref) => videoRefs.current[currentIndex] = ref}
           source={{ uri: currentVideo.uri }}
-          style={styles.video}
+          style={styles.fullScreenVideo}
           resizeMode={ResizeMode.COVER}
           shouldPlay={isPlaying}
           isLooping
