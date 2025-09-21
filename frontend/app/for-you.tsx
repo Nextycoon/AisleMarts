@@ -837,6 +837,15 @@ const styles = StyleSheet.create({
     height: 44,
     justifyContent: 'center',
   },
+
+  // Spaced version of shopping button
+  elegantShoppingButtonSpaced: {
+    alignItems: 'center',
+    marginBottom: 16, // Increased spacing from 8 to 16
+    width: 44,
+    height: 44,
+    justifyContent: 'center',
+  },
   elegantShoppingContainer: {
     width: 40, // Smaller shopping button
     height: 40,
