@@ -435,21 +435,39 @@ export default function ForYouScreen() {
           </TouchableOpacity>
         </View>
 
-        {/* Product Pins */}
+        {/* Enhanced Product Pins - AisleMarts Shopping Integration */}
         {showProducts && currentVideo.products.map((product, index) => (
           <TouchableOpacity
             key={product.id}
-            style={[styles.productPin, { bottom: 200 + index * 60 }]}
+            style={[styles.productPin, { bottom: 200 + index * 80 }]}
             onPress={() => handleProductPin(product)}
           >
-            <Text style={styles.productPinText}>
-              {product.title} - {product.currency} {product.price}
-            </Text>
-            {currentVideo.safety.parentalApproval && (
-              <Text style={styles.approvalRequired}>👨‍👩‍👧‍👦 Approval Required</Text>
-            )}
+            <View style={styles.productPinContainer}>
+              <View style={styles.productPinHeader}>
+                <Text style={styles.productPinTitle}>{product.title}</Text>
+                <TouchableOpacity style={styles.quickBuyButton}>
+                  <Text style={styles.quickBuyText}>Buy Now</Text>
+                </TouchableOpacity>
+              </View>
+              <View style={styles.productPinDetails}>
+                <Text style={styles.productPinPrice}>
+                  {product.currency} {product.price}
+                </Text>
+                <View style={styles.productPinActions}>
+                  <TouchableOpacity style={styles.addToCartButton}>
+                    <Text style={styles.addToCartIcon}>🛒</Text>
+                  </TouchableOpacity>
+                  <TouchableOpacity style={styles.wishlistButton}>
+                    <Text style={styles.wishlistIcon}>❤️</Text>
+                  </TouchableOpacity>
+                </View>
+              </View>
+              {currentVideo.safety.parentalApproval && (
+                <Text style={styles.approvalRequired}>👨‍👩‍👧‍👦 Approval Required</Text>
+              )}
+            </View>
           </TouchableOpacity>
-        ))}
+        ))
 
         {/* Parental Control Indicator */}
         {currentVideo.safety.parentalApproval && (
