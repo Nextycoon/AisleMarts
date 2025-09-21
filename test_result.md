@@ -456,15 +456,18 @@ test_plan:
 
   - task: "Real-time WebSocket Integration and Services"
     implemented: true
-    working: "NA"
+    working: false
     file: "/app/backend/services/websocket_service.py, /app/backend/routers/websocket_routes.py"
-    stuck_count: 0
+    stuck_count: 1
     priority: "critical"
-    needs_retesting: true
+    needs_retesting: false
     status_history:
         - working: "NA"
           agent: "main"
           comment: "Real-time WebSocket integration implemented with comprehensive WebSocket connection management, real-time event processing, user subscription handling, notification broadcasting, performance monitoring, and integration with existing systems including rewards and messaging"
+        - working: false
+          agent: "testing"
+          comment: "❌ CRITICAL ISSUE: WebSocket service not accessible via HTTP endpoints. DETAILED ANALYSIS: ❌ WebSocket Status Endpoint: /api/ws/status returns 404 - service not exposed, ❌ WebSocket Trigger Endpoints: All trigger endpoints (/ws/trigger/mission-update, /ws/trigger/reward-claimed, /ws/trigger/league-advancement) return 404, ❌ Router Integration Issue: WebSocket router appears to be implemented but not properly integrated into main server.py or using incorrect URL prefix. TECHNICAL FINDINGS: WebSocket service code exists in /app/backend/services/websocket_service.py and /app/backend/routers/websocket_routes.py but endpoints are not accessible. This suggests the router is not properly included in the main FastAPI application or is using a different URL prefix than expected. IMPACT: Real-time features cannot be accessed by frontend applications, breaking live notifications, mission progress updates, and real-time user engagement features. RECOMMENDATION: Verify WebSocket router integration in server.py and ensure correct URL prefix configuration."
 
   - task: "AI Personalization Service Implementation"
     implemented: true
