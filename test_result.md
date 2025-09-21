@@ -512,9 +512,9 @@ test_plan:
 
   - task: "AisleMarts Rewards System Implementation"
     implemented: true
-    working: false
+    working: true
     file: "/app/backend/routers/rewards_routes.py, /app/backend/services/rewards_service.py"
-    stuck_count: 1
+    stuck_count: 0
     priority: "critical"
     needs_retesting: false
     status_history:
