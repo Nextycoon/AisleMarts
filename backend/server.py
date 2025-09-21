@@ -580,7 +580,11 @@ try:
     from routers.lead_economy_routes import router as lead_economy_router
     app.include_router(lead_economy_router, prefix="/api", tags=["lead_economy"])
     
-    print("💰🚀 WORLD'S FIRST 0% COMMISSION COMMERCE PLATFORM: AisleMarts Lead Economy | Vendors Keep 100% Revenue | Pay-Per-Lead Only | Most Lovable App in 4M+ Cities | 89 Languages | Physical+Digital Commerce | Voice AI | AR/VR | Creator Economy | Series A Ready")
+    # Import and include AI Super Agent router
+    from routers.ai_super_agent_routes import router as ai_super_agent_router
+    app.include_router(ai_super_agent_router, prefix="/api", tags=["ai_super_agent"])
+    
+    print("💰🚀 WORLD'S FIRST 0% COMMISSION COMMERCE PLATFORM: AisleMarts Lead Economy | Vendors Keep 100% Revenue | Pay-Per-Lead Only | Most Lovable App in 4M+ Cities | 89 Languages | Physical+Digital Commerce | Voice AI | AR/VR | Creator Economy | AI Super Agent | Series A Ready")
 except ImportError as e:
     print(f"⚠️ Routers not available: {e}")
 except Exception as e:
