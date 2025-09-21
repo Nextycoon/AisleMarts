@@ -50,20 +50,28 @@ export default function TabNavigator() {
               key={tab.name}
               style={[
                 styles.tabItem,
-                active && styles.tabItemActive,
+                tab.name === 'create' && styles.createButton,
                 { width: width / tabs.length }
               ]}
               onPress={() => handleTabPress(tab.route)}
               activeOpacity={0.7}
             >
-              <View style={[styles.tabIconContainer, active && styles.tabIconContainerActive]}>
-                <Text style={[styles.tabIcon, active && styles.tabIconActive]}>
-                  {tab.icon}
+              {tab.name === 'create' ? (
+                <View style={styles.createIconContainer}>
+                  <Text style={styles.createIcon}>{tab.icon}</Text>
+                </View>
+              ) : (
+                <View style={[styles.tabIconContainer, active && styles.tabIconContainerActive]}>
+                  <Text style={[styles.tabIcon, active && styles.tabIconActive]}>
+                    {tab.icon}
+                  </Text>
+                </View>
+              )}
+              {tab.label && (
+                <Text style={[styles.tabLabel, active && styles.tabLabelActive]}>
+                  {tab.label}
                 </Text>
-              </View>
-              <Text style={[styles.tabLabel, active && styles.tabLabelActive]}>
-                {tab.label}
-              </Text>
+              )}
             </TouchableOpacity>
           );
         })}
