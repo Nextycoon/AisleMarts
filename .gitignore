@@ -482,3 +482,7 @@ android-sdk/ -e
 *.env
 *.env.*
 model.patch
+-e 
+# Environment files
+*.env
+*.env.*
