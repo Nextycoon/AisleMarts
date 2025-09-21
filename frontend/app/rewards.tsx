@@ -251,6 +251,12 @@ export default function RewardsDashboard() {
               "#4A90E2",
               () => router.push('/rewards/weekly')
             )}
+            {renderProgressRing(
+              "Leaderboard", 
+              75, // Mock rank percentage
+              "#FFD700",
+              () => router.push('/rewards/leaderboard')
+            )}
           </View>
         </Animated.View>
 
