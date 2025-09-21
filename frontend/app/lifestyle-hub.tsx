@@ -10,7 +10,7 @@ import {
   FlatList,
   Alert,
 } from 'react-native';
-import { StatusBar } from 'expo-status-r';
+import { StatusBar } from 'expo-status-bar';
 import { useRouter } from 'expo-router';
 import { Video, ResizeMode } from 'expo-av';
 import TabNavigator from './navigation/TabNavigator';
