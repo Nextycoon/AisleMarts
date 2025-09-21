@@ -115,8 +115,8 @@ async def get_leaderboard(
 @router.get("/ledger")
 async def get_rewards_ledger(
     user_id: str = "current_user",
-    page: int = Field(1, ge=1),
-    page_size: int = Field(25, ge=1, le=100)
+    page: int = Query(1, ge=1),
+    page_size: int = Query(25, ge=1, le=100)
 ):
     """
     🎯 Get paginated reward transaction ledger
