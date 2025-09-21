@@ -721,7 +721,7 @@ const styles = StyleSheet.create({
   // AisleMarts Shopping Button Styles (Clean Golden Style)
   aisleShoppingButton: {
     alignItems: 'center',
-    marginBottom: 24,
+    marginBottom: 18,
     width: 48,
     height: 48,
     justifyContent: 'center',
