@@ -717,6 +717,31 @@ const styles = StyleSheet.create({
     textShadowOffset: { width: 0, height: 1 },
     textShadowRadius: 2,
   },
+  // AisleMarts Shopping Button Styles (Clean Golden Style)
+  aisleShoppingButton: {
+    alignItems: 'center',
+    marginBottom: 24,
+    width: 48,
+    height: 48,
+    justifyContent: 'center',
+  },
+  aisleShoppingIcon: {
+    fontSize: 32,
+    color: '#D4AF37',
+    textShadowColor: 'rgba(0, 0, 0, 0.7)',
+    textShadowOffset: { width: 0, height: 2 },
+    textShadowRadius: 4,
+  },
+  aisleShoppingText: {
+    color: '#D4AF37',
+    fontSize: 12,
+    fontWeight: '700',
+    marginTop: 2,
+    textAlign: 'center',
+    textShadowColor: 'rgba(0, 0, 0, 0.7)',
+    textShadowOffset: { width: 0, height: 1 },
+    textShadowRadius: 2,
+  },
   actionButton: {
     alignItems: 'center',
     marginBottom: 20,
