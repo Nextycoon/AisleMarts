@@ -1200,6 +1200,18 @@ const styles = StyleSheet.create({
     fontSize: 16,
   },
   // ==================================================================================
+  // ANIMATED CONTAINERS FOR FULL SCREEN VIDEO EXPERIENCE
+  // ==================================================================================
+  animatedTopNav: {
+    position: 'relative',
+    zIndex: 10,
+  },
+  animatedTrendingSection: {
+    position: 'relative',
+    zIndex: 9,
+  },
+
+  // ==================================================================================
   // LUXURY TRENDING CREATORS SECTION - PREMIUM AISLEMARTS DESIGN
   // ==================================================================================
   trendingSection: {
