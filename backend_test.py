@@ -25,7 +25,7 @@ from typing import Dict, List, Any, Optional
 import os
 
 # Get backend URL from environment
-BACKEND_URL = os.getenv('EXPO_PUBLIC_BACKEND_URL', 'https://bluewave-social.preview.emergentagent.com')
+BACKEND_URL = os.getenv('EXPO_PUBLIC_BACKEND_URL', 'https://bluewave-aisle.preview.emergentagent.com')
 BASE_URL = f"{BACKEND_URL}/api"
 
 class BlueWaveTestSuite:
