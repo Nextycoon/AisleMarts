@@ -500,22 +500,27 @@ class ComprehensiveSystemValidator:
         success, data, status = await self.make_request('GET', '/awareness/health')
         
         if success:
-            capabilities = data.get('capabilities', 0)
-            languages = data.get('languages_supported', 0)
-            currencies = data.get('currencies_supported', 0)
+            capabilities = data.get('capabilities', [])
+            languages = data.get('languages_supported', [])
+            currencies = data.get('currencies_supported', [])
             
-            if capabilities >= 8 and languages >= 7 and currencies >= 15:
+            # Handle both list and integer responses
+            cap_count = len(capabilities) if isinstance(capabilities, list) else capabilities
+            lang_count = len(languages) if isinstance(languages, list) else languages
+            curr_count = len(currencies) if isinstance(currencies, list) else currencies
+            
+            if cap_count >= 8 and lang_count >= 7 and curr_count >= 15:
                 self.log_test(
                     "AisleMarts Awareness Engine",
                     True,
-                    f"Operational: {capabilities} capabilities, {languages} languages, {currencies} currencies",
+                    f"Operational: {cap_count} capabilities, {lang_count} languages, {curr_count} currencies",
                     data
                 )
             else:
                 self.log_test(
                     "AisleMarts Awareness Engine",
                     False,
-                    f"Below expected: {capabilities} capabilities, {languages} languages, {currencies} currencies",
+                    f"Below expected: {cap_count} capabilities, {lang_count} languages, {curr_count} currencies",
                     data
                 )
         else:
