@@ -692,6 +692,14 @@ const styles = StyleSheet.create({
     textShadowOffset: { width: 0, height: 1 },
     textShadowRadius: 1,
   },
+  actionCircle: {
+    width: 44,
+    height: 44,
+    borderRadius: 22,
+    alignItems: 'center',
+    justifyContent: 'center',
+    marginBottom: 4,
+  },
   shoppingButton: {
     alignItems: 'center',
     backgroundColor: 'rgba(212, 175, 55, 0.2)',
