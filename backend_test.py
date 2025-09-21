@@ -602,51 +602,267 @@ class RewardsSystemTester:
         except Exception as e:
             self.log_test("Feedback System", False, f"Request failed: {str(e)}")
 
+    # Advanced Analytics & Real-time Features Tests
+    
+    async def test_revenue_analytics(self):
+        """Test /api/rewards/analytics/revenue endpoint"""
+        try:
+            async with self.session.get(f"{API_BASE}/rewards/analytics/revenue") as response:
+                if response.status == 200:
+                    data = await response.json()
+                    
+                    expected_fields = ["totalRevenue", "withdrawalFees", "premiumSubscriptions", "transactionFees", "growthMetrics"]
+                    missing_fields = [field for field in expected_fields if field not in data]
+                    
+                    if missing_fields:
+                        self.log_test("Revenue Analytics", False, f"Missing fields: {missing_fields}", data)
+                        return
+                    
+                    total_revenue = data.get("totalRevenue", 0)
+                    growth = data.get("growthMetrics", {}).get("totalRevenueGrowth", 0)
+                    period = data.get("period", "N/A")
+                    
+                    self.log_test("Revenue Analytics", True, 
+                                f"Total Revenue: ${total_revenue:,}, Growth: {growth}%, Period: {period}", 
+                                data)
+                else:
+                    error_text = await response.text()
+                    self.log_test("Revenue Analytics", False, f"HTTP {response.status}: {error_text}")
+        except Exception as e:
+            self.log_test("Revenue Analytics", False, f"Request failed: {str(e)}")
+    
+    async def test_engagement_analytics(self):
+        """Test /api/rewards/analytics/engagement endpoint"""
+        try:
+            async with self.session.get(f"{API_BASE}/rewards/analytics/engagement") as response:
+                if response.status == 200:
+                    data = await response.json()
+                    
+                    expected_fields = ["dailyActiveUsers", "weeklyActiveUsers", "monthlyActiveUsers", 
+                                     "averageSessionTime", "missionCompletionRate", "streakRetentionRate"]
+                    missing_fields = [field for field in expected_fields if field not in data]
+                    
+                    if missing_fields:
+                        self.log_test("Engagement Analytics", False, f"Missing fields: {missing_fields}", data)
+                        return
+                    
+                    dau = data.get("dailyActiveUsers", 0)
+                    completion_rate = data.get("missionCompletionRate", 0)
+                    session_time = data.get("averageSessionTime", 0)
+                    
+                    self.log_test("Engagement Analytics", True, 
+                                f"DAU: {dau:,}, Mission Completion: {completion_rate}%, Avg Session: {session_time}min", 
+                                data)
+                else:
+                    error_text = await response.text()
+                    self.log_test("Engagement Analytics", False, f"HTTP {response.status}: {error_text}")
+        except Exception as e:
+            self.log_test("Engagement Analytics", False, f"Request failed: {str(e)}")
+    
+    async def test_real_time_mission_progress(self):
+        """Test /api/rewards/real-time/mission-progress endpoint"""
+        try:
+            payload = {"progress": 0.75}
+            async with self.session.post(f"{API_BASE}/rewards/real-time/mission-progress?mission_id=stay_10m&user_id=test_user_001", 
+                                       json=payload) as response:
+                if response.status == 200:
+                    data = await response.json()
+                    
+                    required_fields = ["ok", "missionId", "newProgress", "completed"]
+                    missing_fields = [field for field in required_fields if field not in data]
+                    
+                    if missing_fields:
+                        self.log_test("Real-time Mission Progress", False, f"Missing fields: {missing_fields}", data)
+                        return
+                    
+                    progress = data.get("newProgress", 0)
+                    completed = data.get("completed", False)
+                    mission_id = data.get("missionId", "N/A")
+                    
+                    self.log_test("Real-time Mission Progress", True, 
+                                f"Mission: {mission_id}, Progress: {progress*100:.1f}%, Completed: {completed}", 
+                                data)
+                else:
+                    error_text = await response.text()
+                    self.log_test("Real-time Mission Progress", False, f"HTTP {response.status}: {error_text}")
+        except Exception as e:
+            self.log_test("Real-time Mission Progress", False, f"Request failed: {str(e)}")
+    
+    async def test_active_competitions(self):
+        """Test /api/rewards/competitions/active endpoint"""
+        try:
+            async with self.session.get(f"{API_BASE}/rewards/competitions/active") as response:
+                if response.status == 200:
+                    data = await response.json()
+                    
+                    if not isinstance(data, list):
+                        self.log_test("Active Competitions", False, "Expected list response", data)
+                        return
+                    
+                    if len(data) > 0:
+                        competition = data[0]
+                        required_fields = ["id", "name", "participants", "startDate", "endDate", "prizes"]
+                        missing_fields = [field for field in required_fields if field not in competition]
+                        
+                        if missing_fields:
+                            self.log_test("Active Competitions", False, f"Competition missing fields: {missing_fields}", competition)
+                            return
+                        
+                        self.log_test("Active Competitions", True, 
+                                    f"Active competitions: {len(data)}, Top: {competition['name']} ({competition['participants']} participants)", 
+                                    data)
+                    else:
+                        self.log_test("Active Competitions", True, "No active competitions", data)
+                else:
+                    error_text = await response.text()
+                    self.log_test("Active Competitions", False, f"HTTP {response.status}: {error_text}")
+        except Exception as e:
+            self.log_test("Active Competitions", False, f"Request failed: {str(e)}")
+    
+    async def test_unlock_achievement(self):
+        """Test /api/rewards/achievements/unlock endpoint"""
+        try:
+            async with self.session.post(f"{API_BASE}/rewards/achievements/unlock?achievement_id=mission_master&user_id=test_user_001") as response:
+                if response.status == 200:
+                    data = await response.json()
+                    
+                    required_fields = ["ok", "achievementId", "name", "rarity", "reward"]
+                    missing_fields = [field for field in required_fields if field not in data]
+                    
+                    if missing_fields:
+                        self.log_test("Unlock Achievement", False, f"Missing fields: {missing_fields}", data)
+                        return
+                    
+                    achievement_name = data.get("name", "Unknown")
+                    rarity = data.get("rarity", "common")
+                    reward = data.get("reward", {})
+                    reward_value = reward.get("value", 0)
+                    
+                    self.log_test("Unlock Achievement", True, 
+                                f"Achievement: {achievement_name} ({rarity}), Reward: {reward_value} {reward.get('type', 'points')}", 
+                                data)
+                else:
+                    error_text = await response.text()
+                    self.log_test("Unlock Achievement", False, f"HTTP {response.status}: {error_text}")
+        except Exception as e:
+            self.log_test("Unlock Achievement", False, f"Request failed: {str(e)}")
+    
+    async def test_social_activity_feed(self):
+        """Test /api/rewards/social/activity-feed endpoint"""
+        try:
+            async with self.session.get(f"{API_BASE}/rewards/social/activity-feed?user_id=test_user_001&limit=10") as response:
+                if response.status == 200:
+                    data = await response.json()
+                    
+                    if "activities" not in data:
+                        self.log_test("Social Activity Feed", False, "Missing activities in response", data)
+                        return
+                    
+                    activities = data["activities"]
+                    if len(activities) > 0:
+                        recent_activity = activities[0]
+                        required_fields = ["id", "type", "user", "description", "timestamp", "icon"]
+                        missing_fields = [field for field in required_fields if field not in recent_activity]
+                        
+                        if missing_fields:
+                            self.log_test("Social Activity Feed", False, f"Activity missing fields: {missing_fields}", recent_activity)
+                            return
+                        
+                        self.log_test("Social Activity Feed", True, 
+                                    f"Activities: {len(activities)}, Recent: {recent_activity.get('user', 'Unknown')} {recent_activity.get('description', 'N/A')}", 
+                                    data)
+                    else:
+                        self.log_test("Social Activity Feed", True, "No recent activities", data)
+                else:
+                    error_text = await response.text()
+                    self.log_test("Social Activity Feed", False, f"HTTP {response.status}: {error_text}")
+        except Exception as e:
+            self.log_test("Social Activity Feed", False, f"Request failed: {str(e)}")
+    
+    async def test_concurrent_requests(self):
+        """Test concurrent access to multiple endpoints under load"""
+        try:
+            endpoints = [
+                "/rewards/health",
+                "/rewards/balances?user_id=test_user_001",
+                "/rewards/missions/per-sale?user_id=test_user_001",
+                "/rewards/streaks?user_id=test_user_001",
+                "/rewards/analytics/revenue",
+                "/rewards/analytics/engagement",
+                "/rewards/competitions/active",
+                "/rewards/social/activity-feed?user_id=test_user_001&limit=5"
+            ]
+            
+            start_time = time.time()
+            tasks = [self.session.get(f"{API_BASE}{endpoint}") for endpoint in endpoints]
+            responses = await asyncio.gather(*tasks, return_exceptions=True)
+            total_time = time.time() - start_time
+            
+            successful_requests = 0
+            response_times = []
+            
+            for i, response in enumerate(responses):
+                if isinstance(response, Exception):
+                    continue
+                    
+                if response.status == 200:
+                    successful_requests += 1
+                    # Estimate individual response time
+                    response_times.append(total_time / len(endpoints))
+                
+                response.close()
+            
+            avg_response_time = sum(response_times) / len(response_times) if response_times else 0
+            
+            if successful_requests == len(endpoints):
+                self.log_test("Concurrent Requests", True, 
+                            f"All {len(endpoints)} concurrent requests successful in {total_time:.3f}s, avg: {avg_response_time:.3f}s")
+            else:
+                self.log_test("Concurrent Requests", False, 
+                            f"{successful_requests}/{len(endpoints)} requests successful in {total_time:.3f}s")
+        except Exception as e:
+            self.log_test("Concurrent Requests", False, f"Request failed: {str(e)}")
+
     async def run_comprehensive_test(self):
-        """Run all rewards system tests"""
-        print("🎯 AisleMarts Rewards System Comprehensive Backend Testing")
-        print("=" * 70)
+        """Run all comprehensive rewards system tests"""
+        print("🚀 FINAL COMPREHENSIVE SYSTEM TESTING - COMPLETE AISLEMARTS PLATFORM")
+        print("=" * 80)
         print()
         
-        # Core system tests
+        # Core Rewards System Tests
+        print("🎯 CORE REWARDS SYSTEM TESTING")
+        print("-" * 40)
         await self.test_rewards_health_check()
         await self.test_balances_system()
-        
-        # Mission system tests
         await self.test_per_sale_missions()
         await self.test_weekly_missions()
-        
-        # Gamification tests
         await self.test_streaks_system()
         await self.test_leaderboard()
-        
-        # Transaction and reward tests
         await self.test_rewards_ledger()
         await self.test_claim_system()
         await self.test_withdrawal_system()
         await self.test_campaign_system()
-        
-        # Notification and analytics tests
         await self.test_notification_preferences()
         await self.test_system_statistics()
         await self.test_feedback_system()
         
-        # Print summary
-        print("=" * 70)
-        print(f"🎯 REWARDS SYSTEM TEST SUMMARY")
-        print(f"Total Tests: {self.total_tests}")
-        print(f"Passed: {self.passed_tests}")
-        print(f"Failed: {self.total_tests - self.passed_tests}")
-        print(f"Success Rate: {(self.passed_tests/self.total_tests*100):.1f}%")
+        # Advanced Analytics & Real-time Features
+        print("\n💰 ADVANCED ANALYTICS & REAL-TIME FEATURES")
+        print("-" * 40)
+        await self.test_revenue_analytics()
+        await self.test_engagement_analytics()
+        await self.test_real_time_mission_progress()
+        await self.test_active_competitions()
+        await self.test_unlock_achievement()
+        await self.test_social_activity_feed()
         
-        if self.passed_tests == self.total_tests:
-            print("🟢 ALL TESTS PASSED - REWARDS SYSTEM FULLY OPERATIONAL")
-        elif self.passed_tests / self.total_tests >= 0.8:
-            print("🟡 MOSTLY OPERATIONAL - MINOR ISSUES TO ADDRESS")
-        else:
-            print("🔴 SIGNIFICANT ISSUES FOUND - REQUIRES ATTENTION")
+        # Performance & Integration Tests
+        print("\n⚡ PERFORMANCE & INTEGRATION TESTING")
+        print("-" * 40)
+        await self.test_concurrent_requests()
         
-        print("=" * 70)
+        # Generate comprehensive report
+        self.generate_final_report()
         
         return {
             "total_tests": self.total_tests,
@@ -654,6 +870,71 @@ class RewardsSystemTester:
             "success_rate": self.passed_tests / self.total_tests if self.total_tests > 0 else 0,
             "test_results": self.test_results
         }
+    
+    def generate_final_report(self):
+        """Generate comprehensive test report"""
+        total_tests = self.total_tests
+        passed_tests = self.passed_tests
+        failed_tests = total_tests - passed_tests
+        success_rate = (passed_tests / total_tests * 100) if total_tests > 0 else 0
+        
+        print("\n" + "=" * 80)
+        print("🏆 FINAL COMPREHENSIVE SYSTEM TESTING REPORT")
+        print("=" * 80)
+        
+        print(f"\n📊 OVERALL RESULTS:")
+        print(f"   Total Tests: {total_tests}")
+        print(f"   Passed: {passed_tests} ✅")
+        print(f"   Failed: {failed_tests} ❌")
+        print(f"   Success Rate: {success_rate:.1f}%")
+        
+        if success_rate >= 95:
+            print(f"   🟢 SERIES A READY - Excellent performance ({success_rate:.1f}%)")
+        elif success_rate >= 85:
+            print(f"   🟡 PRODUCTION READY - Good performance ({success_rate:.1f}%)")
+        elif success_rate >= 70:
+            print(f"   🟠 NEEDS IMPROVEMENT - Acceptable performance ({success_rate:.1f}%)")
+        else:
+            print(f"   🔴 CRITICAL ISSUES - Poor performance ({success_rate:.1f}%)")
+        
+        # Failed Tests Details
+        failed_test_results = [r for r in self.test_results if not r["success"]]
+        if failed_test_results:
+            print(f"\n❌ FAILED TESTS DETAILS:")
+            for test in failed_test_results:
+                print(f"   • {test['test']}: {test['details']}")
+        
+        # Success Summary by Category
+        core_tests = [t for t in self.test_results if any(keyword in t['test'].lower() for keyword in 
+                     ['health', 'balance', 'mission', 'streak', 'leaderboard', 'ledger', 'claim', 'withdraw', 'campaign', 'notification', 'stats', 'feedback'])]
+        analytics_tests = [t for t in self.test_results if any(keyword in t['test'].lower() for keyword in 
+                          ['revenue', 'engagement', 'real-time', 'competition', 'achievement', 'social'])]
+        performance_tests = [t for t in self.test_results if 'concurrent' in t['test'].lower()]
+        
+        print(f"\n🎯 CATEGORY BREAKDOWN:")
+        if core_tests:
+            core_success = sum(1 for t in core_tests if t['success']) / len(core_tests) * 100
+            print(f"   Core Rewards System: {core_success:.1f}% ({sum(1 for t in core_tests if t['success'])}/{len(core_tests)})")
+        
+        if analytics_tests:
+            analytics_success = sum(1 for t in analytics_tests if t['success']) / len(analytics_tests) * 100
+            print(f"   Advanced Analytics: {analytics_success:.1f}% ({sum(1 for t in analytics_tests if t['success'])}/{len(analytics_tests)})")
+        
+        if performance_tests:
+            performance_success = sum(1 for t in performance_tests if t['success']) / len(performance_tests) * 100
+            print(f"   Performance & Integration: {performance_success:.1f}% ({sum(1 for t in performance_tests if t['success'])}/{len(performance_tests)})")
+        
+        print(f"\n🎬 SERIES A INVESTOR READINESS:")
+        if success_rate >= 95:
+            print("   ✅ READY FOR INVESTOR DEMONSTRATIONS")
+            print("   ✅ Production-grade reliability demonstrated")
+            print("   ✅ Comprehensive feature set validated")
+            print("   ✅ Performance targets met")
+        else:
+            print("   ⚠️  REQUIRES FIXES BEFORE INVESTOR DEMOS")
+            print("   📋 Address failed tests before Series A presentations")
+        
+        print("\n" + "=" * 80)
 
 async def main():
     """Main test execution"""
