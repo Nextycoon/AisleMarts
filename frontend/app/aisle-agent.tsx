@@ -193,6 +193,46 @@ export default function AisleAgentScreen() {
       badge: 'INVESTOR',
       gradient: ['#ff9a9e', '#fecfef'],
     },
+    {
+      icon: '🎤',
+      title: 'Voice Assistant',
+      subtitle: 'AI-powered shopping help',
+      onPress: () => router.push('/voice-assistant'),
+      badge: 'AI',
+      gradient: ['#667eea', '#764ba2'],
+    },
+    {
+      icon: '🥽',
+      title: 'AR Experience',
+      subtitle: 'Try products in AR/VR',
+      onPress: () => router.push('/ar-experience'),
+      badge: 'NEW',
+      gradient: ['#4facfe', '#00f2fe'],
+    },
+    {
+      icon: '🎨',
+      title: 'Creator Economy',
+      subtitle: 'Content monetization hub',
+      onPress: () => router.push('/creator-economy'),
+      badge: 'CREATOR',
+      gradient: ['#fa709a', '#fee140'],
+    },
+    {
+      icon: '🌱',
+      title: 'Sustainability',
+      subtitle: 'Eco-friendly shopping',
+      onPress: () => router.push('/sustainability'),
+      badge: 'ECO',
+      gradient: ['#43e97b', '#38f9d7'],
+    },
+    {
+      icon: '👑',
+      title: 'Premium Membership',
+      subtitle: 'Exclusive luxury benefits',
+      onPress: () => router.push('/premium-membership'),
+      badge: 'LUXURY',
+      gradient: ['#ffecd2', '#fcb69f'],
+    },
   ];
 
   const dashboardStats: DashboardStat[] = [
