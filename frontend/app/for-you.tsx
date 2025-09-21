@@ -855,7 +855,7 @@ const styles = StyleSheet.create({
   },
   musicButton: {
     alignItems: 'center',
-    marginBottom: 24,
+    marginBottom: 12, // Reduced from 24 to match TikTok compact spacing
     width: 48,
     height: 48,
     borderRadius: 24,
