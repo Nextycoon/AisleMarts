@@ -624,7 +624,7 @@ const styles = StyleSheet.create({
   rightSide: {
     position: 'absolute',
     right: 20,
-    bottom: 10, // MUCH LOWER - Almost touching the bottom navigation tabs
+    bottom: 2, // ABSOLUTE BOTTOM - As low as possible without overlapping bottom nav
     alignItems: 'center',
     justifyContent: 'flex-end',
     height: 320, // Keep height for all 7 icons
