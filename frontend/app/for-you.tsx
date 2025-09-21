@@ -373,29 +373,32 @@ export default function ForYouScreen() {
 
         {/* Left Side - Video Info */}
         <View style={styles.leftSide}>
-          <View style={styles.creatorInfo}>
-            <Text style={styles.creatorUsername}>{currentVideo.creator.username}</Text>
-            {currentVideo.creator.verified && (
-              <Text style={styles.verifiedBadge}>✓</Text>
-            )}
-          </View>
-          
-          <Text style={styles.caption}>{currentVideo.caption}</Text>
-          
-          <View style={styles.hashtags}>
-            {currentVideo.hashtags.map((tag, index) => (
-              <TouchableOpacity key={index} style={styles.hashtag}>
-                <Text style={styles.hashtagText}>{tag}</Text>
-              </TouchableOpacity>
-            ))}
-          </View>
-
-          <TouchableOpacity style={styles.soundInfo}>
-            <Text style={styles.soundIcon}>🎵</Text>
-            <Text style={styles.soundText}>
-              {currentVideo.sound.title} - {currentVideo.sound.artist}
+          {/* Creator Info - Moved to Bottom */}
+          <View style={styles.bottomCreatorInfo}>
+            <Text style={styles.creatorUsername}>
+              {currentVideo.creator.username}
+              {currentVideo.creator.verified && (
+                <Text style={styles.verifiedBadge}> ✓</Text>
+              )}
             </Text>
-          </TouchableOpacity>
+            
+            <Text style={styles.caption}>{currentVideo.caption}</Text>
+            
+            <View style={styles.hashtags}>
+              {currentVideo.hashtags.map((tag, index) => (
+                <TouchableOpacity key={index} style={styles.hashtag}>
+                  <Text style={styles.hashtagText}>{tag}</Text>
+                </TouchableOpacity>
+              ))}
+            </View>
+
+            <TouchableOpacity style={styles.soundInfo}>
+              <Text style={styles.soundIcon}>🎵</Text>
+              <Text style={styles.soundText}>
+                {currentVideo.sound.title} - {currentVideo.sound.artist}
+              </Text>
+            </TouchableOpacity>
+          </View>
         </View>
 
         {/* Right Side - Actions */}
