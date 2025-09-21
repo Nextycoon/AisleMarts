@@ -403,58 +403,68 @@ export default function ForYouScreen() {
 
         {/* Right Side - Actions */}
         <View style={styles.rightSide}>
-          {/* Profile Button - Exact TikTok Style */}
+          {/* Profile Button - Luxury AisleMarts Style */}
           <TouchableOpacity 
-            style={styles.avatarContainer}
+            style={styles.luxuryAvatarContainer}
             onPress={() => router.push(`/profile/${currentVideo.creator.id}`)}
           >
-            <View style={styles.tiktokAvatar}>
-              <Text style={styles.avatarText}>L</Text>
+            <View style={styles.luxuryAvatar}>
+              <Text style={styles.luxuryAvatarText}>L</Text>
             </View>
-            <View style={styles.tiktokFollowButton}>
-              <Text style={styles.tiktokFollowPlus}>+</Text>
+            <View style={styles.luxuryFollowButton}>
+              <Text style={styles.luxuryFollowPlus}>+</Text>
             </View>
           </TouchableOpacity>
 
-          {/* Like Button - Clean TikTok Style */}
-          <TouchableOpacity style={styles.tiktokActionButton} onPress={handleLike}>
-            <Text style={styles.tiktokActionIcon}>🤍</Text>
-            <Text style={styles.tiktokActionText}>{currentVideo.stats.likes.toLocaleString()}</Text>
+          {/* Luxury Like Button - World-Class Design */}
+          <TouchableOpacity style={styles.luxuryActionButton} onPress={handleLike}>
+            <View style={styles.luxuryIconContainer}>
+              <Text style={styles.luxuryLikeIcon}>♡</Text>
+            </View>
+            <Text style={styles.luxuryActionText}>{currentVideo.stats.likes.toLocaleString()}</Text>
           </TouchableOpacity>
 
-          {/* Comment Button - Clean TikTok Style */}
-          <TouchableOpacity style={styles.tiktokActionButton} onPress={handleComment}>
-            <Text style={styles.tiktokActionIcon}>💬</Text>
-            <Text style={styles.tiktokActionText}>{currentVideo.stats.comments.toLocaleString()}</Text>
+          {/* Luxury Comment Button - Premium Design */}
+          <TouchableOpacity style={styles.luxuryActionButton} onPress={handleComment}>
+            <View style={styles.luxuryIconContainer}>
+              <Text style={styles.luxuryCommentIcon}>💬</Text>
+            </View>
+            <Text style={styles.luxuryActionText}>{currentVideo.stats.comments.toLocaleString()}</Text>
           </TouchableOpacity>
 
-          {/* Save Button - TikTok Style */}
-          <TouchableOpacity style={styles.tiktokActionButton} onPress={() => console.log('Save pressed')}>
-            <Text style={styles.tiktokActionIcon}>📌</Text>
-            <Text style={styles.tiktokActionText}>{currentVideo.stats.saves.toLocaleString()}</Text>
+          {/* Luxury Save Button - High-End Style */}
+          <TouchableOpacity style={styles.luxuryActionButton} onPress={() => console.log('Save pressed')}>
+            <View style={styles.luxuryIconContainer}>
+              <Text style={styles.luxurySaveIcon}>🔖</Text>
+            </View>
+            <Text style={styles.luxuryActionText}>{currentVideo.stats.saves.toLocaleString()}</Text>
           </TouchableOpacity>
 
-          {/* Share Button - Clean TikTok Style */}
-          <TouchableOpacity style={styles.tiktokActionButton} onPress={handleShare}>
-            <Text style={styles.tiktokActionIcon}>➤</Text>
-            <Text style={styles.tiktokActionText}>{currentVideo.stats.shares.toLocaleString()}</Text>
+          {/* Luxury Share Button - Premium Experience */}
+          <TouchableOpacity style={styles.luxuryActionButton} onPress={handleShare}>
+            <View style={styles.luxuryIconContainer}>
+              <Text style={styles.luxuryShareIcon}>↗</Text>
+            </View>
+            <Text style={styles.luxuryActionText}>{currentVideo.stats.shares.toLocaleString()}</Text>
           </TouchableOpacity>
 
-          {/* Shop Button - AisleMarts Unique Feature */}
+          {/* AisleMarts Luxury Shopping Button - Signature Golden Design */}
           <TouchableOpacity 
-            style={styles.aisleShoppingButton}
+            style={styles.aisleMartsLuxuryShoppingButton}
             onPress={() => setShowProducts(!showProducts)}
           >
-            <Text style={styles.aisleShoppingIcon}>🛍️</Text>
-            <Text style={styles.aisleShoppingText}>Shop</Text>
+            <View style={styles.aisleMartsShoppingContainer}>
+              <Text style={styles.aisleMartsShoppingIcon}>🛍️</Text>
+            </View>
+            <Text style={styles.aisleMartsShoppingText}>Shop</Text>
           </TouchableOpacity>
 
-          {/* Music/Sound Button */}
+          {/* Luxury Music Button - Premium Audio Experience */}
           <TouchableOpacity 
-            style={styles.musicButton}
+            style={styles.luxuryMusicButton}
             onPress={() => console.log('Music pressed:', currentVideo.sound.title)}
           >
-            <Text style={styles.musicIcon}>🎵</Text>
+            <Text style={styles.luxuryMusicIcon}>♪</Text>
           </TouchableOpacity>
         </View>
 
