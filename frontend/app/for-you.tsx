@@ -266,21 +266,14 @@ export default function ForYouScreen() {
       }
     }
     
-    // Toggle full screen mode on swipe up - hide top navigation and trending
+    // Toggle full screen mode on swipe up - hide top navigation only
     if (!isFullScreen) {
       setIsFullScreen(true);
-      Animated.parallel([
-        Animated.timing(topNavTranslateY, {
-          toValue: -100,
-          duration: 300,
-          useNativeDriver: true,
-        }),
-        Animated.timing(trendingTranslateY, {
-          toValue: -150,
-          duration: 300,
-          useNativeDriver: true,
-        }),
-      ]).start();
+      Animated.timing(topNavTranslateY, {
+        toValue: -100,
+        duration: 300,
+        useNativeDriver: true,
+      }).start();
     }
   };
 
@@ -294,21 +287,14 @@ export default function ForYouScreen() {
       }, 100);
     }
     
-    // Show navigation and trending on swipe down
+    // Show navigation on swipe down
     if (isFullScreen) {
       setIsFullScreen(false);
-      Animated.parallel([
-        Animated.timing(topNavTranslateY, {
-          toValue: 0,
-          duration: 300,
-          useNativeDriver: true,
-        }),
-        Animated.timing(trendingTranslateY, {
-          toValue: 0,
-          duration: 300,
-          useNativeDriver: true,
-        }),
-      ]).start();
+      Animated.timing(topNavTranslateY, {
+        toValue: 0,
+        duration: 300,
+        useNativeDriver: true,
+      }).start();
     }
   };
 
