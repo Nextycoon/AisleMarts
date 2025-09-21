@@ -689,6 +689,17 @@ const styles = StyleSheet.create({
     zIndex: 15,
   },
 
+  // New spaced version with increased spacing between icons
+  elegantRightSideWithSpacing: {
+    position: 'absolute',
+    right: 14,
+    bottom: 120, // Same position as original
+    alignItems: 'center',
+    justifyContent: 'flex-end',
+    height: 400, // Increased height to accommodate more spacing
+    zIndex: 15,
+  },
+
   // Elegant Avatar - Compact Premium Design
   elegantAvatarContainer: {
     alignItems: 'center',
