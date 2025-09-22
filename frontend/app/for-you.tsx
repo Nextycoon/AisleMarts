@@ -465,6 +465,13 @@ const styles = StyleSheet.create({
     width: 60, // Explicit width
     height: 60, // Explicit height
   },
+  aiAssistantPosition: {
+    position: 'absolute',
+    top: 0, // Override internal top position
+    right: 0, // Override internal right position
+    bottom: undefined, // Clear any internal bottom positioning
+    left: undefined, // Clear any internal left positioning
+  },
   bottomNavOverlay: {
     position: 'absolute',
     bottom: 0,
