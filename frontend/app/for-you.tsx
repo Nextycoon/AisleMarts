@@ -808,7 +808,7 @@ const styles = StyleSheet.create({
   },
 
   // Sharp Compact Icons
-  sharpRatingIcon: {
+  sharpLikeIcon: {
     fontSize: 18, // Heart icon size
     color: '#FFFFFF',
     textShadowColor: 'rgba(255, 0, 80, 0.6)',
