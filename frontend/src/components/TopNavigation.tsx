@@ -225,4 +225,15 @@ const styles = StyleSheet.create({
     shadowRadius: 2,
     elevation: 4,
   },
+  compactNavIcon: {
+    fontSize: 18,
+    color: 'rgba(255, 255, 255, 0.7)',
+    textAlign: 'center',
+  },
+  navIconActive: {
+    color: '#FFFFFF',
+    textShadowColor: '#D4AF37',
+    textShadowOffset: { width: 0, height: 1 },
+    textShadowRadius: 2,
+  },
 });
