@@ -8,6 +8,7 @@ import {
   Dimensions,
 } from 'react-native';
 import { useRouter, usePathname } from 'expo-router';
+import VendorBadge from '../../src/components/VendorBadge';
 
 const { width } = Dimensions.get('window');
 
