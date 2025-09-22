@@ -875,6 +875,28 @@ const styles = StyleSheet.create({
     textShadowOffset: { width: 0, height: 1 },
     textShadowRadius: 2,
   },
+  elegantCartContainer: {
+    width: 40,
+    height: 40,
+    borderRadius: 20,
+    backgroundColor: 'transparent', // Transparent background
+    borderWidth: 2,
+    borderColor: 'rgba(255, 255, 255, 0.8)', // White border
+    alignItems: 'center',
+    justifyContent: 'center',
+    shadowColor: '#FFFFFF',
+    shadowOffset: { width: 0, height: 2 },
+    shadowOpacity: 0.3,
+    shadowRadius: 4,
+    elevation: 6,
+  },
+  elegantCartIcon: {
+    fontSize: 16,
+    color: '#FFFFFF', // White icon
+    textShadowColor: 'rgba(0, 0, 0, 0.6)',
+    textShadowOffset: { width: 0, height: 1 },
+    textShadowRadius: 2,
+  },
   elegantShoppingText: {
     color: '#D4AF37',
     fontSize: 11,
