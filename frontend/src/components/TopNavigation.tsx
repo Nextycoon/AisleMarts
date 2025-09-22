@@ -287,4 +287,12 @@ const styles = StyleSheet.create({
     textShadowOffset: { width: 0, height: 1 },
     textShadowRadius: 2,
   },
+  exploreIcon: {
+    width: 18,
+    height: 18,
+    tintColor: '#FFFFFF',
+  },
+  exploreIconActive: {
+    tintColor: '#D4AF37',
+  },
 });
