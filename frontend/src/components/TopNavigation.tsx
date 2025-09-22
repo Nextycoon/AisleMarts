@@ -15,6 +15,7 @@ interface TopNavItem {
   name: string;
   route: string;
   label: string;
+  icon?: string;
 }
 
 const topNavTabs: TopNavItem[] = [
