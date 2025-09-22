@@ -407,8 +407,8 @@ export default function ForYouScreen() {
         ))}
       </View>
 
-      {/* AI Assistant Overlay - Positioned well below sound icon with ample spacing */}
-      <FloatingAIAssistant bottom={80} right={20} />
+      {/* AI Assistant Overlay - Positioned on top of Home icon at bottom navigation */}
+      <FloatingAIAssistant bottom={30} right={20} />
 
       {/* Bottom Navigation Overlay */}
       <View style={styles.bottomNavOverlay}>
