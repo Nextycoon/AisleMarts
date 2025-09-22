@@ -77,8 +77,8 @@ export default function ForYouScreen() {
         artist: 'LoFi Studio'
       },
       stats: {
-        ratings: 127300,
-        reviews: 8200,
+        likes: 127300,
+        comments: 8200,
         shares: 3100,
         saves: 12400,
         views: 1420000
