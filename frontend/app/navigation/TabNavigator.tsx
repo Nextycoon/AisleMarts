@@ -45,6 +45,17 @@ export default function TabNavigator() {
 
   return (
     <SafeAreaView style={styles.container}>
+      {/* Vendor Badge - Shows when user is a vendor */}
+      <View style={styles.vendorBadgeContainer}>
+        <VendorBadge 
+          vendorType="goldwave" 
+          vendorName="Tech Guru Emma"
+          showAccessButton={true}
+          size="small"
+          style={styles.vendorBadge}
+        />
+      </View>
+
       <View style={styles.tabBar}>
         {tabs.map((tab, index) => {
           const active = isActive(tab.route);
