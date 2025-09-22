@@ -14,10 +14,10 @@ interface TabItem {
 const tabs: TabItem[] = [
   { name: 'profile', icon: '👤', route: '/profile', label: 'Profile' },
   { name: 'aisleshop', icon: '🛍️', route: '/categories', label: 'Marts' },
-  { name: 'life', icon: '🌟', route: '/life', label: 'Life' },
+  { name: 'friends', icon: '👥', route: '/friends', label: 'Social' },
   { name: 'create', icon: '➕', route: '/create', label: 'Create' },
   { name: 'brands', icon: '🏷️', route: '/brands', label: 'Brands' },
-  { name: 'friends', icon: '👥', route: '/friends', label: 'Social' },
+  { name: 'life', icon: '🌟', route: '/life', label: 'Life' },
   { name: 'home', icon: '🏠', route: '/for-you', label: 'Home' },
 ];
 
