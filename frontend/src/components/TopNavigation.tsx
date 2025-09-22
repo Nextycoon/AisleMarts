@@ -82,10 +82,12 @@ export default function TopNavigation() {
           })}
         </View>
 
-        {/* Live Button - Right Side aligned with profile avatar */}
-        <TouchableOpacity style={styles.liveButton} onPress={handleLivePress}>
-          <Text style={styles.liveIcon}>◉</Text>
-        </TouchableOpacity>
+        {/* Live Button - Far Right Side with extra spacing */}
+        <View style={styles.rightContainer}>
+          <TouchableOpacity style={styles.liveButton} onPress={handleLivePress}>
+            <Text style={styles.liveIcon}>◉</Text>
+          </TouchableOpacity>
+        </View>
       </View>
     </View>
   );
