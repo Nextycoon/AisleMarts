@@ -20,7 +20,7 @@ interface TabItem {
 
 const tabs: TabItem[] = [
   { name: 'profile', icon: '👤', route: '/profile', label: 'Profile' },
-  { name: 'aisleshop', icon: '🛍️', route: '/live-marketplace', label: 'Marts' },
+  { name: 'aisleshop', icon: '🛍️', route: '/categories', label: 'Marts' },
   { name: 'inbox', icon: '✉️', route: '/notifications', label: 'Inbox' },
   { name: 'create', icon: '➕', route: '/create', label: '' },
   { name: 'brands', icon: '🏷️', route: '/brands', label: 'Brands' },
