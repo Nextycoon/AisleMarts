@@ -206,12 +206,15 @@ const styles = StyleSheet.create({
     elevation: 8,
   },
   searchButton: {
-    width: 60,
-    height: 40,
+    width: 44, // Match profile avatar size
+    height: 44, // Square aspect ratio like profile avatar
     alignItems: 'center',
     justifyContent: 'center',
-    backgroundColor: 'transparent', // No background
-    // Removed all border, shadow, and background styling
+    backgroundColor: 'rgba(212, 175, 55, 0.1)',
+    borderRadius: 22, // Perfect circle like profile avatar
+    borderWidth: 1,
+    borderColor: 'rgba(212, 175, 55, 0.3)',
+    marginLeft: 0, // Align with left edge
   },
   searchIcon: {
     fontSize: 20,
