@@ -354,8 +354,8 @@ export default function ForYouScreen() {
           style={styles.elegantCartContainerWithPlus}
           onPress={() => setShowProducts(!showProducts)}
         >
-          <View style={styles.elegantCartContainer}>
-            <Text style={styles.elegantCartIcon}>⬜</Text>
+          <View style={styles.sharpIconContainer}>
+            <Text style={styles.elegantCartIcon}>🛒</Text>
           </View>
           <View style={styles.elegantCartPlusButton}>
             <Text style={styles.elegantCartPlus}>+</Text>
