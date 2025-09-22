@@ -696,11 +696,11 @@ const styles = StyleSheet.create({
     zIndex: 15,
   },
 
-  // New spaced version with increased spacing between icons
+  // New spaced version with increased spacing between icons - moved down to bottom
   elegantRightSideWithSpacing: {
     position: 'absolute',
     right: 14,
-    bottom: 120, // Same position as original
+    bottom: 30, // Moved down to just above bottom navigation
     alignItems: 'center',
     justifyContent: 'flex-end',
     height: 400, // Increased height to accommodate more spacing
