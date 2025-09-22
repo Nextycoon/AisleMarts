@@ -22,8 +22,8 @@ const tabs: TabItem[] = [
 ];
 
 export default function TabNavigator() {
-  const router = useRouter();
   const pathname = usePathname();
+  const router = useRouter();
 
   const isActive = (route: string) => {
     if (route === '/categories' && pathname === '/categories') return true;
@@ -32,57 +32,42 @@ export default function TabNavigator() {
   };
 
   const handleTabPress = (route: string) => {
+    // Add haptic feedback for better UX
     router.push(route as any);
   };
 
   return (
-    <SafeAreaView style={styles.container}>
-      {/* Vendor Badge - Shows when user is a vendor */}
-      <View style={styles.vendorBadgeContainer}>
-        <VendorBadge 
-          vendorType="goldwave" 
-          vendorName="Tech Guru Emma"
-          showAccessButton={true}
-          size="small"
-          style={styles.vendorBadge}
-        />
-      </View>
-
+    <View style={styles.container}>
       <View style={styles.tabBar}>
-        {tabs.map((tab, index) => {
-          const active = isActive(tab.route);
-          
-          return (
-            <TouchableOpacity
-              key={tab.name}
-              style={[
-                styles.tabItem,
-                tab.name === 'create' && styles.createButton,
-              ]}
-              onPress={() => handleTabPress(tab.route)}
-              activeOpacity={0.7}
-            >
-              {tab.name === 'create' ? (
-                <View style={styles.createIconContainer}>
-                  <Text style={styles.createIcon}>{tab.icon}</Text>
-                </View>
-              ) : (
-                <View style={[styles.tabIconContainer, active && styles.tabIconContainerActive]}>
-                  <Text style={[styles.tabIcon, active && styles.tabIconActive]}>
-                    {tab.icon}
-                  </Text>
-                </View>
-              )}
-              {tab.label && (
-                <Text style={[styles.tabLabel, active && styles.tabLabelActive]}>
-                  {tab.label}
-                </Text>
-              )}
-            </TouchableOpacity>
-          );
-        })}
+        {tabs.map((tab) => (
+          <TouchableOpacity
+            key={tab.name}
+            style={styles.tab}
+            onPress={() => handleTabPress(tab.route)}
+            activeOpacity={0.7}
+          >
+            <View style={[
+              styles.tabContent,
+              isActive(tab.route) && styles.activeTab
+            ]}>
+              <Text style={[
+                styles.tabIcon,
+                isActive(tab.route) && styles.activeTabIcon
+              ]}>
+                {tab.icon}
+              </Text>
+              <Text style={[
+                styles.tabLabel,
+                isActive(tab.route) && styles.activeTabLabel
+              ]}>
+                {tab.label}
+              </Text>
+            </View>
+            {isActive(tab.route) && <View style={styles.activeIndicator} />}
+          </TouchableOpacity>
+        ))}
       </View>
-    </SafeAreaView>
+    </View>
   );
 }
 
