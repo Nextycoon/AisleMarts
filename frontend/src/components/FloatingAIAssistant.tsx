@@ -25,6 +25,10 @@ interface ChatMessage {
 
 interface FloatingAIAssistantProps {
   style?: any;
+  bottom?: number;
+  right?: number;
+  top?: number;
+  left?: number;
 }
 
 export default function FloatingAIAssistant({ style }: FloatingAIAssistantProps) {
