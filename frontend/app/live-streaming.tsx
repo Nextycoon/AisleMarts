@@ -199,356 +199,132 @@ export default function LiveStreamingScreen() {
       </LinearGradient>
     </TouchableOpacity>
   );
-  const [showProducts, setShowProducts] = useState(false);
-  const [newComment, setNewComment] = useState('');
-  const [streamTitle, setStreamTitle] = useState('');
-  const videoRef = useRef<any>(null);
 
-  const [liveStats, setLiveStats] = useState<LiveStats>({
-    viewers: 1247,
-    likes: 3421,
-    comments: 892,
-    sales: 23,
-    revenue: 2847.50,
-    duration: 45
-  });
-
-  const [liveComments, setLiveComments] = useState<LiveComment[]>([
-    {
-      id: '1',
-      username: '@sarah_j',
-      text: 'Love this coat! Where can I buy it? 😍',
-      timestamp: '2:34',
-      familySafe: true
-    },
-    {
-      id: '2',
-      username: '@mike_chen',
-      text: 'Great quality! My family would love this',
-      timestamp: '2:28',
-      familySafe: true
-    },
-    {
-      id: '3',
-      username: '@emma_r',
-      text: 'Perfect for winter! Adding to cart now 🛒',
-      timestamp: '2:15',
-      familySafe: true
-    }
-  ]);
-
-  const [pinnedProducts, setPinnedProducts] = useState<PinnedProduct[]>([
-    {
-      id: 'prod_1',
-      title: 'Designer Winter Coat',
-      price: 299.99,
-      currency: 'EUR',
-      sales: 8
-    },
-    {
-      id: 'prod_2',
-      title: 'Luxury Scarf',
-      price: 89.99,
-      currency: 'EUR',
-      sales: 5
-    }
-  ]);
-
-  const availableProducts = [
-    {
-      id: 'prod_3',
-      title: 'Smart Winter Boots',
-      price: 199.99,
-      currency: 'EUR'
-    },
-    {
-      id: 'prod_4',
-      title: 'Heated Gloves',
-      price: 79.99,
-      currency: 'EUR'
-    }
-  ];
-
-  const handleStartLive = () => {
-    if (!streamTitle.trim()) {
-      Alert.alert('Stream Title Required', 'Please enter a title for your live stream');
-      return;
-    }
-
-    Alert.alert(
-      'Start Live Stream',
-      'Ready to go live? Make sure you have good lighting and stable internet.',
-      [
-        { text: 'Cancel', style: 'cancel' },
-        {
-          text: 'Go Live',
-          onPress: () => {
-            setIsLive(true);
-            // Simulate live stream starting
-            simulateLiveStream();
-          }
-        }
-      ]
-    );
-  };
-
-  const handleEndLive = () => {
-    Alert.alert(
-      'End Live Stream',
-      'Are you sure you want to end the live stream?',
-      [
-        { text: 'Cancel', style: 'cancel' },
-        {
-          text: 'End Stream',
-          style: 'destructive',
-          onPress: () => {
-            setIsLive(false);
-            showStreamSummary();
-          }
-        }
-      ]
-    );
-  };
-
-  const simulateLiveStream = () => {
-    // Simulate real-time stats updates
-    const interval = setInterval(() => {
-      setLiveStats(prev => ({
-        ...prev,
-        viewers: prev.viewers + Math.floor(Math.random() * 10) - 5,
-        likes: prev.likes + Math.floor(Math.random() * 5),
-        comments: prev.comments + Math.floor(Math.random() * 3),
-        duration: prev.duration + 1
-      }));
-    }, 1000);
-
-    // Clean up on unmount
-    return () => clearInterval(interval);
-  };
-
-  const showStreamSummary = () => {
-    Alert.alert(
-      'Live Stream Ended',
-      `Great session! Here's your summary:
-      
-• ${liveStats.viewers} peak viewers
-• ${liveStats.likes} likes
-• ${liveStats.comments} comments  
-• ${liveStats.sales} sales
-• €${liveStats.revenue} revenue
-• ${Math.floor(liveStats.duration / 60)}:${(liveStats.duration % 60).toString().padStart(2, '0')} duration`,
-      [{ text: 'Done', onPress: () => router.back() }]
-    );
-  };
-
-  const handleSendComment = () => {
-    if (newComment.trim()) {
-      const comment: LiveComment = {
-        id: Date.now().toString(),
-        username: '@you',
-        text: newComment.trim(),
-        timestamp: `${Math.floor(liveStats.duration / 60)}:${(liveStats.duration % 60).toString().padStart(2, '0')}`,
-        familySafe: true
-      };
-      setLiveComments([comment, ...liveComments]);
-      setNewComment('');
-    }
-  };
-
-  const handlePinProduct = (productId: string) => {
-    const product = availableProducts.find(p => p.id === productId);
-    if (product && pinnedProducts.length < 3) {
-      setPinnedProducts([...pinnedProducts, { ...product, sales: 0 }]);
-      Alert.alert('Product Pinned', `${product.title} is now featured in your live stream`);
-    }
-  };
-
-  const formatDuration = (seconds: number) => {
-    const mins = Math.floor(seconds / 60);
-    const secs = seconds % 60;
-    return `${mins}:${secs.toString().padStart(2, '0')}`;
-  };
-
-  if (!isLive) {
-    return (
-      <SafeAreaView style={styles.container}>
-        <StatusBar style="light" />
-        
-        {/* Setup Screen */}
-        <View style={styles.setupContainer}>
-          <TouchableOpacity 
-            style={styles.backButton}
-            onPress={() => router.back()}
-          >
-            <Text style={styles.backButtonText}>← Back</Text>
-          </TouchableOpacity>
-
-          <Text style={styles.setupTitle}>Go Live</Text>
-          <Text style={styles.setupSubtitle}>
-            Start live shopping with your audience
-          </Text>
-
-          {/* Preview */}
-          <View style={styles.previewContainer}>
-            <View style={styles.preview}>
-              <Text style={styles.previewText}>📹 Camera Preview</Text>
-              <Text style={styles.previewSubtext}>Your live video will appear here</Text>
-            </View>
-          </View>
-
-          {/* Stream Settings */}
-          <View style={styles.settingsContainer}>
-            <Text style={styles.settingsTitle}>Stream Settings</Text>
-            
-            <TextInput
-              style={styles.titleInput}
-              placeholder="Enter stream title..."
-              placeholderTextColor="#666666"
-              value={streamTitle}
-              onChangeText={setStreamTitle}
-              maxLength={100}
-            />
-
-            <View style={styles.settingRow}>
-              <Text style={styles.settingLabel}>🛡️ Family Safe Content</Text>
-              <Text style={styles.settingValue}>Enabled</Text>
-            </View>
-
-            <View style={styles.settingRow}>
-              <Text style={styles.settingLabel}>🎯 Target Audience</Text>
-              <Text style={styles.settingValue}>All Ages</Text>
-            </View>
-
-            <View style={styles.settingRow}>
-              <Text style={styles.settingLabel}>💰 Shopping Features</Text>
-              <Text style={styles.settingValue}>Enabled</Text>
-            </View>
-          </View>
-
-          {/* Live Tips */}
-          <View style={styles.tipsContainer}>
-            <Text style={styles.tipsTitle}>💡 Live Streaming Tips</Text>
-            <Text style={styles.tipText}>• Ensure good lighting and stable internet</Text>
-            <Text style={styles.tipText}>• Pin products during the stream to boost sales</Text>
-            <Text style={styles.tipText}>• Engage with comments to build community</Text>
-            <Text style={styles.tipText}>• Keep content family-friendly for BlueWave</Text>
-          </View>
-
-          {/* Start Button */}
-          <TouchableOpacity 
-            style={styles.startLiveButton}
-            onPress={handleStartLive}
-          >
-            <Text style={styles.startLiveButtonText}>🔴 Start Live Stream</Text>
-          </TouchableOpacity>
+  const renderLiveStream = (stream: LiveStream) => (
+    <TouchableOpacity
+      key={stream.id}
+      style={styles.streamCard}
+      onPress={() => {
+        // Navigate to individual live stream view
+        router.push(`/live-stream/${stream.id}`);
+      }}
+    >
+      <View style={styles.streamThumbnail}>
+        <View style={styles.streamImage}>
+          <Text style={styles.streamImagePlaceholder}>📺</Text>
         </View>
-
-        <TabNavigator />
-      </SafeAreaView>
-    );
-  }
+        
+        {/* Live Badge */}
+        <View style={styles.liveBadge}>
+          <Text style={styles.liveBadgeText}>🔴 LIVE</Text>
+        </View>
+        
+        {/* Viewer Count */}
+        <View style={styles.viewerCount}>
+          <Text style={styles.viewerCountText}>👁️ {stream.viewers.toLocaleString()}</Text>
+        </View>
+        
+        {/* Duration */}
+        <View style={styles.duration}>
+          <Text style={styles.durationText}>{stream.duration}</Text>
+        </View>
+      </View>
+      
+      <View style={styles.streamInfo}>
+        <Text style={styles.streamTitle} numberOfLines={2}>{stream.title}</Text>
+        
+        <View style={styles.streamerInfo}>
+          <LinearGradient
+            colors={getStreamerTypeBadgeColor(stream.streamerType)}
+            style={styles.streamerTypeBadge}
+          >
+            <Text style={styles.streamerTypeIcon}>{getStreamerTypeIcon(stream.streamerType)}</Text>
+          </LinearGradient>
+          <Text style={styles.streamerName}>{stream.streamerName}</Text>
+        </View>
+        
+        <View style={styles.streamMeta}>
+          <Text style={styles.streamCategory}>{stream.category}</Text>
+          <View style={styles.streamTags}>
+            {stream.tags.slice(0, 2).map((tag, index) => (
+              <Text key={index} style={styles.streamTag}>#{tag}</Text>
+            ))}
+          </View>
+        </View>
+      </View>
+    </TouchableOpacity>
+  );
 
   return (
     <SafeAreaView style={styles.container}>
       <StatusBar style="light" />
       
-      {/* Live Stream Interface */}
-      <View style={styles.liveContainer}>
-        {/* Video Stream */}
-        <View style={styles.videoContainer}>
-          <View style={styles.videoPlaceholder}>
-            <Text style={styles.videoPlaceholderText}>🔴 LIVE</Text>
-            <Text style={styles.videoTitle}>{streamTitle}</Text>
-          </View>
+      <LinearGradient
+        colors={['#0C0F14', '#1a1a2e', '#16213e']}
+        style={StyleSheet.absoluteFill}
+      />
 
-          {/* Live Stats Overlay */}
-          <View style={styles.statsOverlay}>
-            <View style={styles.statItem}>
-              <Text style={styles.statIcon}>👁️</Text>
-              <Text style={styles.statText}>{liveStats.viewers.toLocaleString()}</Text>
-            </View>
-            <View style={styles.statItem}>
-              <Text style={styles.statIcon}>❤️</Text>
-              <Text style={styles.statText}>{liveStats.likes.toLocaleString()}</Text>
-            </View>
-            <View style={styles.statItem}>
-              <Text style={styles.statIcon}>🕐</Text>
-              <Text style={styles.statText}>{formatDuration(liveStats.duration)}</Text>
-            </View>
-          </View>
-
-          {/* Controls */}
-          <View style={styles.controlsOverlay}>
-            <TouchableOpacity 
-              style={styles.controlButton}
-              onPress={() => setShowProducts(!showProducts)}
-            >
-              <Text style={styles.controlButtonText}>🛍️</Text>
-            </TouchableOpacity>
-            <TouchableOpacity 
-              style={styles.controlButton}
-              onPress={() => setShowSettings(!showSettings)}
-            >
-              <Text style={styles.controlButtonText}>⚙️</Text>
-            </TouchableOpacity>
-            <TouchableOpacity 
-              style={[styles.controlButton, styles.endButton]}
-              onPress={handleEndLive}
-            >
-              <Text style={styles.controlButtonText}>✕</Text>
-            </TouchableOpacity>
-          </View>
+      {/* Header */}
+      <View style={styles.header}>
+        <TouchableOpacity 
+          style={styles.backButton}
+          onPress={() => router.back()}
+        >
+          <Text style={styles.backButtonText}>←</Text>
+        </TouchableOpacity>
+        <View style={styles.headerContent}>
+          <Text style={styles.headerTitle}>🔴 Live Streams</Text>
+          <Text style={styles.headerSubtitle}>Creators • Business • Vendors</Text>
         </View>
+        <TouchableOpacity style={styles.goLiveButton} onPress={() => router.push('/creator-studio')}>
+          <LinearGradient
+            colors={['#FF6B6B', '#FF8E8E']}
+            style={styles.goLiveButtonGradient}
+          >
+            <Text style={styles.goLiveButtonText}>Go Live</Text>
+          </LinearGradient>
+        </TouchableOpacity>
+      </View>
 
-        {/* Bottom Section */}
-        <View style={styles.bottomSection}>
-          {/* Pinned Products */}
-          {pinnedProducts.length > 0 && (
-            <ScrollView 
-              horizontal 
-              showsHorizontalScrollIndicator={false}
-              style={styles.pinnedProductsContainer}
-            >
-              {pinnedProducts.map(product => (
-                <View key={product.id} style={styles.pinnedProduct}>
-                  <Text style={styles.pinnedProductTitle}>{product.title}</Text>
-                  <Text style={styles.pinnedProductPrice}>
-                    {product.currency} {product.price}
-                  </Text>
-                  <Text style={styles.pinnedProductSales}>
-                    {product.sales} sold
-                  </Text>
-                </View>
-              ))}
-            </ScrollView>
-          )}
+      {/* Category Filters */}
+      <ScrollView 
+        horizontal 
+        showsHorizontalScrollIndicator={false}
+        style={styles.categoriesContainer}
+        contentContainerStyle={styles.categoriesContent}
+      >
+        {liveCategories.map(renderCategoryButton)}
+      </ScrollView>
 
-          {/* Comments */}
-          <View style={styles.commentsContainer}>
-            <ScrollView 
-              style={styles.commentsList}
-              showsVerticalScrollIndicator={false}
-            >
-              {liveComments.map(comment => (
-                <View key={comment.id} style={styles.commentItem}>
-                  <Text style={styles.commentUsername}>{comment.username}</Text>
-                  <Text style={styles.commentText}>{comment.text}</Text>
-                  <Text style={styles.commentTime}>{comment.timestamp}</Text>
-                </View>
-              ))}
-            </ScrollView>
+      {/* Live Streams Grid */}
+      <ScrollView
+        style={styles.streamsContainer}
+        contentContainerStyle={styles.streamsContent}
+        refreshControl={
+          <RefreshControl refreshing={refreshing} onRefresh={onRefresh} />
+        }
+        showsVerticalScrollIndicator={false}
+      >
+        <View style={styles.streamsGrid}>
+          {liveStreams.map(renderLiveStream)}
+        </View>
+        
+        {liveStreams.length === 0 && (
+          <View style={styles.emptyState}>
+            <Text style={styles.emptyStateIcon}>📺</Text>
+            <Text style={styles.emptyStateTitle}>No Live Streams</Text>
+            <Text style={styles.emptyStateSubtitle}>
+              Check back later for live content from creators, businesses, and vendors!
+            </Text>
+          </View>
+        )}
+      </ScrollView>
 
-            {/* Comment Input */}
-            <View style={styles.commentInput}>
-              <TextInput
-                style={styles.commentTextInput}
-                placeholder="Add a comment..."
-                placeholderTextColor="#666666"
-                value={newComment}
-                onChangeText={setNewComment}
-                onSubmitEditing={handleSendComment}
-                returnKeyType="send"
-              />
+      <TabNavigator />
+      <FloatingAIAssistant bottom={90} right={16} />
+    </SafeAreaView>
+  );
+}
               <TouchableOpacity 
                 style={styles.sendButton}
                 onPress={handleSendComment}
