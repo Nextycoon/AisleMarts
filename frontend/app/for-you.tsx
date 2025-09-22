@@ -371,17 +371,6 @@ export default function ForYouScreen() {
             <Text style={styles.sharpMusicIcon}>♪</Text>
           </View>
         </TouchableOpacity>
-
-        {/* Live button - moved from top navigation */}
-        <TouchableOpacity 
-          style={styles.compactActionButtonSpaced}
-          onPress={() => router.push('/live-streaming')}
-        >
-          <View style={styles.sharpIconContainer}>
-            <Text style={styles.sharpLiveIcon}>◉</Text>
-          </View>
-          <Text style={styles.compactActionText}>Live</Text>
-        </TouchableOpacity>
       </View>
 
       {/* Product Pins - AisleMarts Shopping Feature */}
