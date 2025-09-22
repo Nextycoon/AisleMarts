@@ -350,7 +350,7 @@ export default function ForYouScreen() {
         <TouchableOpacity style={styles.compactActionButtonSpaced} onPress={handleSave}>
           <View style={styles.sharpIconContainer}>
             <Text style={[styles.sharpSaveIcon, isSaved && styles.savedIconStyle]}>
-              {isSaved ? '🔖' : '📌'}
+              {isSaved ? '📌' : '🔖'}
             </Text>
           </View>
           <Text style={styles.compactActionText}>{currentVideo.stats.saves.toLocaleString()}</Text>
