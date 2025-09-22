@@ -183,7 +183,7 @@ const styles = StyleSheet.create({
   },
   searchIcon: {
     fontSize: 20,
-    color: '#D4AF37',
+    color: '#FFFFFF', // Clean white color to match minimal design
     textShadowColor: 'rgba(0, 0, 0, 0.3)',
     textShadowOffset: { width: 0, height: 1 },
     textShadowRadius: 2,
