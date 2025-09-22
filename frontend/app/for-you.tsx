@@ -796,11 +796,11 @@ const styles = StyleSheet.create({
 
   // Sharp Compact Icons
   sharpRatingIcon: {
-    fontSize: 18, // Star icon size
-    color: '#FFD700', // Gold color for star rating
-    textShadowColor: 'rgba(255, 215, 0, 0.8)',
+    fontSize: 18, // Heart icon size
+    color: '#FFFFFF',
+    textShadowColor: 'rgba(255, 0, 80, 0.6)',
     textShadowOffset: { width: 0, height: 1 },
-    textShadowRadius: 3,
+    textShadowRadius: 2,
   },
   sharpReviewIcon: {
     fontSize: 16, // Review icon size
