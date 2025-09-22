@@ -209,16 +209,61 @@ const styles = StyleSheet.create({
     shadowRadius: 4,
     elevation: 8,
   },
-  searchButton: {
-    width: 44, // Match profile avatar size
-    height: 44, // Square aspect ratio like profile avatar
+  navIconButton: {
+    width: 36,
+    height: 36,
     alignItems: 'center',
     justifyContent: 'center',
-    backgroundColor: 'rgba(212, 175, 55, 0.1)',
-    borderRadius: 22, // Perfect circle like profile avatar
-    borderWidth: 1,
-    borderColor: 'rgba(212, 175, 55, 0.3)',
-    marginLeft: 0, // Align with left edge
+    marginHorizontal: 4,
+  },
+  navIcon: {
+    fontSize: 18,
+    color: '#FFFFFF',
+    textShadowColor: 'rgba(255, 255, 255, 0.3)',
+    textShadowOffset: { width: 0, height: 1 },
+    textShadowRadius: 2,
+  },
+  navIconActive: {
+    color: '#D4AF37',
+    textShadowColor: 'rgba(212, 175, 55, 0.8)',
+    textShadowOffset: { width: 0, height: 1 },
+    textShadowRadius: 3,
+  },
+  forYouButton: {
+    alignItems: 'center',
+    justifyContent: 'center',
+    paddingHorizontal: 12,
+    paddingVertical: 8,
+    marginHorizontal: 4,
+  },
+  forYouText: {
+    fontSize: 16,
+    fontWeight: '600',
+    color: '#FFFFFF',
+    textShadowColor: 'rgba(255, 255, 255, 0.3)',
+    textShadowOffset: { width: 0, height: 1 },
+    textShadowRadius: 2,
+  },
+  forYouActive: {
+    color: '#D4AF37',
+    textShadowColor: 'rgba(212, 175, 55, 0.8)',
+    textShadowOffset: { width: 0, height: 1 },
+    textShadowRadius: 3,
+  },
+  activeIndicator: {
+    height: 2,
+    width: '100%',
+    backgroundColor: '#D4AF37',
+    borderRadius: 1,
+    marginTop: 4,
+  },
+  iconActiveIndicator: {
+    height: 2,
+    width: 20,
+    backgroundColor: '#D4AF37',
+    borderRadius: 1,
+    marginTop: 2,
+    alignSelf: 'center',
   },
   searchIcon: {
     fontSize: 20,
