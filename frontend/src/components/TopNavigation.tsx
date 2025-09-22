@@ -190,11 +190,11 @@ const styles = StyleSheet.create({
     elevation: 8,
   },
   navIconButton: {
-    width: 36,
+    flex: 1, // Equal width distribution
     height: 36,
     alignItems: 'center',
     justifyContent: 'center',
-    marginHorizontal: 4,
+    maxWidth: 44, // Limit maximum width
   },
   navIcon: {
     fontSize: 18,
