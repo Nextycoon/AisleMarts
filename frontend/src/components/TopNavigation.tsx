@@ -36,6 +36,10 @@ export default function TopNavigation() {
     router.push(route as any);
   };
 
+  const handleLivePress = () => {
+    router.push('/live-streaming');
+  };
+
   const handleSearchPress = () => {
     router.push('/search');
   };
@@ -78,8 +82,10 @@ export default function TopNavigation() {
           })}
         </View>
 
-        {/* Right Side Spacer - Maintain Balance */}
-        <View style={styles.rightSpacer} />
+        {/* Live Button - Right Side aligned with profile avatar */}
+        <TouchableOpacity style={styles.liveButton} onPress={handleLivePress}>
+          <Text style={styles.liveIcon}>◉</Text>
+        </TouchableOpacity>
       </View>
     </View>
   );
