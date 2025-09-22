@@ -1,14 +1,6 @@
 import React from 'react';
-import {
-  View,
-  TouchableOpacity,
-  Text,
-  StyleSheet,
-  SafeAreaView,
-  Dimensions,
-} from 'react-native';
-import { useRouter, usePathname } from 'expo-router';
-import VendorBadge from '../../src/components/VendorBadge';
+import { View, Text, TouchableOpacity, StyleSheet, Dimensions } from 'react-native';
+import { usePathname, useRouter } from 'expo-router';
 
 const { width } = Dimensions.get('window');
 
