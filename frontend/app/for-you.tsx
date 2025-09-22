@@ -355,7 +355,7 @@ export default function ForYouScreen() {
           onPress={() => setShowProducts(!showProducts)}
         >
           <View style={styles.elegantShoppingContainer}>
-            <Text style={styles.elegantShoppingIcon}>🛍</Text>
+            <Text style={styles.elegantShoppingIcon}>⊞</Text>
           </View>
           <Text style={styles.elegantShoppingText}>Add to Cart</Text>
         </TouchableOpacity>
