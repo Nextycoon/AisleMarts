@@ -61,14 +61,19 @@ export default function TopNavigation() {
           <Text style={styles.navIcon}>🔔</Text>
         </TouchableOpacity>
 
-        {/* For You Text */}
+        {/* For You Text - Two Lines */}
         <TouchableOpacity 
           style={styles.forYouButton} 
           onPress={() => handleTabPress('/for-you')}
         >
-          <Text style={[styles.forYouText, isActive('/for-you') && styles.forYouActive]}>
-            For You
-          </Text>
+          <View style={styles.forYouTextContainer}>
+            <Text style={[styles.forYouTextLine, isActive('/for-you') && styles.forYouActive]}>
+              For
+            </Text>
+            <Text style={[styles.forYouTextLine, isActive('/for-you') && styles.forYouActive]}>
+              You
+            </Text>
+          </View>
           {isActive('/for-you') && <View style={styles.activeIndicator} />}
         </TouchableOpacity>
 
