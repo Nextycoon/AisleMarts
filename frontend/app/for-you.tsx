@@ -455,11 +455,12 @@ const styles = StyleSheet.create({
   },
 
   // ==================================================================================
-  // AI ASSISTANT AND BOTTOM NAVIGATION OVERLAYS
+  // AI ASSISTANT POSITIONED UNDER ALL 7 ICONS
   // ==================================================================================
   aiAssistantOverlay: {
     position: 'absolute',
-    top: 50,
+    top: 'auto', // Remove top positioning
+    bottom: 60, // Position under the music icon, above bottom navigation
     right: 20,
     zIndex: 20, // Highest z-index for AI assistant
   },
