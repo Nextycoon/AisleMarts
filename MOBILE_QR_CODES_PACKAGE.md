@@ -4,7 +4,7 @@
 
 ### Web Preview (Desktop/Mobile Browser)
 ```
-🌐 Live Preview: https://social-tiktok-mart.preview.emergentagent.com
+🌐 Live Preview: https://social-commerce-14.preview.emergentagent.com
 ```
 
 ### Mobile App Testing (Expo Go)

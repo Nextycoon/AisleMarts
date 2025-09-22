@@ -4,7 +4,7 @@
 
 **Command Executed**: AWARENESS-PERSONALIZED INVESTOR DEMOS (BLUE WAVE)  
 **Completion Date**: June 15, 2025  
-**Environment**: Dev Preview (`https://social-tiktok-mart.preview.emergentagent.com`)  
+**Environment**: Dev Preview (`https://social-commerce-14.preview.emergentagent.com`)  
 **Status**: All 8 investor bundles provisioned and operational
 
 ---

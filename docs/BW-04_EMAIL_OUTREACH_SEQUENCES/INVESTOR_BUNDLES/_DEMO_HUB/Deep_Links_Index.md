@@ -1,7 +1,7 @@
 # AisleMarts Investor Demo Deep Links Index
 
 ## Base Configuration
-- **Dev Environment**: `https://social-tiktok-mart.preview.emergentagent.com`
+- **Dev Environment**: `https://social-commerce-14.preview.emergentagent.com`
 - **Awareness Engine**: Auto-detects context parameters and adapts UI/content/pricing
 - **UTM Tracking**: All links include investor-specific tracking codes
 

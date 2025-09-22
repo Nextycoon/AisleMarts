@@ -218,7 +218,7 @@ class InvestorDemoService {
     route: string = '/',
     utmContent?: string
   ): string {
-    const baseUrl = process.env.EXPO_PUBLIC_BASE_URL || 'https://social-tiktok-mart.preview.emergentagent.com';
+    const baseUrl = process.env.EXPO_PUBLIC_BASE_URL || 'https://social-commerce-14.preview.emergentagent.com';
     const params = new URLSearchParams({
       locale: context.locale,
       currency: context.currency,
