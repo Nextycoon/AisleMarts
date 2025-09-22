@@ -289,6 +289,7 @@ export default function RootLayout() {
             }}
           />
         </Stack>
-    </CurrencyProvider>
+      </CurrencyProvider>
+    </AuthProvider>
   );
 }
