@@ -98,6 +98,15 @@ const styles = StyleSheet.create({
   container: {
     backgroundColor: '#000000',
   },
+  vendorBadgeContainer: {
+    paddingHorizontal: 16,
+    paddingVertical: 8,
+    borderBottomWidth: 1,
+    borderBottomColor: 'rgba(255, 255, 255, 0.05)',
+  },
+  vendorBadge: {
+    alignSelf: 'center',
+  },
   tabBar: {
     flexDirection: 'row',
     backgroundColor: '#000000',
