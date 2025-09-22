@@ -50,44 +50,48 @@ export default function TopNavigation() {
       <StatusBar barStyle="light-content" backgroundColor="#000000" />
       
       <View style={styles.navBar}>
-        {/* Search Button - Left Side with More Space */}
-        <TouchableOpacity style={styles.searchButton} onPress={handleSearchPress}>
-          <Text style={styles.searchIcon}>🔍</Text>
+        {/* Search Icon - Left Side */}
+        <TouchableOpacity style={styles.navIconButton} onPress={handleSearchPress}>
+          <Text style={styles.navIcon}>🔍</Text>
         </TouchableOpacity>
 
-        {/* Grouped Center Navigation Tabs - For You | Following | Explore */}
-        <View style={styles.centerTabsContainer}>
-          {topNavTabs.map((tab, index) => {
-            const active = isActive(tab.route);
-            
-            return (
-              <TouchableOpacity
-                key={tab.name}
-                style={styles.compactNavItem}
-                onPress={() => handleTabPress(tab.route)}
-                activeOpacity={0.7}
-              >
-                {tab.icon ? (
-                  <Text style={[styles.compactNavIcon, active && styles.navIconActive]}>
-                    {tab.icon}
-                  </Text>
-                ) : (
-                  <Text style={[styles.compactNavLabel, active && styles.navLabelActive]}>
-                    {tab.label}
-                  </Text>
-                )}
-                {active && <View style={styles.compactActiveIndicator} />}
-              </TouchableOpacity>
-            );
-          })}
-        </View>
+        {/* Notification Icon */}
+        <TouchableOpacity style={styles.navIconButton} onPress={() => console.log('Notifications pressed')}>
+          <Text style={styles.navIcon}>🔔</Text>
+        </TouchableOpacity>
 
-        {/* Live Button - Far Right Side with extra spacing */}
-        <View style={styles.rightContainer}>
-          <TouchableOpacity style={styles.liveButton} onPress={handleLivePress}>
-            <Text style={styles.liveIcon}>◉</Text>
-          </TouchableOpacity>
-        </View>
+        {/* For You Text */}
+        <TouchableOpacity 
+          style={styles.forYouButton} 
+          onPress={() => handleTabPress('/for-you')}
+        >
+          <Text style={[styles.forYouText, isActive('/for-you') && styles.forYouActive]}>
+            For You
+          </Text>
+          {isActive('/for-you') && <View style={styles.activeIndicator} />}
+        </TouchableOpacity>
+
+        {/* Following Icon */}
+        <TouchableOpacity style={styles.navIconButton} onPress={() => handleTabPress('/following')}>
+          <Text style={[styles.navIcon, isActive('/following') && styles.navIconActive]}>👥</Text>
+          {isActive('/following') && <View style={styles.iconActiveIndicator} />}
+        </TouchableOpacity>
+
+        {/* Explore Icon */}
+        <TouchableOpacity style={styles.navIconButton} onPress={() => handleTabPress('/explore')}>
+          <Text style={[styles.navIcon, isActive('/explore') && styles.navIconActive]}>🔍</Text>
+          {isActive('/explore') && <View style={styles.iconActiveIndicator} />}
+        </TouchableOpacity>
+
+        {/* Nearby Icon */}
+        <TouchableOpacity style={styles.navIconButton} onPress={() => console.log('Nearby pressed')}>
+          <Text style={styles.navIcon}>📍</Text>
+        </TouchableOpacity>
+
+        {/* Live Icon */}
+        <TouchableOpacity style={styles.navIconButton} onPress={handleLivePress}>
+          <Text style={styles.liveIcon}>◉</Text>
+        </TouchableOpacity>
       </View>
     </View>
   );
