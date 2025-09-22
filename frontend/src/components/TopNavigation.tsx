@@ -299,8 +299,8 @@ const styles = StyleSheet.create({
     textShadowRadius: 2,
   },
   exploreIcon: {
-    width: 18,
-    height: 18,
+    width: 22,
+    height: 22,
     tintColor: '#FFFFFF',
   },
   exploreIconActive: {
