@@ -455,13 +455,15 @@ const styles = StyleSheet.create({
   },
 
   // ==================================================================================
-  // AI ASSISTANT POSITIONED UNDER ALL 7 ICONS - VISIBLE
+  // AI ASSISTANT POSITIONED UNDER ALL 7 ICONS - HIGHLY VISIBLE
   // ==================================================================================
   aiAssistantOverlay: {
     position: 'absolute',
-    bottom: 80, // Moved up to be clearly visible above bottom navigation
-    right: 20,
-    zIndex: 25, // Higher z-index to ensure visibility
+    bottom: 100, // Moved up more to ensure visibility
+    right: 16, // Slightly adjusted right position
+    zIndex: 30, // Maximum z-index to ensure visibility
+    width: 60, // Explicit width
+    height: 60, // Explicit height
   },
   bottomNavOverlay: {
     position: 'absolute',
