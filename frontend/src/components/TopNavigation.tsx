@@ -110,21 +110,23 @@ const styles = StyleSheet.create({
     height: 40,
     alignItems: 'center',
     justifyContent: 'center',
+    backgroundColor: 'rgba(255, 0, 50, 0.1)',
+    borderRadius: 20,
+    borderWidth: 1,
+    borderColor: 'rgba(255, 0, 50, 0.3)',
+    shadowColor: '#FF0032',
+    shadowOffset: { width: 0, height: 2 },
+    shadowOpacity: 0.4,
+    shadowRadius: 6,
+    elevation: 8,
   },
   liveIcon: {
-    fontSize: 18,
-    color: '#FF0050', // Bright red for LIVE
-    fontWeight: '600',
-    textShadowColor: 'rgba(255, 0, 80, 0.6)',
-    textShadowOffset: { width: 0, height: 1 },
-    textShadowRadius: 3,
-  },
-  liveIcon: {
-    fontSize: 20,
-    color: '#FF0050', // Bright red for LIVE
-    textShadowColor: 'rgba(255, 0, 80, 0.6)',
-    textShadowOffset: { width: 0, height: 1 },
-    textShadowRadius: 3,
+    fontSize: 22,
+    color: '#FF0032', // Enhanced bright red for LIVE
+    fontWeight: '700',
+    textShadowColor: 'rgba(255, 0, 50, 0.8)',
+    textShadowOffset: { width: 0, height: 2 },
+    textShadowRadius: 4,
   },
   liveContainer: {
     backgroundColor: 'rgba(212, 175, 55, 0.3)',
