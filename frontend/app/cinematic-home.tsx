@@ -1,6 +1,7 @@
 import React from 'react';
 import { View, Text, StyleSheet, ScrollView, TouchableOpacity } from 'react-native';
-import Animated, { FadeInUp } from 'react-native-reanimated';
+// Temporarily disabled to fix HostFunction error
+// import Animated, { FadeInUp } from 'react-native-reanimated';
 import { useRouter, useLocalSearchParams } from 'expo-router';
 import { useUser } from '../src/state/user';
 import { colors, tierLabel } from '../src/theme/tokens';
