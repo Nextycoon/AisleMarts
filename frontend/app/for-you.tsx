@@ -354,8 +354,8 @@ export default function ForYouScreen() {
           style={styles.elegantShoppingButtonSpaced}
           onPress={() => setShowProducts(!showProducts)}
         >
-          <View style={styles.elegantShoppingContainer}>
-            <Text style={styles.elegantShoppingIcon}>+</Text>
+          <View style={styles.elegantCartContainer}>
+            <Text style={styles.elegantCartIcon}>🛒</Text>
           </View>
           <Text style={styles.elegantShoppingText}>Add to Cart</Text>
         </TouchableOpacity>
