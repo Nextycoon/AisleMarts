@@ -407,8 +407,8 @@ export default function ForYouScreen() {
         ))}
       </View>
 
-      {/* AI Assistant Overlay - Positioned with balanced spacing from profile avatar */}
-      <FloatingAIAssistant bottom={500} right={20} />
+      {/* AI Assistant Overlay - Positioned with optimal spacing from profile avatar */}
+      <FloatingAIAssistant bottom={485} right={20} />
 
       {/* Bottom Navigation Overlay */}
       <View style={styles.bottomNavOverlay}>
