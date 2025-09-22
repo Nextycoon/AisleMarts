@@ -31,7 +31,7 @@ interface FloatingAIAssistantProps {
   left?: number;
 }
 
-export default function FloatingAIAssistant({ style }: FloatingAIAssistantProps) {
+export default function FloatingAIAssistant({ style, bottom, right, top, left }: FloatingAIAssistantProps) {
   const [isExpanded, setIsExpanded] = useState(false);
   const [messages, setMessages] = useState<ChatMessage[]>([
     {
