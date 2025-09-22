@@ -218,6 +218,12 @@ export default function ForYouScreen() {
     // Navigate to review screen or show review modal
   };
 
+  const handleSave = () => {
+    setIsSaved(!isSaved);
+    console.log('Save pressed for video:', currentVideo.id, 'Saved:', !isSaved);
+    // Save API integration would go here
+  };
+
   const handleShare = () => {
     console.log('Share pressed for video:', currentVideo.id);
     // Open share sheet
