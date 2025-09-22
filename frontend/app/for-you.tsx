@@ -324,7 +324,7 @@ export default function ForYouScreen() {
         {/* Other 6 Icons with increased spacing */}
         <TouchableOpacity style={styles.compactActionButtonSpaced} onPress={handleRating}>
           <View style={styles.sharpIconContainer}>
-            <Text style={styles.sharpRatingIcon}>⭐</Text>
+            <Text style={styles.sharpRatingIcon}>♡</Text>
           </View>
           <Text style={styles.compactActionText}>{currentVideo.stats.ratings.toLocaleString()}</Text>
         </TouchableOpacity>
