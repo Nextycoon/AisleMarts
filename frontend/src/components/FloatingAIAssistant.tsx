@@ -135,7 +135,7 @@ export default function FloatingAIAssistant({ style, bottom, right, top, left }:
     bottom: bottom !== undefined ? bottom : undefined,
     left: left !== undefined ? left : undefined,
     right: right !== undefined ? right : (left !== undefined ? undefined : 20),
-    zIndex: 1000,
+    zIndex: 9999, // Extremely high z-index to ensure visibility
   };
 
   return (
