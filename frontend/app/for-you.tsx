@@ -322,18 +322,18 @@ export default function ForYouScreen() {
         </TouchableOpacity>
 
         {/* Other 6 Icons with increased spacing */}
-        <TouchableOpacity style={styles.compactActionButtonSpaced} onPress={handleLike}>
+        <TouchableOpacity style={styles.compactActionButtonSpaced} onPress={handleRating}>
           <View style={styles.sharpIconContainer}>
-            <Text style={styles.sharpLikeIcon}>♡</Text>
+            <Text style={styles.sharpRatingIcon}>⭐</Text>
           </View>
-          <Text style={styles.compactActionText}>{currentVideo.stats.likes.toLocaleString()}</Text>
+          <Text style={styles.compactActionText}>{currentVideo.stats.ratings.toLocaleString()}</Text>
         </TouchableOpacity>
 
-        <TouchableOpacity style={styles.compactActionButtonSpaced} onPress={handleComment}>
+        <TouchableOpacity style={styles.compactActionButtonSpaced} onPress={handleReview}>
           <View style={styles.sharpIconContainer}>
-            <Text style={styles.sharpCommentIcon}>💬</Text>
+            <Text style={styles.sharpReviewIcon}>📝</Text>
           </View>
-          <Text style={styles.compactActionText}>{currentVideo.stats.comments.toLocaleString()}</Text>
+          <Text style={styles.compactActionText}>{currentVideo.stats.reviews.toLocaleString()}</Text>
         </TouchableOpacity>
 
         <TouchableOpacity style={styles.compactActionButtonSpaced} onPress={() => console.log('Save pressed')}>
