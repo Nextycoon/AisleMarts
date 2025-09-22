@@ -612,6 +612,49 @@ const styles = StyleSheet.create({
     lineHeight: 22,
     paddingHorizontal: 40,
   },
+  categoryButton: {
+    marginRight: 12,
+    borderRadius: 20,
+    overflow: 'hidden',
+  },
+  categoryButtonActive: {
+    // Active state handled by gradient
+  },
+  categoryButtonGradient: {
+    paddingHorizontal: 16,
+    paddingVertical: 12,
+    flexDirection: 'row',
+    alignItems: 'center',
+    gap: 8,
+  },
+  categoryIcon: {
+    fontSize: 16,
+  },
+  categoryText: {
+    color: '#FFFFFF',
+    fontSize: 14,
+    fontWeight: '500',
+  },
+  categoryTextActive: {
+    fontWeight: '600',
+  },
+  categoryCount: {
+    color: 'rgba(255, 255, 255, 0.7)',
+    fontSize: 12,
+    fontWeight: '500',
+  },
+  categoryCountActive: {
+    color: '#FFFFFF',
+    fontWeight: '600',
+  },
+  backButton: {
+    padding: 8,
+  },
+  backButtonText: {
+    color: '#D4AF37',
+    fontSize: 18,
+    fontWeight: '600',
+  },
   setupContainer: {
     flex: 1,
     paddingHorizontal: 20,
