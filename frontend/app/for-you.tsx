@@ -835,6 +835,14 @@ const styles = StyleSheet.create({
     textShadowOffset: { width: 0, height: 1 },
     textShadowRadius: 2,
   },
+  sharpLiveIcon: {
+    fontSize: 18,
+    color: '#FF0050', // Bright red for LIVE
+    fontWeight: '600',
+    textShadowColor: 'rgba(255, 0, 80, 0.6)',
+    textShadowOffset: { width: 0, height: 1 },
+    textShadowRadius: 3,
+  },
 
   // Compact Action Text
   compactActionText: {
