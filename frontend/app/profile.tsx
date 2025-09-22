@@ -131,7 +131,7 @@ export default function ProfileScreen() {
       title: 'Business',
       items: [
         {
-          id: '9',
+          id: '10',
           title: 'Business Dashboard',
           icon: '⭐',
           subtitle: 'Analytics, insights',
