@@ -8,7 +8,7 @@ Experience AisleMarts' AI-powered marketplace instantly on your mobile device:
 
 ### **📱 Instant Access**
 ```
-🔗 Mobile Demo: https://shopstream-app.preview.emergentagent.com
+🔗 Mobile Demo: https://social-tiktok-mart.preview.emergentagent.com
 📱 Expo App: exp://cinematic-aisle.preview.emergentagent.com
 ```
 

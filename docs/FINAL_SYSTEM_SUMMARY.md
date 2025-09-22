@@ -312,7 +312,7 @@ The platform now features a complete **context-awareness system** that makes it:
 
 **Access the complete AisleMarts Luxury Commerce Super-App:**
 ```
-🌐 https://shopstream-app.preview.emergentagent.com
+🌐 https://social-tiktok-mart.preview.emergentagent.com
 ```
 
 **Every user, on every device, in every market, will experience AisleMarts as if it were designed exclusively for them. The future of luxury commerce is here! 💎🚀**

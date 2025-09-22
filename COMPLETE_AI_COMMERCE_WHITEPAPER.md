@@ -252,7 +252,7 @@ AisleMarts represents the first complete AI-Commerce system, fundamentally redef
 - **Email**: Zainkenya.com@gmail.com
 - **WhatsApp**: +90 505 331 2222
 - **LinkedIn**: NextYcoon
-- **Live Demo**: https://shopstream-app.preview.emergentagent.com
+- **Live Demo**: https://social-tiktok-mart.preview.emergentagent.com
 
 ---
 
