@@ -109,18 +109,19 @@ const styles = StyleSheet.create({
   },
   rightContainer: {
     flex: 0,
-    alignItems: 'flex-end',
+    alignItems: 'center',
     justifyContent: 'center',
-    paddingLeft: 20, // Extra spacing from center tabs
-    minWidth: 80, // Ensure sufficient space
+    paddingLeft: 16, // Balanced spacing from center tabs
+    width: 60, // Fixed width to match profile avatar area
+    paddingRight: 16, // Align with typical profile avatar right margin
   },
   liveButton: {
-    width: 60,
-    height: 40,
+    width: 44, // Standard touch target size, matches profile avatar
+    height: 44, // Square aspect ratio like profile avatar
     alignItems: 'center',
     justifyContent: 'center',
     backgroundColor: 'rgba(255, 0, 50, 0.1)',
-    borderRadius: 20,
+    borderRadius: 22, // Half of width/height for perfect circle
     borderWidth: 1,
     borderColor: 'rgba(255, 0, 50, 0.3)',
     shadowColor: '#FF0032',
@@ -128,7 +129,6 @@ const styles = StyleSheet.create({
     shadowOpacity: 0.4,
     shadowRadius: 6,
     elevation: 8,
-    marginRight: 4, // Push further from edge
   },
   liveIcon: {
     fontSize: 22,
