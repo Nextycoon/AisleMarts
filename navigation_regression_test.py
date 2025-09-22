@@ -376,15 +376,15 @@ class NavigationRegressionTester:
             
         auth_headers = self.get_auth_headers()
         
-        # Test rewards dashboard data
+        # Test rewards balances (correct endpoint)
         await self.test_endpoint(
-            "/rewards/dashboard",
-            description="Rewards Dashboard Data",
+            "/rewards/balances?user_id=test_user_123",
+            description="Rewards Balances Data",
             category="navigation_routes",
             headers=auth_headers
         )
         
-        # Test AI Super Agent capabilities
+        # Test AI Super Agent capabilities (correct endpoint)
         await self.test_endpoint(
             "/ai-super-agent/capabilities?user_id=test_user_123",
             description="AI Super Agent Capabilities",
@@ -400,18 +400,17 @@ class NavigationRegressionTester:
             headers=auth_headers
         )
         
-        # Test notifications (if available)
+        # Test family safety system (correct endpoint)
         await self.test_endpoint(
-            "/notifications",
-            description="User Notifications",
-            category="navigation_routes",
-            headers=auth_headers
+            "/family/health",
+            description="Family Safety System",
+            category="navigation_routes"
         )
         
-        # Test family safety features
+        # Test rewards analytics
         await self.test_endpoint(
-            "/family-safety/health",
-            description="Family Safety System",
+            "/rewards/analytics",
+            description="Rewards Analytics",
             category="navigation_routes"
         )
 
