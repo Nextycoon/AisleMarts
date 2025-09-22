@@ -111,9 +111,13 @@ const styles = StyleSheet.create({
     alignItems: 'center',
     justifyContent: 'center',
   },
-  rightSpacer: {
-    width: 60,
-    height: 40,
+  liveIcon: {
+    fontSize: 18,
+    color: '#FF0050', // Bright red for LIVE
+    fontWeight: '600',
+    textShadowColor: 'rgba(255, 0, 80, 0.6)',
+    textShadowOffset: { width: 0, height: 1 },
+    textShadowRadius: 3,
   },
   liveIcon: {
     fontSize: 20,
