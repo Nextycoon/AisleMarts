@@ -712,7 +712,7 @@ const styles = StyleSheet.create({
   // Elegant Avatar - Compact Premium Design
   elegantAvatarContainer: {
     alignItems: 'center',
-    marginBottom: 12, // Equal spacing for consistency
+    marginBottom: 18, // Increased spacing between profile avatar and likes
     position: 'relative',
   },
   elegantAvatar: {
