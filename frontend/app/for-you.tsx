@@ -331,7 +331,7 @@ export default function ForYouScreen() {
 
         <TouchableOpacity style={styles.compactActionButtonSpaced} onPress={handleReview}>
           <View style={styles.sharpIconContainer}>
-            <Text style={styles.sharpReviewIcon}>📝</Text>
+            <Text style={styles.sharpReviewIcon}>💭</Text>
           </View>
           <Text style={styles.compactActionText}>{currentVideo.stats.reviews.toLocaleString()}</Text>
         </TouchableOpacity>
