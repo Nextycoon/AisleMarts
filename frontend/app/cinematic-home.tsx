@@ -49,9 +49,9 @@ export default function CinematicHomeScreen() {
           </Text>
         </View>
 
-        <Animated.View entering={FadeInUp} style={{ marginTop: 8 }}>
+        <View style={{ marginTop: 8 }}>
           {metrics.map(m => <Metric key={m.label} label={m.label} value={m.value} />)}
-        </Animated.View>
+        </View>
 
         <Glass style={{ padding: 16, marginTop: 12 }}>
           <Text style={styles.sectionTitle}>Quick Actions</Text>
