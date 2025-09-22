@@ -768,10 +768,10 @@ const styles = StyleSheet.create({
     justifyContent: 'center',
   },
 
-  // Spaced version with increased margin
+  // Spaced version with equal margin for better spacing
   compactActionButtonSpaced: {
     alignItems: 'center',
-    marginBottom: 16, // Increased spacing from 8 to 16
+    marginBottom: 12, // Reduced for more equal spacing
     width: 44, // Same width
     height: 44, // Same height
     justifyContent: 'center',
