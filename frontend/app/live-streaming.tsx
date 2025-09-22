@@ -562,20 +562,7 @@ const styles = StyleSheet.create({
     fontSize: 18,
     fontWeight: '600',
   },
-  setupContainer: {
-    flex: 1,
-    paddingHorizontal: 20,
-    paddingTop: 20,
-  },
-  backButton: {
-    alignSelf: 'flex-start',
-    marginBottom: 20,
-  },
-  backButtonText: {
-    color: '#D4AF37',
-    fontSize: 16,
-    fontWeight: '500',
-  },
+});
   setupTitle: {
     color: '#FFFFFF',
     fontSize: 28,
