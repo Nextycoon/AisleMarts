@@ -795,15 +795,15 @@ const styles = StyleSheet.create({
   },
 
   // Sharp Compact Icons
-  sharpLikeIcon: {
-    fontSize: 18, // Smaller icons
-    color: '#FFFFFF',
-    textShadowColor: 'rgba(255, 0, 80, 0.6)',
+  sharpRatingIcon: {
+    fontSize: 18, // Star icon size
+    color: '#FFD700', // Gold color for star rating
+    textShadowColor: 'rgba(255, 215, 0, 0.8)',
     textShadowOffset: { width: 0, height: 1 },
-    textShadowRadius: 2,
+    textShadowRadius: 3,
   },
-  sharpCommentIcon: {
-    fontSize: 16,
+  sharpReviewIcon: {
+    fontSize: 16, // Review icon size
     color: '#FFFFFF',
     textShadowColor: 'rgba(30, 144, 255, 0.6)',
     textShadowOffset: { width: 0, height: 1 },
