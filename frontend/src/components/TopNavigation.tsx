@@ -6,6 +6,7 @@ import {
   StyleSheet,
   Dimensions,
   StatusBar,
+  Image,
 } from 'react-native';
 import { useRouter, usePathname } from 'expo-router';
 
