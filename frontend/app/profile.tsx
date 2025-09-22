@@ -79,6 +79,14 @@ export default function ProfileScreen() {
         },
         {
           id: '4',
+          title: 'Messages & Inbox',
+          icon: '✉️',
+          subtitle: 'Chat, notifications',
+          route: '/profile/inbox',
+          badge: '3',
+        },
+        {
+          id: '5',
           title: 'Payment Methods',
           icon: '💳',
           subtitle: 'Cards, wallets',
