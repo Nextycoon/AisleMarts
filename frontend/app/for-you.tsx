@@ -207,15 +207,15 @@ export default function ForYouScreen() {
     }
   };
 
-  const handleRating = () => {
+  const handleLike = () => {
     setIsLiked(!isLiked);
-    console.log('Rating pressed for video:', currentVideo.id, 'Liked:', !isLiked);
-    // Rating API integration would go here
+    console.log('Like pressed for video:', currentVideo.id, 'Liked:', !isLiked);
+    // Like API integration would go here
   };
 
-  const handleReview = () => {
-    console.log('Review pressed for video:', currentVideo.id);
-    // Navigate to review screen or show review modal
+  const handleComment = () => {
+    console.log('Comment pressed for video:', currentVideo.id);
+    // Navigate to comment screen or show comment modal
   };
 
   const handleSave = () => {
