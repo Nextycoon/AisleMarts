@@ -116,7 +116,7 @@ export const oneColorTheme = {
 ## 🚀 **LIVE SYSTEM STATUS**
 
 ### **✅ Frontend (Expo)**
-- **URL**: https://social-commerce-14.preview.emergentagent.com
+- **URL**: https://vendor-dashboard-10.preview.emergentagent.com
 - **Status**: Fully operational with one-color UI
 - **Features**: Role selection, adaptive Aisle AI, federated search
 - **Theme**: Dynamic single-color per user type
