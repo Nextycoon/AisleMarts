@@ -20,8 +20,8 @@ interface TopNavItem {
 
 const topNavTabs: TopNavItem[] = [
   { name: 'for-you', route: '/for-you', label: 'For You' },
-  { name: 'following', route: '/following', label: 'Following', icon: '👥' },
-  { name: 'explore', route: '/explore', label: 'Explore', icon: '🔍' },
+  { name: 'following', route: '/following', label: 'Following', icon: '◉' },
+  { name: 'explore', route: '/explore', label: 'Explore', icon: '◇' },
 ];
 
 export default function TopNavigation() {
