@@ -37,6 +37,7 @@ export default function ForYouScreen() {
   const [showProducts, setShowProducts] = useState(false);
   const [currentPlayingIndex, setCurrentPlayingIndex] = useState<number | null>(null);
   const [isLiked, setIsLiked] = useState(false);
+  const [isSaved, setIsSaved] = useState(false);
   const videoRefs = useRef<any[]>([]);
   const translateY = useRef(new Animated.Value(0)).current;
   const api = useTikTokAPI();
