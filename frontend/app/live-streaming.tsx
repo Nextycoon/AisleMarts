@@ -6,48 +6,199 @@ import {
   SafeAreaView,
   TouchableOpacity,
   ScrollView,
-  TextInput,
-  Alert,
   Dimensions,
-  Modal,
+  RefreshControl,
 } from 'react-native';
 import { StatusBar } from 'expo-status-bar';
 import { useRouter } from 'expo-router';
-import { Video, ResizeMode } from 'expo-av';
+import { LinearGradient } from 'expo-linear-gradient';
 import TabNavigator from './navigation/TabNavigator';
 import FloatingAIAssistant from '../src/components/FloatingAIAssistant';
 
 const { width, height } = Dimensions.get('window');
 
-interface LiveComment {
-  id: string;
-  username: string;
-  text: string;
-  timestamp: string;
-  familySafe: boolean;
-}
-
-interface PinnedProduct {
+interface LiveStream {
   id: string;
   title: string;
-  price: number;
-  currency: string;
-  sales: number;
+  streamerName: string;
+  streamerType: 'creator' | 'business' | 'vendor';
+  viewers: number;
+  category: string;
+  thumbnail: string;
+  isLive: boolean;
+  duration: string;
+  tags: string[];
 }
 
-interface LiveStats {
-  viewers: number;
-  likes: number;
-  comments: number;
-  sales: number;
-  revenue: number;
-  duration: number;
+interface LiveCategory {
+  id: string;
+  name: string;
+  icon: string;
+  count: number;
+  gradient: string[];
 }
 
 export default function LiveStreamingScreen() {
   const router = useRouter();
-  const [isLive, setIsLive] = useState(false);
-  const [showSettings, setShowSettings] = useState(false);
+  const [selectedCategory, setSelectedCategory] = useState<string>('all');
+  const [refreshing, setRefreshing] = useState(false);
+  const [liveStreams, setLiveStreams] = useState<LiveStream[]>([]);
+
+  const liveCategories: LiveCategory[] = [
+    { id: 'all', name: 'All Live', icon: '🔴', count: 127, gradient: ['#FF6B6B', '#FF8E8E'] },
+    { id: 'creators', name: 'Creators', icon: '👨‍🎤', count: 45, gradient: ['#4ECDC4', '#44A08D'] },
+    { id: 'business', name: 'Business', icon: '🏢', count: 32, gradient: ['#A8E6CF', '#7FCDCD'] },
+    { id: 'vendors', name: 'Vendors', icon: '🛍️', count: 50, gradient: ['#FFB347', '#FFCC99'] },
+  ];
+
+  useEffect(() => {
+    loadLiveStreams();
+  }, [selectedCategory]);
+
+  const loadLiveStreams = () => {
+    // Mock live streams data
+    const mockStreams: LiveStream[] = [
+      {
+        id: '1',
+        title: 'Winter Fashion Haul 2025 ❄️ New Arrivals!',
+        streamerName: 'StyleGuru Emma',
+        streamerType: 'creator',
+        viewers: 1247,
+        category: 'Fashion',
+        thumbnail: 'https://images.unsplash.com/photo-1441986300917-64674bd600d8?w=400&h=300&fit=crop',
+        isLive: true,
+        duration: '45:32',
+        tags: ['Fashion', 'Haul', 'Winter']
+      },
+      {
+        id: '2',
+        title: 'Tech Review: Latest Smart Home Gadgets 🏠',
+        streamerName: 'TechPro Solutions',
+        streamerType: 'business',
+        viewers: 892,
+        category: 'Technology',
+        thumbnail: 'https://images.unsplash.com/photo-1558618047-b33eb1fb8d4a?w=400&h=300&fit=crop',
+        isLive: true,
+        duration: '23:15',
+        tags: ['Tech', 'Smart Home', 'Review']
+      },
+      {
+        id: '3',
+        title: 'Handmade Jewelry Live Crafting Session ✨',
+        streamerName: 'Artisan Jewelry Co.',
+        streamerType: 'vendor',
+        viewers: 634,
+        category: 'Crafts',
+        thumbnail: 'https://images.unsplash.com/photo-1515562141207-7a88fb7ce338?w=400&h=300&fit=crop',
+        isLive: true,
+        duration: '1:12:45',
+        tags: ['Handmade', 'Jewelry', 'Crafts']
+      },
+      {
+        id: '4',
+        title: 'Cooking Masterclass: Italian Pasta 🍝',
+        streamerName: 'Chef Marco',
+        streamerType: 'creator',
+        viewers: 2156,
+        category: 'Food',
+        thumbnail: 'https://images.unsplash.com/photo-1551183053-bf91a1d81141?w=400&h=300&fit=crop',
+        isLive: true,
+        duration: '38:22',
+        tags: ['Cooking', 'Italian', 'Pasta']
+      },
+      {
+        id: '5',
+        title: 'Fitness Equipment Demo & Sale 💪',
+        streamerName: 'FitGear Direct',
+        streamerType: 'vendor',
+        viewers: 578,
+        category: 'Fitness',
+        thumbnail: 'https://images.unsplash.com/photo-1571019613454-1cb2f99b2d8b?w=400&h=300&fit=crop',
+        isLive: true,
+        duration: '56:18',
+        tags: ['Fitness', 'Equipment', 'Sale']
+      },
+      {
+        id: '6',
+        title: 'Business Strategy Workshop 📈',
+        streamerName: 'Growth Experts',
+        streamerType: 'business',
+        viewers: 421,
+        category: 'Business',
+        thumbnail: 'https://images.unsplash.com/photo-1556761175-b413da4baf72?w=400&h=300&fit=crop',
+        isLive: true,
+        duration: '1:23:45',
+        tags: ['Business', 'Strategy', 'Workshop']
+      }
+    ];
+
+    // Filter by category
+    const filtered = selectedCategory === 'all' 
+      ? mockStreams 
+      : mockStreams.filter(stream => 
+          selectedCategory === 'creators' ? stream.streamerType === 'creator' :
+          selectedCategory === 'business' ? stream.streamerType === 'business' :
+          selectedCategory === 'vendors' ? stream.streamerType === 'vendor' :
+          true
+        );
+
+    setLiveStreams(filtered);
+  };
+
+  const onRefresh = async () => {
+    setRefreshing(true);
+    await new Promise(resolve => setTimeout(resolve, 1000));
+    loadLiveStreams();
+    setRefreshing(false);
+  };
+
+  const getStreamerTypeIcon = (type: 'creator' | 'business' | 'vendor') => {
+    switch (type) {
+      case 'creator': return '👨‍🎤';
+      case 'business': return '🏢';
+      case 'vendor': return '🛍️';
+      default: return '🔴';
+    }
+  };
+
+  const getStreamerTypeBadgeColor = (type: 'creator' | 'business' | 'vendor') => {
+    switch (type) {
+      case 'creator': return ['#4ECDC4', '#44A08D'];
+      case 'business': return ['#A8E6CF', '#7FCDCD'];
+      case 'vendor': return ['#FFB347', '#FFCC99'];
+      default: return ['#FF6B6B', '#FF8E8E'];
+    }
+  };
+
+  const renderCategoryButton = (category: LiveCategory) => (
+    <TouchableOpacity
+      key={category.id}
+      style={[
+        styles.categoryButton,
+        selectedCategory === category.id && styles.categoryButtonActive
+      ]}
+      onPress={() => setSelectedCategory(category.id)}
+    >
+      <LinearGradient
+        colors={selectedCategory === category.id ? category.gradient : ['rgba(255,255,255,0.1)', 'rgba(255,255,255,0.05)']}
+        style={styles.categoryButtonGradient}
+      >
+        <Text style={styles.categoryIcon}>{category.icon}</Text>
+        <Text style={[
+          styles.categoryText,
+          selectedCategory === category.id && styles.categoryTextActive
+        ]}>
+          {category.name}
+        </Text>
+        <Text style={[
+          styles.categoryCount,
+          selectedCategory === category.id && styles.categoryCountActive
+        ]}>
+          {category.count}
+        </Text>
+      </LinearGradient>
+    </TouchableOpacity>
+  );
   const [showProducts, setShowProducts] = useState(false);
   const [newComment, setNewComment] = useState('');
   const [streamTitle, setStreamTitle] = useState('');
