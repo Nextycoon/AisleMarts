@@ -178,15 +178,8 @@ const styles = StyleSheet.create({
     height: 40,
     alignItems: 'center',
     justifyContent: 'center',
-    backgroundColor: 'rgba(212, 175, 55, 0.15)',
-    borderRadius: 20,
-    borderWidth: 1,
-    borderColor: 'rgba(212, 175, 55, 0.3)',
-    shadowColor: '#D4AF37',
-    shadowOffset: { width: 0, height: 2 },
-    shadowOpacity: 0.3,
-    shadowRadius: 4,
-    elevation: 5,
+    backgroundColor: 'transparent', // No background
+    // Removed all border, shadow, and background styling
   },
   searchIcon: {
     fontSize: 20,
