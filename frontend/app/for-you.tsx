@@ -207,7 +207,8 @@ export default function ForYouScreen() {
   };
 
   const handleRating = () => {
-    console.log('Rating pressed for video:', currentVideo.id);
+    setIsLiked(!isLiked);
+    console.log('Rating pressed for video:', currentVideo.id, 'Liked:', !isLiked);
     // Rating API integration would go here
   };
 
