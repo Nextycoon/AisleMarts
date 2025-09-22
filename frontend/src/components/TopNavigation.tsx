@@ -111,6 +111,13 @@ const styles = StyleSheet.create({
     alignItems: 'center',
     justifyContent: 'center',
   },
+  liveIcon: {
+    fontSize: 20,
+    color: '#FF0050', // Bright red for LIVE
+    textShadowColor: 'rgba(255, 0, 80, 0.6)',
+    textShadowOffset: { width: 0, height: 1 },
+    textShadowRadius: 3,
+  },
   liveContainer: {
     backgroundColor: 'rgba(212, 175, 55, 0.3)',
     paddingHorizontal: 12,
