@@ -205,14 +205,14 @@ export default function ForYouScreen() {
     }
   };
 
-  const handleLike = () => {
-    console.log('Like pressed for video:', currentVideo.id);
-    // TikTok API integration would go here
+  const handleRating = () => {
+    console.log('Rating pressed for video:', currentVideo.id);
+    // Rating API integration would go here
   };
 
-  const handleComment = () => {
-    console.log('Comment pressed for video:', currentVideo.id);
-    // Navigate to comment screen or show comment modal
+  const handleReview = () => {
+    console.log('Review pressed for video:', currentVideo.id);
+    // Navigate to review screen or show review modal
   };
 
   const handleShare = () => {
