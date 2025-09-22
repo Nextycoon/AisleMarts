@@ -16,8 +16,8 @@ const tabs: TabItem[] = [
   { name: 'aisleshop', icon: '🛍️', route: '/categories', label: 'Marts' },
   { name: 'friends', icon: '👥', route: '/friends', label: 'Social' },
   { name: 'create', icon: '➕', route: '/create', label: 'Create' },
-  { name: 'brands', icon: '🏷️', route: '/brands', label: 'Brands' },
   { name: 'life', icon: '🌟', route: '/life', label: 'Life' },
+  { name: 'brands', icon: '🏷️', route: '/brands', label: 'Brands' },
   { name: 'home', icon: '🏠', route: '/for-you', label: 'Home' },
 ];
 
