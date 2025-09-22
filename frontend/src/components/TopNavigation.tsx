@@ -210,11 +210,11 @@ const styles = StyleSheet.create({
     textShadowRadius: 3,
   },
   forYouButton: {
+    flex: 1, // Equal width distribution  
     alignItems: 'center',
     justifyContent: 'center',
-    paddingHorizontal: 8,
     paddingVertical: 4,
-    marginHorizontal: 2,
+    maxWidth: 44, // Limit maximum width
   },
   forYouTextContainer: {
     alignItems: 'center',
