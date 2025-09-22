@@ -105,6 +105,10 @@ const styles = StyleSheet.create({
     alignItems: 'center',
     justifyContent: 'center',
   },
+  rightSpacer: {
+    width: 60,
+    height: 40,
+  },
   liveIcon: {
     fontSize: 20,
     color: '#FF0050', // Bright red for LIVE
