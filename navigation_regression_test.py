@@ -74,7 +74,8 @@ class NavigationRegressionTester:
             async with self.session.post(f"{API_BASE}/auth/register", json=register_data) as resp:
                 if resp.status == 200:
                     data = await resp.json()
-                    self.auth_token = data.get('token')
+                    # Handle both response formats
+                    self.auth_token = data.get('token') or data.get('access_token')
                     self.test_user_id = data.get('user_id')
                     print(f"✅ Test user created for navigation testing")
                 else:
