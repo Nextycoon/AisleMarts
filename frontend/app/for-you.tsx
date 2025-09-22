@@ -806,6 +806,12 @@ const styles = StyleSheet.create({
     textShadowOffset: { width: 0, height: 1 },
     textShadowRadius: 2,
   },
+  likedHeartIcon: {
+    // Enhanced styling for the red heart when liked
+    textShadowColor: 'rgba(255, 0, 0, 0.8)',
+    textShadowOffset: { width: 0, height: 2 },
+    textShadowRadius: 4,
+  },
   sharpReviewIcon: {
     fontSize: 16, // Review icon size
     color: '#FFFFFF',
