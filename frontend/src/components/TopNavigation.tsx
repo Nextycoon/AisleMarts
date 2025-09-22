@@ -211,17 +211,22 @@ const styles = StyleSheet.create({
   forYouButton: {
     alignItems: 'center',
     justifyContent: 'center',
-    paddingHorizontal: 12,
-    paddingVertical: 8,
-    marginHorizontal: 4,
+    paddingHorizontal: 8,
+    paddingVertical: 4,
+    marginHorizontal: 2,
   },
-  forYouText: {
-    fontSize: 16,
+  forYouTextContainer: {
+    alignItems: 'center',
+    justifyContent: 'center',
+  },
+  forYouTextLine: {
+    fontSize: 12,
     fontWeight: '600',
     color: '#FFFFFF',
     textShadowColor: 'rgba(255, 255, 255, 0.3)',
     textShadowOffset: { width: 0, height: 1 },
     textShadowRadius: 2,
+    lineHeight: 14,
   },
   forYouActive: {
     color: '#D4AF37',
