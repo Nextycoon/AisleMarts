@@ -700,10 +700,10 @@ const styles = StyleSheet.create({
   elegantRightSideWithSpacing: {
     position: 'absolute',
     right: 14,
-    bottom: 30, // Moved down to just above bottom navigation
+    bottom: 70, // Positioned properly above bottom navigation
     alignItems: 'center',
     justifyContent: 'flex-end',
-    height: 400, // Increased height to accommodate more spacing
+    height: 350, // Adjusted height to fit above navigation
     zIndex: 15,
   },
 
