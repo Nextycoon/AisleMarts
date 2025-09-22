@@ -331,20 +331,20 @@ export default function ForYouScreen() {
         </TouchableOpacity>
 
         {/* Other 6 Icons with increased spacing */}
-        <TouchableOpacity style={styles.compactActionButtonSpaced} onPress={handleRating}>
+        <TouchableOpacity style={styles.compactActionButtonSpaced} onPress={handleLike}>
           <View style={styles.sharpIconContainer}>
-            <Text style={[styles.sharpRatingIcon, isLiked && styles.likedHeartIcon]}>
+            <Text style={[styles.sharpLikeIcon, isLiked && styles.likedHeartIcon]}>
               {isLiked ? '❤️' : '🤍'}
             </Text>
           </View>
-          <Text style={styles.compactActionText}>{currentVideo.stats.ratings.toLocaleString()}</Text>
+          <Text style={styles.compactActionText}>{currentVideo.stats.likes.toLocaleString()}</Text>
         </TouchableOpacity>
 
-        <TouchableOpacity style={styles.compactActionButtonSpaced} onPress={handleReview}>
+        <TouchableOpacity style={styles.compactActionButtonSpaced} onPress={handleComment}>
           <View style={styles.sharpIconContainer}>
-            <Text style={styles.sharpReviewIcon}>💬</Text>
+            <Text style={styles.sharpCommentIcon}>💬</Text>
           </View>
-          <Text style={styles.compactActionText}>{currentVideo.stats.reviews.toLocaleString()}</Text>
+          <Text style={styles.compactActionText}>{currentVideo.stats.comments.toLocaleString()}</Text>
         </TouchableOpacity>
 
         <TouchableOpacity style={styles.compactActionButtonSpaced} onPress={handleSave}>
