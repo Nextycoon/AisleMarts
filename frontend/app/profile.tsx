@@ -164,7 +164,7 @@ export default function ProfileScreen() {
       title: 'Shopping',
       items: [
         {
-          id: '13',
+          id: '14',
           title: 'Order History',
           icon: '📦',
           subtitle: 'Past purchases',
