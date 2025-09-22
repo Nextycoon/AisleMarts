@@ -128,18 +128,28 @@ export default function FloatingAIAssistant({ style, bottom, right, top, left }:
     { title: 'Track Orders', emoji: '📦', action: () => console.log('Track orders') },
   ];
 
+  // Create dynamic positioning style
+  const dynamicPositionStyle = {
+    position: 'absolute' as 'absolute',
+    top: top !== undefined ? top : (bottom !== undefined ? undefined : 120),
+    bottom: bottom !== undefined ? bottom : undefined,
+    left: left !== undefined ? left : undefined,
+    right: right !== undefined ? right : (left !== undefined ? undefined : 20),
+    zIndex: 1000,
+  };
+
   return (
     <>
       {/* Floating AI Button */}
       <Animated.View
         style={[
-          styles.floatingButton,
+          dynamicPositionStyle, // Use dynamic positioning instead of styles.floatingButton
           {
             transform: [
               { scale: Animated.multiply(pulseAnim, scaleAnim) }
             ]
           },
-          style, // External style applied AFTER internal style to override
+          style, // External style applied last
         ]}
       >
         <TouchableOpacity onPress={handlePress} activeOpacity={0.8}>
