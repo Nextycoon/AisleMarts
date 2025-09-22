@@ -107,6 +107,13 @@ const styles = StyleSheet.create({
     paddingVertical: 12,
     height: 50,
   },
+  rightContainer: {
+    flex: 0,
+    alignItems: 'flex-end',
+    justifyContent: 'center',
+    paddingLeft: 20, // Extra spacing from center tabs
+    minWidth: 80, // Ensure sufficient space
+  },
   liveButton: {
     width: 60,
     height: 40,
@@ -121,6 +128,7 @@ const styles = StyleSheet.create({
     shadowOpacity: 0.4,
     shadowRadius: 6,
     elevation: 8,
+    marginRight: 4, // Push further from edge
   },
   liveIcon: {
     fontSize: 22,
