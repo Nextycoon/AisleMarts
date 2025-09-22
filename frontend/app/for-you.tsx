@@ -821,6 +821,12 @@ const styles = StyleSheet.create({
     textShadowOffset: { width: 0, height: 2 },
     textShadowRadius: 4,
   },
+  savedIconStyle: {
+    // Enhanced styling for the bookmark when saved
+    textShadowColor: 'rgba(255, 215, 0, 0.8)',
+    textShadowOffset: { width: 0, height: 2 },
+    textShadowRadius: 4,
+  },
   sharpReviewIcon: {
     fontSize: 16, // Review icon size
     color: '#FFFFFF',
