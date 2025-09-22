@@ -893,14 +893,11 @@ const styles = StyleSheet.create({
     elevation: 6,
   },
   elegantCartIcon: {
-    fontSize: 16,
+    fontSize: 18, // Same as other sharp icons
     color: '#FFFFFF', // Force white color
-    textShadowColor: 'rgba(0, 0, 0, 0.8)',
+    textShadowColor: 'rgba(0, 0, 0, 0.4)',
     textShadowOffset: { width: 0, height: 1 },
     textShadowRadius: 2,
-    // Force emoji to render as white
-    textDecorationColor: '#FFFFFF',
-    textDecorationLine: 'none',
   },
   elegantCartContainerWithPlus: {
     alignItems: 'center',
