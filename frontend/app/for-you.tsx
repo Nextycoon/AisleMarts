@@ -341,9 +341,11 @@ export default function ForYouScreen() {
           <Text style={styles.compactActionText}>{currentVideo.stats.reviews.toLocaleString()}</Text>
         </TouchableOpacity>
 
-        <TouchableOpacity style={styles.compactActionButtonSpaced} onPress={() => console.log('Save pressed')}>
+        <TouchableOpacity style={styles.compactActionButtonSpaced} onPress={handleSave}>
           <View style={styles.sharpIconContainer}>
-            <Text style={styles.sharpSaveIcon}>📌</Text>
+            <Text style={[styles.sharpSaveIcon, isSaved && styles.savedIconStyle]}>
+              {isSaved ? '🔖' : '📌'}
+            </Text>
           </View>
           <Text style={styles.compactActionText}>{currentVideo.stats.saves.toLocaleString()}</Text>
         </TouchableOpacity>
