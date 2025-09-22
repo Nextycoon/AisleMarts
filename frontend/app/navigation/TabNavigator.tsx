@@ -73,76 +73,57 @@ export default function TabNavigator() {
 
 const styles = StyleSheet.create({
   container: {
-    backgroundColor: '#000000',
-  },
-  vendorBadgeContainer: {
-    paddingHorizontal: 16,
-    paddingVertical: 8,
-    borderBottomWidth: 1,
-    borderBottomColor: 'rgba(255, 255, 255, 0.05)',
-  },
-  vendorBadge: {
-    alignSelf: 'center',
+    backgroundColor: 'rgba(0, 0, 0, 0.95)',
+    paddingBottom: 8,
+    borderTopWidth: 1,
+    borderTopColor: 'rgba(255, 255, 255, 0.1)',
   },
   tabBar: {
     flexDirection: 'row',
-    backgroundColor: '#000000',
-    paddingTop: 6,
-    paddingBottom: 18,
-    paddingHorizontal: 4,
-    minHeight: 65,
-    alignItems: 'center',
-    justifyContent: 'space-around',
+    paddingHorizontal: 8,
+    paddingTop: 8,
   },
-  tabItem: {
+  tab: {
     flex: 1,
     alignItems: 'center',
-    justifyContent: 'center',
-    paddingVertical: 4,
+    paddingVertical: 8,
+    position: 'relative',
   },
-  createButton: {
+  tabContent: {
     alignItems: 'center',
+    padding: 4,
+    borderRadius: 12,
+    minWidth: 44,
+    minHeight: 44,
     justifyContent: 'center',
   },
-  tabIconContainer: {
-    alignItems: 'center',
-    justifyContent: 'center',
-    marginBottom: 4,
-  },
-  tabIconContainerActive: {
-    // No special active container styling like TikTok
+  activeTab: {
+    backgroundColor: 'rgba(255, 255, 255, 0.1)',
   },
   tabIcon: {
-    fontSize: 24,
-    color: '#FFFFFF',
+    fontSize: 20,
+    marginBottom: 2,
+    opacity: 0.7,
   },
-  tabIconActive: {
-    fontSize: 24,
-    color: '#FFFFFF',
-  },
-  createIconContainer: {
-    width: 48,
-    height: 32,
-    backgroundColor: '#FFFFFF',
-    borderRadius: 8,
-    alignItems: 'center',
-    justifyContent: 'center',
-    marginBottom: 4,
-  },
-  createIcon: {
-    fontSize: 18,
-    color: '#000000',
-    fontWeight: '600',
+  activeTabIcon: {
+    opacity: 1,
   },
   tabLabel: {
-    fontSize: 9,
-    color: '#FFFFFF',
-    fontWeight: '400',
+    fontSize: 10,
+    color: 'rgba(255, 255, 255, 0.7)',
+    fontWeight: '500',
     textAlign: 'center',
-    marginTop: 2,
   },
-  tabLabelActive: {
+  activeTabLabel: {
     color: '#FFFFFF',
     fontWeight: '600',
+  },
+  activeIndicator: {
+    position: 'absolute',
+    bottom: 0,
+    height: 2,
+    width: 20,
+    backgroundColor: '#D4AF37',
+    borderRadius: 1,
   },
 });
