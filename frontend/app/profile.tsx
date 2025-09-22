@@ -98,7 +98,7 @@ export default function ProfileScreen() {
       title: 'Family & Safety',
       items: [
         {
-          id: '5',
+          id: '6',
           title: 'Family Dashboard',
           icon: '👨‍👩‍👧‍👦',
           subtitle: 'Manage family group',
