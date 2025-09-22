@@ -67,9 +67,15 @@ export default function TopNavigation() {
                 onPress={() => handleTabPress(tab.route)}
                 activeOpacity={0.7}
               >
-                <Text style={[styles.compactNavLabel, active && styles.navLabelActive]}>
-                  {tab.label}
-                </Text>
+                {tab.icon ? (
+                  <Text style={[styles.compactNavIcon, active && styles.navIconActive]}>
+                    {tab.icon}
+                  </Text>
+                ) : (
+                  <Text style={[styles.compactNavLabel, active && styles.navLabelActive]}>
+                    {tab.label}
+                  </Text>
+                )}
                 {active && <View style={styles.compactActiveIndicator} />}
               </TouchableOpacity>
             );
