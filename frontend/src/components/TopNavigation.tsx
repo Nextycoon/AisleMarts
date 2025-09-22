@@ -79,7 +79,10 @@ export default function TopNavigation() {
 
         {/* Explore Icon */}
         <TouchableOpacity style={styles.navIconButton} onPress={() => handleTabPress('/explore')}>
-          <Text style={[styles.navIcon, isActive('/explore') && styles.navIconActive]}>🔍</Text>
+          <Image 
+            source={{ uri: 'https://customer-assets.emergentagent.com/job_vendor-dashboard-10/artifacts/pbzsiikm_EXPLORE.png' }}
+            style={[styles.exploreIcon, isActive('/explore') && styles.exploreIconActive]}
+          />
           {isActive('/explore') && <View style={styles.iconActiveIndicator} />}
         </TouchableOpacity>
 
