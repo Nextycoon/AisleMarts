@@ -21,7 +21,6 @@ const topNavTabs: TopNavItem[] = [
   { name: 'for-you', route: '/for-you', label: 'For You' },
   { name: 'following', route: '/following', label: 'Following' },
   { name: 'explore', route: '/explore', label: 'Explore' },
-  { name: 'live', route: '/live-streaming', label: 'Live' },
 ];
 
 export default function TopNavigation() {
