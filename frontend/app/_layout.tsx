@@ -4,12 +4,14 @@ import { StatusBar } from 'expo-status-bar';
 
 // Import global providers
 import { CurrencyProvider } from '../lib/currency/CurrencyProvider';
+import { AuthProvider } from '../src/context/AuthContext';
 
 export default function RootLayout() {
   return (
-    <CurrencyProvider>
-      <StatusBar style="light" backgroundColor="#1A1A1A" />
-      <Stack
+    <AuthProvider>
+      <CurrencyProvider>
+        <StatusBar style="light" backgroundColor="#1A1A1A" />
+        <Stack
         screenOptions={{
           headerShown: false,
           contentStyle: { backgroundColor: '#1A1A1A' },
