@@ -351,13 +351,15 @@ export default function ForYouScreen() {
         </TouchableOpacity>
 
         <TouchableOpacity 
-          style={styles.elegantShoppingButtonSpaced}
+          style={styles.elegantCartContainerWithPlus}
           onPress={() => setShowProducts(!showProducts)}
         >
           <View style={styles.elegantCartContainer}>
             <Text style={styles.elegantCartIcon}>🛒</Text>
           </View>
-          <Text style={styles.elegantShoppingText}>Add to Cart</Text>
+          <View style={styles.elegantCartPlusButton}>
+            <Text style={styles.elegantCartPlus}>+</Text>
+          </View>
         </TouchableOpacity>
 
         {/* Music button - positioned to stay above bottom nav */}
