@@ -116,8 +116,9 @@ const styles = StyleSheet.create({
   navBar: {
     flexDirection: 'row',
     alignItems: 'center',
-    paddingHorizontal: 12,
-    paddingVertical: 12,
+    justifyContent: 'space-evenly', // Distribute 7 elements evenly like bottom nav
+    paddingHorizontal: 8,
+    paddingVertical: 8,
     height: 50,
   },
   rightContainer: {
