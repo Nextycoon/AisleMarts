@@ -827,8 +827,8 @@ const styles = StyleSheet.create({
     textShadowOffset: { width: 0, height: 2 },
     textShadowRadius: 4,
   },
-  sharpReviewIcon: {
-    fontSize: 16, // Review icon size
+  sharpCommentIcon: {
+    fontSize: 16, // Comment icon size
     color: '#FFFFFF',
     textShadowColor: 'rgba(30, 144, 255, 0.6)',
     textShadowOffset: { width: 0, height: 1 },
