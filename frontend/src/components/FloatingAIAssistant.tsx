@@ -130,12 +130,12 @@ export default function FloatingAIAssistant({ style }: FloatingAIAssistantProps)
       <Animated.View
         style={[
           styles.floatingButton,
-          style,
           {
             transform: [
               { scale: Animated.multiply(pulseAnim, scaleAnim) }
             ]
-          }
+          },
+          style, // External style applied AFTER internal style to override
         ]}
       >
         <TouchableOpacity onPress={handlePress} activeOpacity={0.8}>
