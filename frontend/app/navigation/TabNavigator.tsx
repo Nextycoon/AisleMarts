@@ -33,7 +33,7 @@ export default function TabNavigator() {
   const pathname = usePathname();
 
   const isActive = (route: string) => {
-    if (route === '/aisle-agent' && pathname === '/') return true;
+    if (route === '/for-you' && pathname === '/') return true;
     return pathname === route || pathname.startsWith(route + '/');
   };
 
