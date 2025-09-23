@@ -111,7 +111,7 @@ const styles = StyleSheet.create({
     flexDirection: 'row',
     alignItems: 'center',
     justifyContent: 'space-evenly', // Distribute 7 elements evenly like bottom nav
-    paddingHorizontal: 8,
+    paddingHorizontal: 4, // Reduced from 8 to align with right-side icons (right: 4px)
     paddingVertical: 8,
     height: 50,
   },
