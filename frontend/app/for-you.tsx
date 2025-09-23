@@ -199,7 +199,7 @@ export default function ForYouScreen() {
         parentalApproval: false,
         contentWarning: false
       }
-    }
+    },
     // Add more mock data as needed...
   ];
 
