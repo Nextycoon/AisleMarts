@@ -204,11 +204,12 @@ class SuperAppSocialCommerceTestSuite:
         """Test service integration endpoints"""
         # Test available services
         response = await self.make_request('GET', '/super-app/services')
+        data = self.safe_get_data(response)
         
         services_success = (
             response.get('status_code') == 200 and
             isinstance(response.get('data'), list) and
-            len(response['data']) > 0
+            len(response.get('data', [])) > 0
         )
         
         self.log_test_result("Available Services", services_success,
@@ -225,15 +226,15 @@ class SuperAppSocialCommerceTestSuite:
         }
         
         response = await self.make_request('POST', '/super-app/services/food/order', params=food_order_params)
+        data = self.safe_get_data(response)
         
         food_success = (
             response.get('status_code') == 200 and
-            isinstance(response.get('data'), dict) and
-            (response['data'].get('success') == True or 'error' in response['data'])
+            (data.get('success') == True or 'error' in data)
         )
         
         self.log_test_result("Food Delivery Order", food_success,
-                           f"Order Status: {response['data'].get('success', 'error')}", response)
+                           f"Order Status: {data.get('success', 'error')}", response)
         
         # Test travel booking
         travel_params = {
@@ -247,15 +248,15 @@ class SuperAppSocialCommerceTestSuite:
         }
         
         response = await self.make_request('POST', '/super-app/services/travel/book', params=travel_params)
+        data = self.safe_get_data(response)
         
         travel_success = (
             response.get('status_code') == 200 and
-            isinstance(response.get('data'), dict) and
-            (response['data'].get('success') == True or 'error' in response['data'])
+            (data.get('success') == True or 'error' in data)
         )
         
         self.log_test_result("Travel Booking", travel_success,
-                           f"Booking Status: {response['data'].get('success', 'error')}", response)
+                           f"Booking Status: {data.get('success', 'error')}", response)
         
         # Test bill payment
         bill_params = {
@@ -267,15 +268,15 @@ class SuperAppSocialCommerceTestSuite:
         
         response = await self.make_request('POST', '/super-app/services/bills/pay',
                                          params={'user_id': self.test_user_id, **bill_params})
+        data = self.safe_get_data(response)
         
         bill_success = (
             response.get('status_code') == 200 and
-            isinstance(response.get('data'), dict) and
-            (response['data'].get('success') == True or 'error' in response['data'])
+            (data.get('success') == True or 'error' in data)
         )
         
         self.log_test_result("Bill Payment", bill_success,
-                           f"Payment Status: {response['data'].get('success', 'error')}", response)
+                           f"Payment Status: {data.get('success', 'error')}", response)
         
     async def test_ai_personal_assistant(self):
         """Test AI Personal Assistant functionality"""
