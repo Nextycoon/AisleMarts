@@ -1494,16 +1494,13 @@ const styles = StyleSheet.create({
   // AISLEMARTS STORIES SYSTEM - INSTAGRAM-STYLE WITH E-COMMERCE INTEGRATION
   // ==================================================================================
   storiesSection: {
-    position: 'absolute',
-    top: 80, // Right under header icons
-    left: 0,
-    right: 0,
+    width: '100%',
     height: 110,
-    zIndex: 999, // High z-index to ensure visibility
     backgroundColor: 'rgba(0, 0, 0, 0.9)',
     paddingVertical: 8,
     borderBottomWidth: 2,
     borderBottomColor: '#D4AF37',
+    marginTop: 80, // Space for header icons
   },
   storiesScrollView: {
     flex: 1,
