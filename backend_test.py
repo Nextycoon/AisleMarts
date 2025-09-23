@@ -1,503 +1,956 @@
 #!/usr/bin/env python3
 """
-Comprehensive Backend Testing for Top-Tier App Matrix and Retention Algorithm
-=============================================================================
-
-This test suite validates the complete "Top-Tier App Matrix and Retention Algorithm" 
-backend implementation including:
-
-GAMIFICATION SYSTEM TESTING:
-1. Gamification Health Check (/api/gamification/health)
-2. AI Challenge Generation (/api/gamification/user/test_user/challenges/generate) 
-3. Spin Wheel Mechanics (/api/gamification/user/test_user/spin)
-4. User Progress Tracking (/api/gamification/user/test_user/progress)
-5. Achievement System (/api/gamification/achievements)
-6. Leaderboards (/api/gamification/leaderboard)
-7. Gamification Analytics (/api/gamification/stats)
-
-COMMUNITY SYSTEM TESTING:
-8. Community Health Check (/api/community/health)
-9. Community Feed Generation (/api/community/feed)
-10. AI Content Moderation (POST /api/community/posts)
-11. Product Reviews with AI Analysis (POST /api/community/reviews) 
-12. Community Analytics (/api/community/stats)
-13. Trending Content Detection (/api/community/trending)
-
-LOYALTY SYSTEM TESTING:
-14. Loyalty Health Check (/api/loyalty/health)
-15. User Loyalty Status (/api/loyalty/user/test_user/loyalty)
-16. Points Earning System (/api/loyalty/user/test_user/earn-points)
-17. Rewards Redemption (/api/loyalty/user/test_user/redeem-points)
-18. Loyalty Analytics (/api/loyalty/analytics/program)
-19. Tier System Validation (/api/loyalty/tiers)
-
-INTEGRATION TESTING:
-20. Cross-system data flow validation
-21. AI model performance verification (Emergent LLM integration)
-22. Real-time analytics processing
-23. User journey tracking across all systems
+Comprehensive Backend Testing for AisleMarts Super App Ecosystem & Advanced Social Commerce Features
+Testing Focus: Newly implemented Super App and Social Commerce backend systems
 """
 
 import asyncio
 import aiohttp
 import json
-import time
-from datetime import datetime
+import uuid
+from datetime import datetime, timedelta
 from typing import Dict, List, Any
+import os
+from urllib.parse import urljoin
 
-# Backend URL from frontend .env
-BACKEND_URL = "https://aisleai.preview.emergentagent.com/api"
+# Get backend URL from environment
+BACKEND_URL = os.getenv('EXPO_PUBLIC_BACKEND_URL', 'https://aisleai.preview.emergentagent.com')
+API_BASE = f"{BACKEND_URL}/api"
 
-class BackendTester:
+class SuperAppSocialCommerceTestSuite:
     def __init__(self):
         self.session = None
-        self.results = []
-        self.test_user_id = "test_user_retention_algorithm"
-        self.test_username = "RetentionTester"
+        self.test_results = []
+        self.total_tests = 0
+        self.passed_tests = 0
+        self.failed_tests = 0
         
-    async def __aenter__(self):
+        # Test data
+        self.test_user_id = f"test_user_{uuid.uuid4().hex[:8]}"
+        self.test_creator_id = f"creator_{uuid.uuid4().hex[:8]}"
+        self.test_brand_id = f"brand_{uuid.uuid4().hex[:8]}"
+        self.test_group_id = None
+        self.test_campaign_id = None
+        self.test_content_id = None
+        
+    async def setup_session(self):
+        """Setup HTTP session"""
+        connector = aiohttp.TCPConnector(limit=100, limit_per_host=30)
+        timeout = aiohttp.ClientTimeout(total=30)
         self.session = aiohttp.ClientSession(
-            timeout=aiohttp.ClientTimeout(total=30),
-            headers={"Content-Type": "application/json"}
+            connector=connector,
+            timeout=timeout,
+            headers={'Content-Type': 'application/json'}
         )
-        return self
         
-    async def __aexit__(self, exc_type, exc_val, exc_tb):
+    async def cleanup_session(self):
+        """Cleanup HTTP session"""
         if self.session:
             await self.session.close()
-    
-    def log_result(self, test_name: str, success: bool, details: str = "", response_data: Any = None):
-        """Log test result"""
-        result = {
-            "test": test_name,
-            "success": success,
-            "details": details,
-            "timestamp": datetime.now().isoformat(),
-            "response_data": response_data
-        }
-        self.results.append(result)
+            
+    async def make_request(self, method: str, endpoint: str, **kwargs) -> Dict[str, Any]:
+        """Make HTTP request with error handling"""
+        url = urljoin(API_BASE, endpoint.lstrip('/'))
         
-        status = "✅ PASS" if success else "❌ FAIL"
-        print(f"{status} | {test_name}")
+        try:
+            async with self.session.request(method, url, **kwargs) as response:
+                response_data = {
+                    'status_code': response.status,
+                    'headers': dict(response.headers),
+                    'url': str(response.url)
+                }
+                
+                try:
+                    response_data['data'] = await response.json()
+                except:
+                    response_data['data'] = await response.text()
+                    
+                return response_data
+                
+        except Exception as e:
+            return {
+                'status_code': 0,
+                'error': str(e),
+                'url': url
+            }
+            
+    def log_test_result(self, test_name: str, success: bool, details: str = "", response_data: Dict = None):
+        """Log test result"""
+        self.total_tests += 1
+        if success:
+            self.passed_tests += 1
+            status = "✅ PASS"
+        else:
+            self.failed_tests += 1
+            status = "❌ FAIL"
+            
+        result = {
+            'test_name': test_name,
+            'status': status,
+            'success': success,
+            'details': details,
+            'response_data': response_data
+        }
+        
+        self.test_results.append(result)
+        print(f"{status}: {test_name}")
         if details:
             print(f"    Details: {details}")
         if not success and response_data:
-            print(f"    Response: {response_data}")
+            print(f"    Response: {response_data.get('status_code', 'N/A')} - {response_data.get('data', 'No data')}")
         print()
-    
-    async def test_endpoint(self, method: str, endpoint: str, test_name: str, 
-                          expected_status: int = 200, data: Dict = None, 
-                          params: Dict = None) -> bool:
-        """Generic endpoint testing method"""
-        try:
-            url = f"{BACKEND_URL}{endpoint}"
-            
-            if method.upper() == "GET":
-                async with self.session.get(url, params=params) as response:
-                    response_data = await response.json()
-                    success = response.status == expected_status
-                    
-            elif method.upper() == "POST":
-                async with self.session.post(url, json=data, params=params) as response:
-                    response_data = await response.json()
-                    success = response.status == expected_status
-                    
-            else:
-                raise ValueError(f"Unsupported method: {method}")
-            
-            details = f"Status: {response.status}, Expected: {expected_status}"
-            if success and response_data:
-                details += f", Response keys: {list(response_data.keys()) if isinstance(response_data, dict) else 'Non-dict response'}"
-            
-            self.log_result(test_name, success, details, response_data if not success else None)
-            return success
-            
-        except Exception as e:
-            self.log_result(test_name, False, f"Exception: {str(e)}")
-            return False
 
-    # ==================== GAMIFICATION SYSTEM TESTING ====================
+    # ==================== SUPER APP ECOSYSTEM TESTS ====================
     
-    async def test_gamification_health(self):
-        """Test Gamification Health Check"""
-        return await self.test_endpoint(
-            "GET", "/gamification/health", 
-            "Gamification Health Check"
+    async def test_super_app_health_check(self):
+        """Test Super App health check endpoint"""
+        response = await self.make_request('GET', '/super-app/health')
+        
+        success = (
+            response.get('status_code') == 200 and
+            isinstance(response.get('data'), dict) and
+            response['data'].get('status') == 'operational' and
+            'features' in response['data'] and
+            len(response['data']['features']) > 0
         )
-    
-    async def test_ai_challenge_generation(self):
-        """Test AI Challenge Generation"""
-        return await self.test_endpoint(
-            "POST", f"/gamification/user/{self.test_user_id}/challenges/generate",
-            "AI Challenge Generation",
-            params={"count": 3}
+        
+        details = f"Status: {response['data'].get('status', 'unknown')}, Features: {len(response['data'].get('features', []))}"
+        self.log_test_result("Super App Health Check", success, details, response)
+        
+    async def test_wallet_operations(self):
+        """Test AislePay wallet operations"""
+        # Test wallet creation/retrieval
+        response = await self.make_request('GET', f'/super-app/wallet/{self.test_user_id}')
+        
+        wallet_success = (
+            response.get('status_code') == 200 and
+            isinstance(response.get('data'), dict) and
+            response['data'].get('user_id') == self.test_user_id
         )
-    
-    async def test_spin_wheel_mechanics(self):
-        """Test Spin Wheel Mechanics"""
-        return await self.test_endpoint(
-            "POST", f"/gamification/user/{self.test_user_id}/spin",
-            "Spin Wheel Mechanics"
-        )
-    
-    async def test_user_progress_tracking(self):
-        """Test User Progress Tracking"""
-        return await self.test_endpoint(
-            "GET", f"/gamification/user/{self.test_user_id}/progress",
-            "User Progress Tracking"
-        )
-    
-    async def test_achievement_system(self):
-        """Test Achievement System"""
-        return await self.test_endpoint(
-            "GET", "/gamification/achievements",
-            "Achievement System"
-        )
-    
-    async def test_leaderboards(self):
-        """Test Leaderboards"""
-        return await self.test_endpoint(
-            "GET", "/gamification/leaderboard",
-            "Leaderboards",
-            params={"leaderboard_type": "coins", "limit": 10}
-        )
-    
-    async def test_gamification_analytics(self):
-        """Test Gamification Analytics"""
-        return await self.test_endpoint(
-            "GET", "/gamification/stats",
-            "Gamification Analytics"
-        )
-
-    # ==================== COMMUNITY SYSTEM TESTING ====================
-    
-    async def test_community_health(self):
-        """Test Community Health Check"""
-        return await self.test_endpoint(
-            "GET", "/community/health",
-            "Community Health Check"
-        )
-    
-    async def test_community_feed_generation(self):
-        """Test Community Feed Generation"""
-        return await self.test_endpoint(
-            "GET", "/community/feed",
-            "Community Feed Generation",
-            params={"user_id": self.test_user_id, "limit": 10}
-        )
-    
-    async def test_ai_content_moderation(self):
-        """Test AI Content Moderation (POST /community/posts)"""
-        post_data = {
-            "title": "Testing AI Content Moderation",
-            "content": "This is a test post for AI content moderation testing. The retention algorithm is working great!",
-            "content_type": "post",
-            "category": "general",
-            "tags": ["test", "retention", "algorithm"]
+        
+        self.log_test_result("Wallet Creation/Retrieval", wallet_success, 
+                           f"User ID: {self.test_user_id}, Balance: {response['data'].get('balance', 0)}", response)
+        
+        if not wallet_success:
+            return
+            
+        # Test wallet top-up
+        top_up_data = {
+            'amount': 100.0,
+            'payment_method': 'test_card'
         }
-        return await self.test_endpoint(
-            "POST", "/community/posts",
-            "AI Content Moderation",
-            data=post_data,
-            params={"user_id": self.test_user_id, "username": self.test_username}
+        
+        response = await self.make_request('POST', f'/super-app/wallet/{self.test_user_id}/top-up', 
+                                         params=top_up_data)
+        
+        topup_success = (
+            response.get('status_code') == 200 and
+            isinstance(response.get('data'), dict) and
+            response['data'].get('success') == True
         )
-    
-    async def test_product_reviews_ai_analysis(self):
-        """Test Product Reviews with AI Analysis"""
-        review_data = {
-            "product_id": "test_product_retention_001",
-            "product_name": "AI-Powered Retention Testing Product",
-            "rating": 5,
-            "title": "Amazing Product for Retention Testing",
-            "review_text": "This product works perfectly for our retention algorithm testing. Highly recommended for AI-powered commerce platforms.",
-            "images": []
+        
+        self.log_test_result("Wallet Top-up", topup_success,
+                           f"Amount: $100, New Balance: {response['data'].get('new_balance', 0)}", response)
+        
+        # Test P2P transfer
+        transfer_data = {
+            'to_user_id': f"recipient_{uuid.uuid4().hex[:8]}",
+            'amount': 25.0,
+            'description': 'Test transfer'
         }
-        return await self.test_endpoint(
-            "POST", "/community/reviews",
-            "Product Reviews with AI Analysis",
-            data=review_data,
-            params={"user_id": self.test_user_id, "username": self.test_username}
+        
+        response = await self.make_request('POST', '/super-app/wallet/transfer',
+                                         params={'from_user_id': self.test_user_id, **transfer_data})
+        
+        transfer_success = (
+            response.get('status_code') == 200 and
+            isinstance(response.get('data'), dict) and
+            (response['data'].get('success') == True or 'error' in response['data'])
         )
-    
-    async def test_community_analytics(self):
-        """Test Community Analytics"""
-        return await self.test_endpoint(
-            "GET", "/community/stats",
-            "Community Analytics"
+        
+        self.log_test_result("P2P Transfer", transfer_success,
+                           f"Amount: $25, Status: {response['data'].get('success', 'error')}", response)
+        
+        # Test transaction history
+        response = await self.make_request('GET', f'/super-app/wallet/{self.test_user_id}/transactions')
+        
+        history_success = (
+            response.get('status_code') == 200 and
+            isinstance(response.get('data'), dict) and
+            'transactions' in response['data']
         )
-    
-    async def test_trending_content_detection(self):
-        """Test Trending Content Detection"""
-        return await self.test_endpoint(
-            "GET", "/community/trending",
-            "Trending Content Detection",
-            params={"limit": 5}
+        
+        self.log_test_result("Transaction History", history_success,
+                           f"Transactions: {len(response['data'].get('transactions', []))}", response)
+        
+    async def test_service_integrations(self):
+        """Test service integration endpoints"""
+        # Test available services
+        response = await self.make_request('GET', '/super-app/services')
+        
+        services_success = (
+            response.get('status_code') == 200 and
+            isinstance(response.get('data'), list) and
+            len(response['data']) > 0
         )
+        
+        self.log_test_result("Available Services", services_success,
+                           f"Services count: {len(response.get('data', []))}", response)
+        
+        # Test food delivery order
+        food_order_params = {
+            'user_id': self.test_user_id,
+            'restaurant_id': 'test_restaurant_001',
+            'restaurant_name': 'Test Pizzeria',
+            'items': json.dumps([{'name': 'Margherita Pizza', 'quantity': 1, 'price': 15.99}]),
+            'total_amount': 15.99,
+            'delivery_address': json.dumps({'street': '123 Test St', 'city': 'Test City', 'zip': '12345'})
+        }
+        
+        response = await self.make_request('POST', '/super-app/services/food/order', params=food_order_params)
+        
+        food_success = (
+            response.get('status_code') == 200 and
+            isinstance(response.get('data'), dict) and
+            (response['data'].get('success') == True or 'error' in response['data'])
+        )
+        
+        self.log_test_result("Food Delivery Order", food_success,
+                           f"Order Status: {response['data'].get('success', 'error')}", response)
+        
+        # Test travel booking
+        travel_params = {
+            'user_id': self.test_user_id,
+            'booking_type': 'flight',
+            'destination': 'New York',
+            'departure_date': (datetime.now() + timedelta(days=30)).isoformat(),
+            'passengers': 1,
+            'total_cost': 299.99,
+            'provider': 'Test Airlines'
+        }
+        
+        response = await self.make_request('POST', '/super-app/services/travel/book', params=travel_params)
+        
+        travel_success = (
+            response.get('status_code') == 200 and
+            isinstance(response.get('data'), dict) and
+            (response['data'].get('success') == True or 'error' in response['data'])
+        )
+        
+        self.log_test_result("Travel Booking", travel_success,
+                           f"Booking Status: {response['data'].get('success', 'error')}", response)
+        
+        # Test bill payment
+        bill_params = {
+            'provider': 'Electric Company',
+            'account_number': 'ACC123456',
+            'amount': 89.50,
+            'save_for_autopay': False
+        }
+        
+        response = await self.make_request('POST', '/super-app/services/bills/pay',
+                                         params={'user_id': self.test_user_id, **bill_params})
+        
+        bill_success = (
+            response.get('status_code') == 200 and
+            isinstance(response.get('data'), dict) and
+            (response['data'].get('success') == True or 'error' in response['data'])
+        )
+        
+        self.log_test_result("Bill Payment", bill_success,
+                           f"Payment Status: {response['data'].get('success', 'error')}", response)
+        
+    async def test_ai_personal_assistant(self):
+        """Test AI Personal Assistant functionality"""
+        # Test AI chat
+        chat_params = {
+            'user_id': self.test_user_id,
+            'query': 'Help me find the best restaurants nearby for dinner tonight',
+            'context': json.dumps({'location': 'downtown', 'budget': 'moderate'})
+        }
+        
+        response = await self.make_request('POST', '/super-app/assistant/chat', params=chat_params)
+        
+        chat_success = (
+            response.get('status_code') == 200 and
+            isinstance(response.get('data'), dict) and
+            'response_text' in response['data']
+        )
+        
+        self.log_test_result("AI Assistant Chat", chat_success,
+                           f"Response length: {len(response['data'].get('response_text', ''))}", response)
+        
+        # Test daily content generation
+        response = await self.make_request('GET', f'/super-app/assistant/daily-content/{self.test_user_id}')
+        
+        content_success = (
+            response.get('status_code') == 200 and
+            isinstance(response.get('data'), dict) and
+            'daily_content' in response['data']
+        )
+        
+        self.log_test_result("Daily Content Generation", content_success,
+                           f"Content items: {len(response['data'].get('daily_content', []))}", response)
+        
+    async def test_lifestyle_features(self):
+        """Test lifestyle and user profile features"""
+        # Test lifestyle profile retrieval
+        response = await self.make_request('GET', f'/super-app/profile/{self.test_user_id}/lifestyle')
+        
+        profile_success = (
+            response.get('status_code') == 200 and
+            isinstance(response.get('data'), dict) and
+            response['data'].get('user_id') == self.test_user_id
+        )
+        
+        self.log_test_result("Lifestyle Profile Retrieval", profile_success,
+                           f"User ID: {self.test_user_id}", response)
+        
+        # Test profile update
+        update_params = {
+            'preferences': json.dumps({'interests': ['fitness', 'cooking', 'travel']}),
+            'notification_settings': json.dumps({'email': True, 'push': False})
+        }
+        
+        response = await self.make_request('PATCH', f'/super-app/profile/{self.test_user_id}/lifestyle',
+                                         params=update_params)
+        
+        update_success = (
+            response.get('status_code') == 200 and
+            isinstance(response.get('data'), dict) and
+            response['data'].get('success') == True
+        )
+        
+        self.log_test_result("Lifestyle Profile Update", update_success,
+                           f"Update Status: {response['data'].get('success', False)}", response)
+        
+    async def test_influencer_live_shopping(self):
+        """Test influencer and live shopping features"""
+        # Test influencer registration
+        influencer_params = {
+            'user_id': self.test_creator_id,
+            'specialties': json.dumps(['fashion', 'lifestyle']),
+            'bio': 'Fashion and lifestyle content creator',
+            'contact_info': json.dumps({'email': 'creator@test.com'})
+        }
+        
+        response = await self.make_request('POST', '/super-app/influencer/register', params=influencer_params)
+        
+        influencer_success = (
+            response.get('status_code') == 200 and
+            isinstance(response.get('data'), dict) and
+            response['data'].get('success') == True
+        )
+        
+        self.log_test_result("Influencer Registration", influencer_success,
+                           f"Creator ID: {self.test_creator_id}", response)
+        
+        # Test live shopping event creation
+        event_params = {
+            'host_id': self.test_creator_id,
+            'title': 'Summer Fashion Showcase',
+            'description': 'Discover the latest summer fashion trends',
+            'scheduled_time': (datetime.now() + timedelta(hours=24)).isoformat(),
+            'duration_minutes': 60,
+            'featured_products': json.dumps([{'id': 'prod_001', 'name': 'Summer Dress'}])
+        }
+        
+        response = await self.make_request('POST', '/super-app/live-shopping/create', params=event_params)
+        
+        event_success = (
+            response.get('status_code') == 200 and
+            isinstance(response.get('data'), dict) and
+            response['data'].get('success') == True
+        )
+        
+        self.log_test_result("Live Shopping Event Creation", event_success,
+                           f"Event Title: {event_params['title']}", response)
+        
+        # Test live shopping events listing
+        response = await self.make_request('GET', '/super-app/live-shopping/events')
+        
+        events_success = (
+            response.get('status_code') == 200 and
+            isinstance(response.get('data'), dict) and
+            'events' in response['data']
+        )
+        
+        self.log_test_result("Live Shopping Events Listing", events_success,
+                           f"Events count: {len(response['data'].get('events', []))}", response)
+        
+    async def test_analytics_metrics(self):
+        """Test analytics and metrics endpoints"""
+        # Test super app metrics
+        response = await self.make_request('GET', '/super-app/analytics/metrics')
+        
+        metrics_success = (
+            response.get('status_code') == 200 and
+            isinstance(response.get('data'), dict) and
+            'total_wallet_users' in response['data']
+        )
+        
+        self.log_test_result("Super App Metrics", metrics_success,
+                           f"Wallet Users: {response['data'].get('total_wallet_users', 0)}", response)
+        
+        # Test user engagement analytics
+        response = await self.make_request('GET', f'/super-app/analytics/user-engagement/{self.test_user_id}')
+        
+        engagement_success = (
+            response.get('status_code') == 200 and
+            isinstance(response.get('data'), dict) and
+            'engagement_metrics' in response['data']
+        )
+        
+        self.log_test_result("User Engagement Analytics", engagement_success,
+                           f"User ID: {self.test_user_id}", response)
+        
+        # Test dashboard overview
+        response = await self.make_request('GET', '/super-app/dashboard/overview')
+        
+        dashboard_success = (
+            response.get('status_code') == 200 and
+            isinstance(response.get('data'), dict) and
+            'platform_metrics' in response['data']
+        )
+        
+        self.log_test_result("Dashboard Overview", dashboard_success,
+                           f"Platform Health: {response['data'].get('service_health', {}).get('aislepay', 'unknown')}", response)
+        
+    async def test_user_service_history(self):
+        """Test user service history"""
+        response = await self.make_request('GET', f'/super-app/user/{self.test_user_id}/history')
+        
+        history_success = (
+            response.get('status_code') == 200 and
+            isinstance(response.get('data'), dict) and
+            'history' in response['data'] and
+            'summary' in response['data']
+        )
+        
+        self.log_test_result("User Service History", history_success,
+                           f"Services Used: {response['data'].get('summary', {}).get('services_used', 0)}", response)
 
-    # ==================== LOYALTY SYSTEM TESTING ====================
+    # ==================== SOCIAL COMMERCE TESTS ====================
     
-    async def test_loyalty_health(self):
-        """Test Loyalty Health Check"""
-        return await self.test_endpoint(
-            "GET", "/loyalty/health",
-            "Loyalty Health Check"
+    async def test_social_commerce_health_check(self):
+        """Test Social Commerce health check endpoint"""
+        response = await self.make_request('GET', '/social-commerce/health')
+        
+        success = (
+            response.get('status_code') == 200 and
+            isinstance(response.get('data'), dict) and
+            response['data'].get('status') == 'operational' and
+            'features' in response['data'] and
+            len(response['data']['features']) > 0
         )
-    
-    async def test_user_loyalty_status(self):
-        """Test User Loyalty Status"""
-        return await self.test_endpoint(
-            "GET", f"/loyalty/user/{self.test_user_id}/loyalty",
-            "User Loyalty Status"
+        
+        details = f"Status: {response['data'].get('status', 'unknown')}, Features: {len(response['data'].get('features', []))}"
+        self.log_test_result("Social Commerce Health Check", success, details, response)
+        
+    async def test_shoppable_content_creation(self):
+        """Test shoppable content creation and management"""
+        # Test content creation
+        content_params = {
+            'creator_id': self.test_creator_id,
+            'content_type': 'post',
+            'title': 'Amazing Summer Collection',
+            'description': 'Check out these must-have summer pieces! #SummerFashion #OOTD',
+            'media_urls': json.dumps(['https://example.com/image1.jpg', 'https://example.com/image2.jpg']),
+            'hashtags': json.dumps(['summer_fashion', 'ootd', 'style']),
+            'location': 'Los Angeles, CA',
+            'is_sponsored': False
+        }
+        
+        response = await self.make_request('POST', '/social-commerce/content/create', params=content_params)
+        
+        creation_success = (
+            response.get('status_code') == 200 and
+            isinstance(response.get('data'), dict) and
+            'id' in response['data']
         )
-    
-    async def test_points_earning_system(self):
-        """Test Points Earning System"""
-        return await self.test_endpoint(
-            "POST", f"/loyalty/user/{self.test_user_id}/earn-points",
-            "Points Earning System",
-            params={
-                "points": 250,
-                "activity": "Retention Algorithm Testing Purchase",
-                "transaction_id": "retention_test_001"
-            }
+        
+        if creation_success:
+            self.test_content_id = response['data']['id']
+            
+        self.log_test_result("Shoppable Content Creation", creation_success,
+                           f"Content ID: {response['data'].get('id', 'N/A')}", response)
+        
+        if not self.test_content_id:
+            return
+            
+        # Test content retrieval
+        response = await self.make_request('GET', f'/social-commerce/content/{self.test_content_id}')
+        
+        retrieval_success = (
+            response.get('status_code') == 200 and
+            isinstance(response.get('data'), dict) and
+            response['data'].get('id') == self.test_content_id
         )
-    
-    async def test_rewards_redemption(self):
-        """Test Rewards Redemption"""
-        return await self.test_endpoint(
-            "POST", f"/loyalty/user/{self.test_user_id}/redeem-points",
-            "Rewards Redemption",
-            params={
-                "points": 100,
-                "reward": "Test Cashback Reward",
-                "reward_value": 5.0
-            }
+        
+        self.log_test_result("Shoppable Content Retrieval", retrieval_success,
+                           f"Title: {response['data'].get('title', 'N/A')}", response)
+        
+        # Test content performance analytics
+        response = await self.make_request('GET', f'/social-commerce/content/{self.test_content_id}/performance')
+        
+        performance_success = (
+            response.get('status_code') == 200 and
+            isinstance(response.get('data'), dict) and
+            'engagement_metrics' in response['data']
         )
-    
-    async def test_loyalty_analytics(self):
-        """Test Loyalty Analytics"""
-        return await self.test_endpoint(
-            "GET", "/loyalty/analytics/program",
-            "Loyalty Analytics"
+        
+        self.log_test_result("Content Performance Analytics", performance_success,
+                           f"Views: {response['data'].get('engagement_metrics', {}).get('views', 0)}", response)
+        
+        # Test trending content
+        response = await self.make_request('GET', '/social-commerce/content/trending')
+        
+        trending_success = (
+            response.get('status_code') == 200 and
+            isinstance(response.get('data'), list)
         )
-    
-    async def test_tier_system_validation(self):
-        """Test Tier System Validation"""
-        return await self.test_endpoint(
-            "GET", "/loyalty/tiers",
-            "Tier System Validation"
+        
+        self.log_test_result("Trending Content", trending_success,
+                           f"Trending items: {len(response.get('data', []))}", response)
+        
+    async def test_influencer_marketplace(self):
+        """Test influencer marketplace functionality"""
+        # Test influencer search
+        search_params = {
+            'specialties': json.dumps(['fashion', 'beauty']),
+            'min_followers': 10000,
+            'engagement_rate_min': 0.03,
+            'limit': 10
+        }
+        
+        response = await self.make_request('GET', '/social-commerce/influencers/search', params=search_params)
+        
+        search_success = (
+            response.get('status_code') == 200 and
+            isinstance(response.get('data'), list)
         )
-
-    # ==================== INTEGRATION TESTING ====================
-    
-    async def test_cross_system_data_flow(self):
-        """Test Cross-system data flow validation"""
-        print("🔄 Testing Cross-system Data Flow...")
         
-        # Test gamification -> loyalty integration
-        gamification_success = await self.test_user_progress_tracking()
-        loyalty_success = await self.test_user_loyalty_status()
+        self.log_test_result("Influencer Search", search_success,
+                           f"Results: {len(response.get('data', []))}", response)
         
-        integration_success = gamification_success and loyalty_success
-        self.log_result(
-            "Cross-system Data Flow Validation",
-            integration_success,
-            f"Gamification: {gamification_success}, Loyalty: {loyalty_success}"
+        # Test influencer profile (using sample data)
+        if response.get('data') and len(response['data']) > 0:
+            influencer_id = response['data'][0].get('user_id', 'inf_001')
+            
+            profile_response = await self.make_request('GET', f'/social-commerce/influencers/{influencer_id}')
+            
+            profile_success = (
+                profile_response.get('status_code') == 200 and
+                isinstance(profile_response.get('data'), dict) and
+                'user_id' in profile_response['data']
+            )
+            
+            self.log_test_result("Influencer Profile", profile_success,
+                               f"Username: {profile_response['data'].get('username', 'N/A')}", profile_response)
+            
+            # Test influencer analytics
+            analytics_response = await self.make_request('GET', f'/social-commerce/influencers/{influencer_id}/analytics')
+            
+            analytics_success = (
+                analytics_response.get('status_code') == 200 and
+                isinstance(analytics_response.get('data'), dict)
+            )
+            
+            self.log_test_result("Influencer Analytics", analytics_success,
+                               f"Influencer ID: {influencer_id}", analytics_response)
+        
+    async def test_campaign_management(self):
+        """Test campaign management functionality"""
+        # Test campaign creation
+        campaign_params = {
+            'brand_id': self.test_brand_id,
+            'campaign_name': 'Summer 2025 Fashion Campaign',
+            'description': 'Promote our new summer collection with top fashion influencers',
+            'campaign_type': 'seasonal',
+            'budget': 10000.0,
+            'objectives': json.dumps(['brand_awareness', 'sales', 'engagement']),
+            'target_demographics': json.dumps({'age_range': '18-35', 'gender': 'all', 'interests': ['fashion']}),
+            'content_requirements': json.dumps({'posts': 3, 'stories': 5, 'videos': 1}),
+            'deliverables': json.dumps([{'type': 'post', 'quantity': 3}, {'type': 'story', 'quantity': 5}]),
+            'timeline': json.dumps({
+                'start_date': (datetime.now() + timedelta(days=7)).isoformat(),
+                'end_date': (datetime.now() + timedelta(days=37)).isoformat()
+            })
+        }
+        
+        response = await self.make_request('POST', '/social-commerce/campaigns/create', params=campaign_params)
+        
+        creation_success = (
+            response.get('status_code') == 200 and
+            isinstance(response.get('data'), dict) and
+            'id' in response['data']
         )
-        return integration_success
-    
-    async def test_ai_model_performance(self):
-        """Test AI model performance verification (Emergent LLM integration)"""
-        print("🤖 Testing AI Model Performance...")
         
-        # Test AI challenge generation
-        ai_challenges = await self.test_ai_challenge_generation()
+        if creation_success:
+            self.test_campaign_id = response['data']['id']
+            
+        self.log_test_result("Campaign Creation", creation_success,
+                           f"Campaign ID: {response['data'].get('id', 'N/A')}", response)
         
-        # Test AI content moderation
-        ai_moderation = await self.test_ai_content_moderation()
+        if not self.test_campaign_id:
+            return
+            
+        # Test campaign retrieval
+        response = await self.make_request('GET', f'/social-commerce/campaigns/{self.test_campaign_id}')
         
-        # Test AI review analysis
-        ai_reviews = await self.test_product_reviews_ai_analysis()
-        
-        ai_performance = ai_challenges and ai_moderation and ai_reviews
-        self.log_result(
-            "AI Model Performance Verification",
-            ai_performance,
-            f"Challenges: {ai_challenges}, Moderation: {ai_moderation}, Reviews: {ai_reviews}"
+        retrieval_success = (
+            response.get('status_code') == 200 and
+            isinstance(response.get('data'), dict) and
+            response['data'].get('id') == self.test_campaign_id
         )
-        return ai_performance
-    
-    async def test_realtime_analytics_processing(self):
-        """Test Real-time analytics processing"""
-        print("📊 Testing Real-time Analytics Processing...")
         
-        # Test all analytics endpoints
-        gamification_analytics = await self.test_gamification_analytics()
-        community_analytics = await self.test_community_analytics()
-        loyalty_analytics = await self.test_loyalty_analytics()
+        self.log_test_result("Campaign Retrieval", retrieval_success,
+                           f"Campaign Name: {response['data'].get('campaign_name', 'N/A')}", response)
         
-        analytics_success = gamification_analytics and community_analytics and loyalty_analytics
-        self.log_result(
-            "Real-time Analytics Processing",
-            analytics_success,
-            f"Gamification: {gamification_analytics}, Community: {community_analytics}, Loyalty: {loyalty_analytics}"
+        # Test campaign analytics
+        response = await self.make_request('GET', f'/social-commerce/campaigns/{self.test_campaign_id}/analytics')
+        
+        analytics_success = (
+            response.get('status_code') == 200 and
+            isinstance(response.get('data'), dict) and
+            'performance_summary' in response['data']
         )
-        return analytics_success
-    
-    async def test_user_journey_tracking(self):
-        """Test User journey tracking across all systems"""
-        print("👤 Testing User Journey Tracking...")
         
-        # Simulate complete user journey
-        journey_steps = []
+        self.log_test_result("Campaign Analytics", analytics_success,
+                           f"ROI: {response['data'].get('performance_summary', {}).get('roi', 0)}", response)
         
-        # Step 1: User progress in gamification
-        step1 = await self.test_user_progress_tracking()
-        journey_steps.append(("Gamification Progress", step1))
+        # Test active campaigns
+        response = await self.make_request('GET', '/social-commerce/campaigns/active')
         
-        # Step 2: User creates community content
-        step2 = await self.test_ai_content_moderation()
-        journey_steps.append(("Community Engagement", step2))
-        
-        # Step 3: User earns loyalty points
-        step3 = await self.test_points_earning_system()
-        journey_steps.append(("Loyalty Points Earning", step3))
-        
-        # Step 4: User redeems rewards
-        step4 = await self.test_rewards_redemption()
-        journey_steps.append(("Rewards Redemption", step4))
-        
-        journey_success = all(step[1] for step in journey_steps)
-        journey_details = ", ".join([f"{step[0]}: {step[1]}" for step in journey_steps])
-        
-        self.log_result(
-            "User Journey Tracking Across All Systems",
-            journey_success,
-            journey_details
+        active_success = (
+            response.get('status_code') == 200 and
+            isinstance(response.get('data'), dict) and
+            'campaigns' in response['data']
         )
-        return journey_success
+        
+        self.log_test_result("Active Campaigns", active_success,
+                           f"Active campaigns: {len(response['data'].get('campaigns', []))}", response)
+        
+    async def test_social_shopping_groups(self):
+        """Test social shopping groups functionality"""
+        # Test group creation
+        group_params = {
+            'admin_id': self.test_user_id,
+            'name': 'Fashion Enthusiasts',
+            'description': 'A group for fashion lovers to share deals and recommendations',
+            'group_type': 'fashion'
+        }
+        
+        response = await self.make_request('POST', '/social-commerce/groups/create', params=group_params)
+        
+        creation_success = (
+            response.get('status_code') == 200 and
+            isinstance(response.get('data'), dict) and
+            'id' in response['data']
+        )
+        
+        if creation_success:
+            self.test_group_id = response['data']['id']
+            
+        self.log_test_result("Shopping Group Creation", creation_success,
+                           f"Group ID: {response['data'].get('id', 'N/A')}", response)
+        
+        if not self.test_group_id:
+            return
+            
+        # Test group retrieval
+        response = await self.make_request('GET', f'/social-commerce/groups/{self.test_group_id}')
+        
+        retrieval_success = (
+            response.get('status_code') == 200 and
+            isinstance(response.get('data'), dict) and
+            response['data'].get('id') == self.test_group_id
+        )
+        
+        self.log_test_result("Shopping Group Retrieval", retrieval_success,
+                           f"Group Name: {response['data'].get('name', 'N/A')}", response)
+        
+        # Test joining group
+        join_params = {'user_id': f"member_{uuid.uuid4().hex[:8]}"}
+        
+        response = await self.make_request('POST', f'/social-commerce/groups/{self.test_group_id}/join',
+                                         params=join_params)
+        
+        join_success = (
+            response.get('status_code') == 200 and
+            isinstance(response.get('data'), dict) and
+            (response['data'].get('success') == True or 'message' in response['data'])
+        )
+        
+        self.log_test_result("Join Shopping Group", join_success,
+                           f"Join Status: {response['data'].get('success', 'unknown')}", response)
+        
+    async def test_group_purchases(self):
+        """Test group purchase functionality"""
+        if not self.test_group_id:
+            self.log_test_result("Group Purchase Creation", False, "No test group available", {})
+            return
+            
+        # Test group purchase creation
+        purchase_params = {
+            'organizer_id': self.test_user_id,
+            'group_id': self.test_group_id,
+            'product_id': 'prod_group_001',
+            'minimum_participants': 5,
+            'maximum_participants': 20,
+            'group_price': 79.99,
+            'deadline': (datetime.now() + timedelta(days=7)).isoformat()
+        }
+        
+        response = await self.make_request('POST', '/social-commerce/group-purchase/create', params=purchase_params)
+        
+        creation_success = (
+            response.get('status_code') == 200 and
+            isinstance(response.get('data'), dict) and
+            'id' in response['data']
+        )
+        
+        purchase_id = response['data'].get('id') if creation_success else None
+        
+        self.log_test_result("Group Purchase Creation", creation_success,
+                           f"Purchase ID: {purchase_id}", response)
+        
+        if not purchase_id:
+            return
+            
+        # Test joining group purchase
+        join_params = {'user_id': f"buyer_{uuid.uuid4().hex[:8]}"}
+        
+        response = await self.make_request('POST', f'/social-commerce/group-purchase/{purchase_id}/join',
+                                         params=join_params)
+        
+        join_success = (
+            response.get('status_code') == 200 and
+            isinstance(response.get('data'), dict) and
+            (response['data'].get('success') == True or 'error' in response['data'])
+        )
+        
+        self.log_test_result("Join Group Purchase", join_success,
+                           f"Join Status: {response['data'].get('success', 'error')}", response)
+        
+        # Test active group purchases
+        response = await self.make_request('GET', '/social-commerce/group-purchase/active')
+        
+        active_success = (
+            response.get('status_code') == 200 and
+            isinstance(response.get('data'), dict) and
+            'group_purchases' in response['data']
+        )
+        
+        self.log_test_result("Active Group Purchases", active_success,
+                           f"Active purchases: {len(response['data'].get('group_purchases', []))}", response)
+        
+    async def test_ugc_and_social_proof(self):
+        """Test User Generated Content and Social Proof features"""
+        # Test trending UGC
+        response = await self.make_request('GET', '/social-commerce/ugc/trending', params={'limit': 10})
+        
+        ugc_success = (
+            response.get('status_code') == 200 and
+            isinstance(response.get('data'), list)
+        )
+        
+        self.log_test_result("Trending UGC", ugc_success,
+                           f"UGC items: {len(response.get('data', []))}", response)
+        
+        # Test social proof for a product
+        test_product_id = 'prod_001'
+        response = await self.make_request('GET', f'/social-commerce/social-proof/{test_product_id}')
+        
+        proof_success = (
+            response.get('status_code') == 200 and
+            isinstance(response.get('data'), dict) and
+            'product_id' in response['data']
+        )
+        
+        self.log_test_result("Product Social Proof", proof_success,
+                           f"Product: {test_product_id}, Purchases: {response['data'].get('total_purchases', 0)}", response)
+        
+    async def test_personalized_feed(self):
+        """Test personalized feed generation"""
+        response = await self.make_request('GET', f'/social-commerce/feed/personalized/{self.test_user_id}',
+                                         params={'limit': 15})
+        
+        feed_success = (
+            response.get('status_code') == 200 and
+            isinstance(response.get('data'), dict) and
+            'feed_items' in response['data']
+        )
+        
+        self.log_test_result("Personalized Feed", feed_success,
+                           f"Feed items: {len(response['data'].get('feed_items', []))}", response)
+        
+    async def test_platform_analytics(self):
+        """Test platform analytics and insights"""
+        # Test platform analytics
+        response = await self.make_request('GET', '/social-commerce/analytics/platform')
+        
+        platform_success = (
+            response.get('status_code') == 200 and
+            isinstance(response.get('data'), dict) and
+            'platform_metrics' in response['data']
+        )
+        
+        self.log_test_result("Platform Analytics", platform_success,
+                           f"Total Revenue: ${response['data'].get('platform_metrics', {}).get('total_revenue', 0)}", response)
+        
+        # Test creator analytics
+        if self.test_creator_id:
+            response = await self.make_request('GET', f'/social-commerce/analytics/creator/{self.test_creator_id}')
+            
+            creator_success = (
+                response.get('status_code') == 200 and
+                isinstance(response.get('data'), dict)
+            )
+            
+            self.log_test_result("Creator Analytics", creator_success,
+                               f"Creator ID: {self.test_creator_id}", response)
+        
+    async def test_dashboard_overview(self):
+        """Test social commerce dashboard overview"""
+        response = await self.make_request('GET', '/social-commerce/dashboard/overview')
+        
+        dashboard_success = (
+            response.get('status_code') == 200 and
+            isinstance(response.get('data'), dict) and
+            'platform_health' in response['data']
+        )
+        
+        self.log_test_result("Social Commerce Dashboard", dashboard_success,
+                           f"Active Creators: {response['data'].get('platform_health', {}).get('total_active_creators', 0)}", response)
 
     # ==================== MAIN TEST EXECUTION ====================
     
     async def run_all_tests(self):
-        """Run comprehensive backend testing"""
-        print("🚀 Starting Comprehensive Backend Testing for Top-Tier App Matrix and Retention Algorithm")
-        print("=" * 80)
+        """Run all test suites"""
+        print("🚀 Starting Comprehensive Super App Ecosystem & Advanced Social Commerce Backend Testing")
+        print("=" * 100)
         
-        start_time = time.time()
+        await self.setup_session()
         
-        # GAMIFICATION SYSTEM TESTING
-        print("\n🎮 GAMIFICATION SYSTEM TESTING")
-        print("-" * 40)
-        gamification_tests = [
-            self.test_gamification_health(),
-            self.test_ai_challenge_generation(),
-            self.test_spin_wheel_mechanics(),
-            self.test_user_progress_tracking(),
-            self.test_achievement_system(),
-            self.test_leaderboards(),
-            self.test_gamification_analytics()
-        ]
+        try:
+            # Super App Ecosystem Tests
+            print("\n🌟 SUPER APP ECOSYSTEM TESTS")
+            print("-" * 50)
+            await self.test_super_app_health_check()
+            await self.test_wallet_operations()
+            await self.test_service_integrations()
+            await self.test_ai_personal_assistant()
+            await self.test_lifestyle_features()
+            await self.test_influencer_live_shopping()
+            await self.test_analytics_metrics()
+            await self.test_user_service_history()
+            
+            # Social Commerce Tests
+            print("\n🛍️ ADVANCED SOCIAL COMMERCE TESTS")
+            print("-" * 50)
+            await self.test_social_commerce_health_check()
+            await self.test_shoppable_content_creation()
+            await self.test_influencer_marketplace()
+            await self.test_campaign_management()
+            await self.test_social_shopping_groups()
+            await self.test_group_purchases()
+            await self.test_ugc_and_social_proof()
+            await self.test_personalized_feed()
+            await self.test_platform_analytics()
+            await self.test_dashboard_overview()
+            
+        finally:
+            await self.cleanup_session()
+            
+        # Print final results
+        self.print_final_results()
         
-        gamification_results = await asyncio.gather(*gamification_tests, return_exceptions=True)
-        gamification_success = sum(1 for r in gamification_results if r is True)
+    def print_final_results(self):
+        """Print comprehensive test results"""
+        print("\n" + "=" * 100)
+        print("🎯 COMPREHENSIVE TEST RESULTS SUMMARY")
+        print("=" * 100)
         
-        # COMMUNITY SYSTEM TESTING
-        print("\n🌐 COMMUNITY SYSTEM TESTING")
-        print("-" * 40)
-        community_tests = [
-            self.test_community_health(),
-            self.test_community_feed_generation(),
-            self.test_ai_content_moderation(),
-            self.test_product_reviews_ai_analysis(),
-            self.test_community_analytics(),
-            self.test_trending_content_detection()
-        ]
+        success_rate = (self.passed_tests / self.total_tests * 100) if self.total_tests > 0 else 0
         
-        community_results = await asyncio.gather(*community_tests, return_exceptions=True)
-        community_success = sum(1 for r in community_results if r is True)
+        print(f"📊 OVERALL STATISTICS:")
+        print(f"   Total Tests: {self.total_tests}")
+        print(f"   Passed: {self.passed_tests} ✅")
+        print(f"   Failed: {self.failed_tests} ❌")
+        print(f"   Success Rate: {success_rate:.1f}%")
         
-        # LOYALTY SYSTEM TESTING
-        print("\n🏆 LOYALTY SYSTEM TESTING")
-        print("-" * 40)
-        loyalty_tests = [
-            self.test_loyalty_health(),
-            self.test_user_loyalty_status(),
-            self.test_points_earning_system(),
-            self.test_rewards_redemption(),
-            self.test_loyalty_analytics(),
-            self.test_tier_system_validation()
-        ]
+        # Categorize results
+        super_app_tests = [r for r in self.test_results if 'Super App' in r['test_name'] or 'Wallet' in r['test_name'] or 'AI Assistant' in r['test_name'] or 'Lifestyle' in r['test_name'] or 'Influencer' in r['test_name'] or 'Analytics' in r['test_name'] or 'Service' in r['test_name']]
+        social_commerce_tests = [r for r in self.test_results if 'Social Commerce' in r['test_name'] or 'Shoppable' in r['test_name'] or 'Campaign' in r['test_name'] or 'Shopping Group' in r['test_name'] or 'Group Purchase' in r['test_name'] or 'UGC' in r['test_name'] or 'Feed' in r['test_name'] or 'Platform' in r['test_name'] or 'Creator' in r['test_name'] or 'Dashboard' in r['test_name']]
         
-        loyalty_results = await asyncio.gather(*loyalty_tests, return_exceptions=True)
-        loyalty_success = sum(1 for r in loyalty_results if r is True)
+        print(f"\n🌟 SUPER APP ECOSYSTEM RESULTS:")
+        super_app_passed = len([r for r in super_app_tests if r['success']])
+        super_app_total = len(super_app_tests)
+        super_app_rate = (super_app_passed / super_app_total * 100) if super_app_total > 0 else 0
+        print(f"   Tests: {super_app_total} | Passed: {super_app_passed} | Success Rate: {super_app_rate:.1f}%")
         
-        # INTEGRATION TESTING
-        print("\n🔗 INTEGRATION TESTING")
-        print("-" * 40)
-        integration_tests = [
-            self.test_cross_system_data_flow(),
-            self.test_ai_model_performance(),
-            self.test_realtime_analytics_processing(),
-            self.test_user_journey_tracking()
-        ]
+        print(f"\n🛍️ SOCIAL COMMERCE RESULTS:")
+        social_passed = len([r for r in social_commerce_tests if r['success']])
+        social_total = len(social_commerce_tests)
+        social_rate = (social_passed / social_total * 100) if social_total > 0 else 0
+        print(f"   Tests: {social_total} | Passed: {social_passed} | Success Rate: {social_rate:.1f}%")
         
-        integration_results = await asyncio.gather(*integration_tests, return_exceptions=True)
-        integration_success = sum(1 for r in integration_results if r is True)
-        
-        # FINAL RESULTS
-        end_time = time.time()
-        total_time = end_time - start_time
-        
-        total_tests = len(gamification_tests) + len(community_tests) + len(loyalty_tests) + len(integration_tests)
-        total_passed = gamification_success + community_success + loyalty_success + integration_success
-        success_rate = (total_passed / total_tests) * 100
-        
-        print("\n" + "=" * 80)
-        print("📊 COMPREHENSIVE TESTING RESULTS SUMMARY")
-        print("=" * 80)
-        print(f"🎮 GAMIFICATION SYSTEM: {gamification_success}/{len(gamification_tests)} tests passed")
-        print(f"🌐 COMMUNITY SYSTEM: {community_success}/{len(community_tests)} tests passed")
-        print(f"🏆 LOYALTY SYSTEM: {loyalty_success}/{len(loyalty_tests)} tests passed")
-        print(f"🔗 INTEGRATION TESTING: {integration_success}/{len(integration_tests)} tests passed")
-        print("-" * 80)
-        print(f"📈 OVERALL SUCCESS RATE: {total_passed}/{total_tests} ({success_rate:.1f}%)")
-        print(f"⏱️  TOTAL TESTING TIME: {total_time:.2f} seconds")
-        print(f"⚡ AVERAGE RESPONSE TIME: {total_time/total_tests:.3f} seconds per test")
-        
-        # Detailed failure analysis
-        failed_tests = [r for r in self.results if not r["success"]]
+        # Show failed tests
+        failed_tests = [r for r in self.test_results if not r['success']]
         if failed_tests:
-            print(f"\n❌ FAILED TESTS ({len(failed_tests)}):")
+            print(f"\n❌ FAILED TESTS DETAILS:")
             for test in failed_tests:
-                print(f"   • {test['test']}: {test['details']}")
+                print(f"   • {test['test_name']}: {test['details']}")
         
-        print("\n🎯 RETENTION ALGORITHM BACKEND VALIDATION COMPLETE")
+        # Show critical features status
+        print(f"\n🔍 CRITICAL FEATURES STATUS:")
         
-        return {
-            "total_tests": total_tests,
-            "passed_tests": total_passed,
-            "success_rate": success_rate,
-            "testing_time": total_time,
-            "gamification_success": gamification_success,
-            "community_success": community_success,
-            "loyalty_success": loyalty_success,
-            "integration_success": integration_success,
-            "failed_tests": failed_tests
-        }
+        # Super App critical features
+        wallet_tests = [r for r in self.test_results if 'Wallet' in r['test_name']]
+        wallet_status = "✅ OPERATIONAL" if all(r['success'] for r in wallet_tests) else "❌ ISSUES DETECTED"
+        print(f"   AislePay Wallet System: {wallet_status}")
+        
+        ai_tests = [r for r in self.test_results if 'AI Assistant' in r['test_name']]
+        ai_status = "✅ OPERATIONAL" if all(r['success'] for r in ai_tests) else "❌ ISSUES DETECTED"
+        print(f"   AI Personal Assistant: {ai_status}")
+        
+        service_tests = [r for r in self.test_results if 'Food' in r['test_name'] or 'Travel' in r['test_name'] or 'Bill' in r['test_name']]
+        service_status = "✅ OPERATIONAL" if any(r['success'] for r in service_tests) else "❌ ISSUES DETECTED"
+        print(f"   Service Integrations: {service_status}")
+        
+        # Social Commerce critical features
+        content_tests = [r for r in self.test_results if 'Shoppable Content' in r['test_name']]
+        content_status = "✅ OPERATIONAL" if all(r['success'] for r in content_tests) else "❌ ISSUES DETECTED"
+        print(f"   Shoppable Content System: {content_status}")
+        
+        influencer_tests = [r for r in self.test_results if 'Influencer' in r['test_name'] and 'Social Commerce' not in r['test_name']]
+        influencer_status = "✅ OPERATIONAL" if any(r['success'] for r in influencer_tests) else "❌ ISSUES DETECTED"
+        print(f"   Influencer Marketplace: {influencer_status}")
+        
+        campaign_tests = [r for r in self.test_results if 'Campaign' in r['test_name']]
+        campaign_status = "✅ OPERATIONAL" if all(r['success'] for r in campaign_tests) else "❌ ISSUES DETECTED"
+        print(f"   Campaign Management: {campaign_status}")
+        
+        # Overall system readiness
+        print(f"\n🎯 SYSTEM READINESS ASSESSMENT:")
+        if success_rate >= 90:
+            print("   🟢 EXCELLENT - System ready for Series A investor demonstrations")
+        elif success_rate >= 75:
+            print("   🟡 GOOD - Minor issues need attention before full deployment")
+        elif success_rate >= 60:
+            print("   🟠 MODERATE - Several issues require fixes")
+        else:
+            print("   🔴 CRITICAL - Major issues prevent deployment readiness")
+            
+        print("\n" + "=" * 100)
+
 
 async def main():
-    """Main testing function"""
-    async with BackendTester() as tester:
-        results = await tester.run_all_tests()
-        
-        # Return appropriate exit code
-        if results["success_rate"] >= 80:
-            print("✅ TESTING PASSED: Backend systems are operational")
-            return 0
-        else:
-            print("❌ TESTING FAILED: Critical issues detected")
-            return 1
+    """Main test execution function"""
+    test_suite = SuperAppSocialCommerceTestSuite()
+    await test_suite.run_all_tests()
+
 
 if __name__ == "__main__":
     asyncio.run(main())
