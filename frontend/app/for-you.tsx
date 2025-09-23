@@ -1094,7 +1094,7 @@ const styles = StyleSheet.create({
     textShadowOffset: { width: 0, height: 1 },
     textShadowRadius: 2,
   },
-  elegantRepostPlusButton: {
+  elegantRemixPlusButton: {
     position: 'absolute',
     bottom: -6,
     backgroundColor: '#22C55E',
@@ -1111,7 +1111,7 @@ const styles = StyleSheet.create({
     shadowRadius: 3,
     elevation: 6,
   },
-  elegantRepostPlus: {
+  elegantRemixPlus: {
     color: '#FFFFFF',
     fontSize: 10,
     fontWeight: '800',
