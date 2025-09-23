@@ -235,9 +235,9 @@ export default function ForYouScreen() {
     // Navigate to product detail page
   };
 
-  const handleRepost = (video: any) => {
-    console.log('Repost pressed for video:', video.id);
-    // Navigate to remix creation screen with video data (same features, repost branding)
+  const handleRemix = (video: any) => {
+    console.log('Remix pressed for video:', video.id);
+    // Navigate to remix creation screen with video data (keeping all existing features)
     router.push({
       pathname: '/remix-creator',
       params: {
