@@ -186,6 +186,22 @@ export default function ProfileScreen() {
           badge: 'MULTI-PLATFORM',
         },
         {
+          id: '14b',
+          title: 'Advanced CLP Engine',
+          icon: '⚡',
+          subtitle: 'Content Lead Purchase • AI optimization • 9.4% conversion',
+          route: '/(tabs)/clp-engine-dashboard',
+          badge: 'CLP+PPL',
+        },
+        {
+          id: '14c',
+          title: 'All • More • Beyond All Matrix',
+          icon: '∞',
+          subtitle: 'Matrix visualization • Infinite features • Series A ready',
+          route: '/(tabs)/aislemarts-matrix-dashboard',
+          badge: 'MATRIX',
+        },
+        {
           id: '14',
           title: 'Brand Verification',
           icon: '🏢',
