@@ -41,9 +41,9 @@ Analytics: https://analytics.aislemarts.com
 
 ### **Development/Staging**
 ```
-Development: https://ai-marketplace-13.preview.emergentagent.com
-Staging API: https://ai-marketplace-13.preview.emergentagent.com/api
-Testing Suite: https://ai-marketplace-13.preview.emergentagent.com/test
+Development: https://aislemart-superapp.preview.emergentagent.com
+Staging API: https://aislemart-superapp.preview.emergentagent.com/api
+Testing Suite: https://aislemart-superapp.preview.emergentagent.com/test
 ```
 
 ---

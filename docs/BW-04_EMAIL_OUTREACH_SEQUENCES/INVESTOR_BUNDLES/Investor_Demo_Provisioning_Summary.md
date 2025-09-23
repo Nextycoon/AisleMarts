@@ -4,7 +4,7 @@
 
 **Command Executed**: AWARENESS-PERSONALIZED INVESTOR DEMOS (BLUE WAVE)  
 **Completion Date**: June 15, 2025  
-**Environment**: Dev Preview (`https://ai-marketplace-13.preview.emergentagent.com`)  
+**Environment**: Dev Preview (`https://aislemart-superapp.preview.emergentagent.com`)  
 **Status**: All 8 investor bundles provisioned and operational
 
 ---
