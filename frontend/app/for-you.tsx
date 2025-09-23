@@ -176,9 +176,6 @@ export default function ForYouScreen() {
         useNativeDriver: false,
       }).start();
     }
-        useNativeDriver: false,
-      }).start();
-    }
   };
 
   const handleSwipeDown = () => {
