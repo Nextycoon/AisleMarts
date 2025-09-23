@@ -343,22 +343,20 @@ export default function ForYouScreen() {
         </View>
       </Animated.View>
         
-      {/* Touch Areas for Navigation */}
-      <TouchableOpacity 
-        style={styles.swipeUpArea} 
-        onPress={handleSwipeUp}
-        activeOpacity={1}
-      />
-      <TouchableOpacity 
-        style={styles.swipeDownArea} 
-        onPress={handleSwipeDown}
-        activeOpacity={1}
-      />
-      <TouchableOpacity 
-        style={styles.playPauseArea} 
-        onPress={togglePlayPause}
-        activeOpacity={1}
-      />
+      {/* Gesture Handler for Scroll Detection */}
+      <View 
+        style={styles.gestureArea}
+        onTouchStart={handleTouchStart}
+        onTouchEnd={handleTouchEnd}
+        onTouchMove={handleTouchMove}
+      >
+        {/* Play/Pause Area */}
+        <TouchableOpacity 
+          style={styles.playPauseArea} 
+          onPress={togglePlayPause}
+          activeOpacity={1}
+        />
+      </View>
 
       {/* Left Side - Creator Info moved down to above bottom navigation */}
       <View style={styles.leftSideMovedDown}>
