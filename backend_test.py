@@ -1,7 +1,7 @@
 #!/usr/bin/env python3
 """
-Comprehensive Backend Testing Suite for Social Media Advertising Platform
-Testing all endpoints for multi-platform campaign management, influencer partnerships, and AI optimization
+Comprehensive Backend Testing Suite for CLP Engine Integration
+Testing all CLP Engine endpoints for content lead purchase optimization
 """
 
 import asyncio
@@ -19,7 +19,7 @@ load_dotenv()
 BACKEND_URL = os.getenv('EXPO_PUBLIC_BACKEND_URL', 'https://aislemart-superapp.preview.emergentagent.com')
 BASE_URL = f"{BACKEND_URL}/api"
 
-class SocialMediaAdvertisingTester:
+class CLPEngineTester:
     """Comprehensive tester for Social Media Advertising Suite"""
     
     def __init__(self):
