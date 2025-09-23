@@ -56,7 +56,7 @@ export default function ForYouScreen() {
   const forYouFeed = [
     {
       id: 1,
-      uri: 'https://commondatastorage.googleapis.com/gtv-videos-bucket/sample/BigBuckBunny.mp4',
+      uri: 'https://sample-videos.com/zip/10/mp4/SampleVideo_1280x720_1mb.mp4',
       creator: {
         id: 'luxefashion',
         name: '@LuxeFashion',
