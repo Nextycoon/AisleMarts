@@ -66,7 +66,11 @@ export default function TopNavigation() {
           style={styles.forYouButton} 
           onPress={() => handleTabPress('/for-you')}
         >
-          <Text style={[styles.forYouText, isActive('/for-you') && styles.forYouActive]}>
+          <Text 
+            style={[styles.forYouText, isActive('/for-you') && styles.forYouActive]}
+            numberOfLines={1}
+            adjustsFontSizeToFit={true}
+          >
             For You
           </Text>
           {isActive('/for-you') && <View style={styles.activeIndicator} />}
