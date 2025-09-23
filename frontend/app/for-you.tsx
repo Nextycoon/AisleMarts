@@ -528,7 +528,9 @@ export default function ForYouScreen() {
             <View style={styles.refinedMusicIconContainer}>
               <Text style={styles.refinedMusicIcon}>♪</Text>
             </View>
-            <Text style={styles.refinedMusicText}>{currentVideo.sound.title}</Text>
+            <Text style={styles.refinedMusicText}>
+              {currentVideo.music_info.title} - {currentVideo.music_info.artist}
+            </Text>
           </View>
         </View>
       </View>
