@@ -22,7 +22,7 @@ except ImportError:
         def __init__(self, text):
             self.text = text
 
-from ..models.live_streaming import (
+from models.live_streaming import (
     LiveStream, StreamStatus, ViewerAction, ProductShowcase, 
     LiveStreamAnalytics, AIInsight, ViewerEngagement, StreamMetrics
 )
