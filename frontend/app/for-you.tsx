@@ -237,39 +237,17 @@ export default function ForYouScreen() {
 
   const handleRepost = (video: any) => {
     console.log('Repost pressed for video:', video.id);
-    // Show repost options modal or directly repost
-    Alert.alert(
-      'Repost Options',
-      'How would you like to share this content?',
-      [
-        {
-          text: 'Repost Now',
-          onPress: () => {
-            console.log('Reposting video:', video.id);
-            // Add repost logic here
-            Alert.alert('Success', 'Video reposted to your profile!');
-          }
-        },
-        {
-          text: 'Repost with Comment',
-          onPress: () => {
-            // Navigate to repost with comment screen
-            router.push({
-              pathname: '/repost-creator',
-              params: {
-                videoId: video.id,
-                creatorName: video.creator.name,
-                caption: video.caption,
-              }
-            });
-          }
-        },
-        {
-          text: 'Cancel',
-          style: 'cancel'
-        }
-      ]
-    );
+    // Navigate to remix creation screen with video data (same features, repost branding)
+    router.push({
+      pathname: '/remix-creator',
+      params: {
+        videoId: video.id,
+        soundId: video.sound.id,
+        soundTitle: video.sound.title,
+        soundArtist: video.sound.artist,
+        originalCreator: video.creator.name,
+      }
+    });
   };
 
   return (
