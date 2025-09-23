@@ -111,7 +111,7 @@ export default function ForYouScreen() {
 
   const currentVideo = forYouFeed[currentIndex] || {
     id: 1,
-    uri: 'https://player.vimeo.com/external/434045526.hd.mp4?s=c27eecc69a27dbc4ff2b87d38afc35ea1a9d1ffc&profile_id=175', // Luxury winter fashion video
+    uri: 'https://commondatastorage.googleapis.com/gtv-videos-bucket/sample/ForBiggerEscapes.mp4', // Working sample video
     creator: {
       id: 'luxefashion',
       name: '@LuxeFashion',
