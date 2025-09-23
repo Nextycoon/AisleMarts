@@ -117,9 +117,9 @@ class AdvancedAITester:
             params = {
                 "image_url": test_image_url,
                 "analysis_depth": "standard",
-                "include_price_estimation": True,
-                "include_style_analysis": True,
-                "include_similar_products": True
+                "include_price_estimation": "true",
+                "include_style_analysis": "true",
+                "include_similar_products": "true"
             }
             
             async with self.session.post(f"{API_BASE}/visual/recognize", params=params) as response:
