@@ -364,14 +364,14 @@ export default function ForYouScreen() {
         </TouchableOpacity>
 
         <TouchableOpacity 
-          style={styles.elegantCartContainerWithPlus}
-          onPress={() => setShowProducts(!showProducts)}
+          style={styles.elegantRemixContainerWithPlus}
+          onPress={() => handleRemix(currentVideo)}
         >
           <View style={styles.sharpIconContainer}>
-            <Text style={styles.elegantCartIcon}>🛍️</Text>
+            <Text style={styles.elegantRemixIcon}>🎵</Text>
           </View>
-          <View style={styles.elegantCartPlusButton}>
-            <Text style={styles.elegantCartPlus}>+</Text>
+          <View style={styles.elegantRemixPlusButton}>
+            <Text style={styles.elegantRemixPlus}>R</Text>
           </View>
         </TouchableOpacity>
 
