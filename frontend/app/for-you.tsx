@@ -1252,7 +1252,7 @@ const styles = StyleSheet.create({
     width: 52,
     height: 52,
     borderRadius: 26,
-    backgroundColor: 'linear-gradient(135deg, #D4AF37 0%, #FFD700 50%, #B8860B 100%)',
+    backgroundColor: '#D4AF37', // Fallback color for React Native Web
     alignItems: 'center',
     justifyContent: 'center',
     borderWidth: 3,
