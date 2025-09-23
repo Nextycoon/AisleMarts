@@ -390,6 +390,13 @@ export default function ForYouScreen() {
 
       {/* Left Side - Creator Info moved down to above bottom navigation */}
       <View style={styles.leftSideMovedDown}>
+        
+        {/* Repost to followers pill - TikTok style */}
+        <View style={styles.repostToFollowersPill}>
+          <Text style={styles.repostIcon}>🔄</Text>
+          <Text style={styles.repostText}>Repost to followers</Text>
+        </View>
+        
         <View style={styles.elegantCreatorInfo}>
           <View style={styles.refinedCreatorNameContainer}>
             <Text style={styles.refinedCreatorName}>{currentVideo.creator.name}</Text>
