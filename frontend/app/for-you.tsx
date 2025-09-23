@@ -1495,15 +1495,15 @@ const styles = StyleSheet.create({
   // ==================================================================================
   storiesSection: {
     position: 'absolute',
-    top: 120, // Under the header icons (adjusted for better positioning)
+    top: 80, // Right under header icons
     left: 0,
     right: 0,
-    height: 100,
-    zIndex: 20,
-    backgroundColor: 'rgba(0, 0, 0, 0.8)',
+    height: 110,
+    zIndex: 999, // High z-index to ensure visibility
+    backgroundColor: 'rgba(0, 0, 0, 0.9)',
     paddingVertical: 8,
-    borderBottomWidth: 1,
-    borderBottomColor: 'rgba(212, 175, 55, 0.3)',
+    borderBottomWidth: 2,
+    borderBottomColor: '#D4AF37',
   },
   storiesScrollView: {
     flex: 1,
