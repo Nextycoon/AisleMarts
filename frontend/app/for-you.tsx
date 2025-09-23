@@ -436,13 +436,15 @@ export default function ForYouScreen() {
 
       {/* Right Side Actions - Profile stays, others spaced out */}
       <View style={styles.elegantRightSideWithSpacing}>
-        {/* Profile Avatar with Story Ring - Same as stories section */}
+        {/* Profile Avatar with Story Ring - Exactly like stories section */}
         <TouchableOpacity 
           style={styles.elegantAvatarContainer}
           onPress={() => router.push(`/profile/${currentVideo.creator.id}`)}
         >
-          <View style={styles.elegantAvatarWithStoryRing}>
-            <Text style={styles.elegantAvatarText}>L</Text>
+          <View style={[styles.profileStoryRing, styles.activeStoryRing]}>
+            <View style={styles.elegantAvatarInside}>
+              <Text style={styles.elegantAvatarText}>L</Text>
+            </View>
           </View>
           <View style={styles.elegantFollowButton}>
             <Text style={styles.elegantFollowPlus}>+</Text>
