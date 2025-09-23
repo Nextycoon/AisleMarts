@@ -1081,13 +1081,13 @@ const styles = StyleSheet.create({
     fontSize: 14,
     fontWeight: '800',
   },
-  // Repost Button Styles
-  elegantRepostContainerWithPlus: {
+  // Remix Button Styles (rebranded from repost, same functionality)
+  elegantRemixContainerWithPlus: {
     alignItems: 'center',
     marginBottom: 12,
     position: 'relative',
   },
-  elegantRepostIcon: {
+  elegantRemixIcon: {
     fontSize: 18,
     color: '#FFFFFF',
     textShadowColor: 'rgba(34, 197, 94, 0.6)',
