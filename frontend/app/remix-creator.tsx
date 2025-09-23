@@ -115,18 +115,55 @@ const RemixCreator = () => {
       return;
     }
 
-    if (!remixCaption.trim()) {
-      Alert.alert('Caption Required', 'Please add a caption for your remix');
+    // Handle quick repost without caption requirement
+    if (selectedRemixType === 'repost_now') {
+      setIsCreating(true);
+      
+      try {
+        await new Promise(resolve => setTimeout(resolve, 1500));
+        
+        console.log('Quick repost:', {
+          type: selectedRemixType,
+          originalVideo: videoId,
+          originalCreator
+        });
+
+        Alert.alert(
+          'Reposted Successfully!', 
+          'Content has been shared to your profile and followers.',
+          [
+            {
+              text: 'View Profile',
+              onPress: () => router.push('/profile')
+            },
+            {
+              text: 'Done',
+              onPress: () => router.back()
+            }
+          ]
+        );
+      } catch (error) {
+        Alert.alert('Error', 'Failed to repost. Please try again.');
+      } finally {
+        setIsCreating(false);
+      }
+      return;
+    }
+
+    // For repost with comment and other remix types, caption is required
+    if (!remixCaption.trim() && selectedRemixType !== 'repost_now') {
+      const actionText = selectedRemixType === 'repost_with_comment' ? 'repost with comment' : 'remix';
+      Alert.alert('Caption Required', `Please add a caption for your ${actionText}`);
       return;
     }
 
     setIsCreating(true);
     
     try {
-      // Simulate remix creation process
+      // Simulate creation process
       await new Promise(resolve => setTimeout(resolve, 2000));
       
-      console.log('Creating remix:', {
+      console.log('Creating content:', {
         type: selectedRemixType,
         originalVideo: videoId,
         sound: { id: soundId, title: soundTitle, artist: soundArtist },
@@ -134,9 +171,12 @@ const RemixCreator = () => {
         originalCreator
       });
 
+      const remixType = remixTypes.find(t => t.id === selectedRemixType);
+      const isRepost = selectedRemixType === 'repost_with_comment';
+      
       Alert.alert(
-        'Remix Created!', 
-        `Your ${remixTypes.find(t => t.id === selectedRemixType)?.title} remix is being processed. It will appear in your profile soon.`,
+        isRepost ? 'Repost Created!' : 'Remix Created!', 
+        `Your ${remixType?.title} ${isRepost ? 'repost' : 'remix'} is being processed. It will appear in your profile soon.`,
         [
           {
             text: 'Create Another',
@@ -152,7 +192,7 @@ const RemixCreator = () => {
         ]
       );
     } catch (error) {
-      Alert.alert('Error', 'Failed to create remix. Please try again.');
+      Alert.alert('Error', 'Failed to create content. Please try again.');
     } finally {
       setIsCreating(false);
     }
