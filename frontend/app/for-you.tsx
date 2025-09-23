@@ -436,7 +436,7 @@ export default function ForYouScreen() {
 
       {/* Right Side Actions - Profile stays, others spaced out */}
       <View style={styles.elegantRightSideWithSpacing}>
-        {/* Profile Avatar with Story Ring - Exactly like stories section */}
+        {/* Profile Avatar matching the creator's story in stories section */}
         <TouchableOpacity 
           style={styles.elegantAvatarContainer}
           onPress={() => router.push(`/profile/${currentVideo.creator.id}`)}
