@@ -361,14 +361,6 @@ export default function AisleAgentScreen() {
       badge: 'PLATINUM',
       gradient: ['#607D8B', '#9E9E9E'],
     },
-    {
-      icon: '💰',
-      title: 'Global Monetization',
-      subtitle: '8 revenue streams & analytics',
-      onPress: () => router.push('/(tabs)/global-monetization-dashboard'),
-      badge: 'SERIES A',
-      gradient: ['#D4AF37', '#B8941F'],
-    },
   ];
 
   const dashboardStats: DashboardStat[] = [
