@@ -615,21 +615,14 @@ const styles = StyleSheet.create({
   },
 
   // Touch Areas
-  swipeUpArea: {
+  // New gesture area that covers the entire screen for real swipe detection
+  gestureArea: {
     position: 'absolute',
     top: 0,
     left: 0,
     right: 0,
-    height: height * 0.4,
-    zIndex: 50, // Higher z-index to capture touch events above stories
-  },
-  swipeDownArea: {
-    position: 'absolute',
-    bottom: 100,
-    left: 0,
-    right: 0,
-    height: height * 0.4,
-    zIndex: 50, // Higher z-index to capture touch events above stories
+    bottom: 0,
+    zIndex: 5, // Lower than UI elements but captures gestures
   },
   playPauseArea: {
     position: 'absolute',
