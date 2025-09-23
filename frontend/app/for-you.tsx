@@ -436,7 +436,7 @@ export default function ForYouScreen() {
 
       {/* Right Side Actions - Profile stays, others spaced out */}
       <View style={styles.elegantRightSideWithSpacing}>
-        {/* Profile Avatar matching the creator's story in stories section */}
+        {/* Profile Avatar matching the creator's story with verification badge */}
         <TouchableOpacity 
           style={styles.elegantAvatarContainer}
           onPress={() => router.push(`/profile/${currentVideo.creator.id}`)}
@@ -444,6 +444,10 @@ export default function ForYouScreen() {
           <View style={[styles.profileStoryRing, styles.activeStoryRing]}>
             <View style={styles.elegantAvatarInside}>
               <Text style={styles.elegantAvatarText}>L</Text>
+            </View>
+            {/* Verification badge like in stories section */}
+            <View style={styles.profileVerificationBadge}>
+              <Text style={styles.profileVerificationIcon}>✦</Text>
             </View>
           </View>
           <View style={styles.elegantFollowButton}>
