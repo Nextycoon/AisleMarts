@@ -402,14 +402,11 @@ export default function ForYouScreen() {
         </TouchableOpacity>
 
         <TouchableOpacity 
-          style={styles.elegantRepostContainerWithPlus}
+          style={styles.compactActionButtonSpaced}
           onPress={() => handleRepost(currentVideo)}
         >
           <View style={styles.sharpIconContainer}>
             <Text style={styles.elegantRepostIcon}>🔄</Text>
-          </View>
-          <View style={styles.elegantRepostPlusButton}>
-            <Text style={styles.elegantRepostPlus}>↻</Text>
           </View>
         </TouchableOpacity>
 
