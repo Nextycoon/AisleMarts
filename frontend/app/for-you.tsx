@@ -581,8 +581,6 @@ const styles = StyleSheet.create({
     height: '100%',
     zIndex: 1, // Behind all other content
   },
-    height: '100%',
-    zIndex: 1,
     margin: 0,
     padding: 0,
   },
