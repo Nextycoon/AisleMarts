@@ -199,8 +199,7 @@ export default function ForYouScreen() {
         parentalApproval: false,
         contentWarning: false
       }
-    },
-    // Add more mock data as needed...
+    }
   ];
 
   const currentVideo = forYouFeed[currentIndex] || forYouFeed[0];
