@@ -1274,7 +1274,7 @@ const styles = StyleSheet.create({
   luxuryFollowButton: {
     position: 'absolute',
     bottom: -6,
-    backgroundColor: 'linear-gradient(135deg, #FF0050 0%, #FF3B30 50%, #DC143C 100%)',
+    backgroundColor: '#FF0050', // Solid color instead of gradient for React Native Web
     width: 26,
     height: 26,
     borderRadius: 13,
