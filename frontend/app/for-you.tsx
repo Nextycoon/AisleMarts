@@ -435,6 +435,61 @@ export default function ForYouScreen() {
         ))}
       </View>
 
+      {/* AisleMarts Stories Section - Positioned under header, above AI assistant */}
+      <View style={styles.storiesSection}>
+        <ScrollView 
+          horizontal 
+          showsHorizontalScrollIndicator={false}
+          style={styles.storiesScrollView}
+          contentContainerStyle={styles.storiesContainer}
+        >
+          {/* Your Story Bubble */}
+          <TouchableOpacity style={styles.storyBubble} onPress={() => console.log('Your Story pressed')}>
+            <View style={[styles.storyRing, styles.yourStoryRing]}>
+              <View style={styles.storyImage}>
+                <Text style={styles.storyImageText}>+</Text>
+              </View>
+            </View>
+            <Text style={styles.storyLabel}>Your Story</Text>
+          </TouchableOpacity>
+
+          {/* Brand/Vendor Stories */}
+          {[
+            { id: '1', name: 'LuxeFashion', hasNew: true, isVerified: true },
+            { id: '2', name: 'TechGadgets', hasNew: true, isVerified: true },
+            { id: '3', name: 'HomeDecor', hasNew: false, isVerified: false },
+            { id: '4', name: 'FitnessGear', hasNew: true, isVerified: true },
+            { id: '5', name: 'BeautyBox', hasNew: false, isVerified: false },
+            { id: '6', name: 'BookCorner', hasNew: true, isVerified: false }
+          ].map((story) => (
+            <TouchableOpacity 
+              key={story.id} 
+              style={styles.storyBubble} 
+              onPress={() => handleStoryPress(story)}
+            >
+              <View style={[
+                styles.storyRing, 
+                story.hasNew ? styles.activeStoryRing : styles.inactiveStoryRing
+              ]}>
+                <View style={styles.storyImage}>
+                  <Text style={styles.storyImageText}>
+                    {story.name.charAt(0)}
+                  </Text>
+                  {story.isVerified && (
+                    <View style={styles.verifiedBadge}>
+                      <Text style={styles.verifiedIcon}>✓</Text>
+                    </View>
+                  )}
+                </View>
+              </View>
+              <Text style={styles.storyLabel} numberOfLines={1}>
+                {story.name}
+              </Text>
+            </TouchableOpacity>
+          ))}
+        </ScrollView>
+      </View>
+
       {/* AI Assistant Overlay - Positioned in exact alignment with 7 action icons */}
       <FloatingAIAssistant bottom={485} right={10} />
 
