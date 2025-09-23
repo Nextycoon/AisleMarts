@@ -379,14 +379,14 @@ export default function ForYouScreen() {
         </TouchableOpacity>
 
         <TouchableOpacity 
-          style={styles.elegantRemixContainerWithPlus}
-          onPress={() => handleRemix(currentVideo)}
+          style={styles.elegantRepostContainerWithPlus}
+          onPress={() => handleRepost(currentVideo)}
         >
           <View style={styles.sharpIconContainer}>
-            <Text style={styles.elegantRemixIcon}>🎵</Text>
+            <Text style={styles.elegantRepostIcon}>🔄</Text>
           </View>
-          <View style={styles.elegantRemixPlusButton}>
-            <Text style={styles.elegantRemixPlus}>R</Text>
+          <View style={styles.elegantRepostPlusButton}>
+            <Text style={styles.elegantRepostPlus}>↻</Text>
           </View>
         </TouchableOpacity>
 
