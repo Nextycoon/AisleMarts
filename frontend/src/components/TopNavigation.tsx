@@ -218,6 +218,27 @@ const styles = StyleSheet.create({
     textShadowOffset: { width: 0, height: 1 },
     textShadowRadius: 2,
   },
+  navIconGold: {
+    fontSize: 18,
+    color: '#D4AF37', // Gold color for notification bell
+    textShadowColor: 'rgba(212, 175, 55, 0.3)',
+    textShadowOffset: { width: 0, height: 1 },
+    textShadowRadius: 2,
+  },
+  navIconPurple: {
+    fontSize: 18,
+    color: '#8B5CF6', // Purple color for microphone
+    textShadowColor: 'rgba(139, 92, 246, 0.3)',
+    textShadowOffset: { width: 0, height: 1 },
+    textShadowRadius: 2,
+  },
+  navIconRed: {
+    fontSize: 18,
+    color: '#EF4444', // Red color for recording
+    textShadowColor: 'rgba(239, 68, 68, 0.3)',
+    textShadowOffset: { width: 0, height: 1 },
+    textShadowRadius: 2,
+  },
   navIconActive: {
     color: '#D4AF37',
     textShadowColor: 'rgba(212, 175, 55, 0.8)',
