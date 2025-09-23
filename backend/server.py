@@ -624,6 +624,10 @@ try:
     from routers.advanced_ai_routes import router as advanced_ai_router
     app.include_router(advanced_ai_router, prefix="/api/advanced-ai", tags=["advanced_ai"])
     
+    # Import and include Global Monetization Engine router
+    from routers.global_monetization_routes import router as global_monetization_router
+    app.include_router(global_monetization_router, prefix="/api/monetization", tags=["monetization"])
+    
     # Import and include Production Deployment router
     from routers.production_deployment_routes import router as production_deployment_router
     app.include_router(production_deployment_router, prefix="/api", tags=["production_deployment"])
