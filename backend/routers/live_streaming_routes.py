@@ -2,8 +2,8 @@ from fastapi import APIRouter, HTTPException, Depends, Query
 from typing import List, Dict, Any, Optional
 from datetime import datetime, timedelta
 
-from ..services.live_streaming_ai_service import LiveStreamingAIService
-from ..models.live_streaming import (
+from services.live_streaming_ai_service import LiveStreamingAIService
+from models.live_streaming import (
     LiveStream, CreateStreamRequest, UpdateStreamRequest, 
     StreamAnalyticsRequest, ViewerAction, ProductShowcase
 )
