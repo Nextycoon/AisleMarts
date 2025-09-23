@@ -548,6 +548,14 @@ try:
     from routers.tiktok_features_routes import router as tiktok_features_router
     app.include_router(tiktok_features_router, tags=["tiktok_features"])
     
+    # Import and include Live Streaming Commerce & Analytics router
+    from routers.live_streaming_routes import router as live_streaming_router
+    app.include_router(live_streaming_router, prefix="/api/live-streaming", tags=["live_streaming"])
+    
+    # Import and include AI Analytics & Retention Intelligence router
+    from routers.ai_analytics_routes import router as ai_analytics_router
+    app.include_router(ai_analytics_router, prefix="/api/ai-analytics", tags=["ai_analytics"])
+    
     # Import and include Aisle AI router
     from routers.aisle_ai_routes import router as aisle_ai_router
     app.include_router(aisle_ai_router, tags=["aisle_ai"])
