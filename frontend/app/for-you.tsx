@@ -625,26 +625,7 @@ const styles = StyleSheet.create({
     zIndex: 5, // Lower than UI elements but captures gestures
   },
 
-  // Header 7 Icons Row Styles
-  headerIconsRow: {
-    flexDirection: 'row',
-    justifyContent: 'space-between',
-    alignItems: 'center',
-    paddingHorizontal: 16,
-    paddingVertical: 8,
-    height: 50,
-    backgroundColor: 'rgba(0, 0, 0, 0.8)',
-  },
-  headerIcon: {
-    alignItems: 'center',
-    justifyContent: 'center',
-    minWidth: 40,
-  },
-  headerIconText: {
-    color: '#FFFFFF',
-    fontSize: 14,
-    fontWeight: '600',
-  },
+  // Removed incorrect header styles - using original TopNavigation
   playPauseArea: {
     position: 'absolute',
     top: height * 0.4,
