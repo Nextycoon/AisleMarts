@@ -8,6 +8,7 @@ import {
   TouchableOpacity,
   Animated,
   ScrollView,
+  Alert,
 } from 'react-native';
 import { PanGestureHandler, State } from 'react-native-gesture-handler';
 import { StatusBar } from 'expo-status-bar';
