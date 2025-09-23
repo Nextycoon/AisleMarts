@@ -167,12 +167,15 @@ export default function ForYouScreen() {
       }
     }
     
-    // Toggle full screen mode on swipe up - hide top navigation only
+    // Toggle full screen mode on swipe up - hide top navigation AND stories
     if (!isFullScreen) {
       setIsFullScreen(true);
       Animated.timing(topNavTranslateY, {
-        toValue: -100,
+        toValue: -200, // Increased to hide both header and stories completely
         duration: 300,
+        useNativeDriver: false,
+      }).start();
+    }
         useNativeDriver: false,
       }).start();
     }
