@@ -189,8 +189,9 @@ class BackendTester:
     async def test_ai_content_moderation(self):
         """Test AI Content Moderation (POST /community/posts)"""
         post_data = {
+            "title": "Testing AI Content Moderation",
             "content": "This is a test post for AI content moderation testing. The retention algorithm is working great!",
-            "content_type": "text",
+            "content_type": "post",
             "category": "general",
             "tags": ["test", "retention", "algorithm"]
         }
