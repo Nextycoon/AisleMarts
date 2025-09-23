@@ -115,7 +115,7 @@ class ContentViralityPrediction(BaseModel):
     predicted_reach: int = 0
     predicted_engagement: int = 0
     optimal_posting_time: Optional[datetime] = None
-    target_demographics: Dict[str, float] = {}
+    target_demographics: Dict[str, Any] = {}  # Flexible structure for any demographic data
     hashtag_recommendations: List[str] = []
     collaboration_suggestions: List[str] = []
     content_optimization_tips: List[str] = []
