@@ -80,7 +80,7 @@ const styles = StyleSheet.create({
   },
   tabBar: {
     flexDirection: 'row',
-    paddingHorizontal: 8,
+    paddingHorizontal: 4, // Reduced from 8 to align with right-side icons (right: 4px)
     paddingTop: 8,
   },
   tab: {
