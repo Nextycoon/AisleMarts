@@ -1695,4 +1695,30 @@ const styles = StyleSheet.create({
     color: '#FFFFFF',
     fontWeight: '500',
   },
+
+  // Video fallback styles
+  videoFallback: {
+    position: 'absolute',
+    top: 0,
+    left: 0,
+    right: 0,
+    bottom: 0,
+    backgroundColor: 'linear-gradient(135deg, #1a1a1a 0%, #2d2d2d 50%, #1a1a1a 100%)',
+    alignItems: 'center',
+    justifyContent: 'center',
+    zIndex: 0,
+  },
+  videoFallbackText: {
+    fontSize: 24,
+    color: '#D4AF37',
+    fontWeight: 'bold',
+    textAlign: 'center',
+    marginBottom: 8,
+  },
+  videoFallbackSubtext: {
+    fontSize: 16,
+    color: '#FFFFFF',
+    textAlign: 'center',
+    opacity: 0.8,
+  },
 });
