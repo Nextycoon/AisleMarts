@@ -7,7 +7,7 @@ Index Ventures' expertise in European market expansion and enterprise technology
 We've built the first luxury commerce platform with native European market support - GDPR compliance, multi-currency operations, and enterprise features that address the unique needs of European luxury commerce.
 
 **Your Personalized Demo Access:**
-🔗 https://aislemart-superapp.preview.emergentagent.com/?locale=en-GB&currency=GBP&tz=Europe/London&device=desktop&utm_source=investor&utm_medium=email&utm_campaign=series_a&utm_bundle=INDEX_SOFOA_DOLFE
+🔗 https://aislemart-ui.preview.emergentagent.com/?locale=en-GB&currency=GBP&tz=Europe/London&device=desktop&utm_source=investor&utm_medium=email&utm_campaign=series_a&utm_bundle=INDEX_SOFOA_DOLFE
 
 **Demo Credentials:**
 Email: index.demo@aislemarts.luxury

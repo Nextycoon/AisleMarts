@@ -16,7 +16,7 @@ from dotenv import load_dotenv
 load_dotenv()
 
 # Get backend URL from environment
-BACKEND_URL = os.getenv('EXPO_PUBLIC_BACKEND_URL', 'https://aislemart-superapp.preview.emergentagent.com')
+BACKEND_URL = os.getenv('EXPO_PUBLIC_BACKEND_URL', 'https://aislemart-ui.preview.emergentagent.com')
 BASE_URL = f"{BACKEND_URL}/api"
 
 class CLPEngineTester:
