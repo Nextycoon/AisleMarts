@@ -838,7 +838,7 @@ const styles = StyleSheet.create({
   // New spaced version with increased spacing between icons - moved down to bottom
   elegantRightSideWithSpacing: {
     position: 'absolute',
-    right: 14,
+    right: 4, // Moved closer to screen edge (was 14)
     bottom: 70, // Positioned properly above bottom navigation
     alignItems: 'center',
     justifyContent: 'flex-end',
