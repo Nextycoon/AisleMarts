@@ -263,6 +263,36 @@ export default function ForYouScreen() {
     });
   };
 
+  // Touch gesture handlers for real scroll detection
+  const [touchStart, setTouchStart] = useState({ x: 0, y: 0 });
+  const [touchEnd, setTouchEnd] = useState({ x: 0, y: 0 });
+
+  const handleTouchStart = (event: any) => {
+    const touch = event.nativeEvent.touches[0];
+    setTouchStart({ x: touch.clientX, y: touch.clientY });
+  };
+
+  const handleTouchMove = (event: any) => {
+    const touch = event.nativeEvent.touches[0];
+    setTouchEnd({ x: touch.clientX, y: touch.clientY });
+  };
+
+  const handleTouchEnd = () => {
+    const deltaY = touchStart.y - touchEnd.y;
+    const deltaX = touchStart.x - touchEnd.x;
+    
+    // Only process vertical swipes (ignore horizontal)
+    if (Math.abs(deltaY) > Math.abs(deltaX) && Math.abs(deltaY) > 50) {
+      if (deltaY > 0) {
+        // Swiped up - hide header and stories
+        handleSwipeUp();
+      } else {
+        // Swiped down - show header and stories
+        handleSwipeDown();
+      }
+    }
+  };
+
   return (
     <View style={styles.fullScreenContainer}>
       <StatusBar style="light" />
