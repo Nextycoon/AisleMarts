@@ -51,17 +51,17 @@ export default function TopNavigation() {
       <StatusBar barStyle="light-content" backgroundColor="#000000" />
       
       <View style={styles.navBar}>
-        {/* Home Icon */}
-        <TouchableOpacity style={styles.navIconButton} onPress={() => router.push('/')}>
-          <Text style={styles.navIcon}>🏠</Text>
+        {/* Search Icon - Magnifying Glass */}
+        <TouchableOpacity style={styles.navIconButton} onPress={handleSearchPress}>
+          <Text style={styles.navIcon}>🔍</Text>
         </TouchableOpacity>
 
-        {/* Notification Icon */}
+        {/* Notification Bell - Gold Color */}
         <TouchableOpacity style={styles.navIconButton} onPress={() => console.log('Notifications pressed')}>
-          <Text style={styles.navIcon}>🔔</Text>
+          <Text style={styles.navIconGold}>🔔</Text>
         </TouchableOpacity>
 
-        {/* For You Text - Active with yellow underline */}
+        {/* For You Text - Gold with underline when active */}
         <TouchableOpacity 
           style={styles.forYouButton} 
           onPress={() => handleTabPress('/for-you')}
@@ -72,24 +72,24 @@ export default function TopNavigation() {
           {isActive('/for-you') && <View style={styles.activeIndicator} />}
         </TouchableOpacity>
 
-        {/* People Icon */}
+        {/* Two People/Users Icon */}
         <TouchableOpacity style={styles.navIconButton} onPress={() => router.push('/following')}>
           <Text style={styles.navIcon}>👥</Text>
         </TouchableOpacity>
 
-        {/* Wavy Line Icon */}
-        <TouchableOpacity style={styles.navIconButton} onPress={() => console.log('Wavy pressed')}>
-          <Text style={styles.navIcon}>〰️</Text>
+        {/* Analytics/Trending Arrow */}
+        <TouchableOpacity style={styles.navIconButton} onPress={() => console.log('Analytics pressed')}>
+          <Text style={styles.navIcon}>📈</Text>
         </TouchableOpacity>
 
-        {/* Location Icon */}
-        <TouchableOpacity style={styles.navIconButton} onPress={() => console.log('Location pressed')}>
-          <Text style={styles.navIcon}>📍</Text>
-        </TouchableOpacity>
-
-        {/* Live/Red Circle Icon */}
+        {/* Live Streaming Microphone - Purple */}
         <TouchableOpacity style={styles.navIconButton} onPress={handleLivePress}>
-          <Text style={styles.navIcon}>🔴</Text>
+          <Text style={styles.navIconPurple}>🎤</Text>
+        </TouchableOpacity>
+
+        {/* Recording - Red Circle with Dot */}
+        <TouchableOpacity style={styles.navIconButton} onPress={() => console.log('Recording pressed')}>
+          <Text style={styles.navIconRed}>🔴</Text>
         </TouchableOpacity>
 
         {/* Following Icon */}
