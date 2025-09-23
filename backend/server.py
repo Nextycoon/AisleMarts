@@ -612,6 +612,14 @@ try:
     from routers.ai_super_agent_routes import router as ai_super_agent_router
     app.include_router(ai_super_agent_router, prefix="/api", tags=["ai_super_agent"])
     
+    # Import and include Super App Ecosystem router
+    from routers.super_app_routes import router as super_app_router
+    app.include_router(super_app_router, prefix="/api/super-app", tags=["super_app"])
+    
+    # Import and include Social Commerce router
+    from routers.social_commerce_routes import router as social_commerce_router
+    app.include_router(social_commerce_router, prefix="/api/social-commerce", tags=["social_commerce"])
+    
     # Import and include Production Deployment router
     from routers.production_deployment_routes import router as production_deployment_router
     app.include_router(production_deployment_router, prefix="/api", tags=["production_deployment"])
