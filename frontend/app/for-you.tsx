@@ -1563,8 +1563,7 @@ const styles = StyleSheet.create({
     borderColor: '#666666',
   },
   activeStoryRing: {
-    background: 'linear-gradient(45deg, #D4AF37, #FF6B35, #E91E63, #9C27B0)',
-    backgroundColor: '#D4AF37', // Fallback for React Native
+    backgroundColor: '#D4AF37', // Fallback for React Native Web
     borderWidth: 2,
     borderColor: '#D4AF37',
   },
