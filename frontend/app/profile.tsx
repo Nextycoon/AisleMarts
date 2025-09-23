@@ -178,6 +178,14 @@ export default function ProfileScreen() {
           route: '/business/content',
         },
         {
+          id: '14a',
+          title: 'Social Media Advertising',
+          icon: '📱',
+          subtitle: '8 platforms • AI optimization • ROAS tracking',
+          route: '/(tabs)/social-media-advertising-dashboard',
+          badge: 'MULTI-PLATFORM',
+        },
+        {
           id: '14',
           title: 'Brand Verification',
           icon: '🏢',
