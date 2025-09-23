@@ -2,7 +2,7 @@ from fastapi import APIRouter, HTTPException, Query
 from typing import List, Dict, Any, Optional
 from datetime import datetime
 
-from ..services.ai_analytics_service import AIAnalyticsService
+from services.ai_analytics_service import AIAnalyticsService
 
 router = APIRouter()
 analytics_service = AIAnalyticsService()
