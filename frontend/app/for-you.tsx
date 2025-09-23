@@ -540,39 +540,33 @@ export default function ForYouScreen() {
           </View>
         </TouchableOpacity>
 
-        {/* Other 6 Icons with increased spacing */}
+        {/* Like Button with Dynamic Count */}
         <TouchableOpacity style={styles.compactActionButtonSpaced} onPress={handleLike}>
           <View style={styles.sharpIconContainer}>
             <Text style={[styles.sharpLikeIcon, isLiked && styles.likedHeartIcon]}>
               {isLiked ? '❤️' : '🤍'}
             </Text>
           </View>
-          <Text style={styles.compactActionText}>{currentVideo.stats.likes.toLocaleString()}</Text>
+          <Text style={styles.compactActionText}>{formatCount(currentVideo.likes)}</Text>
         </TouchableOpacity>
 
+        {/* Comment Button with Dynamic Count */}
         <TouchableOpacity style={styles.compactActionButtonSpaced} onPress={handleComment}>
           <View style={styles.sharpIconContainer}>
             <Text style={styles.sharpCommentIcon}>💬</Text>
           </View>
-          <Text style={styles.compactActionText}>{currentVideo.stats.comments.toLocaleString()}</Text>
+          <Text style={styles.compactActionText}>{formatCount(currentVideo.comments)}</Text>
         </TouchableOpacity>
 
-        <TouchableOpacity style={styles.compactActionButtonSpaced} onPress={handleSave}>
-          <View style={styles.sharpIconContainer}>
-            <Text style={[styles.sharpSaveIcon, isSaved && styles.savedIconStyle]}>
-              {isSaved ? '📌' : '🔖'}
-            </Text>
-          </View>
-          <Text style={styles.compactActionText}>{currentVideo.stats.saves.toLocaleString()}</Text>
-        </TouchableOpacity>
-
+        {/* Share Button with Dynamic Count */}
         <TouchableOpacity style={styles.compactActionButtonSpaced} onPress={handleShare}>
           <View style={styles.sharpIconContainer}>
             <Text style={styles.sharpShareIcon}>↗</Text>
           </View>
-          <Text style={styles.compactActionText}>{currentVideo.stats.shares.toLocaleString()}</Text>
+          <Text style={styles.compactActionText}>{formatCount(currentVideo.shares)}</Text>
         </TouchableOpacity>
 
+        {/* Remix Button */}
         <TouchableOpacity 
           style={styles.compactActionButtonSpaced}
           onPress={() => handleRemix(currentVideo)}
@@ -582,7 +576,17 @@ export default function ForYouScreen() {
           </View>
         </TouchableOpacity>
 
-        {/* Music button - positioned to stay above bottom nav */}
+        {/* Save Button with Dynamic Count */}
+        <TouchableOpacity style={styles.compactActionButtonSpaced} onPress={handleSave}>
+          <View style={styles.sharpIconContainer}>
+            <Text style={[styles.sharpSaveIcon, isSaved && styles.savedIconStyle]}>
+              {isSaved ? '📌' : '🔖'}
+            </Text>
+          </View>
+          <Text style={styles.compactActionText}>{formatCount(currentVideo.saves)}</Text>
+        </TouchableOpacity>
+
+        {/* Music Button with Dynamic Count */}
         <TouchableOpacity 
           style={styles.compactMusicButtonFinal}
           onPress={() => console.log('Music pressed:', currentVideo.sound.title)}
@@ -590,6 +594,7 @@ export default function ForYouScreen() {
           <View style={styles.sharpMusicContainer}>
             <Text style={styles.sharpMusicIcon}>♪</Text>
           </View>
+          <Text style={styles.compactActionText}>{formatCount(currentVideo.music)}</Text>
         </TouchableOpacity>
       </View>
 
