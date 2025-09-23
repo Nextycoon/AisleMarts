@@ -306,7 +306,16 @@ export default function ForYouScreen() {
         shouldPlay={isPlaying}
         isLooping
         isMuted={false}
+        onLoad={() => console.log('Video loaded successfully')}
+        onError={(error) => console.log('Video error:', error)}
+        onLoadStart={() => console.log('Video loading started')}
       />
+      
+      {/* Fallback background if video fails to load */}
+      <View style={styles.videoFallback}>
+        <Text style={styles.videoFallbackText}>🎬 @LuxeFashion Winter Collection</Text>
+        <Text style={styles.videoFallbackSubtext}>Luxury Fashion Video</Text>
+      </View>
       
       {/* Animated Top Navigation - Overlay on Video */}
       <Animated.View 
