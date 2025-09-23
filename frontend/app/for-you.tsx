@@ -647,6 +647,27 @@ const styles = StyleSheet.create({
     bottom: 0,
     zIndex: 5, // Lower than UI elements but captures gestures
   },
+
+  // Header 7 Icons Row Styles
+  headerIconsRow: {
+    flexDirection: 'row',
+    justifyContent: 'space-between',
+    alignItems: 'center',
+    paddingHorizontal: 16,
+    paddingVertical: 8,
+    height: 50,
+    backgroundColor: 'rgba(0, 0, 0, 0.8)',
+  },
+  headerIcon: {
+    alignItems: 'center',
+    justifyContent: 'center',
+    minWidth: 40,
+  },
+  headerIconText: {
+    color: '#FFFFFF',
+    fontSize: 14,
+    fontWeight: '600',
+  },
   playPauseArea: {
     position: 'absolute',
     top: height * 0.4,
