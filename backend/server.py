@@ -620,6 +620,10 @@ try:
     from routers.social_commerce_routes import router as social_commerce_router
     app.include_router(social_commerce_router, prefix="/api/social-commerce", tags=["social_commerce"])
     
+    # Import and include Advanced AI Engine router
+    from routers.advanced_ai_routes import router as advanced_ai_router
+    app.include_router(advanced_ai_router, prefix="/api/advanced-ai", tags=["advanced_ai"])
+    
     # Import and include Production Deployment router
     from routers.production_deployment_routes import router as production_deployment_router
     app.include_router(production_deployment_router, prefix="/api", tags=["production_deployment"])
