@@ -588,11 +588,11 @@ export default function ForYouScreen() {
 
         {/* Music Button with Dynamic Count */}
         <TouchableOpacity 
-          style={styles.compactMusicButtonFinal}
+          style={styles.compactActionButtonSpaced}
           onPress={() => console.log('Music pressed:', currentVideo.sound.title)}
         >
-          <View style={styles.sharpMusicContainer}>
-            <Text style={styles.sharpMusicIcon}>♪</Text>
+          <View style={styles.sharpIconContainer}>
+            <Text style={styles.sharpMusicIcon}>🎵</Text>
           </View>
           <Text style={styles.compactActionText}>{formatCount(currentVideo.music)}</Text>
         </TouchableOpacity>
