@@ -57,8 +57,8 @@ export default function TopNavigation() {
         </TouchableOpacity>
 
         {/* 2. Nearby */}
-        <TouchableOpacity style={styles.navIconButton} onPress={() => console.log('Nearby pressed')}>
-          <Text style={styles.navIcon}>📍</Text>
+        <TouchableOpacity style={styles.navTextButton} onPress={() => console.log('Nearby pressed')}>
+          <Text style={styles.navText}>Nearby</Text>
         </TouchableOpacity>
 
         {/* 3. Explore */}
