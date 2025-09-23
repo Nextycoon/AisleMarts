@@ -204,39 +204,6 @@ export default function ForYouScreen() {
   ];
 
   const currentVideo = forYouFeed[currentIndex] || forYouFeed[0];
-    caption: '✨ Transform your winter wardrobe with these chic layers!',
-    hashtags: '#WinterFashion #LuxeStyle #TrendingNow #ShopNow',
-    music: {
-      title: 'Winter Vibes - Chill Beats',
-      artist: 'LoFi Studio',
-    },
-    sound: {
-      id: 'sound_1',
-      title: 'Winter Vibes - Chill Beats',
-      artist: 'LoFi Studio'
-    },
-    stats: {
-      likes: 127300,
-      comments: 8200,
-      shares: 3100,
-      saves: 12400,
-      views: 1420000
-    },
-    products: [
-      {
-        id: 'prod_1',
-        title: 'Premium Winter Coat',
-        price: 299.99,
-        currency: '$',
-        image: 'https://via.placeholder.com/60x60',
-      },
-    ],
-    safety: {
-      familySafe: true,
-      parentalApproval: false,
-      contentWarning: false
-    }
-  };
 
   const handleSwipeUp = () => {
     if (currentIndex < forYouFeed.length - 1) {
