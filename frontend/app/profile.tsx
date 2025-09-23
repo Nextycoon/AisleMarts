@@ -336,7 +336,11 @@ export default function ProfileScreen() {
         </TouchableOpacity>
       </SafeAreaView>
 
-      <ScrollView style={styles.content} showsVerticalScrollIndicator={false}>
+      <ScrollView 
+        style={styles.content} 
+        contentContainerStyle={styles.scrollContent}
+        showsVerticalScrollIndicator={false}
+      >
         
         {/* Profile Header */}
         <View style={styles.profileHeader}>
