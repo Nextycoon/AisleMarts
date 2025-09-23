@@ -74,6 +74,13 @@ class SuperAppSocialCommerceTestSuite:
                 'url': url
             }
             
+    def safe_get_data(self, response: Dict[str, Any]) -> Dict[str, Any]:
+        """Safely get data from response, handling both dict and string responses"""
+        data = response.get('data', {})
+        if isinstance(data, str):
+            return {}
+        return data if isinstance(data, dict) else {}
+    
     def log_test_result(self, test_name: str, success: bool, details: str = "", response_data: Dict = None):
         """Log test result"""
         self.total_tests += 1
@@ -97,7 +104,11 @@ class SuperAppSocialCommerceTestSuite:
         if details:
             print(f"    Details: {details}")
         if not success and response_data:
-            print(f"    Response: {response_data.get('status_code', 'N/A')} - {response_data.get('data', 'No data')}")
+            status_code = response_data.get('status_code', 'N/A')
+            data = response_data.get('data', 'No data')
+            if isinstance(data, str) and len(data) > 200:
+                data = data[:200] + "..."
+            print(f"    Response: {status_code} - {data}")
         print()
 
     # ==================== SUPER APP ECOSYSTEM TESTS ====================
