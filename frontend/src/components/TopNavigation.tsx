@@ -56,17 +56,22 @@ export default function TopNavigation() {
           <Text style={styles.navText}>LIVE</Text>
         </TouchableOpacity>
 
-        {/* 2. Explore */}
+        {/* 2. Nearby */}
+        <TouchableOpacity style={styles.navIconButton} onPress={() => console.log('Nearby pressed')}>
+          <Text style={styles.navIcon}>📍</Text>
+        </TouchableOpacity>
+
+        {/* 3. Explore */}
         <TouchableOpacity style={styles.navTextButton} onPress={() => handleTabPress('/explore')}>
           <Text style={styles.navText}>Explore</Text>
         </TouchableOpacity>
 
-        {/* 3. Following */}
+        {/* 4. Following */}
         <TouchableOpacity style={styles.navTextButton} onPress={() => handleTabPress('/following')}>
           <Text style={styles.navText}>Following</Text>
         </TouchableOpacity>
 
-        {/* 4. For You - Active with underline */}
+        {/* 5. For You - Active with underline */}
         <TouchableOpacity 
           style={styles.forYouButton} 
           onPress={() => handleTabPress('/for-you')}
@@ -81,7 +86,12 @@ export default function TopNavigation() {
           {isActive('/for-you') && <View style={styles.activeIndicator} />}
         </TouchableOpacity>
 
-        {/* 5. Search Icon - Last on right like TikTok */}
+        {/* 6. Notifications */}
+        <TouchableOpacity style={styles.navIconButton} onPress={() => console.log('Notifications pressed')}>
+          <Text style={styles.navIcon}>🔔</Text>
+        </TouchableOpacity>
+
+        {/* 7. Search Icon - Last on right like TikTok */}
         <TouchableOpacity style={styles.navIconButton} onPress={handleSearchPress}>
           <Text style={styles.navIcon}>🔍</Text>
         </TouchableOpacity>
