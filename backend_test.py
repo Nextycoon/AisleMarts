@@ -1,21 +1,20 @@
 #!/usr/bin/env python3
 """
-Comprehensive Backend Testing for AisleMarts Super App Ecosystem & Advanced Social Commerce Features
-Testing Focus: Newly implemented Super App and Social Commerce backend systems
+AisleMarts Global Monetization Suite Backend Testing
+Comprehensive testing for Phase 1.2: Global Monetization Suite
 """
 
 import asyncio
 import aiohttp
 import json
-import uuid
+import time
 from datetime import datetime, timedelta
 from typing import Dict, List, Any
+import sys
 import os
-from urllib.parse import urljoin
 
-# Get backend URL from environment
-BACKEND_URL = os.getenv('EXPO_PUBLIC_BACKEND_URL', 'https://ai-marketplace-13.preview.emergentagent.com')
-API_BASE = f"{BACKEND_URL}/api"
+# Backend URL from frontend/.env
+BACKEND_URL = "https://ai-marketplace-13.preview.emergentagent.com/api"
 
 class SuperAppSocialCommerceTestSuite:
     def __init__(self):
