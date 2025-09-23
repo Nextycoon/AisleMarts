@@ -312,7 +312,7 @@ class GlobalMonetizationTester:
             await self.test_endpoint(
                 "GET", "/monetization/analytics/revenue",
                 f"Revenue Analytics - {period.title()}",
-                params={"period": period, "include_forecasts": True}
+                params={"period": period, "include_forecasts": "true"}
             )
 
     # 10. Configuration & Management
