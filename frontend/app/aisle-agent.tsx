@@ -110,6 +110,14 @@ export default function AisleAgentScreen() {
       gradient: ['#8A2BE2', '#4B0082'],
     },
     {
+      icon: '🤖',
+      title: 'Advanced AI',
+      subtitle: 'AI engine & personalization',
+      onPress: () => router.push('/(tabs)/advanced-ai-dashboard'),
+      badge: 'AI+',
+      gradient: ['#FF6B6B', '#4ECDC4'],
+    },
+    {
       icon: '💬',
       title: 'Messages',
       subtitle: 'Direct messaging & chat',
