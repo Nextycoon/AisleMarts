@@ -628,6 +628,10 @@ try:
     from routers.global_monetization_routes import router as global_monetization_router
     app.include_router(global_monetization_router, prefix="/api/monetization", tags=["monetization"])
     
+    # Import and include Social Media Advertising Suite router
+    from routers.social_media_advertising_routes import router as social_media_advertising_router
+    app.include_router(social_media_advertising_router, prefix="/api/social-ads", tags=["social_advertising"])
+    
     # Import and include Production Deployment router
     from routers.production_deployment_routes import router as production_deployment_router
     app.include_router(production_deployment_router, prefix="/api", tags=["production_deployment"])
