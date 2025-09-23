@@ -1250,9 +1250,6 @@ const styles = StyleSheet.create({
     textShadowOffset: { width: 0, height: 1 },
     textShadowRadius: 3,
   },
-  verifiedIcon: {
-    marginLeft: 6,
-  },
   caption: {
     color: '#FFFFFF',
     fontSize: 15,
