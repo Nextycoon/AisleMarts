@@ -581,9 +581,6 @@ const styles = StyleSheet.create({
     height: '100%',
     zIndex: 1, // Behind all other content
   },
-    margin: 0,
-    padding: 0,
-  },
 
   // ==================================================================================
   // OVERLAY NAVIGATION - FLOATING ON TOP OF VIDEO
