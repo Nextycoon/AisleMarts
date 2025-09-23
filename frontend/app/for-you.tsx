@@ -718,21 +718,21 @@ const styles = StyleSheet.create({
     elevation: 5,
   },
 
-  // Refined Verification Containers
+  // Refined Verification Containers - Match stories badge exactly
   refinedGoldContainer: {
     width: 18,
     height: 18,
-    borderRadius: 4,
-    backgroundColor: 'transparent', // Remove gold background to show only checkmark
+    borderRadius: 9, // Same as stories verifiedBadge
+    backgroundColor: '#D4AF37', // Same golden background as stories
     alignItems: 'center',
     justifyContent: 'center',
-    borderWidth: 0, // Remove border
-    borderColor: 'transparent',
+    borderWidth: 2, // Same border as stories
+    borderColor: '#000000', // Same black border as stories
   },
   refinedGoldIcon: {
-    color: '#D4AF37', // Golden checkmark color
-    fontSize: 12, // Slightly larger for better visibility
-    fontWeight: '900',
+    color: '#FFFFFF', // Same white checkmark as stories
+    fontSize: 10, // Same size as stories
+    fontWeight: '900', // Same weight as stories
     textAlign: 'center',
   },
 
