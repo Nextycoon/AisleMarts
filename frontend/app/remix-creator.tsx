@@ -44,6 +44,22 @@ const RemixCreator = () => {
 
   const remixTypes: RemixType[] = [
     {
+      id: 'repost_now',
+      title: 'Repost Now',
+      description: 'Instantly repost to your profile and followers',
+      icon: '🔄',
+      color: '#22C55E',
+      popularityScore: 98
+    },
+    {
+      id: 'repost_with_comment',
+      title: 'Repost with Comment',
+      description: 'Add your thoughts before reposting',
+      icon: '💬',
+      color: '#10B981',
+      popularityScore: 94
+    },
+    {
       id: 'use_sound',
       title: 'Use This Sound',
       description: 'Create new content with the original audio',
