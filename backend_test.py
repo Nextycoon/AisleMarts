@@ -442,15 +442,21 @@ class SuperAppSocialCommerceTestSuite:
         """Test Social Commerce health check endpoint"""
         response = await self.make_request('GET', '/social-commerce/health')
         
-        success = (
-            response.get('status_code') == 200 and
-            isinstance(response.get('data'), dict) and
-            response['data'].get('status') == 'operational' and
-            'features' in response['data'] and
-            len(response['data']['features']) > 0
-        )
+        data = response.get('data', {})
+        if isinstance(data, str):
+            # Handle string response (likely error message)
+            success = False
+            details = f"Received string response: {data[:100]}..."
+        else:
+            success = (
+                response.get('status_code') == 200 and
+                isinstance(data, dict) and
+                data.get('status') == 'operational' and
+                'features' in data and
+                len(data['features']) > 0
+            )
+            details = f"Status: {data.get('status', 'unknown')}, Features: {len(data.get('features', []))}"
         
-        details = f"Status: {response['data'].get('status', 'unknown')}, Features: {len(response['data'].get('features', []))}"
         self.log_test_result("Social Commerce Health Check", success, details, response)
         
     async def test_shoppable_content_creation(self):
