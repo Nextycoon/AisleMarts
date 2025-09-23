@@ -51,9 +51,9 @@ export default function TopNavigation() {
       <StatusBar barStyle="light-content" backgroundColor="#000000" />
       
       <View style={styles.navBar}>
-        {/* Search Icon - Left Side */}
-        <TouchableOpacity style={styles.navIconButton} onPress={handleSearchPress}>
-          <Text style={styles.navIcon}>🔍</Text>
+        {/* Home Icon */}
+        <TouchableOpacity style={styles.navIconButton} onPress={() => router.push('/')}>
+          <Text style={styles.navIcon}>🏠</Text>
         </TouchableOpacity>
 
         {/* Notification Icon */}
@@ -61,20 +61,35 @@ export default function TopNavigation() {
           <Text style={styles.navIcon}>🔔</Text>
         </TouchableOpacity>
 
-        {/* For You Text - Two Lines */}
+        {/* For You Text - Active with yellow underline */}
         <TouchableOpacity 
           style={styles.forYouButton} 
           onPress={() => handleTabPress('/for-you')}
         >
-          <View style={styles.forYouTextContainer}>
-            <Text style={[styles.forYouTextLine, isActive('/for-you') && styles.forYouActive]}>
-              For
-            </Text>
-            <Text style={[styles.forYouTextLine, isActive('/for-you') && styles.forYouActive]}>
-              You
-            </Text>
-          </View>
+          <Text style={[styles.forYouText, isActive('/for-you') && styles.forYouActive]}>
+            For You
+          </Text>
           {isActive('/for-you') && <View style={styles.activeIndicator} />}
+        </TouchableOpacity>
+
+        {/* People Icon */}
+        <TouchableOpacity style={styles.navIconButton} onPress={() => router.push('/following')}>
+          <Text style={styles.navIcon}>👥</Text>
+        </TouchableOpacity>
+
+        {/* Wavy Line Icon */}
+        <TouchableOpacity style={styles.navIconButton} onPress={() => console.log('Wavy pressed')}>
+          <Text style={styles.navIcon}>〰️</Text>
+        </TouchableOpacity>
+
+        {/* Location Icon */}
+        <TouchableOpacity style={styles.navIconButton} onPress={() => console.log('Location pressed')}>
+          <Text style={styles.navIcon}>📍</Text>
+        </TouchableOpacity>
+
+        {/* Live/Red Circle Icon */}
+        <TouchableOpacity style={styles.navIconButton} onPress={handleLivePress}>
+          <Text style={styles.navIcon}>🔴</Text>
         </TouchableOpacity>
 
         {/* Following Icon */}
