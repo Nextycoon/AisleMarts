@@ -20,7 +20,7 @@ BACKEND_URL = os.getenv('EXPO_PUBLIC_BACKEND_URL', 'https://aislemart-superapp.p
 BASE_URL = f"{BACKEND_URL}/api"
 
 class CLPEngineTester:
-    """Comprehensive tester for Social Media Advertising Suite"""
+    """Comprehensive tester for CLP Engine Suite"""
     
     def __init__(self):
         self.session = None
