@@ -43,6 +43,16 @@ export default function ForYouScreen() {
   const translateY = useRef(new Animated.Value(0)).current;
   const api = useTikTokAPI();
   
+  // Format count function for dynamic display
+  const formatCount = (count: number): string => {
+    if (count >= 1000000) {
+      return (count / 1000000).toFixed(1) + 'M';
+    } else if (count >= 1000) {
+      return (count / 1000).toFixed(1) + 'K';
+    }
+    return count.toString();
+  };
+  
   // Full Screen Animation - Hide/Show Top Navigation and Trending on Scroll
   const scrollY = useRef(new Animated.Value(0)).current;
   const [isFullScreen, setIsFullScreen] = useState(false);
