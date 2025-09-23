@@ -1,18 +1,27 @@
 #!/usr/bin/env python3
 """
-🎯 AisleMarts Backend Testing Suite - Tab Navigation Fix Impact Assessment
+AI-Powered Live Streaming Commerce and Analytics Dashboard Backend Testing
+==========================================================================
 
-This script tests backend systems to ensure the AisleMarts tab navigation fix 
-hasn't broken any existing functionality.
+This test suite validates the newly implemented AI-powered Live Streaming Commerce 
+and Analytics Dashboard backend system with focus on:
 
-PRIORITY TESTING AREAS:
-1. Core API Health Checks - Verify all main API endpoints are responding correctly
-2. Navigation-Related Routes - Test any backend routes that might be related to navigation or user sessions
-3. Currency System - Ensure the Currency-Infinity Engine is still operational since it's used in the Live Marketplace
-4. Auth System - Verify authentication endpoints are working since we made changes to AuthProvider integration
-5. Live Marketplace APIs - Test any APIs that the Live Marketplace screen might be calling
+PRIORITY TESTING:
+1. Live Streaming API Health Check (/api/live-streaming/health)
+2. AI Analytics Health Check (/api/ai-analytics/health) 
+3. Stream Creation and Management endpoints
+4. Real-time analytics and AI insights generation
+5. AI-powered user behavior analysis
+6. Retention dashboard functionality
+7. Personalization insights and LTV prediction
 
-Expected Success Rate: 95%+ (No regression from navigation changes)
+Test Categories:
+- Health Checks and System Status
+- Live Streaming CRUD Operations
+- AI Analytics and Retention Metrics
+- Real-time Analytics Generation
+- AI Insights and Recommendations
+- Performance and Load Testing
 """
 
 import asyncio
