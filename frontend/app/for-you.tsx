@@ -448,7 +448,7 @@ export default function ForYouScreen() {
         ))}
       </View>
 
-      {/* AisleMarts Stories Section - Positioned under header, above AI assistant */}
+      {/* AisleMarts Stories Section - Positioned prominently at top */}
       <View style={styles.storiesSection}>
         <ScrollView 
           horizontal 
