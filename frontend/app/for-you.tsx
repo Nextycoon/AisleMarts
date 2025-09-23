@@ -997,23 +997,23 @@ const styles = StyleSheet.create({
     fontSize: 14,
     fontWeight: '800',
   },
-  // Remix Button Styles
-  elegantRemixContainerWithPlus: {
+  // Repost Button Styles
+  elegantRepostContainerWithPlus: {
     alignItems: 'center',
     marginBottom: 12,
     position: 'relative',
   },
-  elegantRemixIcon: {
+  elegantRepostIcon: {
     fontSize: 18,
     color: '#FFFFFF',
-    textShadowColor: 'rgba(138, 43, 226, 0.6)',
+    textShadowColor: 'rgba(34, 197, 94, 0.6)',
     textShadowOffset: { width: 0, height: 1 },
     textShadowRadius: 2,
   },
-  elegantRemixPlusButton: {
+  elegantRepostPlusButton: {
     position: 'absolute',
     bottom: -6,
-    backgroundColor: '#8A2BE2',
+    backgroundColor: '#22C55E',
     width: 20,
     height: 20,
     borderRadius: 10,
@@ -1021,15 +1021,15 @@ const styles = StyleSheet.create({
     justifyContent: 'center',
     borderWidth: 2,
     borderColor: '#FFFFFF',
-    shadowColor: '#8A2BE2',
+    shadowColor: '#22C55E',
     shadowOffset: { width: 0, height: 2 },
     shadowOpacity: 0.6,
     shadowRadius: 3,
     elevation: 6,
   },
-  elegantRemixPlus: {
+  elegantRepostPlus: {
     color: '#FFFFFF',
-    fontSize: 12,
+    fontSize: 10,
     fontWeight: '800',
   },
   elegantShoppingText: {
