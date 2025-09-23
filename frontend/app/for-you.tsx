@@ -640,8 +640,8 @@ const styles = StyleSheet.create({
   // Removed incorrect header styles - using original TopNavigation
   playPauseArea: {
     position: 'absolute',
-    top: height * 0.4,
-    bottom: height * 0.4,
+    top: '40%', // Fixed: use percentage string instead of undefined height
+    bottom: '40%', // Fixed: use percentage string instead of undefined height
     left: 0,
     right: 100,
     zIndex: 5,
