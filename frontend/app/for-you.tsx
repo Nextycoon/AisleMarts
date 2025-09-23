@@ -234,6 +234,21 @@ export default function ForYouScreen() {
     // Navigate to product detail page
   };
 
+  const handleRemix = (video: any) => {
+    console.log('Remix pressed for video:', video.id);
+    // Navigate to remix creation screen with video data
+    router.push({
+      pathname: '/remix-creator',
+      params: {
+        videoId: video.id,
+        soundId: video.sound.id,
+        soundTitle: video.sound.title,
+        soundArtist: video.sound.artist,
+        originalCreator: video.creator.name,
+      }
+    });
+  };
+
   return (
     <View style={styles.fullScreenContainer}>
       <StatusBar style="light" />
