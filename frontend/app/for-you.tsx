@@ -484,10 +484,10 @@ export default function ForYouScreen() {
 
         <TouchableOpacity 
           style={styles.compactActionButtonSpaced}
-          onPress={() => handleRepost(currentVideo)}
+          onPress={() => handleRemix(currentVideo)}
         >
           <View style={styles.sharpIconContainer}>
-            <Text style={styles.elegantRepostIcon}>🔄</Text>
+            <Text style={styles.elegantRemixIcon}>🎬</Text>
           </View>
         </TouchableOpacity>
 
