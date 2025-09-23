@@ -882,20 +882,20 @@ const styles = StyleSheet.create({
     shadowRadius: 6,
     elevation: 10,
   },
-  // Profile Story Ring - Exact same structure as stories section
+  // Profile Story Ring - Exact match with stories section dimensions
   profileStoryRing: {
-    width: 48, // Slightly larger to fit the ring
-    height: 48,
-    borderRadius: 24,
-    padding: 2, // Creates the ring effect
+    width: 64, // Same as story ring in stories section
+    height: 64,
+    borderRadius: 32,
+    padding: 3, // Creates the ring effect - same as stories
     alignItems: 'center',
     justifyContent: 'center',
     marginBottom: 0,
   },
   elegantAvatarInside: {
-    width: 40, // Inner avatar size
-    height: 40,
-    borderRadius: 20,
+    width: 56, // Same as story image size in stories section
+    height: 56,
+    borderRadius: 28,
     backgroundColor: '#D4AF37',
     alignItems: 'center',
     justifyContent: 'center',
