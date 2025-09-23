@@ -865,6 +865,21 @@ const styles = StyleSheet.create({
     shadowRadius: 4,
     elevation: 8,
   },
+  elegantAvatarWithStoryRing: {
+    width: 44,
+    height: 44,
+    borderRadius: 22,
+    backgroundColor: '#D4AF37',
+    alignItems: 'center',
+    justifyContent: 'center',
+    borderWidth: 3, // Thicker border for story ring effect
+    borderColor: '#D4AF37', // Gold story ring like stories section
+    shadowColor: '#D4AF37',
+    shadowOffset: { width: 0, height: 2 },
+    shadowOpacity: 0.8, // Slightly stronger glow for story effect
+    shadowRadius: 6,
+    elevation: 10,
+  },
   elegantAvatarText: {
     color: '#FFFFFF',
     fontSize: 18,
