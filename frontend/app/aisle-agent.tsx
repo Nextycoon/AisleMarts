@@ -281,6 +281,22 @@ export default function AisleAgentScreen() {
       badge: '0% FEES',
       gradient: ['#667eea', '#764ba2'],
     },
+    {
+      icon: '📡',
+      title: 'Live Streaming Commerce',
+      subtitle: 'AI-powered live commerce & analytics',
+      onPress: () => router.push('/(tabs)/live-streaming-commerce'),
+      badge: 'AI LIVE',
+      gradient: ['#ff4444', '#ff8a80'],
+    },
+    {
+      icon: '📊',
+      title: 'AI Analytics',
+      subtitle: 'Retention intelligence & insights',
+      onPress: () => router.push('/(tabs)/ai-analytics-dashboard'),
+      badge: 'ANALYTICS',
+      gradient: ['#2196F3', '#21CBF3'],
+    },
   ];
 
   const dashboardStats: DashboardStat[] = [
