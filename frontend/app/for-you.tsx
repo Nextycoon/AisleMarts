@@ -194,7 +194,7 @@ export default function ForYouScreen() {
       Animated.timing(topNavTranslateY, {
         toValue: 0,
         duration: 300,
-        useNativeDriver: true,
+        useNativeDriver: false,
       }).start();
     }
   };
