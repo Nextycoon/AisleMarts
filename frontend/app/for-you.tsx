@@ -315,30 +315,7 @@ export default function ForYouScreen() {
           { transform: [{ translateY: topNavTranslateY }] }
         ]}
       >
-        {/* Header 7 Icons Row */}
-        <View style={styles.headerIconsRow}>
-          <TouchableOpacity style={styles.headerIcon}>
-            <Text style={styles.headerIconText}>🏠</Text>
-          </TouchableOpacity>
-          <TouchableOpacity style={styles.headerIcon}>
-            <Text style={styles.headerIconText}>🔔</Text>
-          </TouchableOpacity>
-          <TouchableOpacity style={styles.headerIcon}>
-            <Text style={styles.headerIconText}>For You</Text>
-          </TouchableOpacity>
-          <TouchableOpacity style={styles.headerIcon}>
-            <Text style={styles.headerIconText}>👥</Text>
-          </TouchableOpacity>
-          <TouchableOpacity style={styles.headerIcon}>
-            <Text style={styles.headerIconText}>📈</Text>
-          </TouchableOpacity>
-          <TouchableOpacity style={styles.headerIcon}>
-            <Text style={styles.headerIconText}>📍</Text>
-          </TouchableOpacity>
-          <TouchableOpacity style={styles.headerIcon}>
-            <Text style={styles.headerIconText}>🔴</Text>
-          </TouchableOpacity>
-        </View>
+        <TopNavigation />
         
         {/* AisleMarts Stories Section - Scrolls with header */}
         <View style={styles.storiesSection}>
