@@ -407,7 +407,7 @@ export default function ForYouScreen() {
               ]}>
                 {currentVideo.creator.verificationTier === 'goldwave' && (
                   <View style={styles.refinedGoldContainer}>
-                    <Text style={styles.refinedGoldIcon}>✦</Text>
+                    <Text style={styles.refinedGoldIcon}>✓</Text>
                   </View>
                 )}
                 {currentVideo.creator.verificationTier === 'bluewave' && (
