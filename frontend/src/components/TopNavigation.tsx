@@ -78,8 +78,8 @@ export default function TopNavigation() {
         </TouchableOpacity>
 
         {/* 5. Explore */}
-        <TouchableOpacity style={styles.navIconButton} onPress={() => handleTabPress('/explore')}>
-          <Text style={styles.navIcon}>↗️</Text>
+        <TouchableOpacity style={styles.navTextButton} onPress={() => handleTabPress('/explore')}>
+          <Text style={styles.navText}>Explore</Text>
         </TouchableOpacity>
 
         {/* 6. Nearby */}
