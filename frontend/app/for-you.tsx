@@ -42,6 +42,16 @@ export default function ForYouScreen() {
   const videoRefs = useRef<any[]>([]);
   const translateY = useRef(new Animated.Value(0)).current;
   const api = useTikTokAPI();
+
+  // Format count function for dynamic display
+  const formatCount = (count: number): string => {
+    if (count >= 1000000) {
+      return (count / 1000000).toFixed(1) + 'M';
+    } else if (count >= 1000) {
+      return (count / 1000).toFixed(1) + 'K';
+    }
+    return count.toString();
+  };
   
   // Format count function for dynamic display
   const formatCount = (count: number): string => {
