@@ -138,15 +138,15 @@ class SuperAppSocialCommerceTestSuite:
         """Test AislePay wallet operations"""
         # Test wallet creation/retrieval
         response = await self.make_request('GET', f'/super-app/wallet/{self.test_user_id}')
+        data = self.safe_get_data(response)
         
         wallet_success = (
             response.get('status_code') == 200 and
-            isinstance(response.get('data'), dict) and
-            response['data'].get('user_id') == self.test_user_id
+            data.get('user_id') == self.test_user_id
         )
         
         self.log_test_result("Wallet Creation/Retrieval", wallet_success, 
-                           f"User ID: {self.test_user_id}, Balance: {response['data'].get('balance', 0)}", response)
+                           f"User ID: {self.test_user_id}, Balance: {data.get('balance', 0)}", response)
         
         if not wallet_success:
             return
@@ -159,15 +159,15 @@ class SuperAppSocialCommerceTestSuite:
         
         response = await self.make_request('POST', f'/super-app/wallet/{self.test_user_id}/top-up', 
                                          params=top_up_data)
+        data = self.safe_get_data(response)
         
         topup_success = (
             response.get('status_code') == 200 and
-            isinstance(response.get('data'), dict) and
-            response['data'].get('success') == True
+            data.get('success') == True
         )
         
         self.log_test_result("Wallet Top-up", topup_success,
-                           f"Amount: $100, New Balance: {response['data'].get('new_balance', 0)}", response)
+                           f"Amount: $100, New Balance: {data.get('new_balance', 0)}", response)
         
         # Test P2P transfer
         transfer_data = {
@@ -178,27 +178,27 @@ class SuperAppSocialCommerceTestSuite:
         
         response = await self.make_request('POST', '/super-app/wallet/transfer',
                                          params={'from_user_id': self.test_user_id, **transfer_data})
+        data = self.safe_get_data(response)
         
         transfer_success = (
             response.get('status_code') == 200 and
-            isinstance(response.get('data'), dict) and
-            (response['data'].get('success') == True or 'error' in response['data'])
+            (data.get('success') == True or 'error' in data)
         )
         
         self.log_test_result("P2P Transfer", transfer_success,
-                           f"Amount: $25, Status: {response['data'].get('success', 'error')}", response)
+                           f"Amount: $25, Status: {data.get('success', 'error')}", response)
         
         # Test transaction history
         response = await self.make_request('GET', f'/super-app/wallet/{self.test_user_id}/transactions')
+        data = self.safe_get_data(response)
         
         history_success = (
             response.get('status_code') == 200 and
-            isinstance(response.get('data'), dict) and
-            'transactions' in response['data']
+            'transactions' in data
         )
         
         self.log_test_result("Transaction History", history_success,
-                           f"Transactions: {len(response['data'].get('transactions', []))}", response)
+                           f"Transactions: {len(data.get('transactions', []))}", response)
         
     async def test_service_integrations(self):
         """Test service integration endpoints"""
