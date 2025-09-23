@@ -94,6 +94,22 @@ export default function AisleAgentScreen() {
 
   const quickActions: QuickAction[] = [
     {
+      icon: '🌟',
+      title: 'Super App',
+      subtitle: 'All-in-one lifestyle platform',
+      onPress: () => router.push('/(tabs)/super-app-dashboard'),
+      badge: 'SUPER',
+      gradient: ['#D4AF37', '#B8941F'],
+    },
+    {
+      icon: '🛍️',
+      title: 'Social Commerce',
+      subtitle: 'Shoppable content & influencers',
+      onPress: () => router.push('/(tabs)/social-commerce-hub'),
+      badge: 'SOCIAL',
+      gradient: ['#8A2BE2', '#4B0082'],
+    },
+    {
       icon: '💬',
       title: 'Messages',
       subtitle: 'Direct messaging & chat',
