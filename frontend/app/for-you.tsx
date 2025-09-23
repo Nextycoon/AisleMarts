@@ -391,10 +391,10 @@ export default function ForYouScreen() {
       {/* Left Side - Creator Info moved down to above bottom navigation */}
       <View style={styles.leftSideMovedDown}>
         
-        {/* Remix pill - TikTok style for creative transformations */}
-        <View style={styles.remixPill}>
-          <Text style={styles.remixIcon}>🎬</Text>
-          <Text style={styles.remixText}>Remix</Text>
+        {/* Repost pill - TikTok style above username */}
+        <View style={styles.repostPill}>
+          <Text style={styles.repostIcon}>🔄</Text>
+          <Text style={styles.repostText}>Repost</Text>
         </View>
         
         <View style={styles.elegantCreatorInfo}>
