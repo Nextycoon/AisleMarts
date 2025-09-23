@@ -1,7 +1,7 @@
 # AisleMarts Investor Demo Deep Links Index
 
 ## Base Configuration
-- **Dev Environment**: `https://vendor-dashboard-10.preview.emergentagent.com`
+- **Dev Environment**: `https://loyalty-rewards-app.preview.emergentagent.com`
 - **Awareness Engine**: Auto-detects context parameters and adapts UI/content/pricing
 - **UTM Tracking**: All links include investor-specific tracking codes
 

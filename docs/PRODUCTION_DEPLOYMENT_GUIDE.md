@@ -41,9 +41,9 @@ Analytics: https://analytics.aislemarts.com
 
 ### **Development/Staging**
 ```
-Development: https://vendor-dashboard-10.preview.emergentagent.com
-Staging API: https://vendor-dashboard-10.preview.emergentagent.com/api
-Testing Suite: https://vendor-dashboard-10.preview.emergentagent.com/test
+Development: https://loyalty-rewards-app.preview.emergentagent.com
+Staging API: https://loyalty-rewards-app.preview.emergentagent.com/api
+Testing Suite: https://loyalty-rewards-app.preview.emergentagent.com/test
 ```
 
 ---

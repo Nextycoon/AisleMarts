@@ -4,7 +4,7 @@
 
 ### Web Preview (Desktop/Mobile Browser)
 ```
-🌐 Live Preview: https://vendor-dashboard-10.preview.emergentagent.com
+🌐 Live Preview: https://loyalty-rewards-app.preview.emergentagent.com
 ```
 
 ### Mobile App Testing (Expo Go)
