@@ -445,9 +445,9 @@ export default function ForYouScreen() {
             <View style={styles.elegantAvatarInside}>
               <Text style={styles.elegantAvatarText}>L</Text>
             </View>
-            {/* Verification badge like in stories section */}
+            {/* Verification badge like in stories section - correct golden diamond */}
             <View style={styles.profileVerificationBadge}>
-              <Text style={styles.profileVerificationIcon}>✦</Text>
+              <Text style={styles.profileVerificationIcon}>🔶</Text>
             </View>
           </View>
           <View style={styles.elegantFollowButton}>
