@@ -123,7 +123,7 @@ class GlobalMonetizationTester:
             "transaction_amount": 299.99,
             "product_category": "electronics",
             "buyer_location": "US",
-            "is_premium_seller": True,
+            "is_premium_seller": "true",
             "referral_code": "REF2024"
         }
         
