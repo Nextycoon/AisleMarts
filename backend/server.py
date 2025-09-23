@@ -556,6 +556,18 @@ try:
     from routers.ai_analytics_routes import router as ai_analytics_router
     app.include_router(ai_analytics_router, prefix="/api/ai-analytics", tags=["ai_analytics"])
     
+    # Import and include Gamification & Engagement router
+    from routers.gamification_routes import router as gamification_router
+    app.include_router(gamification_router, prefix="/api/gamification", tags=["gamification"])
+    
+    # Import and include Community & Social Commerce router  
+    from routers.community_routes import router as community_router
+    app.include_router(community_router, prefix="/api/community", tags=["community"])
+    
+    # Import and include Advanced Loyalty Program router
+    from routers.loyalty_routes import router as loyalty_router
+    app.include_router(loyalty_router, prefix="/api/loyalty", tags=["loyalty"])
+    
     # Import and include Aisle AI router
     from routers.aisle_ai_routes import router as aisle_ai_router
     app.include_router(aisle_ai_router, tags=["aisle_ai"])
