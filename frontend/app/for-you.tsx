@@ -1618,4 +1618,27 @@ const styles = StyleSheet.create({
     textAlign: 'center',
     maxWidth: 70,
   },
+
+  // Repost to followers pill - TikTok style
+  repostToFollowersPill: {
+    flexDirection: 'row',
+    alignItems: 'center',
+    backgroundColor: 'rgba(255, 255, 255, 0.2)',
+    paddingHorizontal: 12,
+    paddingVertical: 6,
+    borderRadius: 20,
+    marginBottom: 12,
+    borderWidth: 1,
+    borderColor: 'rgba(255, 255, 255, 0.3)',
+  },
+  repostIcon: {
+    fontSize: 12,
+    color: '#FFFFFF',
+    marginRight: 6,
+  },
+  repostText: {
+    fontSize: 12,
+    color: '#FFFFFF',
+    fontWeight: '500',
+  },
 });
