@@ -250,7 +250,6 @@ const styles = StyleSheet.create({
     textShadowOffset: { width: 0, height: 1 },
     textShadowRadius: 2,
     textAlign: 'center',
-    numberOfLines: 1, // Ensure single line
   },
   forYouTextContainer: {
     alignItems: 'center',
