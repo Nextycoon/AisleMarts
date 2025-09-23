@@ -139,7 +139,7 @@ const getBaseUrl = (): string => {
     return window.location.origin;
   }
   // React Native or server environment
-  return process.env.EXPO_PUBLIC_BACKEND_URL || 'https://loyalty-rewards-app.preview.emergentagent.com';
+  return process.env.EXPO_PUBLIC_BACKEND_URL || 'https://aisleai.preview.emergentagent.com';
 };
 
 const BASE_URL = `${getBaseUrl()}/api/rewards`;

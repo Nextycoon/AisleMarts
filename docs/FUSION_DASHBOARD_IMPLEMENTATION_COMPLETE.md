@@ -114,7 +114,7 @@ Where real meets virtual, and one lifestyle spans both worlds.
 ## 🌊 **DEPLOYMENT OPTIONS**
 
 ### **Live Demo Access:**
-- **URL**: `https://loyalty-rewards-app.preview.emergentagent.com/fusion-dashboard`
+- **URL**: `https://aisleai.preview.emergentagent.com/fusion-dashboard`
 - **QR Code**: Available for mobile device testing
 - **Responsive**: Adapts to phone, tablet, desktop viewing
 

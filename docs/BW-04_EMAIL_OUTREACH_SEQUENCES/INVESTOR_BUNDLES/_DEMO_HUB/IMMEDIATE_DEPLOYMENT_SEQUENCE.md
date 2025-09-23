@@ -11,19 +11,19 @@
 ### **Target 1: Sequoia (Roelof Botha)**
 **Subject:** AisleMarts Series A - The Operating System Where 8 Billion Humans Will Live  
 **Send Time:** Within 2 hours  
-**Demo Link:** https://loyalty-rewards-app.preview.emergentagent.com/fusion-dashboard  
+**Demo Link:** https://aisleai.preview.emergentagent.com/fusion-dashboard  
 **Credentials:** sequoia_roelof / Civilization2025!  
 
 ### **Target 2: a16z (Chris Dixon)**
 **Subject:** The AI-Native Infrastructure for Post-Digital Humanity  
 **Send Time:** Within 2 hours  
-**Demo Link:** https://loyalty-rewards-app.preview.emergentagent.com/fusion-dashboard  
+**Demo Link:** https://aisleai.preview.emergentagent.com/fusion-dashboard  
 **Credentials:** a16z_chris / AIInfra2025!  
 
 ### **Target 3: LVMH (Julie Bercovy)**
 **Subject:** Luxury Commerce Transcends Reality - AisleMarts Series A  
 **Send Time:** Within 2 hours  
-**Demo Link:** https://loyalty-rewards-app.preview.emergentagent.com/fusion-dashboard  
+**Demo Link:** https://aisleai.preview.emergentagent.com/fusion-dashboard  
 **Credentials:** lvmh_julie / LuxuryOS2025!  
 
 ---

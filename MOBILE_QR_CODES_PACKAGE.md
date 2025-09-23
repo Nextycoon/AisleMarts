@@ -4,7 +4,7 @@
 
 ### Web Preview (Desktop/Mobile Browser)
 ```
-🌐 Live Preview: https://loyalty-rewards-app.preview.emergentagent.com
+🌐 Live Preview: https://aisleai.preview.emergentagent.com
 ```
 
 ### Mobile App Testing (Expo Go)

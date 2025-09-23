@@ -46,7 +46,7 @@ from datetime import datetime
 from typing import Dict, List, Any
 
 # Backend URL from frontend .env
-BACKEND_URL = "https://loyalty-rewards-app.preview.emergentagent.com/api"
+BACKEND_URL = "https://aisleai.preview.emergentagent.com/api"
 
 class BackendTester:
     def __init__(self):
