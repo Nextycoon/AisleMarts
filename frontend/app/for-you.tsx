@@ -250,6 +250,19 @@ export default function ForYouScreen() {
     });
   };
 
+  const handleStoryPress = (story: any) => {
+    console.log('Story pressed:', story.name);
+    // Navigate to story viewer
+    router.push({
+      pathname: '/story-viewer',
+      params: {
+        storyId: story.id,
+        storyName: story.name,
+        isVerified: story.isVerified,
+      }
+    });
+  };
+
   return (
     <View style={styles.fullScreenContainer}>
       <StatusBar style="light" />
