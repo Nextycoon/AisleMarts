@@ -297,6 +297,46 @@ export default function AisleAgentScreen() {
       badge: 'ANALYTICS',
       gradient: ['#2196F3', '#21CBF3'],
     },
+    {
+      icon: '🎯',
+      title: 'Daily Challenges',
+      subtitle: 'AI-generated personalized tasks',
+      onPress: () => router.push('/(tabs)/daily-challenges'),
+      badge: 'AI TASKS',
+      gradient: ['#4CAF50', '#8BC34A'],
+    },
+    {
+      icon: '🎰',
+      title: 'Spin Wheel',
+      subtitle: 'Win rewards & unlock achievements',
+      onPress: () => router.push('/(tabs)/spin-wheel'),
+      badge: 'REWARDS',
+      gradient: ['#FF9800', '#FFC107'],
+    },
+    {
+      icon: '👥',
+      title: 'Community Hub',
+      subtitle: 'Social commerce & user reviews',
+      onPress: () => router.push('/(tabs)/community-hub'),
+      badge: 'SOCIAL',
+      gradient: ['#9C27B0', '#E91E63'],
+    },
+    {
+      icon: '⭐',
+      title: 'User Reviews',
+      subtitle: 'AI-enhanced product feedback',
+      onPress: () => router.push('/(tabs)/user-reviews'),
+      badge: 'AI REVIEWS',
+      gradient: ['#FF5722', '#FF9800'],
+    },
+    {
+      icon: '💎',
+      title: 'Loyalty Dashboard',
+      subtitle: 'Multi-tier rewards & cashback',
+      onPress: () => router.push('/(tabs)/loyalty-dashboard'),
+      badge: 'PLATINUM',
+      gradient: ['#607D8B', '#9E9E9E'],
+    },
   ];
 
   const dashboardStats: DashboardStat[] = [
