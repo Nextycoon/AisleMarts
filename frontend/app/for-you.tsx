@@ -723,15 +723,15 @@ const styles = StyleSheet.create({
     width: 18,
     height: 18,
     borderRadius: 4,
-    backgroundColor: '#D4AF37',
+    backgroundColor: 'transparent', // Remove gold background to show only checkmark
     alignItems: 'center',
     justifyContent: 'center',
-    borderWidth: 1,
-    borderColor: 'rgba(255, 255, 255, 0.3)',
+    borderWidth: 0, // Remove border
+    borderColor: 'transparent',
   },
   refinedGoldIcon: {
-    color: '#FFFFFF',
-    fontSize: 10,
+    color: '#D4AF37', // Golden checkmark color
+    fontSize: 12, // Slightly larger for better visibility
     fontWeight: '900',
     textAlign: 'center',
   },
