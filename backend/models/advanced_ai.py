@@ -164,7 +164,7 @@ class SmartPricingOptimization(BaseModel):
     current_price: float
     optimal_price_range: Dict[str, float] = {}
     price_elasticity: float = 0.0
-    competitive_pricing: Dict[str, float] = {}
+    competitive_pricing: Dict[str, Any] = {}  # Flexible structure for competitive data
     demand_based_pricing: Dict[str, float] = {}
     dynamic_pricing_triggers: List[Dict[str, Any]] = []
     personalized_pricing: Dict[str, float] = {}  # user_segment -> price
