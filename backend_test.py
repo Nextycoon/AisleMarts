@@ -206,10 +206,11 @@ class BackendTester:
         """Test Product Reviews with AI Analysis"""
         review_data = {
             "product_id": "test_product_retention_001",
-            "rating": "excellent",
+            "product_name": "AI-Powered Retention Testing Product",
+            "rating": 5,
             "title": "Amazing Product for Retention Testing",
-            "content": "This product works perfectly for our retention algorithm testing. Highly recommended for AI-powered commerce platforms.",
-            "verified_purchase": True
+            "review_text": "This product works perfectly for our retention algorithm testing. Highly recommended for AI-powered commerce platforms.",
+            "images": []
         }
         return await self.test_endpoint(
             "POST", "/community/reviews",
