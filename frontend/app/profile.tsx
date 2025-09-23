@@ -503,6 +503,9 @@ const styles = StyleSheet.create({
   content: {
     flex: 1,
   },
+  scrollContent: {
+    paddingBottom: 20,
+  },
   profileHeader: {
     alignItems: 'center',
     padding: 20,
