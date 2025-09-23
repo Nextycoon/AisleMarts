@@ -1495,12 +1495,11 @@ const styles = StyleSheet.create({
   // ==================================================================================
   storiesSection: {
     width: '100%',
-    height: 110,
-    backgroundColor: 'rgba(0, 0, 0, 0.9)',
+    height: 100,
+    backgroundColor: 'rgba(0, 0, 0, 0.8)',
     paddingVertical: 8,
-    borderBottomWidth: 2,
-    borderBottomColor: '#D4AF37',
-    marginTop: 80, // Space for header icons
+    borderBottomWidth: 1,
+    borderBottomColor: 'rgba(212, 175, 55, 0.5)',
   },
   storiesScrollView: {
     flex: 1,
