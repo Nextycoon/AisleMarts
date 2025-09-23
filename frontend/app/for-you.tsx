@@ -1511,6 +1511,7 @@ const styles = StyleSheet.create({
     paddingVertical: 8,
     borderBottomWidth: 1,
     borderBottomColor: 'rgba(212, 175, 55, 0.5)',
+    // No position properties - inherits animation from parent
   },
   storiesScrollView: {
     flex: 1,
