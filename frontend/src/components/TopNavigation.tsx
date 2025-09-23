@@ -91,31 +91,6 @@ export default function TopNavigation() {
         <TouchableOpacity style={styles.navIconButton} onPress={handleLivePress}>
           <Text style={styles.navIcon}>🔴</Text>
         </TouchableOpacity>
-
-        {/* Following Icon */}
-        <TouchableOpacity style={styles.navIconButton} onPress={() => handleTabPress('/following')}>
-          <Text style={[styles.navIcon, isActive('/following') && styles.navIconActive]}>👥</Text>
-          {isActive('/following') && <View style={styles.iconActiveIndicator} />}
-        </TouchableOpacity>
-
-        {/* Explore Icon */}
-        <TouchableOpacity style={styles.navIconButton} onPress={() => handleTabPress('/explore')}>
-          <Image 
-            source={{ uri: 'https://customer-assets.emergentagent.com/job_vendor-dashboard-10/artifacts/pbzsiikm_EXPLORE.png' }}
-            style={[styles.exploreIcon, isActive('/explore') && styles.exploreIconActive]}
-          />
-          {isActive('/explore') && <View style={styles.iconActiveIndicator} />}
-        </TouchableOpacity>
-
-        {/* Nearby Icon */}
-        <TouchableOpacity style={styles.navIconButton} onPress={() => console.log('Nearby pressed')}>
-          <Text style={styles.navIcon}>📍</Text>
-        </TouchableOpacity>
-
-        {/* Live Icon */}
-        <TouchableOpacity style={styles.navIconButton} onPress={handleLivePress}>
-          <Text style={styles.liveIcon}>◉</Text>
-        </TouchableOpacity>
       </View>
     </View>
   );
