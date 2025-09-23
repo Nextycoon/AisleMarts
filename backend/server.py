@@ -632,6 +632,10 @@ try:
     from routers.social_media_advertising_routes import router as social_media_advertising_router
     app.include_router(social_media_advertising_router, prefix="/api/social-ads", tags=["social_advertising"])
     
+    # Import and include CLP Engine router
+    from routers.clp_engine_routes import router as clp_engine_router
+    app.include_router(clp_engine_router, prefix="/api/clp-engine", tags=["clp_engine"])
+    
     # Import and include Production Deployment router
     from routers.production_deployment_routes import router as production_deployment_router
     app.include_router(production_deployment_router, prefix="/api", tags=["production_deployment"])
