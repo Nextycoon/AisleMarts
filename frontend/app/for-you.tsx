@@ -1619,8 +1619,8 @@ const styles = StyleSheet.create({
     maxWidth: 70,
   },
 
-  // Remix pill - TikTok style for creative transformations
-  remixPill: {
+  // Repost pill - TikTok style above username for sharing
+  repostPill: {
     flexDirection: 'row',
     alignItems: 'center',
     backgroundColor: 'rgba(255, 255, 255, 0.2)',
@@ -1631,12 +1631,12 @@ const styles = StyleSheet.create({
     borderWidth: 1,
     borderColor: 'rgba(255, 255, 255, 0.3)',
   },
-  remixIcon: {
+  repostIcon: {
     fontSize: 12,
     color: '#FFFFFF',
     marginRight: 6,
   },
-  remixText: {
+  repostText: {
     fontSize: 12,
     color: '#FFFFFF',
     fontWeight: '500',
