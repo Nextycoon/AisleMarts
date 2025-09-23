@@ -236,7 +236,17 @@ const styles = StyleSheet.create({
     alignItems: 'center',
     justifyContent: 'center',
     paddingVertical: 4,
-    maxWidth: 44, // Limit maximum width
+    minWidth: 60, // Increased to fit "For You" text on one line
+  },
+  forYouText: {
+    fontSize: 12,
+    fontWeight: '600',
+    color: '#FFFFFF',
+    textShadowColor: 'rgba(255, 255, 255, 0.3)',
+    textShadowOffset: { width: 0, height: 1 },
+    textShadowRadius: 2,
+    textAlign: 'center',
+    numberOfLines: 1, // Ensure single line
   },
   forYouTextContainer: {
     alignItems: 'center',
