@@ -1489,4 +1489,94 @@ const styles = StyleSheet.create({
     marginTop: 4,
     fontWeight: '600',
   },
+
+  // ==================================================================================
+  // AISLEMARTS STORIES SYSTEM - INSTAGRAM-STYLE WITH E-COMMERCE INTEGRATION
+  // ==================================================================================
+  storiesSection: {
+    position: 'absolute',
+    top: 100, // Under the header icons
+    left: 0,
+    right: 0,
+    height: 120,
+    zIndex: 20,
+    backgroundColor: 'rgba(0, 0, 0, 0.3)',
+    paddingVertical: 8,
+  },
+  storiesScrollView: {
+    flex: 1,
+  },
+  storiesContainer: {
+    paddingHorizontal: 16,
+    alignItems: 'center',
+  },
+  storyBubble: {
+    alignItems: 'center',
+    marginRight: 16,
+    width: 70,
+  },
+  storyRing: {
+    width: 64,
+    height: 64,
+    borderRadius: 32,
+    padding: 3,
+    alignItems: 'center',
+    justifyContent: 'center',
+    marginBottom: 6,
+  },
+  yourStoryRing: {
+    backgroundColor: '#333333',
+    borderWidth: 2,
+    borderColor: '#666666',
+  },
+  activeStoryRing: {
+    background: 'linear-gradient(45deg, #D4AF37, #FF6B35, #E91E63, #9C27B0)',
+    backgroundColor: '#D4AF37', // Fallback for React Native
+    borderWidth: 2,
+    borderColor: '#D4AF37',
+  },
+  inactiveStoryRing: {
+    backgroundColor: '#333333',
+    borderWidth: 2,
+    borderColor: '#666666',
+  },
+  storyImage: {
+    width: 56,
+    height: 56,
+    borderRadius: 28,
+    backgroundColor: '#1a1a1a',
+    alignItems: 'center',
+    justifyContent: 'center',
+    position: 'relative',
+  },
+  storyImageText: {
+    fontSize: 24,
+    fontWeight: '700',
+    color: '#FFFFFF',
+  },
+  verifiedBadge: {
+    position: 'absolute',
+    bottom: -2,
+    right: -2,
+    width: 18,
+    height: 18,
+    borderRadius: 9,
+    backgroundColor: '#D4AF37',
+    alignItems: 'center',
+    justifyContent: 'center',
+    borderWidth: 2,
+    borderColor: '#000000',
+  },
+  verifiedIcon: {
+    fontSize: 10,
+    color: '#FFFFFF',
+    fontWeight: '900',
+  },
+  storyLabel: {
+    fontSize: 12,
+    color: '#FFFFFF',
+    fontWeight: '500',
+    textAlign: 'center',
+    maxWidth: 70,
+  },
 });
