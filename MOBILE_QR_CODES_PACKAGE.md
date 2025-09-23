@@ -4,7 +4,7 @@
 
 ### Web Preview (Desktop/Mobile Browser)
 ```
-🌐 Live Preview: https://aisleai.preview.emergentagent.com
+🌐 Live Preview: https://ai-marketplace-13.preview.emergentagent.com
 ```
 
 ### Mobile App Testing (Expo Go)

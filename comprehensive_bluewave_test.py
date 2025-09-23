@@ -26,7 +26,7 @@ import sys
 import os
 
 # Backend URL from environment configuration
-BACKEND_URL = "https://aisleai.preview.emergentagent.com/api"
+BACKEND_URL = "https://ai-marketplace-13.preview.emergentagent.com/api"
 
 class ComprehensiveBlueWaveTester:
     def __init__(self):
