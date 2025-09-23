@@ -167,7 +167,7 @@ class AdvancedAITester:
                 "user_id": test_user_id,
                 "session_data": json.dumps(session_data),
                 "analysis_depth": "comprehensive",
-                "include_predictions": True
+                "include_predictions": "true"
             }
             
             async with self.session.post(f"{API_BASE}/behavior/analyze", params=params) as response:
