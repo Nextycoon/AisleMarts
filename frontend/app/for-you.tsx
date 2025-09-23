@@ -193,15 +193,7 @@ export default function ForYouScreen() {
     // Add more mock data as needed...
   ];
 
-  const currentVideo = forYouFeed[currentIndex] || {
-    id: 1,
-    uri: 'https://commondatastorage.googleapis.com/gtv-videos-bucket/sample/ForBiggerEscapes.mp4', // Working sample video
-    creator: {
-      id: 'luxefashion',
-      name: '@LuxeFashion',
-      verified: true,
-      avatar: 'https://via.placeholder.com/50x50',
-    },
+  const currentVideo = forYouFeed[currentIndex] || forYouFeed[0];
     caption: '✨ Transform your winter wardrobe with these chic layers!',
     hashtags: '#WinterFashion #LuxeStyle #TrendingNow #ShopNow',
     music: {
