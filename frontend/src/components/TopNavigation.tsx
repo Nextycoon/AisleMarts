@@ -51,17 +51,22 @@ export default function TopNavigation() {
       <StatusBar barStyle="light-content" backgroundColor="#000000" />
       
       <View style={styles.navBar}>
-        {/* 1. Search Icon */}
-        <TouchableOpacity style={styles.navIconButton} onPress={handleSearchPress}>
-          <Text style={styles.navIcon}>🔍</Text>
+        {/* 1. Live - First on left like TikTok */}
+        <TouchableOpacity style={styles.navTextButton} onPress={handleLivePress}>
+          <Text style={styles.navText}>LIVE</Text>
         </TouchableOpacity>
 
-        {/* 2. Notifications */}
-        <TouchableOpacity style={styles.navIconButton} onPress={() => console.log('Notifications pressed')}>
-          <Text style={styles.navIcon}>🔔</Text>
+        {/* 2. Explore */}
+        <TouchableOpacity style={styles.navTextButton} onPress={() => handleTabPress('/explore')}>
+          <Text style={styles.navText}>Explore</Text>
         </TouchableOpacity>
 
-        {/* 3. For You - Active with underline */}
+        {/* 3. Following */}
+        <TouchableOpacity style={styles.navTextButton} onPress={() => handleTabPress('/following')}>
+          <Text style={styles.navText}>Following</Text>
+        </TouchableOpacity>
+
+        {/* 4. For You - Active with underline */}
         <TouchableOpacity 
           style={styles.forYouButton} 
           onPress={() => handleTabPress('/for-you')}
@@ -76,24 +81,9 @@ export default function TopNavigation() {
           {isActive('/for-you') && <View style={styles.activeIndicator} />}
         </TouchableOpacity>
 
-        {/* 4. Following */}
-        <TouchableOpacity style={styles.navTextButton} onPress={() => handleTabPress('/following')}>
-          <Text style={styles.navText}>Following</Text>
-        </TouchableOpacity>
-
-        {/* 5. Explore */}
-        <TouchableOpacity style={styles.navTextButton} onPress={() => handleTabPress('/explore')}>
-          <Text style={styles.navText}>Explore</Text>
-        </TouchableOpacity>
-
-        {/* 6. Nearby */}
-        <TouchableOpacity style={styles.navIconButton} onPress={() => console.log('Nearby pressed')}>
-          <Text style={styles.navIcon}>📍</Text>
-        </TouchableOpacity>
-
-        {/* 7. Live */}
-        <TouchableOpacity style={styles.navIconButton} onPress={handleLivePress}>
-          <Text style={styles.navIcon}>🔴</Text>
+        {/* 5. Search Icon - Last on right like TikTok */}
+        <TouchableOpacity style={styles.navIconButton} onPress={handleSearchPress}>
+          <Text style={styles.navIcon}>🔍</Text>
         </TouchableOpacity>
       </View>
     </View>
