@@ -101,380 +101,602 @@ class CLPEngineTester:
             self.log_test(test_name, False, f"Exception: {str(e)}", response_time)
             return {"error": str(e)}
     
-    # 1. Social Media Advertising Health Check Tests
-    async def test_social_ads_health_check(self):
-        """Test social media advertising health check endpoint"""
-        print("\n🏥 TESTING SOCIAL MEDIA ADVERTISING HEALTH CHECK")
+    # 1. CLP Engine Health Check Tests
+    async def test_clp_engine_health_check(self):
+        """Test CLP Engine health check endpoint"""
+        print("\n🏥 TESTING CLP ENGINE HEALTH CHECK")
         
         result = await self.test_endpoint(
-            "GET", "/social-ads/health",
-            test_name="Social Media Advertising Health Check"
+            "GET", "/clp-engine/health",
+            test_name="CLP Engine Health Check"
         )
         
         if "error" not in result:
             # Validate health check response structure
-            required_fields = ["status", "service", "features", "platforms_supported", "overall_performance"]
+            required_fields = ["status", "service", "version", "features", "ai_capabilities", "business_model"]
             missing_fields = [field for field in required_fields if field not in result]
             
             if not missing_fields:
                 self.log_test("Health Check Structure Validation", True, 
                             f"All required fields present: {len(required_fields)} fields")
                 
-                # Validate platform support
-                if result.get("platforms_supported") == 8:
-                    self.log_test("Platform Support Validation", True, "8 platforms supported as expected")
-                else:
-                    self.log_test("Platform Support Validation", False, 
-                                f"Expected 8 platforms, got {result.get('platforms_supported')}")
-                    
                 # Validate features
-                expected_features = [
-                    "Multi-Platform Campaign Management",
-                    "Influencer Partnership Platform",
-                    "AI-Powered Optimization",
-                    "Cross-Platform Analytics"
-                ]
                 features = result.get("features", [])
+                expected_features = [
+                    "Content Lead Purchase Optimization",
+                    "Infinite Discovery Algorithm", 
+                    "Real-time Engagement Tracking",
+                    "AI-Powered Content Optimization"
+                ]
                 features_found = sum(1 for feature in expected_features if feature in features)
                 
                 if features_found >= 3:
-                    self.log_test("Features Validation", True, f"{features_found}/{len(expected_features)} key features present")
+                    self.log_test("CLP Features Validation", True, f"{features_found}/{len(expected_features)} key features present")
                 else:
-                    self.log_test("Features Validation", False, f"Only {features_found}/{len(expected_features)} key features found")
+                    self.log_test("CLP Features Validation", False, f"Only {features_found}/{len(expected_features)} key features found")
+                    
+                # Validate AI capabilities
+                ai_capabilities = result.get("ai_capabilities", [])
+                if len(ai_capabilities) >= 4:
+                    self.log_test("AI Capabilities Validation", True, f"{len(ai_capabilities)} AI capabilities available")
+                else:
+                    self.log_test("AI Capabilities Validation", False, f"Only {len(ai_capabilities)} AI capabilities found")
+                    
+                # Validate business model
+                business_model = result.get("business_model", {})
+                if "clp_formula" in business_model and "conversion_efficiency" in business_model:
+                    self.log_test("Business Model Validation", True, "CLP business model properly defined")
+                else:
+                    self.log_test("Business Model Validation", False, "Business model incomplete")
                     
             else:
                 self.log_test("Health Check Structure Validation", False, f"Missing fields: {missing_fields}")
     
-    # 2. Multi-Platform Campaign Management Tests
-    async def test_campaign_management(self):
-        """Test campaign creation and management across platforms"""
-        print("\n📱 TESTING MULTI-PLATFORM CAMPAIGN MANAGEMENT")
+    # 2. Content Engagement Tracking Tests
+    async def test_content_engagement_tracking(self):
+        """Test content engagement tracking functionality"""
+        print("\n📊 TESTING CONTENT ENGAGEMENT TRACKING")
         
-        # Test campaign creation for different platforms
-        platforms = ["facebook", "instagram", "tiktok", "youtube", "twitter", "linkedin", "pinterest", "snapchat"]
-        
-        for platform in platforms[:4]:  # Test first 4 platforms to save time
-            campaign_data = {
-                "campaign_name": f"Test Campaign - {platform.title()}",
-                "platform": platform,
-                "objective": "sales",
-                "daily_budget": 100.0,
-                "total_budget": 1000.0,
-                "ad_format": "video" if platform in ["tiktok", "youtube"] else "image",
-                "call_to_action": "shop_now",
-                "start_date": datetime.utcnow().isoformat(),
-                "end_date": (datetime.utcnow() + timedelta(days=7)).isoformat(),
-                "created_by": "test_user"
+        # Test engagement tracking
+        engagement_data = {
+            "content_id": "test_content_123",
+            "user_id": "test_user_456",
+            "action": "click",
+            "duration_seconds": 45.5,
+            "engagement_depth": 0.8,
+            "device_type": "mobile",
+            "platform": "aislemarts",
+            "social_context": {
+                "friend_also_engaged": True,
+                "high_engagement_content": True
+            },
+            "previous_actions": ["view", "like"],
+            "session_context": {
+                "browsing_intent": "shopping",
+                "time_spent_shopping": 600
             }
-            
-            result = await self.test_endpoint(
-                "POST", "/social-ads/campaigns/create",
-                data=campaign_data,
-                test_name=f"Create Campaign - {platform.title()}"
-            )
-            
-            if "error" not in result and result.get("success"):
-                campaign_id = result.get("campaign_id")
-                
-                # Test campaign performance retrieval
-                await self.test_endpoint(
-                    "GET", f"/social-ads/campaigns/{campaign_id}/performance",
-                    data={"start_date": "2024-01-01", "end_date": "2024-01-31"},
-                    test_name=f"Get Campaign Performance - {platform.title()}"
-                )
-        
-        # Test campaigns overview
-        await self.test_endpoint(
-            "GET", "/social-ads/campaigns/overview",
-            test_name="Campaigns Overview"
-        )
-    
-    # 3. Influencer Partnership Platform Tests
-    async def test_influencer_platform(self):
-        """Test influencer marketplace and campaign functionality"""
-        print("\n👥 TESTING INFLUENCER PARTNERSHIP PLATFORM")
-        
-        # Test influencer marketplace
-        result = await self.test_endpoint(
-            "GET", "/social-ads/influencers/marketplace",
-            test_name="Influencer Marketplace Overview"
-        )
-        
-        if "error" not in result:
-            # Validate marketplace structure
-            required_fields = ["marketplace_overview", "featured_influencers", "search_filters"]
-            missing_fields = [field for field in required_fields if field not in result]
-            
-            if not missing_fields:
-                self.log_test("Marketplace Structure Validation", True, "All required fields present")
-                
-                # Check if we have featured influencers
-                influencers = result.get("featured_influencers", [])
-                if len(influencers) >= 5:
-                    self.log_test("Featured Influencers Validation", True, f"{len(influencers)} influencers available")
-                else:
-                    self.log_test("Featured Influencers Validation", False, f"Only {len(influencers)} influencers found")
-            else:
-                self.log_test("Marketplace Structure Validation", False, f"Missing fields: {missing_fields}")
-        
-        # Test influencer profile creation
-        influencer_data = {
-            "username": "@test_influencer",
-            "platform": "instagram",
-            "full_name": "Test Influencer",
-            "followers_count": 50000,
-            "engagement_rate": 4.5,
-            "email": "test@example.com",
-            "content_categories": ["fashion", "lifestyle"],
-            "verified": True
         }
         
         result = await self.test_endpoint(
-            "POST", "/social-ads/influencers/create",
-            data=influencer_data,
-            test_name="Create Influencer Profile"
+            "POST", "/clp-engine/engagement/track",
+            data=engagement_data,
+            test_name="Track Content Engagement"
         )
         
         if "error" not in result and result.get("success"):
-            influencer_id = result.get("influencer_id")
-            
-            # Test influencer campaign creation
-            campaign_data = {
-                "influencer_id": influencer_id,
-                "campaign_name": "Test Influencer Campaign",
-                "collaboration_type": "sponsored_post",
-                "platform": "instagram",
-                "compensation_amount": 500.0,
-                "brief_date": datetime.utcnow().isoformat(),
-                "content_due_date": (datetime.utcnow() + timedelta(days=3)).isoformat(),
-                "publish_date": (datetime.utcnow() + timedelta(days=5)).isoformat(),
-                "campaign_end_date": (datetime.utcnow() + timedelta(days=10)).isoformat()
-            }
-            
-            campaign_result = await self.test_endpoint(
-                "POST", "/social-ads/influencers/campaigns/create",
-                data=campaign_data,
-                test_name="Create Influencer Campaign"
-            )
-            
-            if "error" not in campaign_result and campaign_result.get("success"):
-                campaign_id = campaign_result.get("campaign_id")
-                
-                # Test influencer campaign performance
-                await self.test_endpoint(
-                    "GET", f"/social-ads/influencers/campaigns/{campaign_id}/performance",
-                    test_name="Get Influencer Campaign Performance"
-                )
-    
-    # 4. AI-Powered Optimization Engine Tests
-    async def test_ai_optimization(self):
-        """Test AI-powered optimization capabilities"""
-        print("\n🤖 TESTING AI-POWERED OPTIMIZATION ENGINE")
-        
-        # Test AI optimization summary
-        result = await self.test_endpoint(
-            "GET", "/social-ads/ai/optimization/summary",
-            test_name="AI Optimization Summary"
-        )
-        
-        if "error" not in result:
-            # Validate AI summary structure
-            required_fields = ["ai_engine_status", "models_active", "optimization_categories"]
+            # Validate engagement tracking response
+            required_fields = ["engagement_id", "engagement_score", "purchase_intent_score", "content_resonance"]
             missing_fields = [field for field in required_fields if field not in result]
             
             if not missing_fields:
-                self.log_test("AI Summary Structure Validation", True, "All required fields present")
+                self.log_test("Engagement Tracking Response Validation", True, "All tracking metrics present")
                 
-                # Check optimization categories
-                categories = result.get("optimization_categories", {})
-                expected_categories = ["targeting", "creative", "bidding", "scheduling"]
-                categories_found = sum(1 for cat in expected_categories if cat in categories)
+                # Validate score ranges
+                engagement_score = result.get("engagement_score", 0)
+                purchase_intent = result.get("purchase_intent_score", 0)
+                content_resonance = result.get("content_resonance", 0)
                 
-                if categories_found >= 3:
-                    self.log_test("AI Optimization Categories", True, f"{categories_found}/{len(expected_categories)} categories available")
+                if 0 <= engagement_score <= 1 and 0 <= purchase_intent <= 1 and 0 <= content_resonance <= 1:
+                    self.log_test("Engagement Scores Validation", True, "All scores within valid range (0-1)")
                 else:
-                    self.log_test("AI Optimization Categories", False, f"Only {categories_found}/{len(expected_categories)} categories found")
+                    self.log_test("Engagement Scores Validation", False, "Scores outside valid range")
             else:
-                self.log_test("AI Summary Structure Validation", False, f"Missing fields: {missing_fields}")
+                self.log_test("Engagement Tracking Response Validation", False, f"Missing fields: {missing_fields}")
         
-        # Test AI recommendations for a sample campaign
-        test_campaign_id = "camp_test123456"
-        result = await self.test_endpoint(
-            "GET", f"/social-ads/ai/recommendations/{test_campaign_id}",
-            test_name="AI Campaign Recommendations"
+        # Test engagement analytics
+        analytics_result = await self.test_endpoint(
+            "GET", "/clp-engine/engagement/analytics",
+            data={"time_range": "24h", "content_id": "test_content_123"},
+            test_name="Get Engagement Analytics"
         )
         
-        if "error" not in result:
-            # Validate recommendations structure
-            if "recommendations" in result and "priority_breakdown" in result:
-                recommendations = result.get("recommendations", [])
-                if len(recommendations) >= 3:
-                    self.log_test("AI Recommendations Generation", True, f"{len(recommendations)} recommendations generated")
-                    
-                    # Check recommendation priorities
-                    priority_breakdown = result.get("priority_breakdown", {})
-                    if "high" in priority_breakdown and "medium" in priority_breakdown:
-                        self.log_test("AI Recommendations Prioritization", True, "Recommendations properly prioritized")
-                    else:
-                        self.log_test("AI Recommendations Prioritization", False, "Priority breakdown incomplete")
-                else:
-                    self.log_test("AI Recommendations Generation", False, f"Only {len(recommendations)} recommendations generated")
-            else:
-                self.log_test("AI Recommendations Structure", False, "Missing recommendations or priority_breakdown")
-    
-    # 5. Cross-Platform Analytics & Insights Tests
-    async def test_cross_platform_analytics(self):
-        """Test cross-platform analytics and insights"""
-        print("\n📊 TESTING CROSS-PLATFORM ANALYTICS & INSIGHTS")
-        
-        # Test cross-platform analytics
-        start_date = "2024-01-01"
-        end_date = "2024-01-31"
-        
-        result = await self.test_endpoint(
-            "GET", "/social-ads/analytics/cross-platform",
-            data={"start_date": start_date, "end_date": end_date},
-            test_name="Cross-Platform Analytics"
-        )
-        
-        if "error" not in result:
+        if "error" not in analytics_result:
             # Validate analytics structure
-            required_fields = ["insights", "executive_summary", "action_plan"]
-            missing_fields = [field for field in required_fields if field not in result]
+            required_analytics = ["total_engagements", "unique_users", "avg_engagement_score", "top_engagement_actions"]
+            missing_analytics = [field for field in required_analytics if field not in analytics_result]
+            
+            if not missing_analytics:
+                self.log_test("Engagement Analytics Structure", True, "Complete analytics data available")
+                
+                # Validate engagement actions
+                top_actions = analytics_result.get("top_engagement_actions", [])
+                if len(top_actions) >= 3:
+                    self.log_test("Engagement Actions Analysis", True, f"{len(top_actions)} engagement actions analyzed")
+                else:
+                    self.log_test("Engagement Actions Analysis", False, f"Only {len(top_actions)} actions found")
+            else:
+                self.log_test("Engagement Analytics Structure", False, f"Missing analytics: {missing_analytics}")
+    
+    # 3. Content Optimization Tests
+    async def test_content_optimization(self):
+        """Test content optimization functionality"""
+        print("\n🎯 TESTING CONTENT OPTIMIZATION")
+        
+        # Test content optimization
+        content_data = {
+            "content_type": "video",
+            "title": "Amazing Limited Edition Fashion Collection - Shop Now!",
+            "description": "Exclusive designer pieces with free shipping today only. Don't miss out!",
+            "creator_id": "creator_789",
+            "creator_type": "influencer",
+            "media_urls": ["https://example.com/video.mp4"],
+            "thumbnail_url": "https://example.com/thumb.jpg",
+            "duration_seconds": 60.0,
+            "featured_products": ["product_1", "product_2"],
+            "shopping_tags": [
+                {"product_id": "product_1", "timestamp": 15.0},
+                {"product_id": "product_2", "timestamp": 45.0}
+            ],
+            "target_audience": {
+                "age_range": "25-35",
+                "interests": ["fashion", "luxury"]
+            }
+        }
+        
+        result = await self.test_endpoint(
+            "POST", "/clp-engine/content/optimize",
+            data=content_data,
+            test_name="Create Optimized Content"
+        )
+        
+        if "error" not in result and result.get("success"):
+            content_id = result.get("content_id")
+            optimization = result.get("optimization", {})
+            
+            # Validate optimization response
+            required_fields = ["content_triggers_added", "product_placement_score", "optimization_score"]
+            missing_fields = [field for field in required_fields if field not in optimization]
             
             if not missing_fields:
-                self.log_test("Analytics Structure Validation", True, "All required fields present")
+                self.log_test("Content Optimization Response", True, "Complete optimization data provided")
                 
-                # Check executive summary metrics
-                exec_summary = result.get("executive_summary", {})
-                expected_metrics = ["total_spend", "total_revenue", "overall_roas", "best_platform"]
-                metrics_found = sum(1 for metric in expected_metrics if metric in exec_summary)
+                # Validate optimization scores
+                placement_score = optimization.get("product_placement_score", 0)
+                opt_score = optimization.get("optimization_score", 0)
                 
-                if metrics_found >= 3:
-                    self.log_test("Executive Summary Metrics", True, f"{metrics_found}/{len(expected_metrics)} key metrics present")
+                if 0 <= placement_score <= 1 and 0 <= opt_score <= 1:
+                    self.log_test("Optimization Scores Validation", True, "Optimization scores within valid range")
                 else:
-                    self.log_test("Executive Summary Metrics", False, f"Only {metrics_found}/{len(expected_metrics)} metrics found")
+                    self.log_test("Optimization Scores Validation", False, "Optimization scores invalid")
+                    
+                # Validate recommendations
+                recommendations = optimization.get("recommendations", [])
+                if len(recommendations) >= 3:
+                    self.log_test("Optimization Recommendations", True, f"{len(recommendations)} recommendations provided")
+                else:
+                    self.log_test("Optimization Recommendations", False, f"Only {len(recommendations)} recommendations")
+                    
+                # Test content performance retrieval
+                if content_id:
+                    perf_result = await self.test_endpoint(
+                        "GET", f"/clp-engine/content/performance/{content_id}",
+                        test_name="Get Content Performance"
+                    )
+                    
+                    if "error" not in perf_result:
+                        perf_metrics = perf_result.get("performance_metrics", {})
+                        if "clp_efficiency" in perf_metrics and "conversion_rate" in perf_metrics:
+                            self.log_test("Content Performance Metrics", True, "Performance metrics available")
+                        else:
+                            self.log_test("Content Performance Metrics", False, "Performance metrics incomplete")
             else:
-                self.log_test("Analytics Structure Validation", False, f"Missing fields: {missing_fields}")
+                self.log_test("Content Optimization Response", False, f"Missing fields: {missing_fields}")
+    
+    # 4. Infinite Discovery Engine Tests
+    async def test_infinite_discovery_engine(self):
+        """Test infinite discovery engine functionality"""
+        print("\n🔄 TESTING INFINITE DISCOVERY ENGINE")
         
-        # Test performance summary
-        await self.test_endpoint(
-            "GET", "/social-ads/analytics/performance/summary",
-            data={"date_range": "30d"},
-            test_name="Performance Summary"
-        )
+        # Test discovery feed generation
+        feed_request = {
+            "user_id": "test_user_discovery",
+            "context": {
+                "feed_size": 15,
+                "current_mood": "shopping",
+                "session_intent": "discover"
+            }
+        }
         
-        # Test ROI breakdown
         result = await self.test_endpoint(
-            "GET", "/social-ads/analytics/roi/breakdown",
-            test_name="ROI Breakdown Analysis"
+            "POST", "/clp-engine/discovery/generate-feed",
+            data=feed_request,
+            test_name="Generate Infinite Discovery Feed"
         )
         
-        if "error" not in result:
-            # Validate ROI breakdown structure
-            expected_dimensions = ["by_platform", "by_campaign_objective", "by_audience_type", "by_creative_format"]
-            dimensions_found = sum(1 for dim in expected_dimensions if dim in result)
+        if "error" not in result and result.get("success"):
+            feed_data = result.get("feed_data", {})
             
-            if dimensions_found >= 3:
-                self.log_test("ROI Breakdown Dimensions", True, f"{dimensions_found}/{len(expected_dimensions)} dimensions analyzed")
+            # Validate feed structure
+            required_fields = ["feed_items", "engine_status", "feed_metadata"]
+            missing_fields = [field for field in required_fields if field not in feed_data]
+            
+            if not missing_fields:
+                self.log_test("Discovery Feed Structure", True, "Complete feed data structure")
+                
+                # Validate feed items
+                feed_items = feed_data.get("feed_items", [])
+                if len(feed_items) >= 10:
+                    self.log_test("Discovery Feed Items", True, f"{len(feed_items)} personalized items generated")
+                    
+                    # Validate item structure
+                    sample_item = feed_items[0] if feed_items else {}
+                    item_fields = ["content_id", "content_type", "engagement_prediction", "conversion_prediction"]
+                    missing_item_fields = [field for field in item_fields if field not in sample_item]
+                    
+                    if not missing_item_fields:
+                        self.log_test("Feed Item Structure", True, "Feed items properly structured")
+                    else:
+                        self.log_test("Feed Item Structure", False, f"Missing item fields: {missing_item_fields}")
+                else:
+                    self.log_test("Discovery Feed Items", False, f"Only {len(feed_items)} items generated")
+                    
+                # Validate engine status
+                engine_status = feed_data.get("engine_status", {})
+                if "personalization_level" in engine_status and "predicted_engagement" in engine_status:
+                    self.log_test("Discovery Engine Status", True, "Engine status properly reported")
+                else:
+                    self.log_test("Discovery Engine Status", False, "Engine status incomplete")
             else:
-                self.log_test("ROI Breakdown Dimensions", False, f"Only {dimensions_found}/{len(expected_dimensions)} dimensions found")
-    
-    # 6. Platform Integration Management Tests
-    async def test_platform_integration(self):
-        """Test platform integration and connection management"""
-        print("\n🔗 TESTING PLATFORM INTEGRATION MANAGEMENT")
+                self.log_test("Discovery Feed Structure", False, f"Missing fields: {missing_fields}")
         
-        # Test integration status
-        result = await self.test_endpoint(
-            "GET", "/social-ads/integrations/status",
-            test_name="Platform Integrations Status"
+        # Test discovery engine status
+        status_result = await self.test_endpoint(
+            "GET", "/clp-engine/discovery/engine-status/test_user_discovery",
+            test_name="Get Discovery Engine Status"
         )
         
-        if "error" not in result:
-            # Validate integration status structure
-            if "integrations" in result and "summary" in result:
-                integrations = result.get("integrations", [])
-                if len(integrations) >= 6:  # Should have at least 6 major platforms
-                    self.log_test("Platform Integrations Count", True, f"{len(integrations)} platform integrations")
-                    
-                    # Check integration summary
-                    summary = result.get("summary", {})
-                    if "total_platforms" in summary and "connected" in summary:
-                        self.log_test("Integration Summary", True, "Summary metrics available")
-                    else:
-                        self.log_test("Integration Summary", False, "Summary metrics incomplete")
+        if "error" not in status_result:
+            # Validate status structure
+            required_status = ["engine_status", "personalization_level", "learning_progress", "feed_performance"]
+            missing_status = [field for field in required_status if field not in status_result]
+            
+            if not missing_status:
+                self.log_test("Engine Status Structure", True, "Complete engine status available")
+                
+                # Validate learning progress
+                learning_progress = status_result.get("learning_progress", {})
+                if len(learning_progress) >= 3:
+                    self.log_test("Engine Learning Progress", True, f"{len(learning_progress)} learning metrics tracked")
                 else:
-                    self.log_test("Platform Integrations Count", False, f"Only {len(integrations)} integrations found")
+                    self.log_test("Engine Learning Progress", False, "Learning progress incomplete")
             else:
-                self.log_test("Integration Status Structure", False, "Missing integrations or summary")
+                self.log_test("Engine Status Structure", False, f"Missing status fields: {missing_status}")
+    
+    # 5. Conversion Tracking Tests
+    async def test_conversion_tracking(self):
+        """Test CLP conversion tracking functionality"""
+        print("\n💰 TESTING CONVERSION TRACKING")
         
-        # Test platform connection
-        integration_data = {
-            "platform": "facebook",
-            "platform_account_id": "test_account_123",
-            "account_name": "AisleMarts Test Account",
-            "connected_by": "test_user"
+        # Test conversion tracking
+        conversion_data = {
+            "user_id": "test_user_conversion",
+            "content_id": "converting_content_123",
+            "primary_content_id": "converting_content_123",
+            "first_exposure": (datetime.utcnow() - timedelta(hours=2)).isoformat(),
+            "product_ids": ["product_conv_1", "product_conv_2"],
+            "order_value": 299.99,
+            "profit_margin": 0.35,
+            "conversion_path": ["content_1", "content_2", "converting_content_123"],
+            "touchpoints": [
+                {"content_id": "content_1", "action": "view", "timestamp": (datetime.utcnow() - timedelta(hours=2)).isoformat()},
+                {"content_id": "content_2", "action": "like", "timestamp": (datetime.utcnow() - timedelta(hours=1)).isoformat()},
+                {"content_id": "converting_content_123", "action": "click", "timestamp": datetime.utcnow().isoformat()}
+            ],
+            "customer_lifetime_value": 850.0
         }
         
-        await self.test_endpoint(
-            "POST", "/social-ads/integrations/connect",
-            data=integration_data,
-            test_name="Connect Platform Integration"
-        )
-    
-    # 7. Audience Segmentation & Management Tests
-    async def test_audience_management(self):
-        """Test audience segmentation and management"""
-        print("\n🎯 TESTING AUDIENCE SEGMENTATION & MANAGEMENT")
-        
-        # Test audience segments listing
         result = await self.test_endpoint(
-            "GET", "/social-ads/audiences/segments",
-            test_name="Get Audience Segments"
+            "POST", "/clp-engine/conversion/track",
+            data=conversion_data,
+            test_name="Track CLP Conversion"
+        )
+        
+        if "error" not in result and result.get("success"):
+            conversion = result.get("conversion", {})
+            insights = result.get("insights", {})
+            
+            # Validate conversion tracking response
+            required_fields = ["conversion_id", "attribution_analysis", "journey_efficiency", "revenue_impact"]
+            missing_fields = [field for field in required_fields if field not in result or field not in insights]
+            
+            if not missing_fields:
+                self.log_test("Conversion Tracking Response", True, "Complete conversion data tracked")
+                
+                # Validate journey efficiency
+                journey_efficiency = insights.get("journey_efficiency", {})
+                if "time_to_conversion_minutes" in journey_efficiency and "touchpoints_count" in journey_efficiency:
+                    self.log_test("Journey Efficiency Analysis", True, "Conversion journey properly analyzed")
+                else:
+                    self.log_test("Journey Efficiency Analysis", False, "Journey analysis incomplete")
+                    
+                # Validate revenue impact
+                revenue_impact = insights.get("revenue_impact", {})
+                if "order_value" in revenue_impact and "customer_lifetime_value" in revenue_impact:
+                    self.log_test("Revenue Impact Analysis", True, "Revenue impact properly calculated")
+                else:
+                    self.log_test("Revenue Impact Analysis", False, "Revenue impact incomplete")
+            else:
+                self.log_test("Conversion Tracking Response", False, f"Missing fields: {missing_fields}")
+        
+        # Test conversion funnel analysis
+        funnel_result = await self.test_endpoint(
+            "GET", "/clp-engine/conversion/funnel-analysis",
+            data={"date_range": "7d"},
+            test_name="Get Conversion Funnel Analysis"
+        )
+        
+        if "error" not in funnel_result:
+            # Validate funnel structure
+            funnel_stages = funnel_result.get("funnel_stages", {})
+            expected_stages = ["content_view", "product_interest", "consideration", "purchase_intent", "purchase"]
+            stages_found = sum(1 for stage in expected_stages if stage in funnel_stages)
+            
+            if stages_found >= 4:
+                self.log_test("Conversion Funnel Stages", True, f"{stages_found}/{len(expected_stages)} funnel stages analyzed")
+                
+                # Validate optimization opportunities
+                opportunities = funnel_result.get("optimization_opportunities", [])
+                if len(opportunities) >= 2:
+                    self.log_test("Funnel Optimization Opportunities", True, f"{len(opportunities)} optimization opportunities identified")
+                else:
+                    self.log_test("Funnel Optimization Opportunities", False, f"Only {len(opportunities)} opportunities found")
+            else:
+                self.log_test("Conversion Funnel Stages", False, f"Only {stages_found}/{len(expected_stages)} stages found")
+    
+    # 6. Analytics and Insights Tests
+    async def test_analytics_and_insights(self):
+        """Test CLP analytics and insights functionality"""
+        print("\n📈 TESTING ANALYTICS & INSIGHTS")
+        
+        # Test comprehensive analytics
+        start_date = (datetime.utcnow() - timedelta(days=30)).strftime("%Y-%m-%d")
+        end_date = datetime.utcnow().strftime("%Y-%m-%d")
+        
+        result = await self.test_endpoint(
+            "GET", "/clp-engine/analytics/comprehensive",
+            data={"start_date": start_date, "end_date": end_date},
+            test_name="Get Comprehensive CLP Analytics"
         )
         
         if "error" not in result:
-            # Validate segments structure
-            if "segments" in result and "summary" in result:
-                segments = result.get("segments", [])
-                if len(segments) >= 5:
-                    self.log_test("Audience Segments Count", True, f"{len(segments)} audience segments available")
-                    
-                    # Check segment summary
-                    summary = result.get("summary", {})
-                    if "total_segments" in summary and "total_reach" in summary:
-                        self.log_test("Audience Summary Metrics", True, "Summary metrics available")
-                    else:
-                        self.log_test("Audience Summary Metrics", False, "Summary metrics incomplete")
+            analytics = result.get("analytics", {})
+            executive_summary = result.get("executive_summary", {})
+            action_plan = result.get("action_plan", {})
+            
+            # Validate analytics structure
+            required_analytics = ["top_performing_content", "content_optimization_opportunities", "clp_efficiency_scores"]
+            missing_analytics = [field for field in required_analytics if field not in analytics]
+            
+            if not missing_analytics:
+                self.log_test("Comprehensive Analytics Structure", True, "Complete analytics data available")
+                
+                # Validate executive summary
+                summary_fields = ["total_revenue_attributed", "conversion_efficiency", "optimization_impact"]
+                summary_complete = sum(1 for field in summary_fields if field in executive_summary)
+                
+                if summary_complete >= 2:
+                    self.log_test("Executive Summary Completeness", True, f"{summary_complete}/{len(summary_fields)} summary metrics present")
                 else:
-                    self.log_test("Audience Segments Count", False, f"Only {len(segments)} segments found")
+                    self.log_test("Executive Summary Completeness", False, f"Only {summary_complete}/{len(summary_fields)} metrics found")
+                    
+                # Validate action plan
+                if action_plan.get("priority_1") and action_plan.get("priority_2"):
+                    self.log_test("Action Plan Generation", True, "Actionable priorities identified")
+                else:
+                    self.log_test("Action Plan Generation", False, "Action plan incomplete")
             else:
-                self.log_test("Audience Segments Structure", False, "Missing segments or summary")
+                self.log_test("Comprehensive Analytics Structure", False, f"Missing analytics: {missing_analytics}")
         
-        # Test audience segment creation
-        segment_data = {
-            "segment_name": "Test Audience Segment",
-            "segment_type": "custom",
-            "demographics": {
-                "age_range": "25-45",
-                "gender": "all",
-                "income": "middle_to_high"
+        # Test revenue attribution analysis
+        attribution_result = await self.test_endpoint(
+            "GET", "/clp-engine/analytics/revenue-attribution",
+            test_name="Get Revenue Attribution Analysis"
+        )
+        
+        if "error" not in attribution_result:
+            # Validate attribution models
+            attribution_models = attribution_result.get("attribution_models", {})
+            expected_models = ["last_click", "first_click", "linear", "time_decay", "position_based"]
+            models_found = sum(1 for model in expected_models if model in attribution_models)
+            
+            if models_found >= 4:
+                self.log_test("Attribution Models Analysis", True, f"{models_found}/{len(expected_models)} attribution models analyzed")
+                
+                # Validate content attribution
+                content_attribution = attribution_result.get("content_attribution", {})
+                if len(content_attribution) >= 3:
+                    self.log_test("Content Attribution Analysis", True, f"{len(content_attribution)} content types attributed")
+                else:
+                    self.log_test("Content Attribution Analysis", False, f"Only {len(content_attribution)} content types found")
+                    
+                # Validate creator attribution
+                creator_attribution = attribution_result.get("creator_attribution", [])
+                if len(creator_attribution) >= 5:
+                    self.log_test("Creator Attribution Analysis", True, f"{len(creator_attribution)} creators analyzed")
+                else:
+                    self.log_test("Creator Attribution Analysis", False, f"Only {len(creator_attribution)} creators found")
+            else:
+                self.log_test("Attribution Models Analysis", False, f"Only {models_found}/{len(expected_models)} models found")
+    
+    # 7. Real-time Optimization Tests
+    async def test_real_time_optimization(self):
+        """Test real-time CLP optimization functionality"""
+        print("\n⚡ TESTING REAL-TIME OPTIMIZATION")
+        
+        # Test real-time optimization trigger
+        optimization_request = {
+            "target_metrics": ["engagement", "conversion", "revenue"],
+            "optimization_scope": "user_feed",
+            "user_context": {
+                "user_id": "test_user_optimization",
+                "current_session_intent": "shopping",
+                "engagement_history": ["high_engagement", "medium_conversion"]
             },
-            "interests": ["fashion", "technology", "travel"],
-            "behaviors": ["online_shoppers", "frequent_travelers"],
-            "geo_locations": ["US", "CA", "UK"],
-            "available_platforms": ["facebook", "instagram", "tiktok"],
-            "created_by": "test_user"
+            "content_filters": {
+                "content_types": ["video", "carousel"],
+                "min_quality_score": 0.7
+            }
         }
         
-        await self.test_endpoint(
-            "POST", "/social-ads/audiences/create",
-            data=segment_data,
-            test_name="Create Audience Segment"
+        result = await self.test_endpoint(
+            "POST", "/clp-engine/optimization/real-time",
+            data=optimization_request,
+            test_name="Trigger Real-time Optimization"
         )
+        
+        if "error" not in result and result.get("success"):
+            optimization = result.get("optimization", {})
+            
+            # Validate optimization response
+            required_fields = ["optimization_id", "changes_applied", "expected_impact", "optimization_confidence"]
+            missing_fields = [field for field in required_fields if field not in optimization]
+            
+            if not missing_fields:
+                self.log_test("Real-time Optimization Response", True, "Complete optimization data provided")
+                
+                # Validate changes applied
+                changes_applied = optimization.get("changes_applied", [])
+                if len(changes_applied) >= 3:
+                    self.log_test("Optimization Changes Applied", True, f"{len(changes_applied)} optimization changes applied")
+                else:
+                    self.log_test("Optimization Changes Applied", False, f"Only {len(changes_applied)} changes applied")
+                    
+                # Validate expected impact
+                expected_impact = optimization.get("expected_impact", {})
+                impact_metrics = ["engagement_improvement", "conversion_improvement", "revenue_impact"]
+                impact_complete = sum(1 for metric in impact_metrics if metric in expected_impact)
+                
+                if impact_complete >= 2:
+                    self.log_test("Optimization Impact Prediction", True, f"{impact_complete}/{len(impact_metrics)} impact metrics predicted")
+                else:
+                    self.log_test("Optimization Impact Prediction", False, f"Only {impact_complete}/{len(impact_metrics)} metrics predicted")
+                    
+                # Validate confidence score
+                confidence = optimization.get("optimization_confidence", 0)
+                if 0.7 <= confidence <= 1.0:
+                    self.log_test("Optimization Confidence Score", True, f"High confidence: {confidence}")
+                else:
+                    self.log_test("Optimization Confidence Score", False, f"Low confidence: {confidence}")
+            else:
+                self.log_test("Real-time Optimization Response", False, f"Missing fields: {missing_fields}")
+        
+        # Test optimization impact analysis
+        impact_result = await self.test_endpoint(
+            "GET", "/clp-engine/optimization/impact-analysis",
+            test_name="Get Optimization Impact Analysis"
+        )
+        
+        if "error" not in impact_result:
+            # Validate impact analysis structure
+            required_sections = ["optimization_history", "cumulative_impact", "optimization_efficiency", "ai_learning_progress"]
+            missing_sections = [section for section in required_sections if section not in impact_result]
+            
+            if not missing_sections:
+                self.log_test("Impact Analysis Structure", True, "Complete impact analysis available")
+                
+                # Validate optimization history
+                opt_history = impact_result.get("optimization_history", [])
+                if len(opt_history) >= 5:
+                    self.log_test("Optimization History Tracking", True, f"{len(opt_history)} optimization events tracked")
+                else:
+                    self.log_test("Optimization History Tracking", False, f"Only {len(opt_history)} events found")
+                    
+                # Validate cumulative impact
+                cumulative_impact = impact_result.get("cumulative_impact", {})
+                if "total_revenue_increase" in cumulative_impact and "engagement_improvement" in cumulative_impact:
+                    self.log_test("Cumulative Impact Metrics", True, "Cumulative optimization impact tracked")
+                else:
+                    self.log_test("Cumulative Impact Metrics", False, "Cumulative impact incomplete")
+            else:
+                self.log_test("Impact Analysis Structure", False, f"Missing sections: {missing_sections}")
     
-    # 8. Performance and Load Testing
+    # 8. Business Intelligence Tests
+    async def test_business_intelligence(self):
+        """Test CLP business intelligence functionality"""
+        print("\n💼 TESTING BUSINESS INTELLIGENCE")
+        
+        # Test CLP ROI analysis
+        result = await self.test_endpoint(
+            "GET", "/clp-engine/business-intelligence/clp-roi",
+            test_name="Get CLP ROI Analysis"
+        )
+        
+        if "error" not in result:
+            # Validate ROI analysis structure
+            required_sections = ["investment_breakdown", "revenue_generation", "roi_metrics", "competitive_advantage"]
+            missing_sections = [section for section in required_sections if section not in result]
+            
+            if not missing_sections:
+                self.log_test("CLP ROI Analysis Structure", True, "Complete ROI analysis available")
+                
+                # Validate investment breakdown
+                investment = result.get("investment_breakdown", {})
+                if "total_investment" in investment and "content_creation_cost" in investment:
+                    self.log_test("Investment Breakdown Analysis", True, "Investment costs properly tracked")
+                else:
+                    self.log_test("Investment Breakdown Analysis", False, "Investment breakdown incomplete")
+                    
+                # Validate revenue generation
+                revenue = result.get("revenue_generation", {})
+                if "total_revenue" in revenue and "attributed_clp_revenue" in revenue:
+                    self.log_test("Revenue Generation Analysis", True, "Revenue attribution properly calculated")
+                else:
+                    self.log_test("Revenue Generation Analysis", False, "Revenue analysis incomplete")
+                    
+                # Validate ROI metrics
+                roi_metrics = result.get("roi_metrics", {})
+                if "overall_roi" in roi_metrics and "clp_specific_roi" in roi_metrics:
+                    overall_roi = roi_metrics.get("overall_roi", 0)
+                    if overall_roi > 100:  # ROI should be positive for a successful system
+                        self.log_test("ROI Performance Validation", True, f"Positive ROI: {overall_roi}%")
+                    else:
+                        self.log_test("ROI Performance Validation", False, f"Low ROI: {overall_roi}%")
+                else:
+                    self.log_test("ROI Metrics Analysis", False, "ROI metrics incomplete")
+                    
+                # Validate competitive advantage
+                competitive = result.get("competitive_advantage", {})
+                if "market_conversion_rate" in competitive and "aislemarts_conversion_rate" in competitive:
+                    market_rate = competitive.get("market_conversion_rate", 0)
+                    aislemarts_rate = competitive.get("aislemarts_conversion_rate", 0)
+                    
+                    if aislemarts_rate > market_rate:
+                        self.log_test("Competitive Advantage Validation", True, f"Above market performance: {aislemarts_rate} vs {market_rate}")
+                    else:
+                        self.log_test("Competitive Advantage Validation", False, f"Below market performance: {aislemarts_rate} vs {market_rate}")
+                else:
+                    self.log_test("Competitive Advantage Analysis", False, "Competitive analysis incomplete")
+                    
+                # Validate future projections
+                projections = result.get("future_projections", {})
+                if "12_month_roi_projection" in projections and "scalability_factor" in projections:
+                    self.log_test("Future Projections Analysis", True, "Growth projections available")
+                else:
+                    self.log_test("Future Projections Analysis", False, "Projections incomplete")
+            else:
+                self.log_test("CLP ROI Analysis Structure", False, f"Missing sections: {missing_sections}")
+    
+    # 9. Performance and Load Testing
     async def test_performance_and_load(self):
         """Test system performance under load"""
         print("\n⚡ TESTING PERFORMANCE & LOAD HANDLING")
@@ -485,8 +707,8 @@ class CLPEngineTester:
         
         for i in range(10):  # 10 concurrent requests
             task = self.test_endpoint(
-                "GET", "/social-ads/health",
-                test_name=f"Concurrent Health Check {i+1}"
+                "GET", "/clp-engine/health",
+                test_name=f"Concurrent CLP Health Check {i+1}"
             )
             tasks.append(task)
         
@@ -506,39 +728,91 @@ class CLPEngineTester:
         # Test response time for complex analytics
         start_time = time.time()
         await self.test_endpoint(
-            "GET", "/social-ads/analytics/roi/breakdown",
+            "GET", "/clp-engine/analytics/comprehensive",
+            data={"start_date": "2024-01-01", "end_date": "2024-01-31"},
             test_name="Analytics Response Time Test"
         )
         response_time = time.time() - start_time
         
-        if response_time < 3.0:  # Should respond within 3 seconds
+        if response_time < 5.0:  # Should respond within 5 seconds for complex analytics
             self.log_test("Analytics Response Time", True, f"Response time: {response_time:.3f}s")
         else:
             self.log_test("Analytics Response Time", False, f"Slow response: {response_time:.3f}s")
     
+    # 10. Integration Tests
+    async def test_existing_backend_integration(self):
+        """Test that existing backend functionality remains intact"""
+        print("\n🔗 TESTING EXISTING BACKEND INTEGRATION")
+        
+        # Test main API health
+        result = await self.test_endpoint(
+            "GET", "/health",
+            test_name="Main API Health Check"
+        )
+        
+        if "error" not in result and result.get("ok"):
+            self.log_test("Main API Integration", True, "Main API remains operational")
+        else:
+            self.log_test("Main API Integration", False, "Main API integration issue")
+        
+        # Test currency system (existing functionality)
+        currency_result = await self.test_endpoint(
+            "GET", "/currency/health",
+            test_name="Currency System Health Check"
+        )
+        
+        if "error" not in currency_result:
+            self.log_test("Currency System Integration", True, "Currency system operational")
+        else:
+            self.log_test("Currency System Integration", False, "Currency system integration issue")
+        
+        # Test AI Super Agent (existing functionality)
+        ai_result = await self.test_endpoint(
+            "GET", "/ai-super-agent/health",
+            test_name="AI Super Agent Health Check"
+        )
+        
+        if "error" not in ai_result:
+            self.log_test("AI Super Agent Integration", True, "AI Super Agent operational")
+        else:
+            self.log_test("AI Super Agent Integration", False, "AI Super Agent integration issue")
+        
+        # Test rewards system (existing functionality)
+        rewards_result = await self.test_endpoint(
+            "GET", "/rewards/health",
+            test_name="Rewards System Health Check"
+        )
+        
+        if "error" not in rewards_result:
+            self.log_test("Rewards System Integration", True, "Rewards system operational")
+        else:
+            self.log_test("Rewards System Integration", False, "Rewards system integration issue")
+
     async def run_all_tests(self):
         """Run all test suites"""
-        print("🚀📱💰 STARTING COMPREHENSIVE SOCIAL MEDIA ADVERTISING SUITE BACKEND TESTING")
+        print("🚀🎯💰 STARTING COMPREHENSIVE CLP ENGINE BACKEND TESTING")
         print("=" * 80)
         
         self.start_time = time.time()
         
         # Run all test suites
-        await self.test_social_ads_health_check()
-        await self.test_campaign_management()
-        await self.test_influencer_platform()
-        await self.test_ai_optimization()
-        await self.test_cross_platform_analytics()
-        await self.test_platform_integration()
-        await self.test_audience_management()
+        await self.test_clp_engine_health_check()
+        await self.test_content_engagement_tracking()
+        await self.test_content_optimization()
+        await self.test_infinite_discovery_engine()
+        await self.test_conversion_tracking()
+        await self.test_analytics_and_insights()
+        await self.test_real_time_optimization()
+        await self.test_business_intelligence()
         await self.test_performance_and_load()
+        await self.test_existing_backend_integration()
         
         # Print final results
         total_time = time.time() - self.start_time
         success_rate = (self.passed_tests / self.total_tests * 100) if self.total_tests > 0 else 0
         
         print("\n" + "=" * 80)
-        print("🏁 SOCIAL MEDIA ADVERTISING SUITE TESTING COMPLETE")
+        print("🏁 CLP ENGINE TESTING COMPLETE")
         print("=" * 80)
         print(f"📊 RESULTS SUMMARY:")
         print(f"   Total Tests: {self.total_tests}")
@@ -555,15 +829,17 @@ class CLPEngineTester:
                 if not result["success"]:
                     print(f"   • {result['test']}: {result['details']}")
         
-        print("\n🎯 TESTING FOCUS AREAS COVERED:")
-        print("   ✅ Social Media Advertising Health Check")
-        print("   ✅ Multi-Platform Campaign Management (8 platforms)")
-        print("   ✅ Influencer Partnership Platform")
-        print("   ✅ AI-Powered Optimization Engine")
-        print("   ✅ Cross-Platform Analytics & Insights")
-        print("   ✅ Platform Integration Management")
-        print("   ✅ Audience Segmentation & Management")
+        print("\n🎯 CLP ENGINE TESTING FOCUS AREAS COVERED:")
+        print("   ✅ CLP Engine Health Check & Status")
+        print("   ✅ Content Engagement Tracking & Analytics")
+        print("   ✅ Content Optimization & AI Enhancement")
+        print("   ✅ Infinite Discovery Engine & Personalization")
+        print("   ✅ Conversion Tracking & Attribution")
+        print("   ✅ Analytics & Business Intelligence")
+        print("   ✅ Real-time Optimization & AI Learning")
+        print("   ✅ Business Intelligence & ROI Analysis")
         print("   ✅ Performance & Load Testing")
+        print("   ✅ Existing Backend Integration Validation")
         
         return {
             "total_tests": self.total_tests,
@@ -576,18 +852,18 @@ class CLPEngineTester:
 
 async def main():
     """Main test execution function"""
-    async with SocialMediaAdvertisingTester() as tester:
+    async with CLPEngineTester() as tester:
         results = await tester.run_all_tests()
         
         # Determine overall system status
         if results["success_rate"] >= 90:
-            print(f"\n🟢 SYSTEM STATUS: EXCELLENT - Ready for Series A investor demonstrations")
+            print(f"\n🟢 SYSTEM STATUS: EXCELLENT - CLP Engine ready for Series A investor demonstrations")
         elif results["success_rate"] >= 75:
-            print(f"\n🟡 SYSTEM STATUS: GOOD - Minor issues to address")
+            print(f"\n🟡 SYSTEM STATUS: GOOD - Minor CLP Engine issues to address")
         elif results["success_rate"] >= 60:
-            print(f"\n🟠 SYSTEM STATUS: FAIR - Several issues need attention")
+            print(f"\n🟠 SYSTEM STATUS: FAIR - Several CLP Engine issues need attention")
         else:
-            print(f"\n🔴 SYSTEM STATUS: NEEDS WORK - Major issues require immediate attention")
+            print(f"\n🔴 SYSTEM STATUS: NEEDS WORK - Major CLP Engine issues require immediate attention")
         
         return results
 
