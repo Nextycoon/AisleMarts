@@ -211,6 +211,17 @@ const styles = StyleSheet.create({
     justifyContent: 'center',
     maxWidth: 44, // Limit maximum width
   },
+  navTextButton: {
+    padding: 8,
+    alignItems: 'center',
+    justifyContent: 'center',
+    minWidth: 50,
+  },
+  navText: {
+    fontSize: 14,
+    color: '#FFFFFF',
+    fontWeight: '600',
+  },
   navIcon: {
     fontSize: 18,
     color: '#FFFFFF',
