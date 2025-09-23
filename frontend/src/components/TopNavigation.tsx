@@ -73,8 +73,8 @@ export default function TopNavigation() {
         </TouchableOpacity>
 
         {/* 4. Following */}
-        <TouchableOpacity style={styles.navIconButton} onPress={() => handleTabPress('/following')}>
-          <Text style={styles.navIcon}>👥</Text>
+        <TouchableOpacity style={styles.navTextButton} onPress={() => handleTabPress('/following')}>
+          <Text style={styles.navText}>Following</Text>
         </TouchableOpacity>
 
         {/* 5. Explore */}
