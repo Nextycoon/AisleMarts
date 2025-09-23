@@ -556,7 +556,7 @@ const styles = StyleSheet.create({
     left: 0,
     right: 0,
     zIndex: 10,
-    backgroundColor: 'rgba(0, 0, 0, 0.3)', // Semi-transparent overlay
+    backgroundColor: 'transparent', // No background interference
   },
 
   // ==================================================================================
