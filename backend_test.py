@@ -1,7 +1,7 @@
 #!/usr/bin/env python3
 """
-AisleMarts Global Monetization Suite Backend Testing
-Comprehensive testing for Phase 1.2: Global Monetization Suite
+Comprehensive Backend Testing Suite for Social Media Advertising Platform
+Testing all endpoints for multi-platform campaign management, influencer partnerships, and AI optimization
 """
 
 import asyncio
@@ -10,11 +10,14 @@ import json
 import time
 from datetime import datetime, timedelta
 from typing import Dict, List, Any
-import sys
 import os
+from dotenv import load_dotenv
 
-# Backend URL from frontend/.env
-BACKEND_URL = "https://ai-marketplace-13.preview.emergentagent.com/api"
+load_dotenv()
+
+# Get backend URL from environment
+BACKEND_URL = os.getenv('EXPO_PUBLIC_BACKEND_URL', 'https://ai-marketplace-13.preview.emergentagent.com')
+BASE_URL = f"{BACKEND_URL}/api"
 
 class GlobalMonetizationTester:
     def __init__(self):
