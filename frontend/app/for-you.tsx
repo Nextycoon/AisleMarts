@@ -593,7 +593,7 @@ const styles = StyleSheet.create({
     left: 0,
     right: 0,
     height: height * 0.4,
-    zIndex: 5,
+    zIndex: 50, // Higher z-index to capture touch events above stories
   },
   swipeDownArea: {
     position: 'absolute',
@@ -601,7 +601,7 @@ const styles = StyleSheet.create({
     left: 0,
     right: 0,
     height: height * 0.4,
-    zIndex: 5,
+    zIndex: 50, // Higher z-index to capture touch events above stories
   },
   playPauseArea: {
     position: 'absolute',
