@@ -557,13 +557,13 @@ class Phase3CommerceValidator:
         
         if success and result.get('creatorId') == 'techguru':
             commission = result.get('commission', 0)
-            expected_commission = 299.00 * 0.10  # 10% for blue tier
+            expected_commission = 129.00 * 0.10  # 10% for blue tier
             
             if abs(commission - expected_commission) < 0.01:
                 await self.log_test(
                     "Tech Product Scenario",
                     True,
-                    f"Tech Guru smartwatch: ${commission:.2f} commission (10% blue tier)",
+                    f"Tech Guru buds-x: ${commission:.2f} commission (10% blue tier)",
                     response_time
                 )
                 return True
