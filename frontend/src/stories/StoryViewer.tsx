@@ -1,9 +1,10 @@
 import React, { useEffect, useRef, useState } from 'react';
-import { View, Text, TouchableOpacity, Image, StyleSheet, SafeAreaView } from 'react-native';
+import { View, Text, TouchableOpacity, Image, StyleSheet, SafeAreaView, Alert } from 'react-native';
 import { Video, ResizeMode } from 'expo-av';
 import { PanGestureHandler, State } from 'react-native-gesture-handler';
 import type { Story } from './types';
 import { PreloadCoordinator } from './PreloadCoordinator';
+import { useCommerceEvents } from '../commerce/useCommerceEvents';
 
 type Props = {
   stories: Story[];
@@ -21,6 +22,9 @@ export const StoryViewer: React.FC<Props> = ({
   const [index, setIndex] = useState(initialIndex);
   const [paused, setPaused] = useState(false);
   const videoRef = useRef<Video | null>(null);
+  
+  // Phase 3: Commerce tracking hooks
+  const { trackImpression, trackCTA, trackPurchase } = useCommerceEvents('user_123');
 
   const story = stories[index];
 
@@ -33,10 +37,59 @@ export const StoryViewer: React.FC<Props> = ({
     return () => { mounted = false; clearTimeout(t); };
   }, [index, stories, nextCreatorFirst]);
 
+  // Phase 3: Track impression when story becomes visible
+  useEffect(() => {
+    if (story) {
+      trackImpression(story.id);
+    }
+  }, [story?.id, trackImpression]);
+
   const goNext = () => { if (index < stories.length - 1) setIndex(index + 1); else onExitCreator(); };
   const goPrev = () => { if (index > 0) setIndex(index - 1); };
 
   const onLongPress = (down: boolean) => setPaused(down);
+
+  // Phase 3: Enhanced product handler with CTA tracking and mock purchase
+  const handleProductAction = async (productId: string) => {
+    // Track CTA click
+    await trackCTA(story.id, productId);
+    
+    // Show purchase simulation dialog
+    Alert.alert(
+      '🛍️ AisleMarts Commerce',
+      `Product: ${productId}\nPrice: $99.99\n\nSimulate purchase for attribution testing?`,
+      [
+        { text: 'Cancel', style: 'cancel' },
+        { 
+          text: 'Buy Now', 
+          onPress: async () => {
+            // Generate mock order ID
+            const orderId = `order_${Date.now()}`;
+            
+            // Track purchase with attribution
+            const result = await trackPurchase(
+              orderId,
+              productId,
+              99.99,
+              'USD',
+              story.id
+            );
+            
+            // Show attribution result
+            if (result.ok) {
+              Alert.alert(
+                '✅ Purchase Complete!',
+                `Order: ${orderId}\nCommission: $${result.commission?.toFixed(2) || 0}\nCreator: ${result.creatorId}\n\nAttribution successfully tracked!`,
+                [{ text: 'OK' }]
+              );
+            } else {
+              Alert.alert('❌ Purchase Failed', 'Attribution tracking failed');
+            }
+          }
+        }
+      ]
+    );
+  };
 
   if (!story) return null;
 
@@ -79,6 +132,7 @@ export const StoryViewer: React.FC<Props> = ({
       <View style={s.header}>
         <Text style={s.creatorHandle} testID="creator-handle">@{story.creatorId}</Text>
         <Text style={s.storyType}>{story.type.toUpperCase()}</Text>
+        <Text style={s.storyId}>Story ID: {story.id}</Text>
       </View>
 
       <View style={s.actions}>
@@ -86,9 +140,15 @@ export const StoryViewer: React.FC<Props> = ({
         <TouchableOpacity onPress={goNext} style={s.tapRight} testID="story-tap-right" />
       </View>
 
+      {/* Phase 3: Enhanced Commerce CTA with attribution tracking */}
       {story.type === 'product' && story.productId && (
-        <TouchableOpacity onPress={() => onProduct(story.productId)} style={s.cta} testID="cta-buy-now">
-          <Text style={s.ctaText}>🛍️ Buy Now</Text>
+        <TouchableOpacity 
+          onPress={() => handleProductAction(story.productId!)} 
+          style={s.cta} 
+          testID="cta-buy-now"
+        >
+          <Text style={s.ctaText}>🛍️ Buy Now - Phase 3 Attribution</Text>
+          <Text style={s.ctaSubtext}>Tap to test end-to-end commerce tracking</Text>
         </TouchableOpacity>
       )}
 
@@ -133,6 +193,7 @@ const s = StyleSheet.create({
   header: { position: 'absolute', top: 70, left: 16 },
   creatorHandle: { fontSize: 16, color: '#fff', fontWeight: 'bold' },
   storyType: { fontSize: 12, color: '#ccc', marginTop: 4 },
+  storyId: { fontSize: 10, color: '#888', marginTop: 2 },
   actions: { position: 'absolute', top: 0, bottom: 0, left: 0, right: 0, flexDirection: 'row' },
   tapLeft: { flex: 1 },
   tapRight: { flex: 1 },
@@ -147,6 +208,7 @@ const s = StyleSheet.create({
     alignItems: 'center' 
   },
   ctaText: { color: '#000', fontSize: 16, fontWeight: 'bold' },
+  ctaSubtext: { color: '#333', fontSize: 12, marginTop: 4 },
   close: { position: 'absolute', top: 50, right: 16, padding: 8 },
   closeText: { color: '#fff', fontSize: 20, fontWeight: 'bold' }
 });
