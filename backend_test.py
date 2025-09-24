@@ -36,7 +36,7 @@ EXPRESS_URL = "http://localhost:8002"  # Express server for Ultimate Kit
 FASTAPI_URL = f"{BACKEND_URL}/api"
 PERFORMANCE_THRESHOLD_MS = 200  # <200ms response times target
 
-class ProductionHardeningValidator:
+class UltimateOperationalKitValidator:
     def __init__(self):
         self.session = None
         self.auth_token = None
