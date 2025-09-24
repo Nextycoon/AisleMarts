@@ -1,0 +1,1 @@
+const { expect: detoxExpected }=require('detox'); module.exports.waitAny=async(m,t)=>{const s=Date.now();let e;while(Date.now()-s<t){for(const x of m){try{await detoxExpected(x).toExist();return;}catch(err){e=err}}await new Promise(r=>setTimeout(r,250))}throw e||new Error('No matchers appeared')};

@@ -1,0 +1,1 @@
+const { element, by }=require('detox');describe('Swipe',()=>{it('vertical swipe',async()=>{const first=element(by.id('story-card-0'));await first.swipe('up','fast',0.85);await element(by.id('story-card-1')).toBeVisible();});});

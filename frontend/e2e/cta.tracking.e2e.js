@@ -1,0 +1,2 @@
+const { element, by }=require('detox');const {waitAny}=require('./_waitAny');
+describe('CTA',()=>{it('tap CTA shows feedback',async()=>{await element(by.id('stories-tray')).toExist();await waitAny([element(by.id('story-cta')),element(by.text('Shop Now'))],5000);try{await element(by.id('story-cta')).tap();}catch{await element(by.text('Shop Now')).tap();}await waitAny([element(by.id('toast')),element(by.text('Link opened')),element(by.text('Added to cart'))],3000);});});
