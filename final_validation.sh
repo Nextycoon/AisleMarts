@@ -41,9 +41,14 @@ line "✅ CTA posted"
 
 if [ -n "$HMAC_SECRET" ]; then
   say "Purchases (HMAC + idempotency + 422)"
-  node - <<'NODE' > sign.js
-  const c=require('crypto');const [ts,body,secret]=process.argv.slice(2);
-  process.stdout.write(c.createHmac('sha256',secret).update(`${ts}.${body}`).digest('hex'));
+  cat << 'NODE' > sign.js
+const c=require('crypto');
+const [ts,body,secret]=process.argv.slice(2);
+if (!secret) {
+  console.error("HMAC_SECRET required");
+  process.exit(1);
+}
+process.stdout.write(c.createHmac('sha256',secret).update(`${ts}.${body}`).digest('hex'));
 NODE
   TS=$(($(date +%s%N)/1000000)); ORDER="o-$(date +%s)"
   OK=$(jq -n --arg o "$ORDER" --arg p "$PRODUCT_ID" --arg amt "49.9" --arg cur "USD" --arg u "$USER_ID" '{orderId:$o,productId:$p,amount:($amt|tonumber),currency:$cur,userId:$u}')
