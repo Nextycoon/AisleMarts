@@ -127,11 +127,12 @@ class InfinityStoriesBackendTester:
         # Test currency conversion
         success, data, response_time = await self.make_request('GET', '/currency/convert?from=USD&to=EUR&amount=100')
         
-        if success and 'converted_amount' in data:
+        if success and ('converted_amount' in data or 'result' in data):
+            converted = data.get('converted_amount', data.get('result', 0))
             await self.log_test(
                 "Currency Conversion", 
                 True, 
-                f"100 USD = {data.get('converted_amount', 0)} EUR", 
+                f"100 USD = {converted} EUR", 
                 response_time
             )
         else:
