@@ -12,7 +12,7 @@ from typing import Dict, List, Any
 import os
 
 # Get backend URL from environment
-BACKEND_URL = os.getenv('EXPO_PUBLIC_BACKEND_URL', 'https://aislemart-ui.preview.emergentagent.com')
+BACKEND_URL = os.getenv('EXPO_PUBLIC_BACKEND_URL', 'https://social-ecosystem.preview.emergentagent.com')
 API_BASE = f"{BACKEND_URL}/api"
 
 class CurrencyEngineV2Tester:

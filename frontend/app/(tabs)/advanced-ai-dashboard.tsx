@@ -22,7 +22,7 @@ import { BlurView } from 'expo-blur';
 const { width, height } = Dimensions.get('window');
 
 // API configuration
-const API_BASE = process.env.EXPO_PUBLIC_BACKEND_URL || 'https://aislemart-ui.preview.emergentagent.com';
+const API_BASE = process.env.EXPO_PUBLIC_BACKEND_URL || 'https://social-ecosystem.preview.emergentagent.com';
 
 interface AIModelStatus {
   status: string;

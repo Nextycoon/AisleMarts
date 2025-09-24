@@ -4,7 +4,7 @@
 
 ### Web Preview (Desktop/Mobile Browser)
 ```
-🌐 Live Preview: https://aislemart-ui.preview.emergentagent.com
+🌐 Live Preview: https://social-ecosystem.preview.emergentagent.com
 ```
 
 ### Mobile App Testing (Expo Go)

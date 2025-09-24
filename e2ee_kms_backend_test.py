@@ -18,7 +18,7 @@ from datetime import datetime
 from typing import Dict, List, Any, Optional
 
 # Configuration
-BACKEND_URL = os.getenv('REACT_APP_BACKEND_URL', 'https://aislemart-ui.preview.emergentagent.com')
+BACKEND_URL = os.getenv('REACT_APP_BACKEND_URL', 'https://social-ecosystem.preview.emergentagent.com')
 API_BASE = f"{BACKEND_URL}/api"
 
 class E2EEKMSTester:

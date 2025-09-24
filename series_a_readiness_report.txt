@@ -45,4 +45,4 @@ NEXT STEPS FOR SERIES A PREPARATION:
 4. ❌ Prepare investor demo environment
 
 Generated: 2025-09-20 16:48:01 UTC
-Testing Environment: https://aislemart-ui.preview.emergentagent.com
+Testing Environment: https://social-ecosystem.preview.emergentagent.com
