@@ -273,6 +273,174 @@ export default function ForYouScreen() {
     setInfinityReels(prev => [...prev, ...newReels]);
   }, [infinityReels.length]);
 
+  // 🎬 INFINITY STORIES SYSTEM - Phase 1 Implementation
+  
+  // Story types for each creator category
+  const storyTypes = {
+    fashion: [
+      { type: 'daily_moment', weight: 0.3, templates: ['Morning OOTD', 'Coffee & Style', 'Behind the lens'] },
+      { type: 'product_showcase', weight: 0.5, templates: ['New Collection Drop', 'Must-Have Item', 'Style Guide'] },
+      { type: 'bts_content', weight: 0.2, templates: ['Photoshoot BTS', 'Design Process', 'Fitting Room'] }
+    ],
+    technology: [
+      { type: 'daily_moment', weight: 0.2, templates: ['Tech Setup', 'Morning Routine', 'Workspace Tour'] },
+      { type: 'product_showcase', weight: 0.6, templates: ['Unboxing Experience', 'Feature Demo', 'Comparison Test'] },
+      { type: 'bts_content', weight: 0.2, templates: ['Review Setup', 'Testing Lab', 'Content Creation'] }
+    ],
+    fitness: [
+      { type: 'daily_moment', weight: 0.4, templates: ['Morning Workout', 'Healthy Meal', 'Motivation Quote'] },
+      { type: 'product_showcase', weight: 0.4, templates: ['Gear Review', 'Supplement Guide', 'Equipment Demo'] },
+      { type: 'bts_content', weight: 0.2, templates: ['Workout Prep', 'Training Session', 'Recovery Time'] }
+    ],
+    beauty: [
+      { type: 'daily_moment', weight: 0.3, templates: ['Skincare Routine', 'Getting Ready', 'Self Care'] },
+      { type: 'product_showcase', weight: 0.5, templates: ['Product Review', 'Tutorial Sneak', 'Before/After'] },
+      { type: 'bts_content', weight: 0.2, templates: ['Makeup Setup', 'Content Filming', 'Product Testing'] }
+    ],
+    food: [
+      { type: 'daily_moment', weight: 0.4, templates: ['Morning Coffee', 'Market Visit', 'Cooking Time'] },
+      { type: 'product_showcase', weight: 0.4, templates: ['Recipe Preview', 'Ingredient Focus', 'Kitchen Tool'] },
+      { type: 'bts_content', weight: 0.2, templates: ['Prep Work', 'Cooking Process', 'Taste Testing'] }
+    ],
+    travel: [
+      { type: 'daily_moment', weight: 0.5, templates: ['Sunrise View', 'Local Culture', 'Travel Day'] },
+      { type: 'product_showcase', weight: 0.3, templates: ['Travel Gear', 'Local Product', 'Packing Tips'] },
+      { type: 'bts_content', weight: 0.2, templates: ['Planning Trip', 'Travel Prep', 'Hidden Gems'] }
+    ],
+    lifestyle: [
+      { type: 'daily_moment', weight: 0.4, templates: ['Home Morning', 'Organizing', 'Cozy Vibes'] },
+      { type: 'product_showcase', weight: 0.4, templates: ['Decor Item', 'Room Makeover', 'DIY Project'] },
+      { type: 'bts_content', weight: 0.2, templates: ['Design Process', 'Room Setup', 'Project Work'] }
+    ],
+    art: [
+      { type: 'daily_moment', weight: 0.3, templates: ['Studio Time', 'Inspiration', 'Creative Flow'] },
+      { type: 'product_showcase', weight: 0.4, templates: ['Art Supply', 'Technique Demo', 'Finished Piece'] },
+      { type: 'bts_content', weight: 0.3, templates: ['Sketch Process', 'Color Mixing', 'Art Setup'] }
+    ]
+  };
+
+  // 🕐 STORY EXPIRY SIMULATION (24h cycle)
+  const getStoryExpiryStatus = (creatorId: string, storyIndex: number) => {
+    const now = new Date();
+    const creatorSeed = creatorId.length; // Simple seed based on creator ID
+    const storySeed = storyIndex + creatorSeed;
+    
+    // Simulate different upload times within last 24h
+    const hoursAgo = (storySeed % 24) + (now.getMinutes() % 60) / 60;
+    const uploadTime = new Date(now.getTime() - (hoursAgo * 60 * 60 * 1000));
+    const expiryTime = new Date(uploadTime.getTime() + (24 * 60 * 60 * 1000));
+    
+    const isExpired = now > expiryTime;
+    const timeRemaining = Math.max(0, expiryTime.getTime() - now.getTime());
+    const percentRemaining = Math.max(0, (timeRemaining / (24 * 60 * 60 * 1000)) * 100);
+    
+    return {
+      isExpired,
+      uploadTime,
+      expiryTime,
+      timeRemaining,
+      percentRemaining,
+      hoursRemaining: Math.ceil(timeRemaining / (60 * 60 * 1000))
+    };
+  };
+
+  // 👁️ VIEWED/UNVIEWED STORY TRACKING
+  const [viewedStories, setViewedStories] = useState<Set<string>>(new Set());
+  
+  const markStoryAsViewed = (storyId: string) => {
+    setViewedStories(prev => new Set([...prev, storyId]));
+  };
+  
+  const isStoryViewed = (storyId: string) => {
+    return viewedStories.has(storyId);
+  };
+
+  // 🎬 DYNAMIC STORY GENERATION ENGINE
+  const generateCreatorStory = (creator: any, storyIndex: number) => {
+    const categoryStories = storyTypes[creator.category] || storyTypes.lifestyle;
+    
+    // Select story type based on weights
+    const random = Math.random();
+    let cumulativeWeight = 0;
+    let selectedStoryType = categoryStories[0];
+    
+    for (const storyType of categoryStories) {
+      cumulativeWeight += storyType.weight;
+      if (random <= cumulativeWeight) {
+        selectedStoryType = storyType;
+        break;
+      }
+    }
+    
+    const template = selectedStoryType.templates[storyIndex % selectedStoryType.templates.length];
+    const expiryInfo = getStoryExpiryStatus(creator.id, storyIndex);
+    const storyId = `${creator.id}_story_${storyIndex}_${selectedStoryType.type}`;
+    
+    return {
+      id: storyId,
+      creatorId: creator.id,
+      creatorName: creator.name,
+      creatorTier: creator.tier,
+      verification: creator.verification,
+      category: creator.category,
+      type: selectedStoryType.type,
+      template,
+      content: `${template} - ${creator.bio.split('&')[0]}`,
+      isViewed: isStoryViewed(storyId),
+      expiryInfo,
+      hasCommerce: selectedStoryType.type === 'product_showcase',
+      commerceProduct: selectedStoryType.type === 'product_showcase' ? creator.products[storyIndex % creator.products.length] : null,
+      engagement: {
+        views: Math.floor(Math.random() * (creator.baseEngagement.likes[1] * 0.8)) + creator.baseEngagement.likes[0] * 0.3,
+        reactions: Math.floor(Math.random() * (creator.baseEngagement.likes[1] * 0.1)) + creator.baseEngagement.likes[0] * 0.05
+      }
+    };
+  };
+
+  // 🔄 INFINITY STORIES GENERATION
+  const [infinityStories, setInfinityStories] = useState(() => {
+    const stories = [];
+    // Generate 2-4 stories per creator
+    creatorPool.forEach((creator, creatorIndex) => {
+      const numStories = 2 + (creatorIndex % 3); // 2-4 stories per creator
+      for (let i = 0; i < numStories; i++) {
+        const story = generateCreatorStory(creator, i);
+        if (!story.expiryInfo.isExpired) {
+          stories.push(story);
+        }
+      }
+    });
+    
+    // Sort by creator popularity (premium first, then verification tier)
+    return stories.sort((a, b) => {
+      const creatorA = creatorPool.find(c => c.id === a.creatorId);
+      const creatorB = creatorPool.find(c => c.id === b.creatorId);
+      
+      if (creatorA.tier !== creatorB.tier) {
+        const tierOrder = { 'premium': 3, 'verified': 2, 'semi_verified': 1, 'casual': 0 };
+        return tierOrder[creatorB.tier] - tierOrder[creatorA.tier];
+      }
+      
+      return creatorA.name.localeCompare(creatorB.name);
+    });
+  });
+
+  // Generate more stories when needed (endless cycling)
+  const loadMoreStories = useCallback(() => {
+    const newStories = [];
+    creatorPool.forEach((creator, creatorIndex) => {
+      const existingCount = infinityStories.filter(s => s.creatorId === creator.id).length;
+      const newStoryIndex = existingCount + Math.floor(Math.random() * 10);
+      const newStory = generateCreatorStory(creator, newStoryIndex);
+      
+      if (!newStory.expiryInfo.isExpired) {
+        newStories.push(newStory);
+      }
+    });
+    
+    setInfinityStories(prev => [...prev, ...newStories]);
+  }, [infinityStories.length]);
+
   const currentVideo = infinityReels[currentIndex] || generateInfiniteReel(0);
 
   const handleSwipeUp = () => {
