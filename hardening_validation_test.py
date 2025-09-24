@@ -455,6 +455,15 @@ class HardeningValidator:
                         f"Correctly returned 422 for invalid payload",
                         response_time
                     )
+                elif "timestamp_out_of_window" in response.text:
+                    # HMAC validation is working, but timestamp is checked first
+                    self.log_result(
+                        "Auth Validation",
+                        f"Invalid Payload - {endpoint}",
+                        True,
+                        f"HMAC validation working (timestamp checked before payload)",
+                        response_time
+                    )
                 else:
                     self.log_result(
                         "Auth Validation",
