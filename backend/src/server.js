@@ -472,9 +472,29 @@ app.get('/api/analytics/dashboard', async (req, res) => {
   }
 });
 
+// Better 404 handler with hints (before error handler)
+app.use((req, res, next) => {
+  res.status(404).json({
+    error: 'Endpoint not found',
+    path: req.path,
+    method: req.method,
+    hint: 'Try GET /health for status or GET /api/stories for data',
+    available_endpoints: [
+      'GET /',
+      'GET /health',
+      'GET /api/creators', 
+      'GET /api/stories?limit=24&cursor=...',
+      'POST /api/track/impression',
+      'POST /api/track/cta',
+      'POST /api/track/purchase (HMAC required)',
+      'POST /api/track/refund (HMAC required)',
+      'GET /api/analytics/dashboard'
+    ]
+  });
+});
+
 // Error handling
 app.use(errorHandler);
-app.use(notFoundHandler);
 
 const PORT = process.env.PORT || 3000;
 
