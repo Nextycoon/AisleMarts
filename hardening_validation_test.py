@@ -268,11 +268,12 @@ class HardeningValidator:
         ]
         
         test_payload = {
-            "user_id": "test-user-123",
-            "creator_id": "creator-456", 
-            "product_id": "product-789",
+            "orderId": "test-order-123",
+            "productId": "product-789",
             "amount": 99.99,
-            "currency": "USD"
+            "currency": "USD",
+            "userId": "test-user-123",
+            "referrerStoryId": "story-456"
         }
         
         # CTA endpoint has different payload structure
