@@ -1,0 +1,25 @@
+{
+  "applinks": {
+    "apps": [],
+    "details": [
+      {
+        "appID": "TEAMID.com.aislemarts.beta",
+        "paths": [ 
+          "/app/*", 
+          "/story/*", 
+          "/product/*",
+          "/creator/*",
+          "/category/*"
+        ]
+      }
+    ]
+  },
+  "_instructions": [
+    "1. Replace TEAMID with your Apple Developer Team ID",
+    "2. Replace com.aislemarts.beta with your actual bundle identifier",
+    "3. Host this file at https://your-domain.com/.well-known/apple-app-site-association",
+    "4. Ensure Content-Type: application/json (no .json extension)",
+    "5. No redirects, must be served over HTTPS",
+    "6. Add 'applinks:your-domain.com' to iOS associated-domains entitlement"
+  ]
+}
