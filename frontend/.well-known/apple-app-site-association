@@ -1,0 +1,11 @@
+{
+  "applinks": {
+    "apps": [],
+    "details": [
+      {
+        "appID": "TEAMID.com.company.aislemarts",
+        "paths": [ "/app/*" ]
+      }
+    ]
+  }
+}

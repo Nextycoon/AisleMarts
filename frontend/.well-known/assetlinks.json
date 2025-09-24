@@ -1,0 +1,10 @@
+[
+  {
+    "relation": [ "delegate_permission/common.handle_all_urls" ],
+    "target": {
+      "namespace": "android_app",
+      "package_name": "com.company.aislemarts",
+      "sha256_cert_fingerprints": [ "AA:BB:CC:DD:EE:FF:..." ]
+    }
+  }
+]
