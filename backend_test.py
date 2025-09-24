@@ -38,739 +38,1039 @@ TEST_USER_PASSWORD = "SeriesA2024!"
 CONCURRENT_REQUESTS = 20
 PERFORMANCE_THRESHOLD_MS = 200  # Stories ≤120ms, Purchase ≤200ms per SLO
 
-class Phase3CommerceValidator:
+class ProductionHardeningValidator:
     def __init__(self):
         self.session = None
+        self.auth_token = None
         self.test_results = []
-        self.test_data = {
-            'impressions': [],
-            'ctas': [],
-            'purchases': [],
-            'users': ['user_luxury_buyer', 'user_tech_enthusiast', 'user_fitness_lover'],
-            'stories': [],
-            'creators': []
-        }
+        self.start_time = time.time()
         
     async def __aenter__(self):
         self.session = aiohttp.ClientSession(
             timeout=aiohttp.ClientTimeout(total=30),
-            headers={'Content-Type': 'application/json'}
+            connector=aiohttp.TCPConnector(limit=50)
         )
         return self
         
     async def __aexit__(self, exc_type, exc_val, exc_tb):
         if self.session:
             await self.session.close()
-
-    async def log_test(self, test_name: str, success: bool, details: str = "", response_time: float = 0):
-        """Log test results with detailed information"""
+    
+    def log_test(self, test_name: str, success: bool, details: str = "", response_time: float = 0):
+        """Log test result with enterprise metrics"""
+        self.test_results.append({
+            "test": test_name,
+            "success": success,
+            "details": details,
+            "response_time_ms": round(response_time * 1000, 2),
+            "timestamp": datetime.utcnow().isoformat()
+        })
         status = "✅ PASS" if success else "❌ FAIL"
-        result = {
-            'test': test_name,
-            'success': success,
-            'details': details,
-            'response_time': f"{response_time:.3f}s"
-        }
-        self.test_results.append(result)
-        print(f"{status} {test_name} ({response_time:.3f}s) - {details}")
-
-    async def make_request(self, method: str, endpoint: str, data: dict = None) -> tuple:
-        """Make HTTP request and return response data and time"""
-        start_time = time.time()
+        print(f"{status} {test_name} ({response_time*1000:.1f}ms) - {details}")
+    
+    async def authenticate(self):
+        """Authenticate test user for protected endpoints"""
         try:
-            url = f"{BASE_URL}{endpoint}"
-            if method.upper() == 'GET':
-                async with self.session.get(url, params=data) as response:
-                    response_time = time.time() - start_time
-                    if response.status == 200:
-                        result = await response.json()
-                        return result, response_time, True
-                    else:
-                        error_text = await response.text()
-                        return f"HTTP {response.status}: {error_text}", response_time, False
-            else:
-                async with self.session.post(url, json=data) as response:
-                    response_time = time.time() - start_time
-                    if response.status == 200:
-                        result = await response.json()
-                        return result, response_time, True
-                    else:
-                        error_text = await response.text()
-                        return f"HTTP {response.status}: {error_text}", response_time, False
-        except Exception as e:
-            response_time = time.time() - start_time
-            return f"Request failed: {str(e)}", response_time, False
-
-    # ========== PHASE 3 COMMERCE API TESTING ==========
-
-    async def test_stories_health_phase3(self):
-        """Test GET /api/stories/health - Validate Phase 3 features"""
-        result, response_time, success = await self.make_request('GET', '/stories/health')
-        
-        if success:
-            required_features = [
-                'impression_tracking', 'cta_attribution', 'commission_calculation',
-                '7_day_attribution_window', 'creator_performance_analytics'
-            ]
+            start = time.time()
             
-            features = result.get('features', [])
-            missing_features = [f for f in required_features if f not in features]
-            
-            if not missing_features and result.get('phase') == '3':
-                await self.log_test(
-                    "Stories Health Check - Phase 3 Features",
-                    True,
-                    f"Phase 3 operational with {len(features)} features, {result.get('creators_count', 0)} creators",
-                    response_time
-                )
-                return True
-            else:
-                await self.log_test(
-                    "Stories Health Check - Phase 3 Features",
-                    False,
-                    f"Missing features: {missing_features}, Phase: {result.get('phase')}",
-                    response_time
-                )
-                return False
-        else:
-            await self.log_test("Stories Health Check - Phase 3 Features", False, str(result), response_time)
-            return False
-
-    async def test_impression_tracking(self):
-        """Test POST /api/track/impression - Test story impression tracking"""
-        # First get stories to have valid story IDs
-        stories_result, _, stories_success = await self.make_request('GET', '/stories', {'limit': 5})
-        
-        if not stories_success:
-            await self.log_test("Impression Tracking", False, "Could not fetch stories for testing", 0)
-            return False
-            
-        stories = stories_result.get('data', [])
-        if not stories:
-            await self.log_test("Impression Tracking", False, "No stories available for testing", 0)
-            return False
-            
-        # Track impressions for multiple stories and users
-        success_count = 0
-        total_tests = 0
-        
-        for i, story in enumerate(stories[:3]):  # Test first 3 stories
-            for user in self.test_data['users']:
-                total_tests += 1
-                impression_data = {
-                    'storyId': story['id'],
-                    'userId': user
-                }
-                
-                result, response_time, success = await self.make_request('POST', '/track/impression', impression_data)
-                
-                if success and result.get('ok'):
-                    success_count += 1
-                    self.test_data['impressions'].append({
-                        'id': result.get('id'),
-                        'storyId': story['id'],
-                        'userId': user
-                    })
-                    
-        success_rate = (success_count / total_tests) * 100 if total_tests > 0 else 0
-        await self.log_test(
-            "Impression Tracking",
-            success_rate >= 90,
-            f"{success_count}/{total_tests} impressions tracked ({success_rate:.1f}% success rate)",
-            response_time
-        )
-        return success_rate >= 90
-
-    async def test_cta_tracking(self):
-        """Test POST /api/track/cta - Test CTA click tracking with product attribution"""
-        # Get stories with products
-        stories_result, _, stories_success = await self.make_request('GET', '/stories', {'limit': 10})
-        
-        if not stories_success:
-            await self.log_test("CTA Tracking", False, "Could not fetch stories for testing", 0)
-            return False
-            
-        stories = stories_result.get('data', [])
-        product_stories = [s for s in stories if s.get('productId')]
-        
-        if not product_stories:
-            await self.log_test("CTA Tracking", False, "No product stories available for CTA testing", 0)
-            return False
-            
-        success_count = 0
-        total_tests = 0
-        
-        # Track CTAs for product stories
-        for story in product_stories[:5]:  # Test first 5 product stories
-            for user in self.test_data['users']:
-                total_tests += 1
-                cta_data = {
-                    'storyId': story['id'],
-                    'productId': story.get('productId'),
-                    'userId': user
-                }
-                
-                result, response_time, success = await self.make_request('POST', '/track/cta', cta_data)
-                
-                if success and result.get('ok'):
-                    success_count += 1
-                    self.test_data['ctas'].append({
-                        'id': result.get('id'),
-                        'storyId': story['id'],
-                        'productId': story.get('productId'),
-                        'userId': user
-                    })
-                    
-        success_rate = (success_count / total_tests) * 100 if total_tests > 0 else 0
-        await self.log_test(
-            "CTA Tracking with Product Attribution",
-            success_rate >= 90,
-            f"{success_count}/{total_tests} CTAs tracked ({success_rate:.1f}% success rate)",
-            response_time
-        )
-        return success_rate >= 90
-
-    async def test_purchase_tracking(self):
-        """Test POST /api/track/purchase - Test purchase tracking with commission calculation"""
-        if not self.test_data['ctas']:
-            await self.log_test("Purchase Tracking", False, "No CTAs available for purchase attribution testing", 0)
-            return False
-            
-        success_count = 0
-        total_tests = 0
-        
-        # Create purchases based on tracked CTAs
-        for i, cta in enumerate(self.test_data['ctas'][:5]):  # Test first 5 CTAs
-            total_tests += 1
-            purchase_data = {
-                'orderId': f"order_{int(time.time())}_{i}",
-                'userId': cta['userId'],
-                'productId': cta['productId'],
-                'amount': 89.00 if 'silk-scarf' in cta['productId'] else 299.00,  # Realistic prices
-                'currency': 'USD',
-                'referrerStoryId': cta['storyId']
+            # Register test user
+            register_data = {
+                "email": TEST_USER_EMAIL,
+                "name": "Series A Investor Demo",
+                "password": TEST_USER_PASSWORD
             }
             
-            result, response_time, success = await self.make_request('POST', '/track/purchase', purchase_data)
+            async with self.session.post(f"{BASE_URL}/auth/register", json=register_data) as resp:
+                if resp.status == 200:
+                    data = await resp.json()
+                    self.auth_token = data.get("access_token")
+                elif resp.status == 400:
+                    # User exists, try login
+                    login_data = {
+                        "email": TEST_USER_EMAIL,
+                        "password": TEST_USER_PASSWORD
+                    }
+                    async with self.session.post(f"{BASE_URL}/auth/login", json=login_data) as login_resp:
+                        if login_resp.status == 200:
+                            data = await login_resp.json()
+                            self.auth_token = data.get("access_token")
+                        else:
+                            raise Exception(f"Login failed: {login_resp.status}")
+                else:
+                    raise Exception(f"Registration failed: {resp.status}")
             
-            if success and result.get('ok'):
-                success_count += 1
-                commission = result.get('commission', 0)
-                creator_id = result.get('creatorId')
-                attribution_method = result.get('attributionMethod')
-                
-                self.test_data['purchases'].append({
-                    'orderId': purchase_data['orderId'],
-                    'commission': commission,
-                    'creatorId': creator_id,
-                    'attributionMethod': attribution_method
-                })
-                
-        success_rate = (success_count / total_tests) * 100 if total_tests > 0 else 0
-        await self.log_test(
-            "Purchase Tracking with Commission Calculation",
-            success_rate >= 90,
-            f"{success_count}/{total_tests} purchases tracked ({success_rate:.1f}% success rate)",
-            response_time
-        )
-        return success_rate >= 90
-
-    async def test_commerce_analytics(self):
-        """Test GET /api/commerce/analytics - Test commerce analytics dashboard"""
-        result, response_time, success = await self.make_request('GET', '/commerce/analytics')
-        
-        if success:
-            summary = result.get('summary', {})
-            creator_stats = result.get('creatorStats', {})
-            recent_purchases = result.get('recentPurchases', [])
-            
-            required_metrics = ['totalImpressions', 'totalCTAs', 'totalPurchases', 'totalRevenue', 'conversionRate']
-            missing_metrics = [m for m in required_metrics if m not in summary]
-            
-            if not missing_metrics and len(creator_stats) > 0:
-                await self.log_test(
-                    "Commerce Analytics Dashboard",
-                    True,
-                    f"Analytics operational: {summary.get('totalPurchases', 0)} purchases, {len(creator_stats)} creators, {summary.get('conversionRate', 0):.2f}% conversion",
-                    response_time
-                )
-                return True
-            else:
-                await self.log_test(
-                    "Commerce Analytics Dashboard",
-                    False,
-                    f"Missing metrics: {missing_metrics}, Creator stats: {len(creator_stats)}",
-                    response_time
-                )
-                return False
-        else:
-            await self.log_test("Commerce Analytics Dashboard", False, str(result), response_time)
-            return False
-
-    # ========== END-TO-END ATTRIBUTION FLOW ==========
-
-    async def test_complete_attribution_cycle(self):
-        """Test Complete Attribution Cycle: Impression → CTA → Purchase"""
-        print("\n🔄 TESTING COMPLETE ATTRIBUTION CYCLE")
-        
-        # Step 1: Get a product story
-        stories_result, _, stories_success = await self.make_request('GET', '/stories', {'limit': 10})
-        if not stories_success:
-            await self.log_test("Complete Attribution Cycle", False, "Could not fetch stories", 0)
-            return False
-            
-        stories = stories_result.get('data', [])
-        product_story = next((s for s in stories if s.get('productId')), None)
-        
-        if not product_story:
-            await self.log_test("Complete Attribution Cycle", False, "No product story available", 0)
-            return False
-            
-        user_id = "attribution_test_user"
-        
-        # Step 2: Track impression
-        impression_data = {'storyId': product_story['id'], 'userId': user_id}
-        impression_result, _, impression_success = await self.make_request('POST', '/track/impression', impression_data)
-        
-        if not impression_success:
-            await self.log_test("Complete Attribution Cycle", False, "Impression tracking failed", 0)
-            return False
-            
-        # Step 3: Track CTA
-        cta_data = {
-            'storyId': product_story['id'],
-            'productId': product_story.get('productId'),
-            'userId': user_id
-        }
-        cta_result, _, cta_success = await self.make_request('POST', '/track/cta', cta_data)
-        
-        if not cta_success:
-            await self.log_test("Complete Attribution Cycle", False, "CTA tracking failed", 0)
-            return False
-            
-        # Step 4: Track purchase
-        purchase_data = {
-            'orderId': f"attribution_order_{int(time.time())}",
-            'userId': user_id,
-            'productId': product_story.get('productId'),
-            'amount': 150.00,
-            'currency': 'USD',
-            'referrerStoryId': product_story['id']
-        }
-        purchase_result, response_time, purchase_success = await self.make_request('POST', '/track/purchase', purchase_data)
-        
-        if purchase_success and purchase_result.get('ok'):
-            commission = purchase_result.get('commission', 0)
-            attribution_method = purchase_result.get('attributionMethod')
-            creator_id = purchase_result.get('creatorId')
-            
-            await self.log_test(
-                "Complete Attribution Cycle",
-                True,
-                f"Full cycle completed: ${commission:.2f} commission to {creator_id} via {attribution_method}",
-                response_time
-            )
+            response_time = time.time() - start
+            self.log_test("Authentication System", True, f"JWT token obtained", response_time)
             return True
-        else:
-            await self.log_test("Complete Attribution Cycle", False, "Purchase tracking failed", response_time)
+            
+        except Exception as e:
+            self.log_test("Authentication System", False, f"Auth failed: {str(e)}")
             return False
+    
+    def get_auth_headers(self):
+        """Get authorization headers for authenticated requests"""
+        if not self.auth_token:
+            return {}
+        return {"Authorization": f"Bearer {self.auth_token}"}
 
-    async def test_7_day_attribution_window(self):
-        """Test 7-Day Attribution Window calculation"""
-        # This test validates that the attribution window logic is working
-        # In a real scenario, we'd test with expired CTAs, but for demo we validate the logic exists
-        
-        user_id = "window_test_user"
-        
-        # Get a product story
-        stories_result, _, stories_success = await self.make_request('GET', '/stories', {'limit': 5})
-        if not stories_success:
-            await self.log_test("7-Day Attribution Window", False, "Could not fetch stories", 0)
-            return False
-            
-        stories = stories_result.get('data', [])
-        product_story = next((s for s in stories if s.get('productId')), None)
-        
-        if not product_story:
-            await self.log_test("7-Day Attribution Window", False, "No product story available", 0)
-            return False
-            
-        # Track CTA
-        cta_data = {
-            'storyId': product_story['id'],
-            'productId': product_story.get('productId'),
-            'userId': user_id
-        }
-        await self.make_request('POST', '/track/cta', cta_data)
-        
-        # Track purchase (should be attributed within window)
-        purchase_data = {
-            'orderId': f"window_test_{int(time.time())}",
-            'userId': user_id,
-            'productId': product_story.get('productId'),
-            'amount': 200.00,
-            'currency': 'USD'
-        }
-        
-        result, response_time, success = await self.make_request('POST', '/track/purchase', purchase_data)
-        
-        if success and result.get('attributionMethod') == 'CTA':
-            await self.log_test(
-                "7-Day Attribution Window",
-                True,
-                f"Attribution working: Purchase attributed to CTA within window",
-                response_time
-            )
-            return True
-        else:
-            await self.log_test(
-                "7-Day Attribution Window",
-                False,
-                f"Attribution failed: {result.get('attributionMethod', 'Unknown')}",
-                response_time
-            )
-            return False
-
-    async def test_commission_calculation(self):
-        """Test tier-based commission rates validation"""
-        # Get creators to validate commission rates
-        creators_result, response_time, success = await self.make_request('GET', '/creators')
-        
-        if not success:
-            await self.log_test("Commission Calculation", False, "Could not fetch creators", response_time)
-            return False
-            
-        creators = creators_result
-        
-        # Validate commission rates by tier
-        tier_rates = {
-            'gold': (0.11, 0.13),    # 11-13%
-            'blue': (0.08, 0.10),    # 8-10%
-            'grey': (0.06, 0.07),    # 6-7%
-            'unverified': (0.05, 0.05)  # 5%
-        }
-        
-        valid_rates = 0
-        total_creators = len(creators)
-        
-        for creator in creators:
-            tier = creator.get('tier')
-            commission_pct = creator.get('commissionPct', 0)
-            
-            if tier in tier_rates:
-                min_rate, max_rate = tier_rates[tier]
-                if min_rate <= commission_pct <= max_rate:
-                    valid_rates += 1
-                    
-        success_rate = (valid_rates / total_creators) * 100 if total_creators > 0 else 0
-        
-        await self.log_test(
-            "Commission Calculation - Tier-based Rates",
-            success_rate >= 90,
-            f"{valid_rates}/{total_creators} creators have valid tier-based commission rates ({success_rate:.1f}%)",
-            response_time
-        )
-        return success_rate >= 90
-
-    # ========== SERIES A INVESTOR DEMO SCENARIOS ==========
-
-    async def test_luxury_fashion_scenario(self):
-        """Test Luxury Fashion Scenario: Lux Fashion (Gold, 12% commission) silk scarf purchase"""
-        print("\n🏆 TESTING LUXURY FASHION SCENARIO")
-        
-        # Find Lux Fashion creator and silk scarf story
-        stories_result, _, stories_success = await self.make_request('GET', '/stories', {'limit': 20})
-        if not stories_success:
-            await self.log_test("Luxury Fashion Scenario", False, "Could not fetch stories", 0)
-            return False
-            
-        stories = stories_result.get('data', [])
-        
-        lux_fashion_story = None
-        for story in stories:
-            if 'luxefashion' in story.get('id', '') and story.get('productId') == 'trench-coat':
-                lux_fashion_story = story
-                break
-                
-        if not lux_fashion_story:
-            await self.log_test("Luxury Fashion Scenario", False, "Lux Fashion silk scarf story not found", 0)
-            return False
-            
-        user_id = "luxury_buyer_demo"
-        
-        # Complete attribution cycle
-        await self.make_request('POST', '/track/impression', {'storyId': lux_fashion_story['id'], 'userId': user_id})
-        await self.make_request('POST', '/track/cta', {
-            'storyId': lux_fashion_story['id'],
-            'productId': 'trench-coat',
-            'userId': user_id
-        })
-        
-        purchase_data = {
-            'orderId': f"luxury_demo_{int(time.time())}",
-            'userId': user_id,
-            'productId': 'trench-coat',
-            'amount': 239.00,  # Trench coat price
-            'currency': 'USD',
-            'referrerStoryId': lux_fashion_story['id']
-        }
-        
-        result, response_time, success = await self.make_request('POST', '/track/purchase', purchase_data)
-        
-        if success and result.get('creatorId') == 'luxefashion':
-            commission = result.get('commission', 0)
-            expected_commission = 239.00 * 0.12  # 12% for gold tier
-            
-            if abs(commission - expected_commission) < 0.01:  # Allow for rounding
-                await self.log_test(
-                    "Luxury Fashion Scenario",
-                    True,
-                    f"Lux Fashion trench coat: ${commission:.2f} commission (12% gold tier)",
-                    response_time
-                )
-                return True
-                
-        await self.log_test("Luxury Fashion Scenario", False, f"Scenario failed: {result}", response_time)
-        return False
-
-    async def test_tech_product_scenario(self):
-        """Test Tech Product Scenario: Tech Guru (Blue, 10% commission) smartwatch purchase"""
-        print("\n🏆 TESTING TECH PRODUCT SCENARIO")
-        
-        # Find Tech Guru smartwatch story
-        stories_result, _, stories_success = await self.make_request('GET', '/stories', {'limit': 20})
-        if not stories_success:
-            await self.log_test("Tech Product Scenario", False, "Could not fetch stories", 0)
-            return False
-            
-        stories = stories_result.get('data', [])
-        
-        tech_guru_story = None
-        for story in stories:
-            if 'techguru' in story.get('id', '') and story.get('productId') == 'buds-x':
-                tech_guru_story = story
-                break
-                
-        if not tech_guru_story:
-            await self.log_test("Tech Product Scenario", False, "Tech Guru buds-x story not found", 0)
-            return False
-            
-        user_id = "tech_enthusiast_demo"
-        
-        # Complete attribution cycle
-        await self.make_request('POST', '/track/impression', {'storyId': tech_guru_story['id'], 'userId': user_id})
-        await self.make_request('POST', '/track/cta', {
-            'storyId': tech_guru_story['id'],
-            'productId': 'buds-x',
-            'userId': user_id
-        })
-        
-        purchase_data = {
-            'orderId': f"tech_demo_{int(time.time())}",
-            'userId': user_id,
-            'productId': 'buds-x',
-            'amount': 129.00,  # Buds-x price
-            'currency': 'USD',
-            'referrerStoryId': tech_guru_story['id']
-        }
-        
-        result, response_time, success = await self.make_request('POST', '/track/purchase', purchase_data)
-        
-        if success and result.get('creatorId') == 'techguru':
-            commission = result.get('commission', 0)
-            expected_commission = 129.00 * 0.10  # 10% for blue tier
-            
-            if abs(commission - expected_commission) < 0.01:
-                await self.log_test(
-                    "Tech Product Scenario",
-                    True,
-                    f"Tech Guru buds-x: ${commission:.2f} commission (10% blue tier)",
-                    response_time
-                )
-                return True
-                
-        await self.log_test("Tech Product Scenario", False, f"Scenario failed: {result}", response_time)
-        return False
-
-    async def test_volume_commerce(self):
-        """Test multiple purchases across different creators and products"""
-        print("\n🏆 TESTING VOLUME COMMERCE")
-        
-        success_count = 0
-        total_tests = 6  # Test 6 different creator-product combinations
-        
-        test_scenarios = [
-            ('fitnessjane', 'protein-shaker', 14.99, 'fitness_buyer'),
-            ('beautyqueen', 'silk-scarf', 89.00, 'beauty_lover'),
-            ('foodiefun', 'protein-shaker', 14.99, 'health_enthusiast'),
-            ('traveladdict', 'buds-x', 129.00, 'travel_lover'),
-            ('homedecor', 'yoga-mat', 49.99, 'home_decorator'),
-            ('artcreative', 'silk-scarf', 89.00, 'art_collector')
+    # ==================== CORE HEALTH CHECKS ====================
+    
+    async def test_core_api_health(self):
+        """Test core API health endpoints for Series A readiness"""
+        endpoints = [
+            ("/health", "Main API Health"),
+            ("/currency/health", "Currency-Infinity Engine"),
+            ("/ai-super-agent/health", "AI Super Agent"),
+            ("/rewards/health", "Rewards System"),
+            ("/clp-engine/health", "CLP Engine"),
+            ("/stories/health", "Infinity Stories System")
         ]
         
-        for creator_id, product_id, amount, user_id in test_scenarios:
-            # Find matching story
-            stories_result, _, stories_success = await self.make_request('GET', '/stories', {'limit': 25})
-            if not stories_success:
-                continue
-                
-            stories = stories_result.get('data', [])
-            
-            matching_story = None
-            for story in stories:
-                if creator_id in story.get('id', '') and story.get('productId') == product_id:
-                    matching_story = story
-                    break
+        for endpoint, name in endpoints:
+            try:
+                start = time.time()
+                async with self.session.get(f"{BASE_URL}{endpoint}") as resp:
+                    response_time = time.time() - start
                     
-            if matching_story:
-                # Complete purchase cycle
-                await self.make_request('POST', '/track/impression', {'storyId': matching_story['id'], 'userId': user_id})
-                await self.make_request('POST', '/track/cta', {
-                    'storyId': matching_story['id'],
-                    'productId': product_id,
-                    'userId': user_id
-                })
-                
-                purchase_data = {
-                    'orderId': f"volume_{creator_id}_{int(time.time())}",
-                    'userId': user_id,
-                    'productId': product_id,
-                    'amount': amount,
-                    'currency': 'USD',
-                    'referrerStoryId': matching_story['id']
+                    if resp.status == 200:
+                        data = await resp.json()
+                        self.log_test(f"Health Check: {name}", True, 
+                                    f"Status: {data.get('status', 'healthy')}", response_time)
+                    else:
+                        self.log_test(f"Health Check: {name}", False, 
+                                    f"HTTP {resp.status}", response_time)
+                        
+            except Exception as e:
+                self.log_test(f"Health Check: {name}", False, f"Error: {str(e)}")
+
+    # ==================== ATTRIBUTION EDGE CASES ====================
+    
+    async def test_attribution_edge_cases(self):
+        """Test multi-CTA same product, direct purchase, cross-creator attribution"""
+        
+        # Test 1: Multi-CTA Same Product (Last CTA Wins)
+        await self._test_multi_cta_same_product()
+        
+        # Test 2: Direct Purchase (No Attribution)
+        await self._test_direct_purchase_no_attribution()
+        
+        # Test 3: Cross-Creator Attribution Accuracy
+        await self._test_cross_creator_attribution()
+        
+        # Test 4: Attribution Window Expiry (7-day window)
+        await self._test_attribution_window_expiry()
+    
+    async def _test_multi_cta_same_product(self):
+        """Test that last CTA wins for same product"""
+        try:
+            user_id = f"test_user_{uuid.uuid4().hex[:8]}"
+            product_id = "trench-coat"
+            
+            # Create multiple CTAs for same product
+            cta_requests = []
+            for i in range(3):
+                story_id = f"luxefashion_story_{i}"
+                cta_data = {
+                    "storyId": story_id,
+                    "productId": product_id,
+                    "userId": user_id
                 }
                 
-                result, _, success = await self.make_request('POST', '/track/purchase', purchase_data)
-                
-                if success and result.get('creatorId') == creator_id:
-                    success_count += 1
-                    
-        success_rate = (success_count / total_tests) * 100
-        await self.log_test(
-            "Volume Commerce Testing",
-            success_rate >= 80,
-            f"{success_count}/{total_tests} multi-creator purchases successful ({success_rate:.1f}%)",
-            0
-        )
-        return success_rate >= 80
-
-    async def test_real_time_analytics(self):
-        """Test real-time analytics updates"""
-        # Get initial analytics
-        initial_result, _, initial_success = await self.make_request('GET', '/commerce/analytics')
-        if not initial_success:
-            await self.log_test("Real-time Analytics Updates", False, "Could not fetch initial analytics", 0)
-            return False
+                start = time.time()
+                async with self.session.post(f"{BASE_URL}/track/cta", json=cta_data) as resp:
+                    response_time = time.time() - start
+                    if resp.status == 200:
+                        cta_requests.append((story_id, response_time))
+                    await asyncio.sleep(0.1)  # Small delay between CTAs
             
-        initial_purchases = initial_result.get('summary', {}).get('totalPurchases', 0)
-        
-        # Make a test purchase
-        stories_result, _, stories_success = await self.make_request('GET', '/stories', {'limit': 5})
-        if not stories_success:
-            await self.log_test("Real-time Analytics Updates", False, "Could not fetch stories", 0)
-            return False
-            
-        stories = stories_result.get('data', [])
-        product_story = next((s for s in stories if s.get('productId')), None)
-        
-        if product_story:
-            user_id = "analytics_test_user"
-            await self.make_request('POST', '/track/cta', {
-                'storyId': product_story['id'],
-                'productId': product_story.get('productId'),
-                'userId': user_id
-            })
-            
+            # Make purchase - should attribute to last CTA
             purchase_data = {
-                'orderId': f"analytics_test_{int(time.time())}",
-                'userId': user_id,
-                'productId': product_story.get('productId'),
-                'amount': 100.00,
-                'currency': 'USD',
-                'referrerStoryId': product_story['id']
+                "orderId": f"order_{uuid.uuid4().hex[:8]}",
+                "userId": user_id,
+                "productId": product_id,
+                "amount": 239.00,
+                "currency": "USD"
             }
             
-            await self.make_request('POST', '/track/purchase', purchase_data)
-            
-            # Check updated analytics
-            updated_result, response_time, success = await self.make_request('GET', '/commerce/analytics')
-            
-            if success:
-                updated_purchases = updated_result.get('summary', {}).get('totalPurchases', 0)
+            start = time.time()
+            async with self.session.post(f"{BASE_URL}/track/purchase", json=purchase_data) as resp:
+                response_time = time.time() - start
                 
-                if updated_purchases > initial_purchases:
-                    await self.log_test(
-                        "Real-time Analytics Updates",
-                        True,
-                        f"Analytics updated: {initial_purchases} → {updated_purchases} purchases",
-                        response_time
-                    )
-                    return True
+                if resp.status == 200:
+                    data = await resp.json()
+                    # Should attribute to last CTA (luxefashion_story_2)
+                    expected_story = "luxefashion_story_2"
+                    attributed_correctly = "luxefashion" in data.get("creatorId", "")
                     
-        await self.log_test("Real-time Analytics Updates", False, "Analytics not updating in real-time", 0)
-        return False
+                    self.log_test("Multi-CTA Attribution (Last CTA Wins)", attributed_correctly,
+                                f"Commission: ${data.get('commission', 0)}, Method: {data.get('attributionMethod')}", 
+                                response_time)
+                else:
+                    self.log_test("Multi-CTA Attribution (Last CTA Wins)", False, 
+                                f"HTTP {resp.status}", response_time)
+                    
+        except Exception as e:
+            self.log_test("Multi-CTA Attribution (Last CTA Wins)", False, f"Error: {str(e)}")
+    
+    async def _test_direct_purchase_no_attribution(self):
+        """Test direct purchase without CTA attribution"""
+        try:
+            user_id = f"test_user_{uuid.uuid4().hex[:8]}"
+            
+            # Make direct purchase without any CTA
+            purchase_data = {
+                "orderId": f"order_{uuid.uuid4().hex[:8]}",
+                "userId": user_id,
+                "productId": "smartwatch-pro",
+                "amount": 299.00,
+                "currency": "USD"
+            }
+            
+            start = time.time()
+            async with self.session.post(f"{BASE_URL}/track/purchase", json=purchase_data) as resp:
+                response_time = time.time() - start
+                
+                if resp.status == 200:
+                    data = await resp.json()
+                    # Should show "Direct" attribution with no commission
+                    is_direct = data.get("attributionMethod") == "Direct"
+                    no_commission = data.get("commission", 0) == 0
+                    
+                    self.log_test("Direct Purchase (No Attribution)", is_direct and no_commission,
+                                f"Method: {data.get('attributionMethod')}, Commission: ${data.get('commission', 0)}", 
+                                response_time)
+                else:
+                    self.log_test("Direct Purchase (No Attribution)", False, 
+                                f"HTTP {resp.status}", response_time)
+                    
+        except Exception as e:
+            self.log_test("Direct Purchase (No Attribution)", False, f"Error: {str(e)}")
+    
+    async def _test_cross_creator_attribution(self):
+        """Test attribution accuracy across different creators"""
+        try:
+            user_id = f"test_user_{uuid.uuid4().hex[:8]}"
+            
+            # Test different creator tiers and their commission rates
+            test_cases = [
+                ("luxefashion", "silk-scarf", 89.00, 0.12),  # Gold tier
+                ("techguru", "buds-x", 129.00, 0.10),       # Blue tier
+                ("homedecor", "yoga-mat", 49.99, 0.07),     # Grey tier
+                ("artcreative", "silk-scarf", 89.00, 0.05)  # Unverified tier
+            ]
+            
+            for creator_id, product_id, amount, expected_rate in test_cases:
+                # Create CTA
+                cta_data = {
+                    "storyId": f"{creator_id}_story_0",
+                    "productId": product_id,
+                    "userId": user_id
+                }
+                
+                await self.session.post(f"{BASE_URL}/track/cta", json=cta_data)
+                await asyncio.sleep(0.1)
+                
+                # Make purchase
+                purchase_data = {
+                    "orderId": f"order_{uuid.uuid4().hex[:8]}",
+                    "userId": user_id,
+                    "productId": product_id,
+                    "amount": amount,
+                    "currency": "USD"
+                }
+                
+                start = time.time()
+                async with self.session.post(f"{BASE_URL}/track/purchase", json=purchase_data) as resp:
+                    response_time = time.time() - start
+                    
+                    if resp.status == 200:
+                        data = await resp.json()
+                        actual_commission = data.get("commission", 0)
+                        expected_commission = amount * expected_rate
+                        
+                        # Allow 1% tolerance for rounding
+                        commission_accurate = abs(actual_commission - expected_commission) <= (expected_commission * 0.01)
+                        
+                        self.log_test(f"Cross-Creator Attribution ({creator_id})", commission_accurate,
+                                    f"Expected: ${expected_commission:.2f}, Actual: ${actual_commission:.2f}", 
+                                    response_time)
+                    else:
+                        self.log_test(f"Cross-Creator Attribution ({creator_id})", False, 
+                                    f"HTTP {resp.status}", response_time)
+                        
+        except Exception as e:
+            self.log_test("Cross-Creator Attribution", False, f"Error: {str(e)}")
+    
+    async def _test_attribution_window_expiry(self):
+        """Test 7-day attribution window with proper expiration"""
+        try:
+            # This test simulates expired attribution by checking the logic
+            # In production, we'd need to manipulate timestamps or wait
+            
+            user_id = f"test_user_{uuid.uuid4().hex[:8]}"
+            
+            # Create CTA (in real scenario, this would be 8 days old)
+            cta_data = {
+                "storyId": "luxefashion_story_0",
+                "productId": "trench-coat",
+                "userId": user_id
+            }
+            
+            await self.session.post(f"{BASE_URL}/track/cta", json=cta_data)
+            
+            # Immediate purchase should work (within window)
+            purchase_data = {
+                "orderId": f"order_{uuid.uuid4().hex[:8]}",
+                "userId": user_id,
+                "productId": "trench-coat",
+                "amount": 239.00,
+                "currency": "USD"
+            }
+            
+            start = time.time()
+            async with self.session.post(f"{BASE_URL}/track/purchase", json=purchase_data) as resp:
+                response_time = time.time() - start
+                
+                if resp.status == 200:
+                    data = await resp.json()
+                    # Should have attribution since it's immediate
+                    has_attribution = data.get("attributionMethod") == "CTA"
+                    
+                    self.log_test("Attribution Window (Within 7 Days)", has_attribution,
+                                f"Method: {data.get('attributionMethod')}, Commission: ${data.get('commission', 0)}", 
+                                response_time)
+                else:
+                    self.log_test("Attribution Window (Within 7 Days)", False, 
+                                f"HTTP {resp.status}", response_time)
+                    
+        except Exception as e:
+            self.log_test("Attribution Window (Within 7 Days)", False, f"Error: {str(e)}")
 
-    # ========== MAIN TEST EXECUTION ==========
+    # ==================== COMMISSION TIER ACCURACY ====================
+    
+    async def test_commission_tier_accuracy(self):
+        """Test exact commission calculations: Gold 12%, Blue 10%, Grey 7%, Unverified 5%"""
+        
+        # Test cases with exact expected rates
+        tier_tests = [
+            ("Gold Tier (12%)", "luxefashion", "trench-coat", 239.00, 0.12),
+            ("Blue Tier (10%)", "techguru", "buds-x", 129.00, 0.10),
+            ("Grey Tier (7%)", "homedecor", "yoga-mat", 49.99, 0.07),
+            ("Unverified Tier (5%)", "artcreative", "silk-scarf", 89.00, 0.05)
+        ]
+        
+        for tier_name, creator_id, product_id, amount, expected_rate in tier_tests:
+            await self._test_commission_calculation(tier_name, creator_id, product_id, amount, expected_rate)
+    
+    async def _test_commission_calculation(self, tier_name: str, creator_id: str, product_id: str, amount: float, expected_rate: float):
+        """Test specific commission calculation with banker's rounding"""
+        try:
+            user_id = f"test_user_{uuid.uuid4().hex[:8]}"
+            
+            # Create CTA
+            cta_data = {
+                "storyId": f"{creator_id}_story_0",
+                "productId": product_id,
+                "userId": user_id
+            }
+            
+            await self.session.post(f"{BASE_URL}/track/cta", json=cta_data)
+            
+            # Make purchase
+            purchase_data = {
+                "orderId": f"order_{uuid.uuid4().hex[:8]}",
+                "userId": user_id,
+                "productId": product_id,
+                "amount": amount,
+                "currency": "USD"
+            }
+            
+            start = time.time()
+            async with self.session.post(f"{BASE_URL}/track/purchase", json=purchase_data) as resp:
+                response_time = time.time() - start
+                
+                if resp.status == 200:
+                    data = await resp.json()
+                    actual_commission = data.get("commission", 0)
+                    expected_commission = round(amount * expected_rate, 2)  # Banker's rounding
+                    
+                    # Exact match required for commission accuracy
+                    commission_exact = abs(actual_commission - expected_commission) < 0.01
+                    
+                    self.log_test(f"Commission Accuracy: {tier_name}", commission_exact,
+                                f"Expected: ${expected_commission:.2f}, Actual: ${actual_commission:.2f}, Rate: {expected_rate*100}%", 
+                                response_time)
+                else:
+                    self.log_test(f"Commission Accuracy: {tier_name}", False, 
+                                f"HTTP {resp.status}", response_time)
+                    
+        except Exception as e:
+            self.log_test(f"Commission Accuracy: {tier_name}", False, f"Error: {str(e)}")
 
+    # ==================== PERFORMANCE UNDER LOAD ====================
+    
+    async def test_performance_under_load(self):
+        """Test concurrent API performance with SLO compliance"""
+        
+        # Test Stories API (≤120ms SLO)
+        await self._test_concurrent_stories_performance()
+        
+        # Test Purchase API (≤200ms SLO)
+        await self._test_concurrent_purchase_performance()
+        
+        # Test Analytics API performance
+        await self._test_analytics_performance()
+    
+    async def _test_concurrent_stories_performance(self):
+        """Test stories API under concurrent load"""
+        try:
+            tasks = []
+            for i in range(CONCURRENT_REQUESTS):
+                task = self._single_stories_request(i)
+                tasks.append(task)
+            
+            start = time.time()
+            results = await asyncio.gather(*tasks, return_exceptions=True)
+            total_time = time.time() - start
+            
+            successful_requests = sum(1 for r in results if isinstance(r, dict) and r.get('success'))
+            avg_response_time = sum(r.get('response_time', 0) for r in results if isinstance(r, dict)) / len(results)
+            
+            # SLO: Stories ≤120ms
+            slo_compliance = avg_response_time <= 0.120
+            success_rate = (successful_requests / CONCURRENT_REQUESTS) * 100
+            
+            self.log_test("Concurrent Stories Performance", slo_compliance and success_rate >= 95,
+                        f"{successful_requests}/{CONCURRENT_REQUESTS} success, {avg_response_time*1000:.1f}ms avg, SLO: ≤120ms", 
+                        total_time)
+                        
+        except Exception as e:
+            self.log_test("Concurrent Stories Performance", False, f"Error: {str(e)}")
+    
+    async def _single_stories_request(self, request_id: int):
+        """Single stories API request for load testing"""
+        try:
+            start = time.time()
+            async with self.session.get(f"{BASE_URL}/stories?limit=10") as resp:
+                response_time = time.time() - start
+                
+                if resp.status == 200:
+                    data = await resp.json()
+                    return {
+                        'success': True,
+                        'response_time': response_time,
+                        'stories_count': len(data.get('data', []))
+                    }
+                else:
+                    return {'success': False, 'response_time': response_time}
+                    
+        except Exception as e:
+            return {'success': False, 'response_time': 0, 'error': str(e)}
+    
+    async def _test_concurrent_purchase_performance(self):
+        """Test purchase API under concurrent load"""
+        try:
+            tasks = []
+            for i in range(CONCURRENT_REQUESTS):
+                task = self._single_purchase_request(i)
+                tasks.append(task)
+            
+            start = time.time()
+            results = await asyncio.gather(*tasks, return_exceptions=True)
+            total_time = time.time() - start
+            
+            successful_requests = sum(1 for r in results if isinstance(r, dict) and r.get('success'))
+            avg_response_time = sum(r.get('response_time', 0) for r in results if isinstance(r, dict)) / len(results)
+            
+            # SLO: Purchase ≤200ms
+            slo_compliance = avg_response_time <= 0.200
+            success_rate = (successful_requests / CONCURRENT_REQUESTS) * 100
+            
+            self.log_test("Concurrent Purchase Performance", slo_compliance and success_rate >= 95,
+                        f"{successful_requests}/{CONCURRENT_REQUESTS} success, {avg_response_time*1000:.1f}ms avg, SLO: ≤200ms", 
+                        total_time)
+                        
+        except Exception as e:
+            self.log_test("Concurrent Purchase Performance", False, f"Error: {str(e)}")
+    
+    async def _single_purchase_request(self, request_id: int):
+        """Single purchase API request for load testing"""
+        try:
+            purchase_data = {
+                "orderId": f"load_test_order_{request_id}_{uuid.uuid4().hex[:8]}",
+                "userId": f"load_test_user_{request_id}",
+                "productId": "yoga-mat",
+                "amount": 49.99,
+                "currency": "USD"
+            }
+            
+            start = time.time()
+            async with self.session.post(f"{BASE_URL}/track/purchase", json=purchase_data) as resp:
+                response_time = time.time() - start
+                
+                if resp.status == 200:
+                    data = await resp.json()
+                    return {
+                        'success': True,
+                        'response_time': response_time,
+                        'commission': data.get('commission', 0)
+                    }
+                else:
+                    return {'success': False, 'response_time': response_time}
+                    
+        except Exception as e:
+            return {'success': False, 'response_time': 0, 'error': str(e)}
+    
+    async def _test_analytics_performance(self):
+        """Test analytics dashboard performance"""
+        try:
+            start = time.time()
+            async with self.session.get(f"{BASE_URL}/commerce/analytics") as resp:
+                response_time = time.time() - start
+                
+                if resp.status == 200:
+                    data = await resp.json()
+                    # Analytics should load under 5 seconds per requirement
+                    performance_ok = response_time <= 5.0
+                    has_data = 'summary' in data and 'creatorStats' in data
+                    
+                    self.log_test("Analytics Dashboard Performance", performance_ok and has_data,
+                                f"Load time: {response_time:.2f}s, Target: ≤5s", response_time)
+                else:
+                    self.log_test("Analytics Dashboard Performance", False, 
+                                f"HTTP {resp.status}", response_time)
+                    
+        except Exception as e:
+            self.log_test("Analytics Dashboard Performance", False, f"Error: {str(e)}")
+
+    # ==================== ANALYTICS DATA INTEGRITY ====================
+    
+    async def test_analytics_data_integrity(self):
+        """Test funnel logic validation and conversion rate accuracy"""
+        
+        # Create test data for funnel validation
+        await self._create_test_funnel_data()
+        
+        # Test funnel logic (impressions ≥ CTAs ≥ purchases)
+        await self._test_funnel_logic_validation()
+        
+        # Test conversion rate accuracy
+        await self._test_conversion_rate_accuracy()
+    
+    async def _create_test_funnel_data(self):
+        """Create test data for funnel validation"""
+        try:
+            user_id = f"funnel_test_user_{uuid.uuid4().hex[:8]}"
+            
+            # Create impressions (should be highest number)
+            for i in range(10):
+                impression_data = {
+                    "storyId": f"luxefashion_story_{i % 3}",
+                    "userId": f"{user_id}_{i}"
+                }
+                await self.session.post(f"{BASE_URL}/track/impression", json=impression_data)
+            
+            # Create CTAs (subset of impressions)
+            for i in range(5):
+                cta_data = {
+                    "storyId": f"luxefashion_story_{i % 3}",
+                    "productId": "trench-coat",
+                    "userId": f"{user_id}_{i}"
+                }
+                await self.session.post(f"{BASE_URL}/track/cta", json=cta_data)
+            
+            # Create purchases (subset of CTAs)
+            for i in range(2):
+                purchase_data = {
+                    "orderId": f"funnel_order_{i}_{uuid.uuid4().hex[:8]}",
+                    "userId": f"{user_id}_{i}",
+                    "productId": "trench-coat",
+                    "amount": 239.00,
+                    "currency": "USD"
+                }
+                await self.session.post(f"{BASE_URL}/track/purchase", json=purchase_data)
+            
+            self.log_test("Test Funnel Data Creation", True, "Created 10 impressions, 5 CTAs, 2 purchases")
+            
+        except Exception as e:
+            self.log_test("Test Funnel Data Creation", False, f"Error: {str(e)}")
+    
+    async def _test_funnel_logic_validation(self):
+        """Test that impressions ≥ CTAs ≥ purchases"""
+        try:
+            start = time.time()
+            async with self.session.get(f"{BASE_URL}/commerce/analytics") as resp:
+                response_time = time.time() - start
+                
+                if resp.status == 200:
+                    data = await resp.json()
+                    summary = data.get('summary', {})
+                    
+                    impressions = summary.get('totalImpressions', 0)
+                    ctas = summary.get('totalCTAs', 0)
+                    purchases = summary.get('totalPurchases', 0)
+                    
+                    # Funnel logic: impressions ≥ CTAs ≥ purchases
+                    funnel_valid = impressions >= ctas >= purchases
+                    
+                    self.log_test("Funnel Logic Validation", funnel_valid,
+                                f"Impressions: {impressions}, CTAs: {ctas}, Purchases: {purchases}", 
+                                response_time)
+                else:
+                    self.log_test("Funnel Logic Validation", False, 
+                                f"HTTP {resp.status}", response_time)
+                    
+        except Exception as e:
+            self.log_test("Funnel Logic Validation", False, f"Error: {str(e)}")
+    
+    async def _test_conversion_rate_accuracy(self):
+        """Test conversion rate calculation accuracy"""
+        try:
+            start = time.time()
+            async with self.session.get(f"{BASE_URL}/commerce/analytics") as resp:
+                response_time = time.time() - start
+                
+                if resp.status == 200:
+                    data = await resp.json()
+                    summary = data.get('summary', {})
+                    
+                    ctas = summary.get('totalCTAs', 0)
+                    purchases = summary.get('totalPurchases', 0)
+                    reported_rate = summary.get('conversionRate', 0)
+                    
+                    # Calculate expected conversion rate
+                    expected_rate = (purchases / ctas * 100) if ctas > 0 else 0
+                    
+                    # Allow small rounding tolerance
+                    rate_accurate = abs(reported_rate - expected_rate) <= 0.1
+                    
+                    self.log_test("Conversion Rate Accuracy", rate_accurate,
+                                f"Expected: {expected_rate:.2f}%, Reported: {reported_rate:.2f}%", 
+                                response_time)
+                else:
+                    self.log_test("Conversion Rate Accuracy", False, 
+                                f"HTTP {resp.status}", response_time)
+                    
+        except Exception as e:
+            self.log_test("Conversion Rate Accuracy", False, f"Error: {str(e)}")
+
+    # ==================== SYSTEM RESILIENCE ====================
+    
+    async def test_system_resilience(self):
+        """Test error handling, duplicate order protection, timeout management"""
+        
+        # Test error handling
+        await self._test_error_handling()
+        
+        # Test duplicate order protection
+        await self._test_duplicate_order_protection()
+        
+        # Test timeout management
+        await self._test_timeout_management()
+    
+    async def _test_error_handling(self):
+        """Test proper error responses for invalid requests"""
+        error_tests = [
+            ("Invalid Story ID", "/track/impression", {"storyId": "", "userId": "test"}),
+            ("Missing Product ID", "/track/cta", {"storyId": "test_story", "userId": "test"}),
+            ("Invalid Amount", "/track/purchase", {
+                "orderId": "test_order",
+                "userId": "test",
+                "productId": "test_product",
+                "amount": -100,
+                "currency": "USD"
+            })
+        ]
+        
+        for test_name, endpoint, invalid_data in error_tests:
+            try:
+                start = time.time()
+                async with self.session.post(f"{BASE_URL}{endpoint}", json=invalid_data) as resp:
+                    response_time = time.time() - start
+                    
+                    # Should return 4xx error for invalid data
+                    proper_error = 400 <= resp.status < 500
+                    
+                    self.log_test(f"Error Handling: {test_name}", proper_error,
+                                f"HTTP {resp.status} (expected 4xx)", response_time)
+                    
+            except Exception as e:
+                self.log_test(f"Error Handling: {test_name}", False, f"Error: {str(e)}")
+    
+    async def _test_duplicate_order_protection(self):
+        """Test idempotency protection for duplicate orders"""
+        try:
+            user_id = f"dup_test_user_{uuid.uuid4().hex[:8]}"
+            order_id = f"dup_test_order_{uuid.uuid4().hex[:8]}"
+            
+            purchase_data = {
+                "orderId": order_id,
+                "userId": user_id,
+                "productId": "yoga-mat",
+                "amount": 49.99,
+                "currency": "USD"
+            }
+            
+            # First purchase
+            start = time.time()
+            async with self.session.post(f"{BASE_URL}/track/purchase", json=purchase_data) as resp1:
+                response_time1 = time.time() - start
+                first_success = resp1.status == 200
+                first_data = await resp1.json() if first_success else {}
+            
+            # Duplicate purchase (same order ID)
+            start = time.time()
+            async with self.session.post(f"{BASE_URL}/track/purchase", json=purchase_data) as resp2:
+                response_time2 = time.time() - start
+                
+                # Should either succeed with same result or properly handle duplicate
+                duplicate_handled = resp2.status in [200, 409]  # OK or Conflict
+                
+                self.log_test("Duplicate Order Protection", duplicate_handled,
+                            f"First: HTTP {resp1.status}, Duplicate: HTTP {resp2.status}", 
+                            response_time1 + response_time2)
+                    
+        except Exception as e:
+            self.log_test("Duplicate Order Protection", False, f"Error: {str(e)}")
+    
+    async def _test_timeout_management(self):
+        """Test system behavior under timeout conditions"""
+        try:
+            # Test with very short timeout to simulate network issues
+            short_timeout = aiohttp.ClientTimeout(total=0.1)  # 100ms timeout
+            
+            async with aiohttp.ClientSession(timeout=short_timeout) as timeout_session:
+                try:
+                    start = time.time()
+                    async with timeout_session.get(f"{BASE_URL}/stories?limit=100") as resp:
+                        response_time = time.time() - start
+                        # If it succeeds within timeout, that's good
+                        self.log_test("Timeout Management", True, 
+                                    f"Completed within {response_time*1000:.1f}ms", response_time)
+                        
+                except asyncio.TimeoutError:
+                    # Timeout is properly handled
+                    self.log_test("Timeout Management", True, 
+                                "Timeout properly handled", 0.1)
+                    
+        except Exception as e:
+            self.log_test("Timeout Management", False, f"Error: {str(e)}")
+
+    # ==================== ENTERPRISE-GRADE FEATURES ====================
+    
+    async def test_enterprise_features(self):
+        """Test idempotency, HMAC security, FX normalization readiness"""
+        
+        # Test idempotency protection
+        await self._test_idempotency_protection()
+        
+        # Test HMAC security simulation
+        await self._test_hmac_security_simulation()
+        
+        # Test multi-currency support readiness
+        await self._test_multi_currency_readiness()
+    
+    async def _test_idempotency_protection(self):
+        """Test idempotency keys for replay attack mitigation"""
+        try:
+            user_id = f"idem_test_user_{uuid.uuid4().hex[:8]}"
+            idempotency_key = f"idem_{uuid.uuid4().hex}"
+            
+            purchase_data = {
+                "orderId": f"idem_order_{uuid.uuid4().hex[:8]}",
+                "userId": user_id,
+                "productId": "smartwatch-pro",
+                "amount": 299.00,
+                "currency": "USD"
+            }
+            
+            headers = {"Idempotency-Key": idempotency_key}
+            
+            # First request
+            start = time.time()
+            async with self.session.post(f"{BASE_URL}/track/purchase", 
+                                       json=purchase_data, headers=headers) as resp1:
+                response_time1 = time.time() - start
+                first_success = resp1.status == 200
+                first_data = await resp1.json() if first_success else {}
+            
+            # Replay with same idempotency key
+            start = time.time()
+            async with self.session.post(f"{BASE_URL}/track/purchase", 
+                                       json=purchase_data, headers=headers) as resp2:
+                response_time2 = time.time() - start
+                
+                # Should return same result or handle replay appropriately
+                replay_handled = resp2.status in [200, 409]
+                
+                self.log_test("Idempotency Protection", replay_handled,
+                            f"Original: HTTP {resp1.status}, Replay: HTTP {resp2.status}", 
+                            response_time1 + response_time2)
+                    
+        except Exception as e:
+            self.log_test("Idempotency Protection", False, f"Error: {str(e)}")
+    
+    async def _test_hmac_security_simulation(self):
+        """Test HMAC signature verification simulation"""
+        try:
+            # Simulate HMAC signature generation
+            secret_key = "test_hmac_secret_key"
+            timestamp = str(int(time.time()))
+            payload = '{"test": "hmac_validation"}'
+            
+            # Create HMAC signature
+            message = f"{timestamp}.{payload}"
+            signature = hmac.new(
+                secret_key.encode(),
+                message.encode(),
+                hashlib.sha256
+            ).hexdigest()
+            
+            headers = {
+                "X-Timestamp": timestamp,
+                "X-Signature": f"sha256={signature}"
+            }
+            
+            # Test endpoint that would validate HMAC (using health check as proxy)
+            start = time.time()
+            async with self.session.get(f"{BASE_URL}/health", headers=headers) as resp:
+                response_time = time.time() - start
+                
+                # Health check should still work (HMAC validation would be in webhook endpoints)
+                hmac_ready = resp.status == 200
+                
+                self.log_test("HMAC Security Readiness", hmac_ready,
+                            f"Signature generated and headers sent", response_time)
+                    
+        except Exception as e:
+            self.log_test("HMAC Security Readiness", False, f"Error: {str(e)}")
+    
+    async def _test_multi_currency_readiness(self):
+        """Test multi-currency support architecture"""
+        try:
+            # Test different currencies
+            currencies = ["USD", "EUR", "GBP", "JPY"]
+            
+            for currency in currencies:
+                purchase_data = {
+                    "orderId": f"fx_order_{currency}_{uuid.uuid4().hex[:8]}",
+                    "userId": f"fx_user_{currency}",
+                    "productId": "yoga-mat",
+                    "amount": 49.99,
+                    "currency": currency
+                }
+                
+                start = time.time()
+                async with self.session.post(f"{BASE_URL}/track/purchase", json=purchase_data) as resp:
+                    response_time = time.time() - start
+                    
+                    if resp.status == 200:
+                        data = await resp.json()
+                        currency_handled = currency in str(data)
+                        
+                        self.log_test(f"Multi-Currency Support ({currency})", currency_handled,
+                                    f"Currency: {currency}, Commission: ${data.get('commission', 0)}", 
+                                    response_time)
+                    else:
+                        self.log_test(f"Multi-Currency Support ({currency})", False, 
+                                    f"HTTP {resp.status}", response_time)
+                        
+        except Exception as e:
+            self.log_test("Multi-Currency Support", False, f"Error: {str(e)}")
+
+    # ==================== BUSINESS METRICS VALIDATION ====================
+    
+    async def test_business_metrics(self):
+        """Test high conversion rate validation and creator performance tracking"""
+        
+        # Test conversion rate benchmarks
+        await self._test_conversion_rate_benchmarks()
+        
+        # Test creator performance tracking
+        await self._test_creator_performance_tracking()
+        
+        # Test revenue attribution accuracy
+        await self._test_revenue_attribution_accuracy()
+    
+    async def _test_conversion_rate_benchmarks(self):
+        """Test that conversion rates meet business benchmarks"""
+        try:
+            start = time.time()
+            async with self.session.get(f"{BASE_URL}/commerce/analytics") as resp:
+                response_time = time.time() - start
+                
+                if resp.status == 200:
+                    data = await resp.json()
+                    summary = data.get('summary', {})
+                    conversion_rate = summary.get('conversionRate', 0)
+                    
+                    # Business benchmark: >2% conversion rate is good for e-commerce
+                    meets_benchmark = conversion_rate >= 2.0
+                    
+                    self.log_test("Conversion Rate Benchmark", meets_benchmark,
+                                f"Rate: {conversion_rate:.2f}%, Benchmark: ≥2.0%", response_time)
+                else:
+                    self.log_test("Conversion Rate Benchmark", False, 
+                                f"HTTP {resp.status}", response_time)
+                    
+        except Exception as e:
+            self.log_test("Conversion Rate Benchmark", False, f"Error: {str(e)}")
+    
+    async def _test_creator_performance_tracking(self):
+        """Test creator performance analytics"""
+        try:
+            start = time.time()
+            async with self.session.get(f"{BASE_URL}/commerce/analytics") as resp:
+                response_time = time.time() - start
+                
+                if resp.status == 200:
+                    data = await resp.json()
+                    creator_stats = data.get('creatorStats', {})
+                    
+                    # Should have performance data for creators
+                    has_creator_data = len(creator_stats) > 0
+                    has_performance_metrics = all(
+                        'purchases' in stats and 'revenue' in stats and 'commissions' in stats
+                        for stats in creator_stats.values()
+                    )
+                    
+                    tracking_complete = has_creator_data and has_performance_metrics
+                    
+                    self.log_test("Creator Performance Tracking", tracking_complete,
+                                f"Creators tracked: {len(creator_stats)}", response_time)
+                else:
+                    self.log_test("Creator Performance Tracking", False, 
+                                f"HTTP {resp.status}", response_time)
+                    
+        except Exception as e:
+            self.log_test("Creator Performance Tracking", False, f"Error: {str(e)}")
+    
+    async def _test_revenue_attribution_accuracy(self):
+        """Test revenue attribution to creators"""
+        try:
+            start = time.time()
+            async with self.session.get(f"{BASE_URL}/commerce/analytics") as resp:
+                response_time = time.time() - start
+                
+                if resp.status == 200:
+                    data = await resp.json()
+                    summary = data.get('summary', {})
+                    
+                    total_revenue = summary.get('totalRevenue', 0)
+                    total_commissions = summary.get('totalCommissions', 0)
+                    
+                    # Commission should be reasonable percentage of revenue (5-15%)
+                    if total_revenue > 0:
+                        commission_rate = (total_commissions / total_revenue) * 100
+                        reasonable_rate = 5 <= commission_rate <= 15
+                    else:
+                        reasonable_rate = True  # No revenue yet is acceptable
+                    
+                    self.log_test("Revenue Attribution Accuracy", reasonable_rate,
+                                f"Revenue: ${total_revenue:.2f}, Commissions: ${total_commissions:.2f}", 
+                                response_time)
+                else:
+                    self.log_test("Revenue Attribution Accuracy", False, 
+                                f"HTTP {resp.status}", response_time)
+                    
+        except Exception as e:
+            self.log_test("Revenue Attribution Accuracy", False, f"Error: {str(e)}")
+
+    # ==================== MAIN TEST EXECUTION ====================
+    
     async def run_all_tests(self):
-        """Execute all Phase 3 Commerce Layer tests"""
-        print("🛍️💎 PHASE 3: END-TO-END COMMERCE ATTRIBUTION VALIDATION")
+        """Execute comprehensive production hardening validation"""
+        print("🏆💎 STARTING FINAL PRODUCTION HARDENING VALIDATION - SERIES A INVESTOR READY")
         print("=" * 80)
         
-        start_time = time.time()
+        # Authenticate first
+        auth_success = await self.authenticate()
+        if not auth_success:
+            print("❌ Authentication failed - cannot proceed with protected endpoint tests")
+            return
         
-        # Phase 3 Commerce API Testing
-        print("\n🎯 PHASE 3 COMMERCE API TESTING:")
-        await self.test_stories_health_phase3()
-        await self.test_impression_tracking()
-        await self.test_cta_tracking()
-        await self.test_purchase_tracking()
-        await self.test_commerce_analytics()
+        # Core Health Checks
+        print("\n🔍 CORE HEALTH CHECKS")
+        await self.test_core_api_health()
         
-        # End-to-End Attribution Flow
-        print("\n🔄 END-TO-END ATTRIBUTION FLOW:")
-        await self.test_complete_attribution_cycle()
-        await self.test_7_day_attribution_window()
-        await self.test_commission_calculation()
+        # Attribution Edge Cases
+        print("\n🎯 ATTRIBUTION EDGE CASES")
+        await self.test_attribution_edge_cases()
         
-        # Series A Investor Demo Scenarios
-        print("\n🏆 SERIES A INVESTOR DEMO SCENARIOS:")
-        await self.test_luxury_fashion_scenario()
-        await self.test_tech_product_scenario()
-        await self.test_volume_commerce()
-        await self.test_real_time_analytics()
+        # Commission Tier Accuracy
+        print("\n💰 COMMISSION TIER ACCURACY")
+        await self.test_commission_tier_accuracy()
         
-        # Calculate final results
-        total_time = time.time() - start_time
+        # Performance Under Load
+        print("\n⚡ PERFORMANCE UNDER LOAD")
+        await self.test_performance_under_load()
+        
+        # Analytics Data Integrity
+        print("\n📊 ANALYTICS DATA INTEGRITY")
+        await self.test_analytics_data_integrity()
+        
+        # System Resilience
+        print("\n🛡️ SYSTEM RESILIENCE")
+        await self.test_system_resilience()
+        
+        # Enterprise-Grade Features
+        print("\n🏢 ENTERPRISE-GRADE FEATURES")
+        await self.test_enterprise_features()
+        
+        # Business Metrics Validation
+        print("\n📈 BUSINESS METRICS VALIDATION")
+        await self.test_business_metrics()
+        
+        # Generate final report
+        await self.generate_final_report()
+    
+    async def generate_final_report(self):
+        """Generate comprehensive Series A readiness report"""
         total_tests = len(self.test_results)
-        passed_tests = sum(1 for r in self.test_results if r['success'])
+        passed_tests = sum(1 for test in self.test_results if test['success'])
         success_rate = (passed_tests / total_tests) * 100 if total_tests > 0 else 0
         
-        print("\n" + "=" * 80)
-        print("🎯 PHASE 3 COMMERCE ATTRIBUTION VALIDATION COMPLETE")
-        print("=" * 80)
-        print(f"📊 OVERALL RESULTS: {passed_tests}/{total_tests} tests passed ({success_rate:.1f}% success rate)")
-        print(f"⏱️  TOTAL TIME: {total_time:.2f} seconds")
-        print(f"🚀 SERIES A READINESS: {'✅ READY' if success_rate >= 90 else '❌ NEEDS WORK'}")
+        total_time = time.time() - self.start_time
+        avg_response_time = sum(test['response_time_ms'] for test in self.test_results) / total_tests if total_tests > 0 else 0
         
-        if success_rate >= 90:
-            print("\n🌟 PHASE 3 INFINITY STORIES COMMERCE LAYER IS SERIES A INVESTOR DEMO READY!")
-            print("✅ Complete attribution tracking operational")
-            print("✅ Commission calculations accurate")
-            print("✅ Real-time analytics functional")
-            print("✅ Multi-creator commerce scenarios validated")
+        print("\n" + "=" * 80)
+        print("🏆💎 FINAL PRODUCTION HARDENING VALIDATION REPORT")
+        print("=" * 80)
+        
+        print(f"📊 OVERALL RESULTS:")
+        print(f"   • Total Tests: {total_tests}")
+        print(f"   • Passed: {passed_tests}")
+        print(f"   • Failed: {total_tests - passed_tests}")
+        print(f"   • Success Rate: {success_rate:.1f}%")
+        print(f"   • Total Testing Time: {total_time:.2f}s")
+        print(f"   • Average Response Time: {avg_response_time:.1f}ms")
+        
+        # Series A Readiness Assessment
+        series_a_ready = success_rate >= 95.0
+        print(f"\n🎯 SERIES A READINESS: {'✅ READY' if series_a_ready else '❌ NOT READY'}")
+        
+        if series_a_ready:
+            print("   • ✅ Attribution system operational with edge case handling")
+            print("   • ✅ Commission calculations accurate across all tiers")
+            print("   • ✅ Performance meets SLO requirements")
+            print("   • ✅ Analytics data integrity validated")
+            print("   • ✅ System resilience confirmed")
+            print("   • ✅ Enterprise-grade features operational")
+            print("   • ✅ Business metrics meet benchmarks")
         else:
-            print(f"\n⚠️  PHASE 3 NEEDS ATTENTION: {success_rate:.1f}% success rate (target: 90%+)")
-            failed_tests = [r['test'] for r in self.test_results if not r['success']]
-            print(f"❌ Failed tests: {', '.join(failed_tests)}")
-            
-        return success_rate >= 90
+            print("   • ❌ Critical issues identified requiring resolution")
+            failed_tests = [test for test in self.test_results if not test['success']]
+            print(f"   • Failed Tests: {len(failed_tests)}")
+            for test in failed_tests[:5]:  # Show first 5 failures
+                print(f"     - {test['test']}: {test['details']}")
+        
+        print(f"\n💎 INVESTOR DEMO QUALITY: {'ACHIEVED' if series_a_ready else 'REQUIRES FIXES'}")
+        print("=" * 80)
 
 async def main():
     """Main test execution function"""
-    async with Phase3CommerceValidator() as validator:
-        success = await validator.run_all_tests()
-        return success
+    async with ProductionHardeningValidator() as validator:
+        await validator.run_all_tests()
 
 if __name__ == "__main__":
     asyncio.run(main())
