@@ -25,22 +25,16 @@ import asyncio
 import aiohttp
 import json
 import time
-import random
 import uuid
-from datetime import datetime, timedelta
+from datetime import datetime
 from typing import Dict, List, Any, Optional
-import hmac
-import hashlib
-import base64
 import os
 
-# Configuration
-BACKEND_URL = os.getenv('EXPO_PUBLIC_BACKEND_URL', 'https://stories-marketplace.preview.emergentagent.com')
-BASE_URL = f"{BACKEND_URL}/api"
-TEST_USER_EMAIL = "investor.demo@aislemarts.com"
-TEST_USER_PASSWORD = "SeriesA2024!"
-CONCURRENT_REQUESTS = 20
-PERFORMANCE_THRESHOLD_MS = 200  # Stories ≤120ms, Purchase ≤200ms per SLO
+# Configuration - Based on review request
+BACKEND_URL = "https://stories-marketplace.preview.emergentagent.com"
+EXPRESS_URL = "http://localhost:8002"  # Express server for Ultimate Kit
+FASTAPI_URL = f"{BACKEND_URL}/api"
+PERFORMANCE_THRESHOLD_MS = 200  # <200ms response times target
 
 class ProductionHardeningValidator:
     def __init__(self):
