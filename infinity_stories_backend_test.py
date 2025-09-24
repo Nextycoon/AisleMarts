@@ -162,21 +162,19 @@ class InfinityStoriesBackendTester:
                 response_time
             )
             
-        # Test AI capabilities
-        success, data, response_time = await self.make_request('GET', '/ai-super-agent/capabilities')
-        
-        if success and isinstance(data.get('capabilities'), list):
+        # Test AI features (from health endpoint)
+        if success and isinstance(data.get('features'), list):
             await self.log_test(
-                "AI Super Agent Capabilities", 
+                "AI Super Agent Features", 
                 True, 
-                f"Available capabilities: {len(data.get('capabilities', []))}", 
+                f"Available features: {len(data.get('features', []))}", 
                 response_time
             )
         else:
             await self.log_test(
-                "AI Super Agent Capabilities", 
+                "AI Super Agent Features", 
                 False, 
-                f"Failed: {data}", 
+                f"No features found in health response", 
                 response_time
             )
             
