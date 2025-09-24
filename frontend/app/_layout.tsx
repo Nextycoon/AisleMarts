@@ -11,6 +11,7 @@ import { AuthProvider } from '../src/context/AuthContext';
 import { initPush } from '../src/mobile/pushBridge';
 import { parseDeepLink } from '../src/navigation/deeplinks';
 import { routeDeepLink } from '../src/navigation/deepLinkRouter';
+import { safeLog, safeError } from '../src/util/safeLog';
 
 export default function RootLayout() {
   // Deep link handling
