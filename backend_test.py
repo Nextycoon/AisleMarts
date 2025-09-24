@@ -31,7 +31,7 @@ import base64
 import os
 
 # Configuration
-BACKEND_URL = os.getenv('EXPO_PUBLIC_BACKEND_URL', 'https://social-ecosystem.preview.emergentagent.com')
+BACKEND_URL = os.getenv('EXPO_PUBLIC_BACKEND_URL', 'https://stories-marketplace.preview.emergentagent.com')
 BASE_URL = f"{BACKEND_URL}/api"
 TEST_USER_EMAIL = "investor.demo@aislemarts.com"
 TEST_USER_PASSWORD = "SeriesA2024!"

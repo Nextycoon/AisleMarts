@@ -15,7 +15,7 @@ import uuid
 from datetime import datetime
 
 # Use production URL from frontend/.env
-BASE_URL = "https://social-ecosystem.preview.emergentagent.com/api"
+BASE_URL = "https://stories-marketplace.preview.emergentagent.com/api"
 
 class FocusedValidator:
     def __init__(self):
