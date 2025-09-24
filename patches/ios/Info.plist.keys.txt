@@ -1,0 +1,4 @@
+<key>NSUserTrackingUsageDescription</key>
+<string>This identifier is used to deliver personalized commerce and measure performance.</string>
+<key>ITSAppUsesNonExemptEncryption</key>
+<false/>

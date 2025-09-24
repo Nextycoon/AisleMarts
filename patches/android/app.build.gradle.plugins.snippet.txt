@@ -1,0 +1,9 @@
+apply plugin: 'com.android.application'
+
+/* If using FCM in GMS flavor
+apply plugin: 'com.google.gms.google-services'
+*/
+
+/* For HMS flavor
+apply plugin: 'com.huawei.agconnect'
+*/
