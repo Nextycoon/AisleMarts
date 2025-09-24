@@ -526,12 +526,12 @@ class Phase3CommerceValidator:
         
         tech_guru_story = None
         for story in stories:
-            if 'techguru' in story.get('id', '') and story.get('productId') == 'smartwatch-pro':
+            if 'techguru' in story.get('id', '') and story.get('productId') == 'buds-x':
                 tech_guru_story = story
                 break
                 
         if not tech_guru_story:
-            await self.log_test("Tech Product Scenario", False, "Tech Guru smartwatch story not found", 0)
+            await self.log_test("Tech Product Scenario", False, "Tech Guru buds-x story not found", 0)
             return False
             
         user_id = "tech_enthusiast_demo"
@@ -540,15 +540,15 @@ class Phase3CommerceValidator:
         await self.make_request('POST', '/track/impression', {'storyId': tech_guru_story['id'], 'userId': user_id})
         await self.make_request('POST', '/track/cta', {
             'storyId': tech_guru_story['id'],
-            'productId': 'smartwatch-pro',
+            'productId': 'buds-x',
             'userId': user_id
         })
         
         purchase_data = {
             'orderId': f"tech_demo_{int(time.time())}",
             'userId': user_id,
-            'productId': 'smartwatch-pro',
-            'amount': 299.00,  # Smartwatch price
+            'productId': 'buds-x',
+            'amount': 129.00,  # Buds-x price
             'currency': 'USD',
             'referrerStoryId': tech_guru_story['id']
         }
