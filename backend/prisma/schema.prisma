@@ -1,0 +1,141 @@
+// This is your Prisma schema file,
+// learn more about it in the docs: https://pris.ly/d/prisma-schema
+
+generator client {
+  provider = "prisma-client-js"
+}
+
+datasource db {
+  provider = "postgresql"
+  url      = env("DATABASE_URL")
+}
+
+// Creators for Infinity Stories System
+model creators {
+  id                String   @id @default(cuid())
+  username          String   @unique
+  displayName       String
+  avatar            String
+  bio               String?
+  tier              String   // gold, blue, grey, unverified
+  verificationLevel String   // gold_verified, blue_verified, grey_verified, unverified
+  isActive          Boolean  @default(true)
+  createdAt         DateTime @default(now())
+  updatedAt         DateTime @updatedAt
+  
+  // Relations
+  stories           stories[]
+}
+
+// Stories for Infinity Stories System  
+model stories {
+  id          Int       @id @default(autoincrement())
+  creatorId   String
+  type        String    // moment, product, bts
+  content     String
+  mediaUrl    String
+  productId   String?
+  expiresAt   DateTime
+  createdAt   DateTime  @default(now())
+  
+  // Relations
+  creator     creators  @relation(fields: [creatorId], references: [id])
+}
+
+// Story impressions tracking
+model story_impressions {
+  id         Int      @id @default(autoincrement())
+  story_id   String
+  user_id    String
+  synthetic  Boolean  @default(false)
+  created_at DateTime @default(now())
+  
+  @@index([story_id])
+  @@index([created_at])
+  @@index([user_id, story_id])
+}
+
+// Story CTA tracking
+model story_ctas {
+  id         Int      @id @default(autoincrement())  
+  story_id   String
+  user_id    String
+  product_id String?
+  created_at DateTime @default(now())
+  
+  @@index([story_id])
+  @@index([created_at])
+  @@index([user_id, story_id])
+  @@index([product_id])
+}
+
+// Purchase tracking with commission
+model purchases {
+  id                 String   @id @default(cuid())
+  order_id           String   @unique
+  user_id            String
+  product_id         String
+  amount             Float
+  currency           String
+  amount_usd         Float    // USD normalized amount
+  referrer_story_id  String?
+  commission_amount  Float?
+  commission_currency String?
+  commission_usd     Float?
+  created_at         DateTime @default(now())
+  
+  // Relations
+  refunds            purchase_refunds[]
+  
+  @@index([order_id])
+  @@index([created_at])
+  @@index([referrer_story_id])
+  @@index([user_id])
+  @@index([currency])
+}
+
+// Purchase refunds
+model purchase_refunds {
+  id          String    @id @default(cuid())
+  purchase_id String
+  amount      Float
+  currency    String
+  amount_usd  Float
+  reason      String
+  user_id     String
+  created_at  DateTime  @default(now())
+  
+  // Relations  
+  purchase    purchases @relation(fields: [purchase_id], references: [id])
+  
+  @@index([purchase_id])
+  @@index([created_at])
+}
+
+// FX rates for multi-currency support
+model FxRate {
+  id           Int      @id @default(autoincrement())
+  fromCurrency String   @db.VarChar(3)
+  toCurrency   String   @db.VarChar(3) 
+  rate         Decimal  @db.Decimal(10,6)
+  createdAt    DateTime @default(now())
+  
+  @@unique([fromCurrency, toCurrency])
+  @@index([fromCurrency, toCurrency])
+}
+
+// Idempotency keys for request deduplication  
+model IdempotencyKey {
+  id          Int      @id @default(autoincrement())
+  key         String   @unique
+  method      String
+  path        String
+  requestHash String
+  status      Int
+  response    Json
+  expiresAt   DateTime
+  createdAt   DateTime @default(now())
+  
+  @@index([key])
+  @@index([expiresAt])
+}
