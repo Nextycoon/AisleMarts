@@ -1,28 +1,42 @@
 #!/usr/bin/env python3
 """
-🏆💎 FINAL SERIES A INVESTOR DEMO VALIDATION - COMPLETE END-TO-END SYSTEM
-Comprehensive validation of the complete Infinity Stories Commerce Attribution System
-for Series A investor demonstration readiness.
+🏆💎 FINAL PRODUCTION HARDENING VALIDATION - SERIES A INVESTOR READY
+Infinity Stories Commerce Attribution System - Enterprise-Grade Testing Suite
+
+This comprehensive test suite validates the production-hardened system for Series A investor demonstrations
+with focus on attribution edge cases, commission accuracy, performance under load, analytics integrity,
+system resilience, and enterprise-grade security features.
 
 Testing Focus:
-1. Complete Attribution Chain (impression → CTA → purchase → commission calculation)
-2. Real-Time Analytics (43 impressions, 37 CTAs, 34 purchases, $5,376.90 revenue)
-3. Commission Accuracy (tier-based rates with Lux Fashion gold tier 12% = $28.68 on $239 trench coat)
-4. Concurrency Performance (multiple simultaneous transactions)
-5. Investor Demo Scenario (luxury fashion purchase flow)
+1. Attribution Edge Cases (multi-CTA same product, direct purchase, cross-creator attribution)
+2. Commission Tier Accuracy (Gold 12%, Blue 10%, Grey 7%, Unverified 5%)
+3. Performance Under Load (concurrent API performance, SLO compliance)
+4. Analytics Data Integrity (funnel logic validation, conversion rate accuracy)
+5. System Resilience (error handling, duplicate order protection, timeout management)
+6. Enterprise-Grade Features (idempotency, HMAC security, FX normalization)
+7. Business Metrics (high conversion rate validation, creator performance tracking)
 """
 
 import asyncio
 import aiohttp
 import json
 import time
+import random
+import uuid
 from datetime import datetime, timedelta
-from typing import Dict, List, Any
+from typing import Dict, List, Any, Optional
+import hmac
+import hashlib
+import base64
 import os
 
-# Get backend URL from environment
+# Configuration
 BACKEND_URL = os.getenv('EXPO_PUBLIC_BACKEND_URL', 'https://social-ecosystem.preview.emergentagent.com')
 BASE_URL = f"{BACKEND_URL}/api"
+TEST_USER_EMAIL = "investor.demo@aislemarts.com"
+TEST_USER_PASSWORD = "SeriesA2024!"
+CONCURRENT_REQUESTS = 20
+PERFORMANCE_THRESHOLD_MS = 200  # Stories ≤120ms, Purchase ≤200ms per SLO
 
 class Phase3CommerceValidator:
     def __init__(self):
