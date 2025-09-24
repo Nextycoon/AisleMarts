@@ -43,7 +43,6 @@ app.use(cors({
   allowedHeaders: ['Content-Type','X-Timestamp','X-Signature','Idempotency-Key'],
   maxAge: 86400,
 }));
-app.options('*', cors());
 app.use(express.json());
 app.use(idempotency());
 
