@@ -63,106 +63,217 @@ export default function ForYouScreen() {
   const { data: feedData, loading: isLoading, error, refresh, loadMore } = useForYouFeed('test_user_001', true);
 
   // Mock data with AisleMarts verification system
-  const forYouFeed = [
+  // 🔄 INFINITY AISLEMARTS CREATOR POOL
+  const creatorPool = [
     {
-      id: 1,
-      uri: 'https://commondatastorage.googleapis.com/gtv-videos-bucket/sample/ForBiggerEscapes.mp4', // Working sample video - nature/travel theme that can represent luxury lifestyle
-      creator: {
-        id: 'luxefashion',
-        name: '@LuxeFashion',
-        verified: true,
-        verificationTier: 'goldwave', // bluewave, goldwave, greywave
-        isAffiliated: false,
-        affiliatedWith: null,
-        avatar: 'https://via.placeholder.com/50x50',
-      },
-      likes: 127300,
-      comments: 8200,
-      shares: 2500,
-      saves: 12400,
-      music: 3100,
-      caption: 'Transform your winter wardrobe with these chic layers! Perfect for staying stylish in cold weather ❄️',
-      hashtags: '#WinterFashion #LuxeStyle #TrendingNow #ShopNow',
-      music_info: {
-        title: 'Winter Vibes - Chill Beats',
-        artist: 'LoFi Studio',
-      },
+      id: 'luxefashion',
+      name: '@LuxeFashion',
+      category: 'fashion',
+      tier: 'premium',
+      verification: 'goldwave',
+      baseEngagement: { likes: [80000, 200000], comments: [5000, 15000], shares: [2000, 8000] },
+      contentThemes: ['winter_fashion', 'luxury_brands', 'style_tips', 'outfit_ideas'],
+      products: ['coats', 'accessories', 'shoes', 'bags'],
+      commissionRate: 0.15,
+      bio: 'Premium Fashion & Luxury Lifestyle ✨'
     },
     {
-      id: 2,
-      uri: 'https://commondatastorage.googleapis.com/gtv-videos-bucket/sample/BigBuckBunny.mp4',
-      creator: {
-        id: 'techguru',
-        name: '@TechGuru',
-        verified: true,
-        verificationTier: 'bluewave',
-        isAffiliated: true,
-        affiliatedWith: 'TechBrand',
-        avatar: 'https://via.placeholder.com/50x50',
-      },
-      likes: 89500,
-      comments: 5600,
-      shares: 1800,
-      saves: 9200,
-      music: 2400,
-      caption: 'Latest tech gadgets that will change your life! 🚀 Swipe for the best deals on premium electronics',
-      hashtags: '#TechReview #Gadgets #Innovation #TechDeals',
-      music_info: {
-        title: 'Future Beats',
-        artist: 'Digital Dreams',
-      },
+      id: 'techguru',
+      name: '@TechGuru',
+      category: 'technology',
+      tier: 'verified',
+      verification: 'bluewave',
+      baseEngagement: { likes: [60000, 150000], comments: [3000, 10000], shares: [1500, 5000] },
+      contentThemes: ['gadget_reviews', 'tech_tips', 'unboxing', 'comparisons'],
+      products: ['smartphones', 'laptops', 'accessories', 'smartwatches'],
+      commissionRate: 0.08,
+      bio: 'Latest Tech Reviews & Gadgets 📱'
     },
     {
-      id: 3,
-      uri: 'https://commondatastorage.googleapis.com/gtv-videos-bucket/sample/ElephantsDream.mp4',
-      creator: {
-        id: 'fitnessjane',
-        name: '@FitnessJane',
-        verified: true,
-        verificationTier: 'goldwave',
-        isAffiliated: false,
-        affiliatedWith: null,
-        avatar: 'https://via.placeholder.com/50x50',
-      },
-      likes: 156800,
-      comments: 12400,
-      shares: 3200,
-      saves: 18600,
-      music: 4500,
-      caption: 'Morning workout routine that takes only 15 minutes! 💪 Get fit at home with these simple exercises',
-      hashtags: '#FitnessMotivation #HomeWorkout #HealthyLifestyle #MorningRoutine',
-      music_info: {
-        title: 'Workout Energy',
-        artist: 'Fitness Beats',
-      },
+      id: 'fitnessjane',
+      name: '@FitnessJane',
+      category: 'fitness',
+      tier: 'premium',
+      verification: 'goldwave',
+      baseEngagement: { likes: [90000, 250000], comments: [8000, 20000], shares: [3000, 12000] },
+      contentThemes: ['workout_routines', 'fitness_tips', 'nutrition', 'motivation'],
+      products: ['workout_gear', 'supplements', 'activewear', 'equipment'],
+      commissionRate: 0.12,
+      bio: 'Fitness Coach & Wellness Expert 💪'
     },
     {
-      id: 4,
-      uri: 'https://commondatastorage.googleapis.com/gtv-videos-bucket/sample/Sintel.mp4',
-      creator: {
-        id: 'beautyqueen',
-        name: '@BeautyQueen',
-        verified: true,
-        verificationTier: 'goldwave',
-        isAffiliated: true,
-        affiliatedWith: 'BeautyBrand',
-        avatar: 'https://via.placeholder.com/50x50',
-      },
-      likes: 203500,
-      comments: 15600,
-      shares: 4100,
-      saves: 25800,
-      music: 6200,
-      caption: '10-minute natural makeup look for busy mornings ✨ Glowing skin secrets revealed!',
-      hashtags: '#BeautyTips #NaturalMakeup #SkincareRoutine #BeautyHacks',
-      music_info: {
-        title: 'Glow Up',
-        artist: 'Beauty Vibes',
-      },
+      id: 'beautyqueen',
+      name: '@BeautyQueen',
+      category: 'beauty',
+      tier: 'premium',
+      verification: 'goldwave',
+      baseEngagement: { likes: [100000, 300000], comments: [10000, 25000], shares: [4000, 15000] },
+      contentThemes: ['makeup_tutorials', 'skincare', 'beauty_tips', 'product_reviews'],
+      products: ['cosmetics', 'skincare', 'tools', 'fragrances'],
+      commissionRate: 0.18,
+      bio: 'Beauty Expert & Makeup Artist 💄'
     },
+    {
+      id: 'foodiefun',
+      name: '@FoodieFun',
+      category: 'food',
+      tier: 'verified',
+      verification: 'bluewave',
+      baseEngagement: { likes: [45000, 120000], comments: [2000, 8000], shares: [1000, 4000] },
+      contentThemes: ['recipes', 'food_reviews', 'cooking_tips', 'restaurant_visits'],
+      products: ['kitchen_tools', 'ingredients', 'cookbooks', 'appliances'],
+      commissionRate: 0.10,
+      bio: 'Food Lover & Recipe Creator 🍴'
+    },
+    {
+      id: 'traveladdict',
+      name: '@TravelAddict',
+      category: 'travel',
+      tier: 'verified',
+      verification: 'bluewave',
+      baseEngagement: { likes: [70000, 180000], comments: [4000, 12000], shares: [2500, 9000] },
+      contentThemes: ['destinations', 'travel_tips', 'adventures', 'culture'],
+      products: ['luggage', 'travel_gear', 'cameras', 'accessories'],
+      commissionRate: 0.11,
+      bio: 'World Explorer & Travel Guide 🌍'
+    },
+    {
+      id: 'homedecor',
+      name: '@HomeDecor',
+      category: 'lifestyle',
+      tier: 'semi_verified',
+      verification: 'greywave',
+      baseEngagement: { likes: [30000, 80000], comments: [1500, 5000], shares: [800, 3000] },
+      contentThemes: ['home_styling', 'diy_projects', 'organization', 'decor_ideas'],
+      products: ['furniture', 'decor', 'organization', 'lighting'],
+      commissionRate: 0.09,
+      bio: 'Home Styling & Interior Design 🏡'
+    },
+    {
+      id: 'artcreative',
+      name: '@ArtCreative',
+      category: 'art',
+      tier: 'casual',
+      verification: 'unverified',
+      baseEngagement: { likes: [15000, 45000], comments: [800, 3000], shares: [400, 1500] },
+      contentThemes: ['digital_art', 'tutorials', 'creativity', 'inspiration'],
+      products: ['art_supplies', 'software', 'prints', 'courses'],
+      commissionRate: 0.06,
+      bio: 'Digital Artist & Creative Mind 🎨'
+    }
   ];
 
-  const currentVideo = forYouFeed[currentIndex] || forYouFeed[0];
+  // 🎬 INFINITY CONTENT VARIATIONS
+  const contentVariations = {
+    fashion: [
+      'Transform your wardrobe with these stunning pieces!',
+      'Elevate your style with luxury fashion trends',
+      'Discover the latest must-have fashion items',
+      'Unleash your inner fashionista with these looks'
+    ],
+    technology: [
+      'Mind-blowing tech that will change your life!',
+      'Latest gadgets you need to see right now',
+      'Revolutionary technology at your fingertips',
+      'Tech innovations that are game-changers'
+    ],
+    fitness: [
+      'Transform your body with this workout routine!',
+      'Fitness secrets for amazing results',
+      'Get stronger and healthier starting today',
+      'Unlock your fitness potential with these tips'
+    ],
+    beauty: [
+      'Glow up with these beauty transformations!',
+      'Beauty secrets for that perfect look',
+      'Makeup magic that will amaze you',
+      'Skincare routine for radiant skin'
+    ],
+    food: [
+      'Delicious recipes you must try today!',
+      'Foodie adventures that will inspire you',
+      'Cooking hacks for incredible meals',
+      'Taste the flavors of amazing cuisine'
+    ],
+    travel: [
+      'Explore breathtaking destinations around the world!',
+      'Travel adventures that will inspire wanderlust',
+      'Hidden gems waiting to be discovered',
+      'Journey to incredible places you never knew existed'
+    ],
+    lifestyle: [
+      'Transform your living space with style!',
+      'Home decor ideas for a beautiful space',
+      'Lifestyle tips for better living',
+      'Create your perfect home sanctuary'
+    ],
+    art: [
+      'Creative art that will blow your mind!',
+      'Artistic inspiration for your soul',
+      'Digital masterpieces in the making',
+      'Unleash creativity with amazing art'
+    ]
+  };
+
+  // 🔄 INFINITY GENERATION ENGINE
+  const generateInfiniteReel = (index: number) => {
+    const creatorIndex = index % creatorPool.length;
+    const creator = creatorPool[creatorIndex];
+    const variation = Math.floor(index / creatorPool.length) % 4;
+    
+    // Generate realistic engagement based on creator tier
+    const likes = Math.floor(Math.random() * (creator.baseEngagement.likes[1] - creator.baseEngagement.likes[0])) + creator.baseEngagement.likes[0];
+    const comments = Math.floor(Math.random() * (creator.baseEngagement.comments[1] - creator.baseEngagement.comments[0])) + creator.baseEngagement.comments[0];
+    const shares = Math.floor(Math.random() * (creator.baseEngagement.shares[1] - creator.baseEngagement.shares[0])) + creator.baseEngagement.shares[0];
+    const saves = Math.floor(likes * (0.1 + Math.random() * 0.1)); // 10-20% of likes
+    const music = Math.floor(likes * (0.02 + Math.random() * 0.03)); // 2-5% of likes
+
+    return {
+      id: `${creator.id}_${index}`,
+      uri: `https://commondatastorage.googleapis.com/gtv-videos-bucket/sample/${['ForBiggerEscapes.mp4', 'BigBuckBunny.mp4', 'ElephantsDream.mp4', 'Sintel.mp4'][index % 4]}`,
+      creator: {
+        id: creator.id,
+        name: creator.name,
+        verified: true,
+        verificationTier: creator.verification,
+        isAffiliated: creator.tier === 'premium',
+        affiliatedWith: creator.tier === 'premium' ? `${creator.category}Brand` : null,
+        avatar: 'https://via.placeholder.com/50x50',
+        bio: creator.bio,
+        category: creator.category,
+        tier: creator.tier
+      },
+      likes,
+      comments,
+      shares,
+      saves,
+      music,
+      caption: contentVariations[creator.category][variation] + ` ${creator.contentThemes[variation % creator.contentThemes.length].replace('_', ' ')}`,
+      hashtags: `#${creator.category} #AisleMarts #${creator.contentThemes[variation % creator.contentThemes.length]} #Trending`,
+      music_info: {
+        title: `${creator.category} Vibes ${variation + 1}`,
+        artist: `${creator.name} Mix`
+      },
+      products: creator.products,
+      commissionRate: creator.commissionRate
+    };
+  };
+
+  // 🔄 INFINITY FEED SYSTEM
+  const [infinityReels, setInfinityReels] = useState(() => {
+    // Pre-generate initial reels
+    return Array.from({ length: 20 }, (_, i) => generateInfiniteReel(i));
+  });
+
+  // Load more reels when approaching end
+  const loadMoreReels = useCallback(() => {
+    const newReels = Array.from({ length: 10 }, (_, i) => 
+      generateInfiniteReel(infinityReels.length + i)
+    );
+    setInfinityReels(prev => [...prev, ...newReels]);
+  }, [infinityReels.length]);
+
+  const currentVideo = infinityReels[currentIndex] || generateInfiniteReel(0);
 
   const handleSwipeUp = () => {
     if (currentIndex < forYouFeed.length - 1) {
