@@ -28,7 +28,7 @@ import sys
 
 # Configuration
 BACKEND_URL = "https://infinity-stories.preview.emergentagent.com"
-EXPRESS_PORT = 3000
+EXPRESS_PORT = 8002
 FASTAPI_PORT = 8001
 HMAC_SECRET = "dev-secret"
 
