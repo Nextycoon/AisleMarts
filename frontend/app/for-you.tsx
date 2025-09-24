@@ -444,7 +444,7 @@ export default function ForYouScreen() {
   const currentVideo = infinityReels[currentIndex] || generateInfiniteReel(0);
 
   const handleSwipeUp = () => {
-    if (currentIndex < forYouFeed.length - 1) {
+    if (currentIndex < infinityReels.length - 1) {
       setCurrentIndex(currentIndex + 1);
       // Pause current video, play next
       videoRefs.current[currentIndex]?.pauseAsync();
@@ -453,8 +453,8 @@ export default function ForYouScreen() {
       }, 100);
       
       // Load more content when approaching the end
-      if (currentIndex >= forYouFeed.length - 3 && loadMore) {
-        loadMore();
+      if (currentIndex >= infinityReels.length - 3) {
+        loadMoreReels();
       }
     }
     
