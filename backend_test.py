@@ -293,7 +293,11 @@ class Phase3CommerceValidator:
         print("\n🔄 TESTING COMPLETE ATTRIBUTION CYCLE")
         
         # Step 1: Get a product story
-        stories_result, _, _ = await self.make_request('GET', '/stories', {'limit': 10})
+        stories_result, _, stories_success = await self.make_request('GET', '/stories', {'limit': 10})
+        if not stories_success:
+            await self.log_test("Complete Attribution Cycle", False, "Could not fetch stories", 0)
+            return False
+            
         stories = stories_result.get('data', [])
         product_story = next((s for s in stories if s.get('productId')), None)
         
