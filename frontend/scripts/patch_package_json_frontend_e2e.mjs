@@ -1,4 +1,4 @@
-import fs from 'fs'; const f='frontend/package.json'; if(!fs.existsSync(f))process.exit(1);
+import fs from 'fs'; const f='package.json'; if(!fs.existsSync(f))process.exit(1);
 const pkg=JSON.parse(fs.readFileSync(f,'utf8')); pkg.scripts=pkg.scripts||{};
 pkg.scripts['e2e:build:ios']??='detox build -c ios.sim.release';
 pkg.scripts['e2e:test:ios'] ??='detox test -c ios.sim.release --record-logs all --workers 1';
