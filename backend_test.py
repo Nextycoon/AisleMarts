@@ -155,10 +155,10 @@ class ProductionHardeningValidator:
                                 f"Features: {len(features)}/5 hardened features present", response_time)
                 else:
                     self.log_test("Express Server Health Check", False, 
-                                f"HTTP {resp.status}", response_time)
+                                f"HTTP {resp.status} - Express server may not be running", response_time)
                         
         except Exception as e:
-            self.log_test("Express Server Health Check", False, f"Error: {str(e)}")
+            self.log_test("Express Server Health Check", False, f"Express server not accessible: {str(e)}")
     
     async def _test_fastapi_backend_health(self):
         """Test FastAPI Backend Health Check"""
