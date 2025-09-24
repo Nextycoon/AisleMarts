@@ -1,0 +1,588 @@
+{
+  "creators": [
+    {
+      "id": "mira.moda",
+      "displayName": "Mira Moda",
+      "tier": "blue",
+      "commissionPct": 0.1,
+      "popularity": 0.7
+    },
+    {
+      "id": "techtarek",
+      "displayName": "Tech Tarek",
+      "tier": "gold",
+      "commissionPct": 0.12,
+      "popularity": 0.9
+    },
+    {
+      "id": "linafit",
+      "displayName": "Lina Fit",
+      "tier": "blue",
+      "commissionPct": 0.08,
+      "popularity": 0.65
+    },
+    {
+      "id": "chefzey",
+      "displayName": "Chef Zey",
+      "tier": "unverified",
+      "commissionPct": 0.05,
+      "popularity": 0.4
+    },
+    {
+      "id": "nomadnour",
+      "displayName": "Nomad Nour",
+      "tier": "grey",
+      "commissionPct": 0.06,
+      "popularity": 0.5
+    },
+    {
+      "id": "beautyberil",
+      "displayName": "Beauty Beril",
+      "tier": "blue",
+      "commissionPct": 0.09,
+      "popularity": 0.6
+    },
+    {
+      "id": "fixwithfaris",
+      "displayName": "Fix with Faris",
+      "tier": "grey",
+      "commissionPct": 0.07,
+      "popularity": 0.45
+    },
+    {
+      "id": "greenayla",
+      "displayName": "Green Ayla",
+      "tier": "blue",
+      "commissionPct": 0.08,
+      "popularity": 0.55
+    },
+    {
+      "id": "gamerkaan",
+      "displayName": "Gamer Kaan",
+      "tier": "grey",
+      "commissionPct": 0.06,
+      "popularity": 0.52
+    },
+    {
+      "id": "styleelif",
+      "displayName": "Style Elif",
+      "tier": "gold",
+      "commissionPct": 0.13,
+      "popularity": 0.88
+    },
+    {
+      "id": "soundcem",
+      "displayName": "Sound Cem",
+      "tier": "blue",
+      "commissionPct": 0.1,
+      "popularity": 0.58
+    },
+    {
+      "id": "runwithdeniz",
+      "displayName": "Run with Deniz",
+      "tier": "grey",
+      "commissionPct": 0.07,
+      "popularity": 0.49
+    }
+  ],
+  "products": [
+    {
+      "id": "yoga-mat",
+      "title": "Pro Yoga Mat",
+      "price": 49.9,
+      "currency": "USD",
+      "imageUrl": "https://picsum.photos/seed/yogamat/600/800"
+    },
+    {
+      "id": "protein-shaker",
+      "title": "Protein Shaker 700ml",
+      "price": 14.9,
+      "currency": "USD",
+      "imageUrl": "https://picsum.photos/seed/shaker/600/800"
+    },
+    {
+      "id": "silk-scarf",
+      "title": "Silk Scarf",
+      "price": 89.0,
+      "currency": "USD",
+      "imageUrl": "https://picsum.photos/seed/scarf/600/800"
+    },
+    {
+      "id": "trench-coat",
+      "title": "Classic Trench Coat",
+      "price": 239.0,
+      "currency": "USD",
+      "imageUrl": "https://picsum.photos/seed/trench/600/800"
+    },
+    {
+      "id": "smartwatch-pro",
+      "title": "Smartwatch Pro",
+      "price": 299.0,
+      "currency": "USD",
+      "imageUrl": "https://picsum.photos/seed/watch/600/800"
+    },
+    {
+      "id": "buds-x",
+      "title": "Buds X Earphones",
+      "price": 129.0,
+      "currency": "USD",
+      "imageUrl": "https://picsum.photos/seed/buds/600/800"
+    },
+    {
+      "id": "olive-oil",
+      "title": "Aegean Olive Oil",
+      "price": 19.0,
+      "currency": "USD",
+      "imageUrl": "https://picsum.photos/seed/oil/600/800"
+    },
+    {
+      "id": "spice-mix",
+      "title": "Chef\u2019s Spice Mix",
+      "price": 9.5,
+      "currency": "USD",
+      "imageUrl": "https://picsum.photos/seed/spice/600/800"
+    },
+    {
+      "id": "carryon-24l",
+      "title": "Carry-On 24L",
+      "price": 119.0,
+      "currency": "USD",
+      "imageUrl": "https://picsum.photos/seed/carry/600/800"
+    },
+    {
+      "id": "packing-cubes",
+      "title": "Packing Cubes Set",
+      "price": 39.0,
+      "currency": "USD",
+      "imageUrl": "https://picsum.photos/seed/cubes/600/800"
+    },
+    {
+      "id": "matte-lip",
+      "title": "Matte Lipstick",
+      "price": 21.0,
+      "currency": "USD",
+      "imageUrl": "https://picsum.photos/seed/lip/600/800"
+    },
+    {
+      "id": "silk-serum",
+      "title": "Silk Hair Serum",
+      "price": 27.0,
+      "currency": "USD",
+      "imageUrl": "https://picsum.photos/seed/serum/600/800"
+    },
+    {
+      "id": "laser-level",
+      "title": "Laser Level",
+      "price": 59.0,
+      "currency": "USD",
+      "imageUrl": "https://picsum.photos/seed/laser/600/800"
+    },
+    {
+      "id": "smart-bulb",
+      "title": "Smart Bulb",
+      "price": 19.0,
+      "currency": "USD",
+      "imageUrl": "https://picsum.photos/seed/bulb/600/800"
+    },
+    {
+      "id": "studio-mic",
+      "title": "Studio Microphone",
+      "price": 149.0,
+      "currency": "USD",
+      "imageUrl": "https://picsum.photos/seed/mic/600/800"
+    },
+    {
+      "id": "monitor-headphones",
+      "title": "Monitor Headphones",
+      "price": 129.0,
+      "currency": "USD",
+      "imageUrl": "https://picsum.photos/seed/headphones/600/800"
+    }
+  ],
+  "stories": [
+    {
+      "id": "mira.moda-s1",
+      "creatorId": "mira.moda",
+      "type": "moment",
+      "mediaUrl": "https://picsum.photos/seed/s3/720/1280",
+      "productId": null,
+      "expiresAt": 1758807654
+    },
+    {
+      "id": "mira.moda-s2",
+      "creatorId": "mira.moda",
+      "type": "product",
+      "mediaUrl": "https://picsum.photos/seed/s3/720/1280",
+      "productId": "protein-shaker",
+      "expiresAt": 1758807654
+    },
+    {
+      "id": "mira.moda-s3",
+      "creatorId": "mira.moda",
+      "type": "bts",
+      "mediaUrl": "https://picsum.photos/seed/s1/720/1280",
+      "productId": null,
+      "expiresAt": 1758807654
+    },
+    {
+      "id": "mira.moda-s4",
+      "creatorId": "mira.moda",
+      "type": "bts",
+      "mediaUrl": "https://picsum.photos/seed/s2/720/1280",
+      "productId": null,
+      "expiresAt": 1758807654
+    },
+    {
+      "id": "techtarek-s1",
+      "creatorId": "techtarek",
+      "type": "product",
+      "mediaUrl": "https://picsum.photos/seed/s2/720/1280",
+      "productId": "buds-x",
+      "expiresAt": 1758807654
+    },
+    {
+      "id": "techtarek-s2",
+      "creatorId": "techtarek",
+      "type": "product",
+      "mediaUrl": "https://picsum.photos/seed/s4/720/1280",
+      "productId": "silk-serum",
+      "expiresAt": 1758807654
+    },
+    {
+      "id": "techtarek-s3",
+      "creatorId": "techtarek",
+      "type": "product",
+      "mediaUrl": "https://picsum.photos/seed/s3/720/1280",
+      "productId": "carryon-24l",
+      "expiresAt": 1758807654
+    },
+    {
+      "id": "techtarek-s4",
+      "creatorId": "techtarek",
+      "type": "product",
+      "mediaUrl": "https://picsum.photos/seed/s4/720/1280",
+      "productId": "silk-scarf",
+      "expiresAt": 1758807654
+    },
+    {
+      "id": "linafit-s1",
+      "creatorId": "linafit",
+      "type": "product",
+      "mediaUrl": "https://picsum.photos/seed/s3/720/1280",
+      "productId": "silk-serum",
+      "expiresAt": 1758807654
+    },
+    {
+      "id": "linafit-s2",
+      "creatorId": "linafit",
+      "type": "bts",
+      "mediaUrl": "https://picsum.photos/seed/s4/720/1280",
+      "productId": null,
+      "expiresAt": 1758807654
+    },
+    {
+      "id": "linafit-s3",
+      "creatorId": "linafit",
+      "type": "product",
+      "mediaUrl": "https://sample-videos.com/video321/mp4/720/big_buck_bunny_720p_1mb.mp4",
+      "productId": "silk-scarf",
+      "expiresAt": 1758807654
+    },
+    {
+      "id": "linafit-s4",
+      "creatorId": "linafit",
+      "type": "bts",
+      "mediaUrl": "https://picsum.photos/seed/s1/720/1280",
+      "productId": null,
+      "expiresAt": 1758807654
+    },
+    {
+      "id": "chefzey-s1",
+      "creatorId": "chefzey",
+      "type": "bts",
+      "mediaUrl": "https://picsum.photos/seed/s1/720/1280",
+      "productId": null,
+      "expiresAt": 1758807654
+    },
+    {
+      "id": "chefzey-s2",
+      "creatorId": "chefzey",
+      "type": "product",
+      "mediaUrl": "https://picsum.photos/seed/s1/720/1280",
+      "productId": "trench-coat",
+      "expiresAt": 1758807654
+    },
+    {
+      "id": "chefzey-s3",
+      "creatorId": "chefzey",
+      "type": "product",
+      "mediaUrl": "https://picsum.photos/seed/s1/720/1280",
+      "productId": "studio-mic",
+      "expiresAt": 1758807654
+    },
+    {
+      "id": "chefzey-s4",
+      "creatorId": "chefzey",
+      "type": "moment",
+      "mediaUrl": "https://picsum.photos/seed/s4/720/1280",
+      "productId": null,
+      "expiresAt": 1758807654
+    },
+    {
+      "id": "nomadnour-s1",
+      "creatorId": "nomadnour",
+      "type": "bts",
+      "mediaUrl": "https://picsum.photos/seed/s4/720/1280",
+      "productId": null,
+      "expiresAt": 1758807654
+    },
+    {
+      "id": "nomadnour-s2",
+      "creatorId": "nomadnour",
+      "type": "bts",
+      "mediaUrl": "https://sample-videos.com/video321/mp4/720/big_buck_bunny_720p_1mb.mp4",
+      "productId": null,
+      "expiresAt": 1758807654
+    },
+    {
+      "id": "nomadnour-s3",
+      "creatorId": "nomadnour",
+      "type": "bts",
+      "mediaUrl": "https://picsum.photos/seed/s3/720/1280",
+      "productId": null,
+      "expiresAt": 1758807654
+    },
+    {
+      "id": "nomadnour-s4",
+      "creatorId": "nomadnour",
+      "type": "product",
+      "mediaUrl": "https://picsum.photos/seed/s3/720/1280",
+      "productId": "studio-mic",
+      "expiresAt": 1758807654
+    },
+    {
+      "id": "beautyberil-s1",
+      "creatorId": "beautyberil",
+      "type": "bts",
+      "mediaUrl": "https://sample-videos.com/video321/mp4/720/big_buck_bunny_720p_1mb.mp4",
+      "productId": null,
+      "expiresAt": 1758807654
+    },
+    {
+      "id": "beautyberil-s2",
+      "creatorId": "beautyberil",
+      "type": "product",
+      "mediaUrl": "https://picsum.photos/seed/s4/720/1280",
+      "productId": "olive-oil",
+      "expiresAt": 1758807654
+    },
+    {
+      "id": "beautyberil-s3",
+      "creatorId": "beautyberil",
+      "type": "bts",
+      "mediaUrl": "https://picsum.photos/seed/s1/720/1280",
+      "productId": null,
+      "expiresAt": 1758807654
+    },
+    {
+      "id": "beautyberil-s4",
+      "creatorId": "beautyberil",
+      "type": "product",
+      "mediaUrl": "https://picsum.photos/seed/s1/720/1280",
+      "productId": "spice-mix",
+      "expiresAt": 1758807654
+    },
+    {
+      "id": "fixwithfaris-s1",
+      "creatorId": "fixwithfaris",
+      "type": "moment",
+      "mediaUrl": "https://picsum.photos/seed/s3/720/1280",
+      "productId": null,
+      "expiresAt": 1758807654
+    },
+    {
+      "id": "fixwithfaris-s2",
+      "creatorId": "fixwithfaris",
+      "type": "moment",
+      "mediaUrl": "https://picsum.photos/seed/s1/720/1280",
+      "productId": null,
+      "expiresAt": 1758807654
+    },
+    {
+      "id": "fixwithfaris-s3",
+      "creatorId": "fixwithfaris",
+      "type": "product",
+      "mediaUrl": "https://sample-videos.com/video321/mp4/720/big_buck_bunny_720p_1mb.mp4",
+      "productId": "smart-bulb",
+      "expiresAt": 1758807654
+    },
+    {
+      "id": "fixwithfaris-s4",
+      "creatorId": "fixwithfaris",
+      "type": "product",
+      "mediaUrl": "https://picsum.photos/seed/s3/720/1280",
+      "productId": "spice-mix",
+      "expiresAt": 1758807654
+    },
+    {
+      "id": "greenayla-s1",
+      "creatorId": "greenayla",
+      "type": "moment",
+      "mediaUrl": "https://picsum.photos/seed/s2/720/1280",
+      "productId": null,
+      "expiresAt": 1758807654
+    },
+    {
+      "id": "greenayla-s2",
+      "creatorId": "greenayla",
+      "type": "moment",
+      "mediaUrl": "https://picsum.photos/seed/s1/720/1280",
+      "productId": null,
+      "expiresAt": 1758807654
+    },
+    {
+      "id": "greenayla-s3",
+      "creatorId": "greenayla",
+      "type": "product",
+      "mediaUrl": "https://picsum.photos/seed/s2/720/1280",
+      "productId": "packing-cubes",
+      "expiresAt": 1758807654
+    },
+    {
+      "id": "greenayla-s4",
+      "creatorId": "greenayla",
+      "type": "product",
+      "mediaUrl": "https://picsum.photos/seed/s4/720/1280",
+      "productId": "protein-shaker",
+      "expiresAt": 1758807654
+    },
+    {
+      "id": "gamerkaan-s1",
+      "creatorId": "gamerkaan",
+      "type": "product",
+      "mediaUrl": "https://picsum.photos/seed/s2/720/1280",
+      "productId": "laser-level",
+      "expiresAt": 1758807654
+    },
+    {
+      "id": "gamerkaan-s2",
+      "creatorId": "gamerkaan",
+      "type": "bts",
+      "mediaUrl": "https://picsum.photos/seed/s3/720/1280",
+      "productId": null,
+      "expiresAt": 1758807654
+    },
+    {
+      "id": "gamerkaan-s3",
+      "creatorId": "gamerkaan",
+      "type": "moment",
+      "mediaUrl": "https://picsum.photos/seed/s1/720/1280",
+      "productId": null,
+      "expiresAt": 1758807654
+    },
+    {
+      "id": "gamerkaan-s4",
+      "creatorId": "gamerkaan",
+      "type": "moment",
+      "mediaUrl": "https://sample-videos.com/video321/mp4/720/big_buck_bunny_720p_1mb.mp4",
+      "productId": null,
+      "expiresAt": 1758807654
+    },
+    {
+      "id": "styleelif-s1",
+      "creatorId": "styleelif",
+      "type": "bts",
+      "mediaUrl": "https://picsum.photos/seed/s1/720/1280",
+      "productId": null,
+      "expiresAt": 1758807654
+    },
+    {
+      "id": "styleelif-s2",
+      "creatorId": "styleelif",
+      "type": "moment",
+      "mediaUrl": "https://picsum.photos/seed/s2/720/1280",
+      "productId": null,
+      "expiresAt": 1758807654
+    },
+    {
+      "id": "styleelif-s3",
+      "creatorId": "styleelif",
+      "type": "product",
+      "mediaUrl": "https://picsum.photos/seed/s1/720/1280",
+      "productId": "smartwatch-pro",
+      "expiresAt": 1758807654
+    },
+    {
+      "id": "styleelif-s4",
+      "creatorId": "styleelif",
+      "type": "bts",
+      "mediaUrl": "https://sample-videos.com/video321/mp4/720/big_buck_bunny_720p_1mb.mp4",
+      "productId": null,
+      "expiresAt": 1758807654
+    },
+    {
+      "id": "soundcem-s1",
+      "creatorId": "soundcem",
+      "type": "bts",
+      "mediaUrl": "https://sample-videos.com/video321/mp4/720/big_buck_bunny_720p_1mb.mp4",
+      "productId": null,
+      "expiresAt": 1758807654
+    },
+    {
+      "id": "soundcem-s2",
+      "creatorId": "soundcem",
+      "type": "bts",
+      "mediaUrl": "https://sample-videos.com/video321/mp4/720/big_buck_bunny_720p_1mb.mp4",
+      "productId": null,
+      "expiresAt": 1758807654
+    },
+    {
+      "id": "soundcem-s3",
+      "creatorId": "soundcem",
+      "type": "moment",
+      "mediaUrl": "https://picsum.photos/seed/s1/720/1280",
+      "productId": null,
+      "expiresAt": 1758807654
+    },
+    {
+      "id": "soundcem-s4",
+      "creatorId": "soundcem",
+      "type": "product",
+      "mediaUrl": "https://picsum.photos/seed/s2/720/1280",
+      "productId": "olive-oil",
+      "expiresAt": 1758807654
+    },
+    {
+      "id": "runwithdeniz-s1",
+      "creatorId": "runwithdeniz",
+      "type": "product",
+      "mediaUrl": "https://sample-videos.com/video321/mp4/720/big_buck_bunny_720p_1mb.mp4",
+      "productId": "smart-bulb",
+      "expiresAt": 1758807654
+    },
+    {
+      "id": "runwithdeniz-s2",
+      "creatorId": "runwithdeniz",
+      "type": "moment",
+      "mediaUrl": "https://picsum.photos/seed/s1/720/1280",
+      "productId": null,
+      "expiresAt": 1758807654
+    },
+    {
+      "id": "runwithdeniz-s3",
+      "creatorId": "runwithdeniz",
+      "type": "bts",
+      "mediaUrl": "https://picsum.photos/seed/s4/720/1280",
+      "productId": null,
+      "expiresAt": 1758807654
+    },
+    {
+      "id": "runwithdeniz-s4",
+      "creatorId": "runwithdeniz",
+      "type": "product",
+      "mediaUrl": "https://picsum.photos/seed/s4/720/1280",
+      "productId": "buds-x",
+      "expiresAt": 1758807654
+    }
+  ]
+}

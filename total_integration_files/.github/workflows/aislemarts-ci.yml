@@ -1,0 +1,42 @@
+name: AisleMarts CI
+
+on:
+  push:
+  pull_request:
+
+jobs:
+  web-e2e:
+    runs-on: ubuntu-latest
+    services:
+      postgres:
+        image: postgres:16
+        env:
+          POSTGRES_PASSWORD: postgres
+          POSTGRES_DB: aislemarts
+        ports: [ "5432:5432" ]
+        options: >-
+          --health-cmd "pg_isready -U postgres"
+          --health-interval 10s
+          --health-timeout 5s
+          --health-retries 5
+    env:
+      DATABASE_URL: postgresql://postgres:postgres@localhost:5432/aislemarts?schema=public
+      CORS_REGEX: (localhost:\d+|127\.0\.0\.1:\d+|.*\.up\.railway\.app)
+    steps:
+      - uses: actions/checkout@v4
+      - uses: actions/setup-node@v4
+        with: { node-version: 20 }
+      - name: Install backend deps
+        run: pnpm i --prefix backend || (npm i -g pnpm && pnpm i --prefix backend)
+      - name: Migrate
+        run: pnpm prisma migrate deploy --prefix backend
+      - name: Seed
+        run: node backend/scripts/seed.mjs
+      - name: Start backend
+        run: pnpm start --prefix backend &
+      - name: Serve web client
+        run: npx http-server client-web -p 5500 &
+      - name: Cypress
+        run: pnpm cypress run --prefix tests/web --config-file tests/web/cypress.config.ts
+      - name: Lighthouse
+        run: pnpm lhci autorun --prefix tests/web --config=tests/web/lighthouse/lighthouserc.json

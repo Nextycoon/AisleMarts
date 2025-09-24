@@ -1,0 +1,11 @@
+generator client { provider = "prisma-client-js" }
+datasource db { provider = "postgresql"; url = env("DATABASE_URL") }
+
+model Creator { id String @id; displayName String; tier String; commissionPct Decimal @default(0.08); popularity Decimal @default(0.5); createdAt DateTime @default(now()); products CreatorProduct[]; contracts AffiliateContract[]; stories Story[] }
+model Product { id String @id; title String; price Decimal; currency String; imageUrl String?; createdAt DateTime @default(now()); placements CreatorProduct[] }
+model CreatorProduct { id String @id @default(cuid()); creator Creator @relation(fields: [creatorId], references: [id]); creatorId String; product Product @relation(fields: [productId], references: [id]); productId String; weight Decimal @default(1.0) }
+model AffiliateContract { id String @id @default(cuid()); creator Creator @relation(fields: [creatorId], references: [id]); creatorId String; brandId String; rateOverride Decimal?; windowDays Int @default(7); active Boolean @default(true); createdAt DateTime @default(now()) }
+model Story { id String @id; creator Creator @relation(fields: [creatorId], references: [id]); creatorId String; type String; mediaUrl String; productId String?; expiresAt DateTime; createdAt DateTime @default(now()); impressions StoryImpression[]; ctas StoryCTA[] }
+model StoryImpression { id String @id @default(cuid()); story Story @relation(fields: [storyId], references: [id]); storyId String; userId String?; viewedAt DateTime @default(now()) }
+model StoryCTA { id String @id @default(cuid()); story Story @relation(fields: [storyId], references: [id]); storyId String; productId String?; userId String?; clickedAt DateTime @default(now()) }
+model Purchase { id String @id @default(cuid()); orderId String @unique; userId String?; productId String; amount Decimal; currency String; refStoryId String?; creatorId String?; commission Decimal @default(0.0); createdAt DateTime @default(now()) }
