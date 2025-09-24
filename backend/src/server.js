@@ -49,44 +49,6 @@ app.use(cors({
 app.use(express.json());
 app.use(idempotency());
 
-// Auth validation middleware for signed endpoints
-const UNSIGNED = new Set(['/api/track/cta', '/health', '/', '/api/creators', '/api/stories', '/api/analytics/dashboard']);
-const HMAC_SECRET = process.env.HMAC_SECRET || 'dev-secret';
-
-app.use((req, res, next) => {
-  // Skip auth for unsigned endpoints
-  if (UNSIGNED.has(req.path) || req.method === 'GET') {
-    return next();
-  }
-
-  const sig = req.header('X-Signature');
-  const ts = Number(req.header('X-Timestamp') || 0);
-  
-  if (!sig || !ts) {
-    return res.status(401).json({ error: 'missing_auth_headers' });
-  }
-
-  // Timestamp skew check (±5 min)
-  if (Math.abs(Date.now() - ts) > 5 * 60 * 1000) {
-    return res.status(401).json({ error: 'timestamp_out_of_window' });
-  }
-
-  // Compute HMAC
-  const body = JSON.stringify(req.body || {});
-  const expected = crypto.createHmac('sha256', HMAC_SECRET).update(`${ts}.${body}`).digest('hex');
-  
-  // Constant-time compare
-  try {
-    if (!crypto.timingSafeEqual(Buffer.from(sig, 'hex'), Buffer.from(expected, 'hex'))) {
-      return res.status(401).json({ error: 'invalid_signature' });
-    }
-  } catch (e) {
-    return res.status(401).json({ error: 'invalid_signature_format' });
-  }
-
-  next();
-});
-
 // Friendly root endpoint
 app.get('/', (req, res) => {
   res.json({
