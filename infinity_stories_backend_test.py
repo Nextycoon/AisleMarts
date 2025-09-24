@@ -237,14 +237,22 @@ class InfinityStoriesBackendTester:
                 response_time
             )
             
-        # Test content optimization
-        success, data, response_time = await self.make_request('GET', '/clp-engine/content/optimize')
+        # Test content optimization with POST request
+        content_data = {
+            "content_type": "video",
+            "title": "Luxury Fashion Collection - Limited Edition",
+            "description": "Exclusive designer pieces with premium quality",
+            "creator_id": "test_creator_123",
+            "featured_products": ["product_1", "product_2"]
+        }
+        
+        success, data, response_time = await self.make_request('POST', '/clp-engine/content/optimize', content_data)
         
         if success:
             await self.log_test(
                 "CLP Content Optimization", 
                 True, 
-                f"Optimization available", 
+                f"Content optimization successful", 
                 response_time
             )
         else:
