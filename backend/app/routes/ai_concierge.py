@@ -48,7 +48,7 @@ async def chat_with_ai(
     
     # Add user message to session
     user_message = ChatMessage(role="user", content=message)
-    chat_session["messages"].append(user_message.dict())
+    chat_session["messages"].append(user_message.model_dump())
     
     # Prepare context for AI
     system_message = """
@@ -78,7 +78,7 @@ async def chat_with_ai(
         
         # Add AI response to session
         ai_message = ChatMessage(role="assistant", content=ai_response)
-        chat_session["messages"].append(ai_message.dict())
+        chat_session["messages"].append(ai_message.model_dump())
         
         # Update session in database
         await db.chat_sessions.update_one(

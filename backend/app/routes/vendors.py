@@ -22,7 +22,7 @@ async def create_vendor_profile(
         )
     
     # Create vendor profile
-    vendor_dict = vendor_data.dict()
+    vendor_dict = vendor_data.model_dump()
     vendor_dict["user_id"] = current_user.id
     vendor_dict["_id"] = ObjectId()
     
@@ -61,7 +61,7 @@ async def update_vendor_profile(
 ):
     result = await db.vendors.update_one(
         {"user_id": current_user.id},
-        {"$set": vendor_update.dict()}
+        {"$set": vendor_update.model_dump()}
     )
     
     if result.matched_count == 0:

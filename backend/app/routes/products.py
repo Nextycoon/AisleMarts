@@ -28,7 +28,7 @@ async def create_product(
         )
     
     # Create product
-    product_dict = product_data.dict()
+    product_dict = product_data.model_dump()
     product_dict["vendor_id"] = vendor["_id"]
     product_dict["_id"] = ObjectId()
     
@@ -138,7 +138,7 @@ async def update_product(
         )
     
     # Update product
-    update_data = {k: v for k, v in product_update.dict().items() if v is not None}
+    update_data = {k: v for k, v in product_update.model_dump().items() if v is not None}
     if update_data:
         result = await db.products.update_one(
             {"_id": ObjectId(product_id)},

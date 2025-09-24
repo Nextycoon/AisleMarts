@@ -89,10 +89,10 @@ async def create_order(
         "_id": ObjectId(),
         "user_id": current_user.id,
         "order_number": order_number,
-        "items": [item.dict() for item in order_items],
+        "items": [item.model_dump() for item in order_items],
         "total_amount": total_amount,
         "status": OrderStatus.PENDING,
-        "shipping_address": shipping_address.dict(),
+        "shipping_address": shipping_address.model_dump(),
         "payment_intent_id": payment_intent.id if payment_intent else None
     }
     

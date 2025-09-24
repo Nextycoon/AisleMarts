@@ -158,7 +158,7 @@ MONGODB_URL=mongodb://localhost:27017
 DATABASE_NAME=aislemarts
 
 # JWT Authentication
-SECRET_KEY=your-secret-key-change-in-production
+SECRET_KEY=your-secure-secret-key-here  # Will auto-generate if not set
 ALGORITHM=HS256
 ACCESS_TOKEN_EXPIRE_MINUTES=30
 
@@ -173,6 +173,8 @@ OPENAI_API_KEY=sk-your-openai-api-key
 # Environment
 ENVIRONMENT=development
 ```
+
+> **Security Note**: If `SECRET_KEY` is not provided or uses the default value, a secure key will be automatically generated. For production deployments, always set a strong, unique `SECRET_KEY` environment variable.
 
 ## 📱 Mobile App Features
 

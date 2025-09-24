@@ -27,7 +27,7 @@ async def register(user: UserCreate, db = Depends(get_database)):
     
     # Hash password and create user
     hashed_password = get_password_hash(user.password)
-    user_dict = user.dict()
+    user_dict = user.model_dump()
     user_dict["password_hash"] = hashed_password
     del user_dict["password"]
     user_dict["_id"] = ObjectId()
