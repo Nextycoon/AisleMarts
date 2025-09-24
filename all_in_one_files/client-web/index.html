@@ -1,0 +1,17 @@
+<!doctype html><html><head><meta charset="utf-8"><title>AisleMarts Web Sample</title></head>
+<body>
+  <button id="buy">Buy Now</button>
+  <script>
+    async function post(path, body) {
+      const base = localStorage.getItem('API') || 'http://localhost:3000';
+      const res = await fetch(base + path, { method:'POST', headers:{'Content-Type':'application/json'}, body: JSON.stringify(body) });
+      if (!res.ok) throw new Error('request failed: '+path);
+      return res.json();
+    }
+    document.getElementById('buy').onclick = async () => {
+      await post('/api/track/cta', { storyId:'mira.moda-s1', productId:'silk-scarf', userId:'u1' });
+      const out = await post('/api/track/purchase', { orderId: 'o-'+Date.now(), userId:'u1', productId:'silk-scarf', amount: 89.0, currency:'USD', referrerStoryId:'mira.moda-s1' });
+      alert('Commission: '+out.commission+' for creator '+(out.creatorId||'n/a'));
+    };
+  </script>
+</body></html>
