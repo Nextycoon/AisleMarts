@@ -32,1856 +32,761 @@ EXPRESS_PORT = 3000
 FASTAPI_PORT = 8001
 HMAC_SECRET = "dev-secret"
 
-class UltimateOperationalKitValidator:
+class P0HardeningValidator:
     def __init__(self):
-        self.session = None
-        self.auth_token = None
-        self.test_results = []
+        self.results = []
+        self.total_tests = 0
+        self.passed_tests = 0
+        self.failed_tests = 0
         self.start_time = time.time()
         
-    async def __aenter__(self):
-        self.session = aiohttp.ClientSession(
-            timeout=aiohttp.ClientTimeout(total=30),
-            connector=aiohttp.TCPConnector(limit=50)
-        )
-        return self
-        
-    async def __aexit__(self, exc_type, exc_val, exc_tb):
-        if self.session:
-            await self.session.close()
-    
-    def log_test(self, test_name: str, success: bool, details: str = "", response_time: float = 0):
-        """Log test result with enterprise metrics"""
-        self.test_results.append({
+    def log_result(self, test_name: str, success: bool, details: str = "", response_time: float = 0):
+        """Log test result"""
+        status = "✅ PASS" if success else "❌ FAIL"
+        self.results.append({
             "test": test_name,
             "success": success,
             "details": details,
-            "response_time_ms": round(response_time * 1000, 2),
-            "timestamp": datetime.utcnow().isoformat()
+            "response_time": response_time,
+            "status": status
         })
-        status = "✅ PASS" if success else "❌ FAIL"
-        print(f"{status} {test_name} ({response_time*1000:.1f}ms) - {details}")
-    
-    async def authenticate(self):
-        """Authenticate test user for protected endpoints"""
-        try:
-            start = time.time()
+        
+        self.total_tests += 1
+        if success:
+            self.passed_tests += 1
+        else:
+            self.failed_tests += 1
             
-            # Register test user
-            register_data = {
-                "email": TEST_USER_EMAIL,
-                "name": "Series A Investor Demo",
-                "password": TEST_USER_PASSWORD
-            }
-            
-            async with self.session.post(f"{BASE_URL}/auth/register", json=register_data) as resp:
-                if resp.status == 200:
-                    data = await resp.json()
-                    self.auth_token = data.get("access_token")
-                elif resp.status == 400:
-                    # User exists, try login
-                    login_data = {
-                        "email": TEST_USER_EMAIL,
-                        "password": TEST_USER_PASSWORD
-                    }
-                    async with self.session.post(f"{BASE_URL}/auth/login", json=login_data) as login_resp:
-                        if login_resp.status == 200:
-                            data = await login_resp.json()
-                            self.auth_token = data.get("access_token")
-                        else:
-                            raise Exception(f"Login failed: {login_resp.status}")
-                else:
-                    raise Exception(f"Registration failed: {resp.status}")
-            
-            response_time = time.time() - start
-            self.log_test("Authentication System", True, f"JWT token obtained", response_time)
-            return True
-            
-        except Exception as e:
-            self.log_test("Authentication System", False, f"Auth failed: {str(e)}")
-            return False
-    
-    def get_auth_headers(self):
-        """Get authorization headers for authenticated requests"""
-        if not self.auth_token:
-            return {}
-        return {"Authorization": f"Bearer {self.auth_token}"}
+        print(f"{status} {test_name} ({response_time:.3f}s) - {details}")
 
-    # ==================== CORE HEALTH CHECKS ====================
-    
-    async def test_core_api_health(self):
-        """Test core API health endpoints for Ultimate Operational Kit validation"""
-        # Test Express Server Health Check (Ultimate Operational Kit)
-        await self._test_express_server_health()
-        
-        # Test FastAPI Backend Health Check
-        await self._test_fastapi_backend_health()
-        
-        # Test Database Connectivity
-        await self._test_database_connectivity()
-        
-        # Test Prisma Client Functionality
-        await self._test_prisma_client_functionality()
-    
-    async def _test_express_server_health(self):
-        """Test Express Server Health Check with hardened features"""
+    def generate_hmac_signature(self, timestamp: int, body: str) -> str:
+        """Generate HMAC signature for authenticated requests"""
+        message = f"{timestamp}.{body}"
+        signature = hmac.new(
+            HMAC_SECRET.encode(),
+            message.encode(),
+            hashlib.sha256
+        ).hexdigest()
+        return signature
+
+    async def test_express_server_health(self, session: aiohttp.ClientSession):
+        """Test Express server health and features"""
+        start_time = time.time()
         try:
-            start = time.time()
-            # Test Express server on port 3000 (Ultimate Operational Kit)
-            express_url = f"{BACKEND_URL}:3000/health"
-            async with self.session.get(express_url) as resp:
-                response_time = time.time() - start
+            # Test Express server on port 3000
+            async with session.get(f"http://localhost:{EXPRESS_PORT}/health") as response:
+                response_time = time.time() - start_time
                 
-                if resp.status == 200:
-                    data = await resp.json()
+                if response.status == 200:
+                    data = await response.json()
                     features = data.get('features', [])
-                    required_features = [
+                    expected_features = [
                         'analytics_funnel_integrity',
-                        'proper_4xx_responses', 
+                        'proper_4xx_responses',
                         'multi_currency_support',
                         'hmac_security',
                         'idempotency_protection'
                     ]
                     
-                    all_features_present = all(feature in features for feature in required_features)
-                    
-                    self.log_test("Express Server Health Check", all_features_present,
-                                f"Features: {len(features)}/5 hardened features present", response_time)
+                    missing_features = [f for f in expected_features if f not in features]
+                    if not missing_features:
+                        self.log_result(
+                            "Express Server Health Check",
+                            True,
+                            f"All 5 hardening features operational: {', '.join(features)}",
+                            response_time
+                        )
+                    else:
+                        self.log_result(
+                            "Express Server Health Check",
+                            False,
+                            f"Missing features: {missing_features}",
+                            response_time
+                        )
                 else:
-                    self.log_test("Express Server Health Check", False, 
-                                f"HTTP {resp.status} - Express server may not be running", response_time)
-                        
+                    self.log_result(
+                        "Express Server Health Check",
+                        False,
+                        f"HTTP {response.status}",
+                        response_time
+                    )
         except Exception as e:
-            self.log_test("Express Server Health Check", False, f"Express server not accessible: {str(e)}")
-    
-    async def _test_fastapi_backend_health(self):
-        """Test FastAPI Backend Health Check"""
+            self.log_result(
+                "Express Server Health Check",
+                False,
+                f"Connection error: {str(e)}",
+                time.time() - start_time
+            )
+
+    async def test_fastapi_server_health(self, session: aiohttp.ClientSession):
+        """Test FastAPI server health"""
+        start_time = time.time()
         try:
-            start = time.time()
-            async with self.session.get(f"{BASE_URL}/health") as resp:
-                response_time = time.time() - start
+            async with session.get(f"http://localhost:{FASTAPI_PORT}/api/health") as response:
+                response_time = time.time() - start_time
                 
-                if resp.status == 200:
-                    data = await resp.json()
+                if response.status == 200:
+                    data = await response.json()
                     service_name = data.get('service', '')
-                    is_aislemarts = 'AisleMarts' in service_name
-                    
-                    self.log_test("FastAPI Backend Health Check", is_aislemarts,
-                                f"Service: {service_name}", response_time)
-                else:
-                    self.log_test("FastAPI Backend Health Check", False, 
-                                f"HTTP {resp.status}", response_time)
-                        
-        except Exception as e:
-            self.log_test("FastAPI Backend Health Check", False, f"Error: {str(e)}")
-    
-    async def _test_database_connectivity(self):
-        """Test Database connectivity and Prisma client functionality"""
-        try:
-            start = time.time()
-            # Test creators endpoint to verify database connectivity
-            async with self.session.get(f"{BACKEND_URL}:3000/api/creators") as resp:
-                response_time = time.time() - start
-                
-                if resp.status == 200:
-                    data = await resp.json()
-                    creators = data.get('creators', [])
-                    has_creators = len(creators) > 0
-                    
-                    self.log_test("Database Connectivity", has_creators,
-                                f"Creators found: {len(creators)}", response_time)
-                else:
-                    self.log_test("Database Connectivity", False, 
-                                f"HTTP {resp.status}", response_time)
-                        
-        except Exception as e:
-            self.log_test("Database Connectivity", False, f"Error: {str(e)}")
-    
-    async def _test_prisma_client_functionality(self):
-        """Test Prisma client functionality with stories endpoint"""
-        try:
-            start = time.time()
-            # Test stories endpoint to verify Prisma client
-            async with self.session.get(f"{BACKEND_URL}:3000/api/stories?limit=5") as resp:
-                response_time = time.time() - start
-                
-                if resp.status == 200:
-                    data = await resp.json()
-                    stories = data.get('stories', [])
-                    has_pagination = 'nextCursor' in data and 'hasMore' in data
-                    
-                    self.log_test("Prisma Client Functionality", has_pagination,
-                                f"Stories: {len(stories)}, Pagination: {has_pagination}", response_time)
-                else:
-                    self.log_test("Prisma Client Functionality", False, 
-                                f"HTTP {resp.status}", response_time)
-                        
-        except Exception as e:
-            self.log_test("Prisma Client Functionality", False, f"Error: {str(e)}")
-
-    # ==================== CRITICAL FIX VALIDATION ====================
-    
-    async def test_critical_fixes(self):
-        """Test the 3 critical fixes that were previously at 94.7%"""
-        
-        # Critical Fix A: Analytics Funnel Integrity
-        await self._test_analytics_funnel_integrity()
-        
-        # Critical Fix B: Proper 4xx Error Responses  
-        await self._test_proper_4xx_error_responses()
-        
-        # Critical Fix C: Multi-Currency Support
-        await self._test_multi_currency_support()
-    
-    async def _test_analytics_funnel_integrity(self):
-        """Test sql/01_funnel_views.sql - Verify sessionized funnel ensures impressions ≥ CTAs ≥ purchases"""
-        try:
-            # Test funnel data integrity by creating test data
-            user_id = f"funnel_test_{uuid.uuid4().hex[:8]}"
-            
-            # Create impressions (highest number)
-            impression_count = 21
-            for i in range(impression_count):
-                impression_data = {
-                    "storyId": f"luxefashion_story_{i % 3}",
-                    "userId": f"{user_id}_{i}"
-                }
-                await self.session.post(f"{BACKEND_URL}:3000/api/track/impression", json=impression_data)
-            
-            # Create CTAs (subset of impressions)
-            cta_count = 11
-            for i in range(cta_count):
-                cta_data = {
-                    "storyId": f"luxefashion_story_{i % 3}",
-                    "productId": "trench-coat",
-                    "userId": f"{user_id}_{i}"
-                }
-                await self.session.post(f"{BACKEND_URL}:3000/api/track/cta", json=cta_data)
-            
-            # Create purchases (subset of CTAs)
-            purchase_count = 5
-            for i in range(purchase_count):
-                purchase_data = {
-                    "orderId": f"funnel_order_{i}_{uuid.uuid4().hex[:8]}",
-                    "userId": f"{user_id}_{i}",
-                    "productId": "trench-coat",
-                    "amount": 239.00,
-                    "currency": "USD"
-                }
-                # Add HMAC signature for purchase
-                await self._make_signed_request("/api/track/purchase", purchase_data)
-            
-            # Verify funnel integrity
-            start = time.time()
-            async with self.session.get(f"{BACKEND_URL}:3000/api/analytics/dashboard") as resp:
-                response_time = time.time() - start
-                
-                if resp.status == 200:
-                    data = await resp.json()
-                    stats = data.get('stats', {})
-                    
-                    impressions = stats.get('impressions7d', 0)
-                    ctas = stats.get('ctas7d', 0)
-                    purchases = stats.get('purchases7d', 0)
-                    
-                    # Funnel logic: impressions ≥ CTAs ≥ purchases
-                    funnel_valid = impressions >= ctas >= purchases
-                    
-                    self.log_test("Analytics Funnel Integrity", funnel_valid,
-                                f"Impressions: {impressions} ≥ CTAs: {ctas} ≥ Purchases: {purchases}", 
-                                response_time)
-                else:
-                    self.log_test("Analytics Funnel Integrity", False, 
-                                f"HTTP {resp.status}", response_time)
-                    
-        except Exception as e:
-            self.log_test("Analytics Funnel Integrity", False, f"Error: {str(e)}")
-    
-    async def _test_proper_4xx_error_responses(self):
-        """Test all validation scenarios using validation_and_idem.test.js logic"""
-        error_test_cases = [
-            # Invalid/missing HMAC signatures (should return 401)
-            ("Invalid HMAC Signature", "/api/track/purchase", {
-                "orderId": "test_order_001",
-                "userId": "test_user",
-                "productId": "test_product",
-                "amount": 100.00,
-                "currency": "USD"
-            }, {"X-Signature": "invalid_signature"}, 401),
-            
-            # Invalid request payloads (should return 422)
-            ("Missing Required Field", "/api/track/impression", {
-                "userId": "test_user"
-                # Missing storyId
-            }, {}, 422),
-            
-            ("Invalid Amount", "/api/track/purchase", {
-                "orderId": "test_order_002",
-                "userId": "test_user", 
-                "productId": "test_product",
-                "amount": -100.00,  # Negative amount
-                "currency": "USD"
-            }, {}, 422),
-            
-            ("Invalid Currency", "/api/track/purchase", {
-                "orderId": "test_order_003",
-                "userId": "test_user",
-                "productId": "test_product", 
-                "amount": 100.00,
-                "currency": "INVALID"  # Unsupported currency
-            }, {}, 422),
-            
-            # Idempotency key conflicts (should return 409)
-            ("Idempotency Conflict", "/api/track/purchase", {
-                "orderId": "test_order_004",
-                "userId": "test_user",
-                "productId": "test_product",
-                "amount": 100.00,
-                "currency": "USD"
-            }, {"Idempotency-Key": "duplicate_key_test"}, 409)
-        ]
-        
-        for test_name, endpoint, payload, headers, expected_status in error_test_cases:
-            try:
-                start = time.time()
-                
-                # For purchase endpoints, we need to test twice for idempotency conflict
-                if "Idempotency Conflict" in test_name:
-                    # First request should succeed
-                    signed_headers = await self._generate_hmac_headers(payload)
-                    signed_headers.update(headers)
-                    
-                    await self.session.post(f"{BACKEND_URL}:3000{endpoint}", 
-                                          json=payload, headers=signed_headers)
-                    
-                    # Second request with same idempotency key should return 409
-                    async with self.session.post(f"{BACKEND_URL}:3000{endpoint}", 
-                                                json=payload, headers=signed_headers) as resp:
-                        response_time = time.time() - start
-                        correct_status = resp.status == expected_status
-                else:
-                    # Regular error validation
-                    async with self.session.post(f"{BACKEND_URL}:3000{endpoint}", 
-                                                json=payload, headers=headers) as resp:
-                        response_time = time.time() - start
-                        correct_status = resp.status == expected_status
-                
-                self.log_test(f"4xx Error Response: {test_name}", correct_status,
-                            f"Expected: {expected_status}, Got: {resp.status}", response_time)
-                        
-            except Exception as e:
-                self.log_test(f"4xx Error Response: {test_name}", False, f"Error: {str(e)}")
-    
-    async def _test_multi_currency_support(self):
-        """Test all currencies using currency_rounding.test.js logic"""
-        currency_test_cases = [
-            # USD/EUR/GBP (2 decimal places)
-            ("USD Currency", "USD", 123.456, 123.46),
-            ("EUR Currency", "EUR", 123.456, 123.46), 
-            ("GBP Currency", "GBP", 123.456, 123.46),
-            
-            # JPY (0 decimal places)
-            ("JPY Currency", "JPY", 123.456, 123),
-            
-            # FX normalization test
-            ("FX Normalization", "EUR", 100.00, None)  # Should convert to USD
-        ]
-        
-        for test_name, currency, amount, expected_rounded in currency_test_cases:
-            try:
-                purchase_data = {
-                    "orderId": f"currency_test_{currency}_{uuid.uuid4().hex[:8]}",
-                    "userId": f"currency_test_user_{currency}",
-                    "productId": "test_product",
-                    "amount": amount,
-                    "currency": currency
-                }
-                
-                start = time.time()
-                signed_headers = await self._generate_hmac_headers(purchase_data)
-                
-                async with self.session.post(f"{BACKEND_URL}:3000/api/track/purchase", 
-                                           json=purchase_data, headers=signed_headers) as resp:
-                    response_time = time.time() - start
-                    
-                    if resp.status == 200:
-                        data = await resp.json()
-                        returned_amount = data.get('amount')
-                        returned_currency = data.get('currency')
-                        has_usd_conversion = 'amountUSD' in data
-                        
-                        if expected_rounded is not None:
-                            rounding_correct = abs(returned_amount - expected_rounded) < 0.01
-                        else:
-                            rounding_correct = True  # For FX normalization test
-                        
-                        currency_valid = returned_currency == currency and has_usd_conversion
-                        
-                        success = rounding_correct and currency_valid
-                        
-                        self.log_test(f"Multi-Currency: {test_name}", success,
-                                    f"Amount: {returned_amount} {returned_currency}, USD: {data.get('amountUSD')}", 
-                                    response_time)
+                    if 'AisleMarts' in service_name:
+                        self.log_result(
+                            "FastAPI Server Health Check",
+                            True,
+                            f"Service: {service_name}",
+                            response_time
+                        )
                     else:
-                        self.log_test(f"Multi-Currency: {test_name}", False, 
-                                    f"HTTP {resp.status}", response_time)
-                        
-            except Exception as e:
-                self.log_test(f"Multi-Currency: {test_name}", False, f"Error: {str(e)}")
-    
-    async def _generate_hmac_headers(self, payload):
-        """Generate HMAC headers for signed requests"""
-        import hmac
-        import hashlib
-        
-        secret_key = "test_hmac_secret_key"
-        timestamp = str(int(time.time()))
-        payload_str = json.dumps(payload, sort_keys=True)
-        
-        message = f"{timestamp}.{payload_str}"
-        signature = hmac.new(
-            secret_key.encode(),
-            message.encode(),
-            hashlib.sha256
-        ).hexdigest()
-        
-        return {
-            "X-Timestamp": timestamp,
-            "X-Signature": f"sha256={signature}",
-            "Content-Type": "application/json"
-        }
-    
-    async def _make_signed_request(self, endpoint, payload):
-        """Make a signed request to HMAC-protected endpoint"""
-        headers = await self._generate_hmac_headers(payload)
-        return await self.session.post(f"{BACKEND_URL}:3000{endpoint}", 
-                                     json=payload, headers=headers)
-    
-    async def _test_multi_cta_same_product(self):
-        """Test that last CTA wins for same product"""
-        try:
-            user_id = f"test_user_{uuid.uuid4().hex[:8]}"
-            product_id = "trench-coat"
-            
-            # Create multiple CTAs for same product
-            cta_requests = []
-            for i in range(3):
-                story_id = f"luxefashion_story_{i}"
-                cta_data = {
-                    "storyId": story_id,
-                    "productId": product_id,
-                    "userId": user_id
-                }
-                
-                start = time.time()
-                async with self.session.post(f"{BASE_URL}/track/cta", json=cta_data) as resp:
-                    response_time = time.time() - start
-                    if resp.status == 200:
-                        cta_requests.append((story_id, response_time))
-                    await asyncio.sleep(0.1)  # Small delay between CTAs
-            
-            # Make purchase - should attribute to last CTA
-            purchase_data = {
-                "orderId": f"order_{uuid.uuid4().hex[:8]}",
-                "userId": user_id,
-                "productId": product_id,
-                "amount": 239.00,
-                "currency": "USD"
-            }
-            
-            start = time.time()
-            async with self.session.post(f"{BASE_URL}/track/purchase", json=purchase_data) as resp:
-                response_time = time.time() - start
-                
-                if resp.status == 200:
-                    data = await resp.json()
-                    # Should attribute to last CTA (luxefashion_story_2)
-                    expected_story = "luxefashion_story_2"
-                    attributed_correctly = "luxefashion" in data.get("creatorId", "")
-                    
-                    self.log_test("Multi-CTA Attribution (Last CTA Wins)", attributed_correctly,
-                                f"Commission: ${data.get('commission', 0)}, Method: {data.get('attributionMethod')}", 
-                                response_time)
+                        self.log_result(
+                            "FastAPI Server Health Check",
+                            False,
+                            f"Unexpected service: {service_name}",
+                            response_time
+                        )
                 else:
-                    self.log_test("Multi-CTA Attribution (Last CTA Wins)", False, 
-                                f"HTTP {resp.status}", response_time)
-                    
+                    self.log_result(
+                        "FastAPI Server Health Check",
+                        False,
+                        f"HTTP {response.status}",
+                        response_time
+                    )
         except Exception as e:
-            self.log_test("Multi-CTA Attribution (Last CTA Wins)", False, f"Error: {str(e)}")
-    
-    async def _test_direct_purchase_no_attribution(self):
-        """Test direct purchase without CTA attribution"""
-        try:
-            user_id = f"test_user_{uuid.uuid4().hex[:8]}"
-            
-            # Make direct purchase without any CTA
-            purchase_data = {
-                "orderId": f"order_{uuid.uuid4().hex[:8]}",
-                "userId": user_id,
-                "productId": "smartwatch-pro",
-                "amount": 299.00,
-                "currency": "USD"
-            }
-            
-            start = time.time()
-            async with self.session.post(f"{BASE_URL}/track/purchase", json=purchase_data) as resp:
-                response_time = time.time() - start
-                
-                if resp.status == 200:
-                    data = await resp.json()
-                    # Should show "Direct" attribution with no commission
-                    is_direct = data.get("attributionMethod") == "Direct"
-                    no_commission = data.get("commission", 0) == 0
-                    
-                    self.log_test("Direct Purchase (No Attribution)", is_direct and no_commission,
-                                f"Method: {data.get('attributionMethod')}, Commission: ${data.get('commission', 0)}", 
-                                response_time)
-                else:
-                    self.log_test("Direct Purchase (No Attribution)", False, 
-                                f"HTTP {resp.status}", response_time)
-                    
-        except Exception as e:
-            self.log_test("Direct Purchase (No Attribution)", False, f"Error: {str(e)}")
-    
-    async def _test_cross_creator_attribution(self):
-        """Test attribution accuracy across different creators"""
-        try:
-            user_id = f"test_user_{uuid.uuid4().hex[:8]}"
-            
-            # Test different creator tiers and their commission rates
-            test_cases = [
-                ("luxefashion", "silk-scarf", 89.00, 0.12),  # Gold tier
-                ("techguru", "buds-x", 129.00, 0.10),       # Blue tier
-                ("homedecor", "yoga-mat", 49.99, 0.07),     # Grey tier
-                ("artcreative", "silk-scarf", 89.00, 0.05)  # Unverified tier
-            ]
-            
-            for creator_id, product_id, amount, expected_rate in test_cases:
-                # Create CTA
-                cta_data = {
-                    "storyId": f"{creator_id}_story_0",
-                    "productId": product_id,
-                    "userId": user_id
-                }
-                
-                await self.session.post(f"{BASE_URL}/track/cta", json=cta_data)
-                await asyncio.sleep(0.1)
-                
-                # Make purchase
-                purchase_data = {
-                    "orderId": f"order_{uuid.uuid4().hex[:8]}",
-                    "userId": user_id,
-                    "productId": product_id,
-                    "amount": amount,
-                    "currency": "USD"
-                }
-                
-                start = time.time()
-                async with self.session.post(f"{BASE_URL}/track/purchase", json=purchase_data) as resp:
-                    response_time = time.time() - start
-                    
-                    if resp.status == 200:
-                        data = await resp.json()
-                        actual_commission = data.get("commission", 0)
-                        expected_commission = amount * expected_rate
-                        
-                        # Allow 1% tolerance for rounding
-                        commission_accurate = abs(actual_commission - expected_commission) <= (expected_commission * 0.01)
-                        
-                        self.log_test(f"Cross-Creator Attribution ({creator_id})", commission_accurate,
-                                    f"Expected: ${expected_commission:.2f}, Actual: ${actual_commission:.2f}", 
-                                    response_time)
-                    else:
-                        self.log_test(f"Cross-Creator Attribution ({creator_id})", False, 
-                                    f"HTTP {resp.status}", response_time)
-                        
-        except Exception as e:
-            self.log_test("Cross-Creator Attribution", False, f"Error: {str(e)}")
-    
-    async def _test_attribution_window_expiry(self):
-        """Test 7-day attribution window with proper expiration"""
-        try:
-            # This test simulates expired attribution by checking the logic
-            # In production, we'd need to manipulate timestamps or wait
-            
-            user_id = f"test_user_{uuid.uuid4().hex[:8]}"
-            
-            # Create CTA (in real scenario, this would be 8 days old)
-            cta_data = {
-                "storyId": "luxefashion_story_0",
-                "productId": "trench-coat",
-                "userId": user_id
-            }
-            
-            await self.session.post(f"{BASE_URL}/track/cta", json=cta_data)
-            
-            # Immediate purchase should work (within window)
-            purchase_data = {
-                "orderId": f"order_{uuid.uuid4().hex[:8]}",
-                "userId": user_id,
-                "productId": "trench-coat",
-                "amount": 239.00,
-                "currency": "USD"
-            }
-            
-            start = time.time()
-            async with self.session.post(f"{BASE_URL}/track/purchase", json=purchase_data) as resp:
-                response_time = time.time() - start
-                
-                if resp.status == 200:
-                    data = await resp.json()
-                    # Should have attribution since it's immediate
-                    has_attribution = data.get("attributionMethod") == "CTA"
-                    
-                    self.log_test("Attribution Window (Within 7 Days)", has_attribution,
-                                f"Method: {data.get('attributionMethod')}, Commission: ${data.get('commission', 0)}", 
-                                response_time)
-                else:
-                    self.log_test("Attribution Window (Within 7 Days)", False, 
-                                f"HTTP {resp.status}", response_time)
-                    
-        except Exception as e:
-            self.log_test("Attribution Window (Within 7 Days)", False, f"Error: {str(e)}")
+            self.log_result(
+                "FastAPI Server Health Check",
+                False,
+                f"Connection error: {str(e)}",
+                time.time() - start_time
+            )
 
-    # ==================== PRODUCTION HARDENING FEATURES ====================
-    
-    async def test_production_hardening_features(self):
-        """Test HMAC Security, Idempotency Protection, Commerce Attribution, Commission Calculation"""
-        
-        # Test HMAC Security
-        await self._test_hmac_security()
-        
-        # Test Idempotency Protection
-        await self._test_idempotency_protection()
-        
-        # Test Commerce Attribution
-        await self._test_commerce_attribution()
-        
-        # Test Commission Calculation (tier-based)
-        await self._test_commission_calculation_tiers()
-    
-    async def _test_hmac_security(self):
-        """Test HMAC signature validation for /api/track/purchase and /api/track/refund"""
+    async def test_cors_headers(self, session: aiohttp.ClientSession):
+        """Test CORS headers include all required values"""
+        start_time = time.time()
         try:
-            # Test valid HMAC signature
-            purchase_data = {
-                "orderId": f"hmac_test_{uuid.uuid4().hex[:8]}",
-                "userId": "hmac_test_user",
-                "productId": "test_product",
-                "amount": 100.00,
-                "currency": "USD"
-            }
-            
-            start = time.time()
-            signed_headers = await self._generate_hmac_headers(purchase_data)
-            
-            async with self.session.post(f"{BACKEND_URL}:3000/api/track/purchase", 
-                                       json=purchase_data, headers=signed_headers) as resp:
-                response_time = time.time() - start
-                valid_hmac_works = resp.status == 200
-            
-            # Test invalid HMAC signature
-            invalid_headers = {
-                "X-Timestamp": str(int(time.time())),
-                "X-Signature": "sha256=invalid_signature",
-                "Content-Type": "application/json"
-            }
-            
-            async with self.session.post(f"{BACKEND_URL}:3000/api/track/purchase", 
-                                       json=purchase_data, headers=invalid_headers) as resp:
-                invalid_hmac_rejected = resp.status == 401
-            
-            hmac_security_working = valid_hmac_works and invalid_hmac_rejected
-            
-            self.log_test("HMAC Security", hmac_security_working,
-                        f"Valid: {valid_hmac_works}, Invalid rejected: {invalid_hmac_rejected}", 
-                        response_time)
-                        
-        except Exception as e:
-            self.log_test("HMAC Security", False, f"Error: {str(e)}")
-    
-    async def _test_idempotency_protection(self):
-        """Test duplicate request handling with idempotency keys"""
-        try:
-            idempotency_key = f"idem_test_{uuid.uuid4().hex}"
-            purchase_data = {
-                "orderId": f"idem_test_{uuid.uuid4().hex[:8]}",
-                "userId": "idem_test_user",
-                "productId": "test_product",
-                "amount": 100.00,
-                "currency": "USD"
-            }
-            
-            signed_headers = await self._generate_hmac_headers(purchase_data)
-            signed_headers["Idempotency-Key"] = idempotency_key
-            
-            # First request
-            start = time.time()
-            async with self.session.post(f"{BACKEND_URL}:3000/api/track/purchase", 
-                                       json=purchase_data, headers=signed_headers) as resp1:
-                first_success = resp1.status == 200
-                first_data = await resp1.json() if first_success else {}
-            
-            # Duplicate request with same idempotency key
-            async with self.session.post(f"{BACKEND_URL}:3000/api/track/purchase", 
-                                       json=purchase_data, headers=signed_headers) as resp2:
-                response_time = time.time() - start
+            # Test OPTIONS request to purchase endpoint
+            async with session.options(f"http://localhost:{EXPRESS_PORT}/api/track/purchase") as response:
+                response_time = time.time() - start_time
                 
-                # Should handle duplicate appropriately (200 with same result or 409)
-                duplicate_handled = resp2.status in [200, 409]
+                allow_headers = response.headers.get('Access-Control-Allow-Headers', '')
+                required_headers = ['Content-Type', 'X-Timestamp', 'X-Signature', 'Idempotency-Key']
                 
-                self.log_test("Idempotency Protection", duplicate_handled,
-                            f"First: {resp1.status}, Duplicate: {resp2.status}", response_time)
-                        
-        except Exception as e:
-            self.log_test("Idempotency Protection", False, f"Error: {str(e)}")
-    
-    async def _test_commerce_attribution(self):
-        """Test impression → CTA → purchase flow"""
-        try:
-            user_id = f"attribution_test_{uuid.uuid4().hex[:8]}"
-            story_id = "luxefashion_story_0"
-            product_id = "trench-coat"
-            
-            # Create impression
-            impression_data = {
-                "storyId": story_id,
-                "userId": user_id
-            }
-            await self.session.post(f"{BACKEND_URL}:3000/api/track/impression", json=impression_data)
-            
-            # Create CTA
-            cta_data = {
-                "storyId": story_id,
-                "productId": product_id,
-                "userId": user_id
-            }
-            await self.session.post(f"{BACKEND_URL}:3000/api/track/cta", json=cta_data)
-            
-            # Create purchase with attribution
-            purchase_data = {
-                "orderId": f"attribution_order_{uuid.uuid4().hex[:8]}",
-                "userId": user_id,
-                "productId": product_id,
-                "amount": 239.00,
-                "currency": "USD",
-                "referrerStoryId": story_id
-            }
-            
-            start = time.time()
-            signed_headers = await self._generate_hmac_headers(purchase_data)
-            
-            async with self.session.post(f"{BACKEND_URL}:3000/api/track/purchase", 
-                                       json=purchase_data, headers=signed_headers) as resp:
-                response_time = time.time() - start
+                missing_headers = [h for h in required_headers if h not in allow_headers]
                 
-                if resp.status == 200:
-                    data = await resp.json()
-                    has_attribution = data.get('attribution') is not None
-                    has_commission = data.get('commission') is not None
-                    
-                    attribution_working = has_attribution and has_commission
-                    
-                    self.log_test("Commerce Attribution", attribution_working,
-                                f"Attribution: {has_attribution}, Commission: {has_commission}", 
-                                response_time)
+                if not missing_headers:
+                    self.log_result(
+                        "CORS Headers Validation",
+                        True,
+                        f"All required headers present: {allow_headers}",
+                        response_time
+                    )
                 else:
-                    self.log_test("Commerce Attribution", False, 
-                                f"HTTP {resp.status}", response_time)
-                        
+                    self.log_result(
+                        "CORS Headers Validation",
+                        False,
+                        f"Missing headers: {missing_headers}",
+                        response_time
+                    )
         except Exception as e:
-            self.log_test("Commerce Attribution", False, f"Error: {str(e)}")
-    
-    async def _test_commission_calculation_tiers(self):
-        """Test tier-based commission calculations (Gold: 12%, Blue: 10%, Grey: 7%, Unverified: 5%)"""
-        tier_tests = [
-            ("Gold Tier (12%)", "luxefashion", "trench-coat", 239.00, 0.12),
-            ("Blue Tier (10%)", "techguru", "buds-x", 129.00, 0.10),
-            ("Grey Tier (7%)", "homedecor", "yoga-mat", 49.99, 0.07),
-            ("Unverified Tier (5%)", "artcreative", "silk-scarf", 89.00, 0.05)
-        ]
-        
-        for tier_name, creator_id, product_id, amount, expected_rate in tier_tests:
-            await self._test_single_commission_calculation(tier_name, creator_id, product_id, amount, expected_rate)
-    
-    async def _test_single_commission_calculation(self, tier_name: str, creator_id: str, product_id: str, amount: float, expected_rate: float):
-        """Test specific commission calculation"""
-        try:
-            user_id = f"commission_test_{uuid.uuid4().hex[:8]}"
-            story_id = f"{creator_id}_story_0"
-            
-            # Create CTA for attribution
-            cta_data = {
-                "storyId": story_id,
-                "productId": product_id,
-                "userId": user_id
-            }
-            await self.session.post(f"{BACKEND_URL}:3000/api/track/cta", json=cta_data)
-            
-            # Make purchase with attribution
-            purchase_data = {
-                "orderId": f"commission_order_{uuid.uuid4().hex[:8]}",
-                "userId": user_id,
-                "productId": product_id,
-                "amount": amount,
-                "currency": "USD",
-                "referrerStoryId": story_id
-            }
-            
-            start = time.time()
-            signed_headers = await self._generate_hmac_headers(purchase_data)
-            
-            async with self.session.post(f"{BACKEND_URL}:3000/api/track/purchase", 
-                                       json=purchase_data, headers=signed_headers) as resp:
-                response_time = time.time() - start
-                
-                if resp.status == 200:
-                    data = await resp.json()
-                    commission_data = data.get('commission', {})
-                    actual_commission = commission_data.get('amount', 0)
-                    expected_commission = round(amount * expected_rate, 2)
-                    
-                    # Allow small rounding tolerance
-                    commission_accurate = abs(actual_commission - expected_commission) <= 0.01
-                    
-                    self.log_test(f"Commission: {tier_name}", commission_accurate,
-                                f"Expected: ${expected_commission:.2f}, Actual: ${actual_commission:.2f}", 
-                                response_time)
-                else:
-                    self.log_test(f"Commission: {tier_name}", False, 
-                                f"HTTP {resp.status}", response_time)
-                        
-        except Exception as e:
-            self.log_test(f"Commission: {tier_name}", False, f"Error: {str(e)}")
-    
-    # ==================== ULTIMATE KIT TOOLS VALIDATION ====================
-    
-    async def test_ultimate_kit_tools(self):
-        """Test Ultimate Kit Tools: CLI tools, SQL scripts, backend maintenance scripts"""
-        
-        # Test SQL Scripts Execution
-        await self._test_sql_scripts_execution()
-        
-        # Test Backend Maintenance Scripts
-        await self._test_backend_maintenance_scripts()
-        
-        # Test CLI Tools Functionality
-        await self._test_cli_tools_functionality()
-    
-    async def _test_sql_scripts_execution(self):
-        """Test sql/01_funnel_views.sql, sql/02_fx_seed.sql, sql/03_indexes.sql"""
-        try:
-            # Test if funnel views are working by checking analytics endpoint
-            start = time.time()
-            async with self.session.get(f"{BACKEND_URL}:3000/api/analytics/dashboard") as resp:
-                response_time = time.time() - start
-                
-                if resp.status == 200:
-                    data = await resp.json()
-                    has_funnel_data = 'funnel' in data
-                    has_stats = 'stats' in data
-                    
-                    sql_scripts_working = has_funnel_data and has_stats
-                    
-                    self.log_test("SQL Scripts Execution", sql_scripts_working,
-                                f"Funnel views: {has_funnel_data}, Stats: {has_stats}", response_time)
-                else:
-                    self.log_test("SQL Scripts Execution", False, 
-                                f"HTTP {resp.status}", response_time)
-                        
-        except Exception as e:
-            self.log_test("SQL Scripts Execution", False, f"Error: {str(e)}")
-    
-    async def _test_backend_maintenance_scripts(self):
-        """Test backend/scripts/refresh_funnel.mjs and backfillSyntheticImpressions.mjs"""
-        try:
-            # Test that the scripts have been executed by checking data consistency
-            start = time.time()
-            async with self.session.get(f"{BACKEND_URL}:3000/api/analytics/dashboard") as resp:
-                response_time = time.time() - start
-                
-                if resp.status == 200:
-                    data = await resp.json()
-                    stats = data.get('stats', {})
-                    
-                    # Check if we have reasonable data (indicating scripts have run)
-                    has_impressions = stats.get('impressions7d', 0) > 0
-                    has_ctas = stats.get('ctas7d', 0) > 0
-                    has_purchases = stats.get('purchases7d', 0) > 0
-                    
-                    scripts_executed = has_impressions or has_ctas or has_purchases
-                    
-                    self.log_test("Backend Maintenance Scripts", scripts_executed,
-                                f"Data present: impressions={has_impressions}, ctas={has_ctas}, purchases={has_purchases}", 
-                                response_time)
-                else:
-                    self.log_test("Backend Maintenance Scripts", False, 
-                                f"HTTP {resp.status}", response_time)
-                        
-        except Exception as e:
-            self.log_test("Backend Maintenance Scripts", False, f"Error: {str(e)}")
-    
-    async def _test_cli_tools_functionality(self):
-        """Test tools/signedPurchase.js and tools/signedRefund.js CLI tools"""
-        try:
-            # Test that the CLI tools' functionality is available via API
-            # (The tools generate signed requests, so we test the endpoints they target)
-            
-            # Test signed purchase functionality
-            purchase_data = {
-                "orderId": f"cli_test_purchase_{uuid.uuid4().hex[:8]}",
-                "userId": "cli_test_user",
-                "productId": "test_product",
-                "amount": 99.99,
-                "currency": "USD"
-            }
-            
-            start = time.time()
-            signed_headers = await self._generate_hmac_headers(purchase_data)
-            
-            async with self.session.post(f"{BACKEND_URL}:3000/api/track/purchase", 
-                                       json=purchase_data, headers=signed_headers) as resp:
-                purchase_success = resp.status == 200
-                purchase_data_response = await resp.json() if purchase_success else {}
-            
-            # Test signed refund functionality (if purchase succeeded)
-            refund_success = False
-            if purchase_success and 'purchaseId' in purchase_data_response:
-                refund_data = {
-                    "purchaseId": purchase_data_response['purchaseId'],
-                    "amount": 99.99,
-                    "currency": "USD",
-                    "reason": "CLI tool test refund",
-                    "userId": "cli_test_user"
-                }
-                
-                signed_refund_headers = await self._generate_hmac_headers(refund_data)
-                
-                async with self.session.post(f"{BACKEND_URL}:3000/api/track/refund", 
-                                           json=refund_data, headers=signed_refund_headers) as refund_resp:
-                    refund_success = refund_resp.status == 200
-            
-            response_time = time.time() - start
-            cli_tools_working = purchase_success and refund_success
-            
-            self.log_test("CLI Tools Functionality", cli_tools_working,
-                        f"Purchase: {purchase_success}, Refund: {refund_success}", response_time)
-                        
-        except Exception as e:
-            self.log_test("CLI Tools Functionality", False, f"Error: {str(e)}")
-    
-    async def _test_commission_calculation(self, tier_name: str, creator_id: str, product_id: str, amount: float, expected_rate: float):
-        """Test specific commission calculation with banker's rounding"""
-        try:
-            user_id = f"test_user_{uuid.uuid4().hex[:8]}"
-            
-            # Create CTA
-            cta_data = {
-                "storyId": f"{creator_id}_story_0",
-                "productId": product_id,
-                "userId": user_id
-            }
-            
-            await self.session.post(f"{BASE_URL}/track/cta", json=cta_data)
-            
-            # Make purchase
-            purchase_data = {
-                "orderId": f"order_{uuid.uuid4().hex[:8]}",
-                "userId": user_id,
-                "productId": product_id,
-                "amount": amount,
-                "currency": "USD"
-            }
-            
-            start = time.time()
-            async with self.session.post(f"{BASE_URL}/track/purchase", json=purchase_data) as resp:
-                response_time = time.time() - start
-                
-                if resp.status == 200:
-                    data = await resp.json()
-                    actual_commission = data.get("commission", 0)
-                    expected_commission = round(amount * expected_rate, 2)  # Banker's rounding
-                    
-                    # Exact match required for commission accuracy
-                    commission_exact = abs(actual_commission - expected_commission) < 0.01
-                    
-                    self.log_test(f"Commission Accuracy: {tier_name}", commission_exact,
-                                f"Expected: ${expected_commission:.2f}, Actual: ${actual_commission:.2f}, Rate: {expected_rate*100}%", 
-                                response_time)
-                else:
-                    self.log_test(f"Commission Accuracy: {tier_name}", False, 
-                                f"HTTP {resp.status}", response_time)
-                    
-        except Exception as e:
-            self.log_test(f"Commission Accuracy: {tier_name}", False, f"Error: {str(e)}")
+            self.log_result(
+                "CORS Headers Validation",
+                False,
+                f"Error: {str(e)}",
+                time.time() - start_time
+            )
 
-    # ==================== PERFORMANCE UNDER LOAD ====================
-    
-    async def test_performance_under_load(self):
-        """Test concurrent API performance with SLO compliance"""
+    async def test_hmac_auth_error_codes(self, session: aiohttp.ClientSession):
+        """Test HMAC/Auth Error Code Standardization"""
         
-        # Test Stories API (≤120ms SLO)
-        await self._test_concurrent_stories_performance()
-        
-        # Test Purchase API (≤200ms SLO)
-        await self._test_concurrent_purchase_performance()
-        
-        # Test Analytics API performance
-        await self._test_analytics_performance()
-    
-    async def _test_concurrent_stories_performance(self):
-        """Test stories API under concurrent load"""
+        # Test 1: Missing headers should return 401 for missing auth headers
+        start_time = time.time()
         try:
-            tasks = []
-            for i in range(CONCURRENT_REQUESTS):
-                task = self._single_stories_request(i)
-                tasks.append(task)
-            
-            start = time.time()
-            results = await asyncio.gather(*tasks, return_exceptions=True)
-            total_time = time.time() - start
-            
-            successful_requests = sum(1 for r in results if isinstance(r, dict) and r.get('success'))
-            avg_response_time = sum(r.get('response_time', 0) for r in results if isinstance(r, dict)) / len(results)
-            
-            # SLO: Stories ≤120ms
-            slo_compliance = avg_response_time <= 0.120
-            success_rate = (successful_requests / CONCURRENT_REQUESTS) * 100
-            
-            self.log_test("Concurrent Stories Performance", slo_compliance and success_rate >= 95,
-                        f"{successful_requests}/{CONCURRENT_REQUESTS} success, {avg_response_time*1000:.1f}ms avg, SLO: ≤120ms", 
-                        total_time)
-                        
-        except Exception as e:
-            self.log_test("Concurrent Stories Performance", False, f"Error: {str(e)}")
-    
-    async def _single_stories_request(self, request_id: int):
-        """Single stories API request for load testing"""
-        try:
-            start = time.time()
-            async with self.session.get(f"{BASE_URL}/stories?limit=10") as resp:
-                response_time = time.time() - start
+            payload = {"orderId": "test-order", "userId": "test-user", "productId": "test-product", "amount": 100.00, "currency": "USD"}
+            async with session.post(
+                f"http://localhost:{EXPRESS_PORT}/api/track/purchase",
+                json=payload
+            ) as response:
+                response_time = time.time() - start_time
                 
-                if resp.status == 200:
-                    data = await resp.json()
-                    return {
-                        'success': True,
-                        'response_time': response_time,
-                        'stories_count': len(data.get('data', []))
-                    }
+                if response.status == 401:  # Should be 401 for missing auth headers
+                    data = await response.json()
+                    self.log_result(
+                        "Missing Headers Error Code",
+                        True,
+                        f"Returns 401 for missing auth headers: {data.get('error', '')}",
+                        response_time
+                    )
                 else:
-                    return {'success': False, 'response_time': response_time}
-                    
+                    self.log_result(
+                        "Missing Headers Error Code",
+                        False,
+                        f"Expected 401, got {response.status}",
+                        response_time
+                    )
         except Exception as e:
-            return {'success': False, 'response_time': 0, 'error': str(e)}
-    
-    async def _test_concurrent_purchase_performance(self):
-        """Test purchase API under concurrent load"""
-        try:
-            tasks = []
-            for i in range(CONCURRENT_REQUESTS):
-                task = self._single_purchase_request(i)
-                tasks.append(task)
-            
-            start = time.time()
-            results = await asyncio.gather(*tasks, return_exceptions=True)
-            total_time = time.time() - start
-            
-            successful_requests = sum(1 for r in results if isinstance(r, dict) and r.get('success'))
-            avg_response_time = sum(r.get('response_time', 0) for r in results if isinstance(r, dict)) / len(results)
-            
-            # SLO: Purchase ≤200ms
-            slo_compliance = avg_response_time <= 0.200
-            success_rate = (successful_requests / CONCURRENT_REQUESTS) * 100
-            
-            self.log_test("Concurrent Purchase Performance", slo_compliance and success_rate >= 95,
-                        f"{successful_requests}/{CONCURRENT_REQUESTS} success, {avg_response_time*1000:.1f}ms avg, SLO: ≤200ms", 
-                        total_time)
-                        
-        except Exception as e:
-            self.log_test("Concurrent Purchase Performance", False, f"Error: {str(e)}")
-    
-    async def _single_purchase_request(self, request_id: int):
-        """Single purchase API request for load testing"""
-        try:
-            purchase_data = {
-                "orderId": f"load_test_order_{request_id}_{uuid.uuid4().hex[:8]}",
-                "userId": f"load_test_user_{request_id}",
-                "productId": "yoga-mat",
-                "amount": 49.99,
-                "currency": "USD"
-            }
-            
-            start = time.time()
-            async with self.session.post(f"{BASE_URL}/track/purchase", json=purchase_data) as resp:
-                response_time = time.time() - start
-                
-                if resp.status == 200:
-                    data = await resp.json()
-                    return {
-                        'success': True,
-                        'response_time': response_time,
-                        'commission': data.get('commission', 0)
-                    }
-                else:
-                    return {'success': False, 'response_time': response_time}
-                    
-        except Exception as e:
-            return {'success': False, 'response_time': 0, 'error': str(e)}
-    
-    async def _test_analytics_performance(self):
-        """Test analytics dashboard performance"""
-        try:
-            start = time.time()
-            async with self.session.get(f"{BASE_URL}/commerce/analytics") as resp:
-                response_time = time.time() - start
-                
-                if resp.status == 200:
-                    data = await resp.json()
-                    # Analytics should load under 5 seconds per requirement
-                    performance_ok = response_time <= 5.0
-                    has_data = 'summary' in data and 'creatorStats' in data
-                    
-                    self.log_test("Analytics Dashboard Performance", performance_ok and has_data,
-                                f"Load time: {response_time:.2f}s, Target: ≤5s", response_time)
-                else:
-                    self.log_test("Analytics Dashboard Performance", False, 
-                                f"HTTP {resp.status}", response_time)
-                    
-        except Exception as e:
-            self.log_test("Analytics Dashboard Performance", False, f"Error: {str(e)}")
+            self.log_result(
+                "Missing Headers Error Code",
+                False,
+                f"Error: {str(e)}",
+                time.time() - start_time
+            )
 
-    # ==================== ANALYTICS DATA INTEGRITY ====================
-    
-    async def test_analytics_data_integrity(self):
-        """Test funnel logic validation and conversion rate accuracy"""
-        
-        # Create test data for funnel validation
-        await self._create_test_funnel_data()
-        
-        # Test funnel logic (impressions ≥ CTAs ≥ purchases)
-        await self._test_funnel_logic_validation()
-        
-        # Test conversion rate accuracy
-        await self._test_conversion_rate_accuracy()
-    
-    async def _create_test_funnel_data(self):
-        """Create test data for funnel validation"""
+        # Test 2: Invalid HMAC signatures should return 401 (not 500)
+        start_time = time.time()
         try:
-            user_id = f"funnel_test_user_{uuid.uuid4().hex[:8]}"
-            
-            # Create impressions (should be highest number)
-            for i in range(10):
-                impression_data = {
-                    "storyId": f"luxefashion_story_{i % 3}",
-                    "userId": f"{user_id}_{i}"
-                }
-                await self.session.post(f"{BASE_URL}/track/impression", json=impression_data)
-            
-            # Create CTAs (subset of impressions)
-            for i in range(5):
-                cta_data = {
-                    "storyId": f"luxefashion_story_{i % 3}",
-                    "productId": "trench-coat",
-                    "userId": f"{user_id}_{i}"
-                }
-                await self.session.post(f"{BASE_URL}/track/cta", json=cta_data)
-            
-            # Create purchases (subset of CTAs)
-            for i in range(2):
-                purchase_data = {
-                    "orderId": f"funnel_order_{i}_{uuid.uuid4().hex[:8]}",
-                    "userId": f"{user_id}_{i}",
-                    "productId": "trench-coat",
-                    "amount": 239.00,
-                    "currency": "USD"
-                }
-                await self.session.post(f"{BASE_URL}/track/purchase", json=purchase_data)
-            
-            self.log_test("Test Funnel Data Creation", True, "Created 10 impressions, 5 CTAs, 2 purchases")
-            
-        except Exception as e:
-            self.log_test("Test Funnel Data Creation", False, f"Error: {str(e)}")
-    
-    async def _test_funnel_logic_validation(self):
-        """Test that impressions ≥ CTAs ≥ purchases"""
-        try:
-            start = time.time()
-            async with self.session.get(f"{BASE_URL}/commerce/analytics") as resp:
-                response_time = time.time() - start
-                
-                if resp.status == 200:
-                    data = await resp.json()
-                    summary = data.get('summary', {})
-                    
-                    impressions = summary.get('totalImpressions', 0)
-                    ctas = summary.get('totalCTAs', 0)
-                    purchases = summary.get('totalPurchases', 0)
-                    
-                    # Funnel logic: impressions ≥ CTAs ≥ purchases
-                    funnel_valid = impressions >= ctas >= purchases
-                    
-                    self.log_test("Funnel Logic Validation", funnel_valid,
-                                f"Impressions: {impressions}, CTAs: {ctas}, Purchases: {purchases}", 
-                                response_time)
-                else:
-                    self.log_test("Funnel Logic Validation", False, 
-                                f"HTTP {resp.status}", response_time)
-                    
-        except Exception as e:
-            self.log_test("Funnel Logic Validation", False, f"Error: {str(e)}")
-    
-    async def _test_conversion_rate_accuracy(self):
-        """Test conversion rate calculation accuracy"""
-        try:
-            start = time.time()
-            async with self.session.get(f"{BASE_URL}/commerce/analytics") as resp:
-                response_time = time.time() - start
-                
-                if resp.status == 200:
-                    data = await resp.json()
-                    summary = data.get('summary', {})
-                    
-                    ctas = summary.get('totalCTAs', 0)
-                    purchases = summary.get('totalPurchases', 0)
-                    reported_rate = summary.get('conversionRate', 0)
-                    
-                    # Calculate expected conversion rate
-                    expected_rate = (purchases / ctas * 100) if ctas > 0 else 0
-                    
-                    # Allow small rounding tolerance
-                    rate_accurate = abs(reported_rate - expected_rate) <= 0.1
-                    
-                    self.log_test("Conversion Rate Accuracy", rate_accurate,
-                                f"Expected: {expected_rate:.2f}%, Reported: {reported_rate:.2f}%", 
-                                response_time)
-                else:
-                    self.log_test("Conversion Rate Accuracy", False, 
-                                f"HTTP {resp.status}", response_time)
-                    
-        except Exception as e:
-            self.log_test("Conversion Rate Accuracy", False, f"Error: {str(e)}")
-
-    # ==================== SYSTEM RESILIENCE ====================
-    
-    async def test_system_resilience(self):
-        """Test error handling, duplicate order protection, timeout management"""
-        
-        # Test error handling
-        await self._test_error_handling()
-        
-        # Test duplicate order protection
-        await self._test_duplicate_order_protection()
-        
-        # Test timeout management
-        await self._test_timeout_management()
-    
-    async def _test_error_handling(self):
-        """Test proper error responses for invalid requests"""
-        error_tests = [
-            ("Invalid Story ID", "/track/impression", {"storyId": "", "userId": "test"}),
-            ("Missing Product ID", "/track/cta", {"storyId": "test_story", "userId": "test"}),
-            ("Invalid Amount", "/track/purchase", {
-                "orderId": "test_order",
-                "userId": "test",
-                "productId": "test_product",
-                "amount": -100,
-                "currency": "USD"
-            })
-        ]
-        
-        for test_name, endpoint, invalid_data in error_tests:
-            try:
-                start = time.time()
-                async with self.session.post(f"{BASE_URL}{endpoint}", json=invalid_data) as resp:
-                    response_time = time.time() - start
-                    
-                    # Should return 4xx error for invalid data
-                    proper_error = 400 <= resp.status < 500
-                    
-                    self.log_test(f"Error Handling: {test_name}", proper_error,
-                                f"HTTP {resp.status} (expected 4xx)", response_time)
-                    
-            except Exception as e:
-                self.log_test(f"Error Handling: {test_name}", False, f"Error: {str(e)}")
-    
-    async def _test_duplicate_order_protection(self):
-        """Test idempotency protection for duplicate orders"""
-        try:
-            user_id = f"dup_test_user_{uuid.uuid4().hex[:8]}"
-            order_id = f"dup_test_order_{uuid.uuid4().hex[:8]}"
-            
-            purchase_data = {
-                "orderId": order_id,
-                "userId": user_id,
-                "productId": "yoga-mat",
-                "amount": 49.99,
-                "currency": "USD"
-            }
-            
-            # First purchase
-            start = time.time()
-            async with self.session.post(f"{BASE_URL}/track/purchase", json=purchase_data) as resp1:
-                response_time1 = time.time() - start
-                first_success = resp1.status == 200
-                first_data = await resp1.json() if first_success else {}
-            
-            # Duplicate purchase (same order ID)
-            start = time.time()
-            async with self.session.post(f"{BASE_URL}/track/purchase", json=purchase_data) as resp2:
-                response_time2 = time.time() - start
-                
-                # Should either succeed with same result or properly handle duplicate
-                duplicate_handled = resp2.status in [200, 409]  # OK or Conflict
-                
-                self.log_test("Duplicate Order Protection", duplicate_handled,
-                            f"First: HTTP {resp1.status}, Duplicate: HTTP {resp2.status}", 
-                            response_time1 + response_time2)
-                    
-        except Exception as e:
-            self.log_test("Duplicate Order Protection", False, f"Error: {str(e)}")
-    
-    async def _test_timeout_management(self):
-        """Test system behavior under timeout conditions"""
-        try:
-            # Test with very short timeout to simulate network issues
-            short_timeout = aiohttp.ClientTimeout(total=0.1)  # 100ms timeout
-            
-            async with aiohttp.ClientSession(timeout=short_timeout) as timeout_session:
-                try:
-                    start = time.time()
-                    async with timeout_session.get(f"{BASE_URL}/stories?limit=100") as resp:
-                        response_time = time.time() - start
-                        # If it succeeds within timeout, that's good
-                        self.log_test("Timeout Management", True, 
-                                    f"Completed within {response_time*1000:.1f}ms", response_time)
-                        
-                except asyncio.TimeoutError:
-                    # Timeout is properly handled
-                    self.log_test("Timeout Management", True, 
-                                "Timeout properly handled", 0.1)
-                    
-        except Exception as e:
-            self.log_test("Timeout Management", False, f"Error: {str(e)}")
-
-    # ==================== ENTERPRISE-GRADE FEATURES ====================
-    
-    async def test_enterprise_features(self):
-        """Test idempotency, HMAC security, FX normalization readiness"""
-        
-        # Test idempotency protection
-        await self._test_idempotency_protection()
-        
-        # Test HMAC security simulation
-        await self._test_hmac_security_simulation()
-        
-        # Test multi-currency support readiness
-        await self._test_multi_currency_readiness()
-    
-    async def _test_idempotency_protection(self):
-        """Test idempotency keys for replay attack mitigation"""
-        try:
-            user_id = f"idem_test_user_{uuid.uuid4().hex[:8]}"
-            idempotency_key = f"idem_{uuid.uuid4().hex}"
-            
-            purchase_data = {
-                "orderId": f"idem_order_{uuid.uuid4().hex[:8]}",
-                "userId": user_id,
-                "productId": "smartwatch-pro",
-                "amount": 299.00,
-                "currency": "USD"
-            }
-            
-            headers = {"Idempotency-Key": idempotency_key}
-            
-            # First request
-            start = time.time()
-            async with self.session.post(f"{BASE_URL}/track/purchase", 
-                                       json=purchase_data, headers=headers) as resp1:
-                response_time1 = time.time() - start
-                first_success = resp1.status == 200
-                first_data = await resp1.json() if first_success else {}
-            
-            # Replay with same idempotency key
-            start = time.time()
-            async with self.session.post(f"{BASE_URL}/track/purchase", 
-                                       json=purchase_data, headers=headers) as resp2:
-                response_time2 = time.time() - start
-                
-                # Should return same result or handle replay appropriately
-                replay_handled = resp2.status in [200, 409]
-                
-                self.log_test("Idempotency Protection", replay_handled,
-                            f"Original: HTTP {resp1.status}, Replay: HTTP {resp2.status}", 
-                            response_time1 + response_time2)
-                    
-        except Exception as e:
-            self.log_test("Idempotency Protection", False, f"Error: {str(e)}")
-    
-    async def _test_hmac_security_simulation(self):
-        """Test HMAC signature verification simulation"""
-        try:
-            # Simulate HMAC signature generation
-            secret_key = "test_hmac_secret_key"
-            timestamp = str(int(time.time()))
-            payload = '{"test": "hmac_validation"}'
-            
-            # Create HMAC signature
-            message = f"{timestamp}.{payload}"
-            signature = hmac.new(
-                secret_key.encode(),
-                message.encode(),
-                hashlib.sha256
-            ).hexdigest()
+            timestamp = int(time.time() * 1000)
+            payload = {"orderId": "test-order-2", "userId": "test-user", "productId": "test-product", "amount": 100.00, "currency": "USD"}
             
             headers = {
-                "X-Timestamp": timestamp,
-                "X-Signature": f"sha256={signature}"
+                'Content-Type': 'application/json',
+                'X-Timestamp': str(timestamp),
+                'X-Signature': 'invalid_signature_here'
             }
             
-            # Test endpoint that would validate HMAC (using health check as proxy)
-            start = time.time()
-            async with self.session.get(f"{BASE_URL}/health", headers=headers) as resp:
-                response_time = time.time() - start
+            async with session.post(
+                f"http://localhost:{EXPRESS_PORT}/api/track/purchase",
+                json=payload,
+                headers=headers
+            ) as response:
+                response_time = time.time() - start_time
                 
-                # Health check should still work (HMAC validation would be in webhook endpoints)
-                hmac_ready = resp.status == 200
-                
-                self.log_test("HMAC Security Readiness", hmac_ready,
-                            f"Signature generated and headers sent", response_time)
-                    
-        except Exception as e:
-            self.log_test("HMAC Security Readiness", False, f"Error: {str(e)}")
-    
-    async def _test_multi_currency_readiness(self):
-        """Test multi-currency support architecture"""
-        try:
-            # Test different currencies
-            currencies = ["USD", "EUR", "GBP", "JPY"]
-            
-            for currency in currencies:
-                purchase_data = {
-                    "orderId": f"fx_order_{currency}_{uuid.uuid4().hex[:8]}",
-                    "userId": f"fx_user_{currency}",
-                    "productId": "yoga-mat",
-                    "amount": 49.99,
-                    "currency": currency
-                }
-                
-                start = time.time()
-                async with self.session.post(f"{BASE_URL}/track/purchase", json=purchase_data) as resp:
-                    response_time = time.time() - start
-                    
-                    if resp.status == 200:
-                        data = await resp.json()
-                        currency_handled = currency in str(data)
-                        
-                        self.log_test(f"Multi-Currency Support ({currency})", currency_handled,
-                                    f"Currency: {currency}, Commission: ${data.get('commission', 0)}", 
-                                    response_time)
-                    else:
-                        self.log_test(f"Multi-Currency Support ({currency})", False, 
-                                    f"HTTP {resp.status}", response_time)
-                        
-        except Exception as e:
-            self.log_test("Multi-Currency Support", False, f"Error: {str(e)}")
-
-    # ==================== BUSINESS METRICS VALIDATION ====================
-    
-    async def test_business_metrics(self):
-        """Test high conversion rate validation and creator performance tracking"""
-        
-        # Test conversion rate benchmarks
-        await self._test_conversion_rate_benchmarks()
-        
-        # Test creator performance tracking
-        await self._test_creator_performance_tracking()
-        
-        # Test revenue attribution accuracy
-        await self._test_revenue_attribution_accuracy()
-    
-    async def _test_conversion_rate_benchmarks(self):
-        """Test that conversion rates meet business benchmarks"""
-        try:
-            start = time.time()
-            async with self.session.get(f"{BASE_URL}/commerce/analytics") as resp:
-                response_time = time.time() - start
-                
-                if resp.status == 200:
-                    data = await resp.json()
-                    summary = data.get('summary', {})
-                    conversion_rate = summary.get('conversionRate', 0)
-                    
-                    # Business benchmark: >2% conversion rate is good for e-commerce
-                    meets_benchmark = conversion_rate >= 2.0
-                    
-                    self.log_test("Conversion Rate Benchmark", meets_benchmark,
-                                f"Rate: {conversion_rate:.2f}%, Benchmark: ≥2.0%", response_time)
-                else:
-                    self.log_test("Conversion Rate Benchmark", False, 
-                                f"HTTP {resp.status}", response_time)
-                    
-        except Exception as e:
-            self.log_test("Conversion Rate Benchmark", False, f"Error: {str(e)}")
-    
-    async def _test_creator_performance_tracking(self):
-        """Test creator performance analytics"""
-        try:
-            start = time.time()
-            async with self.session.get(f"{BASE_URL}/commerce/analytics") as resp:
-                response_time = time.time() - start
-                
-                if resp.status == 200:
-                    data = await resp.json()
-                    creator_stats = data.get('creatorStats', {})
-                    
-                    # Should have performance data for creators
-                    has_creator_data = len(creator_stats) > 0
-                    has_performance_metrics = all(
-                        'purchases' in stats and 'revenue' in stats and 'commissions' in stats
-                        for stats in creator_stats.values()
+                if response.status == 401:
+                    data = await response.json()
+                    self.log_result(
+                        "Invalid HMAC Signature Error Code",
+                        True,
+                        f"Returns 401 for invalid signature: {data.get('error', '')}",
+                        response_time
                     )
-                    
-                    tracking_complete = has_creator_data and has_performance_metrics
-                    
-                    self.log_test("Creator Performance Tracking", tracking_complete,
-                                f"Creators tracked: {len(creator_stats)}", response_time)
                 else:
-                    self.log_test("Creator Performance Tracking", False, 
-                                f"HTTP {resp.status}", response_time)
-                    
+                    self.log_result(
+                        "Invalid HMAC Signature Error Code",
+                        False,
+                        f"Expected 401, got {response.status}",
+                        response_time
+                    )
         except Exception as e:
-            self.log_test("Creator Performance Tracking", False, f"Error: {str(e)}")
-    
-    async def _test_revenue_attribution_accuracy(self):
-        """Test revenue attribution to creators"""
-        try:
-            start = time.time()
-            async with self.session.get(f"{BASE_URL}/commerce/analytics") as resp:
-                response_time = time.time() - start
-                
-                if resp.status == 200:
-                    data = await resp.json()
-                    summary = data.get('summary', {})
-                    
-                    total_revenue = summary.get('totalRevenue', 0)
-                    total_commissions = summary.get('totalCommissions', 0)
-                    
-                    # Commission should be reasonable percentage of revenue (5-15%)
-                    if total_revenue > 0:
-                        commission_rate = (total_commissions / total_revenue) * 100
-                        reasonable_rate = 5 <= commission_rate <= 15
-                    else:
-                        reasonable_rate = True  # No revenue yet is acceptable
-                    
-                    self.log_test("Revenue Attribution Accuracy", reasonable_rate,
-                                f"Revenue: ${total_revenue:.2f}, Commissions: ${total_commissions:.2f}", 
-                                response_time)
-                else:
-                    self.log_test("Revenue Attribution Accuracy", False, 
-                                f"HTTP {resp.status}", response_time)
-                    
-        except Exception as e:
-            self.log_test("Revenue Attribution Accuracy", False, f"Error: {str(e)}")
+            self.log_result(
+                "Invalid HMAC Signature Error Code",
+                False,
+                f"Error: {str(e)}",
+                time.time() - start_time
+            )
 
-    # ==================== SERIES A DEMO SCENARIOS ====================
-    
-    async def test_series_a_demo_scenarios(self):
-        """Test Series A Demo Scenarios: Luxury commerce, global markets, error resilience"""
-        
-        # Test Luxury Commerce Transaction Flow
-        await self._test_luxury_commerce_flow()
-        
-        # Test Global Markets Validation
-        await self._test_global_markets_validation()
-        
-        # Test Error Resilience
-        await self._test_error_resilience_scenarios()
-        
-        # Test Real-time Analytics Dashboard
-        await self._test_realtime_analytics_dashboard()
-    
-    async def _test_luxury_commerce_flow(self):
-        """Test high-value luxury purchases with commission"""
+        # Test 3: Valid HMAC signature should work
+        start_time = time.time()
         try:
-            user_id = f"luxury_demo_{uuid.uuid4().hex[:8]}"
-            story_id = "luxefashion_story_0"
+            timestamp = int(time.time() * 1000)
+            payload = {"orderId": f"test-order-{timestamp}", "userId": "test-user", "productId": "test-product", "amount": 100.00, "currency": "USD"}
+            body_str = json.dumps(payload)
+            signature = self.generate_hmac_signature(timestamp, body_str)
             
-            # Create impression for luxury item
-            impression_data = {
-                "storyId": story_id,
-                "userId": user_id
-            }
-            await self.session.post(f"{BACKEND_URL}:3000/api/track/impression", json=impression_data)
-            
-            # Create CTA for luxury item
-            cta_data = {
-                "storyId": story_id,
-                "productId": "luxury-handbag",
-                "userId": user_id
-            }
-            await self.session.post(f"{BACKEND_URL}:3000/api/track/cta", json=cta_data)
-            
-            # High-value luxury purchase
-            purchase_data = {
-                "orderId": f"luxury_order_{uuid.uuid4().hex[:8]}",
-                "userId": user_id,
-                "productId": "luxury-handbag",
-                "amount": 2399.00,  # High-value luxury item
-                "currency": "USD",
-                "referrerStoryId": story_id
+            headers = {
+                'Content-Type': 'application/json',
+                'X-Timestamp': str(timestamp),
+                'X-Signature': signature,
+                'Idempotency-Key': f'test-key-{timestamp}'
             }
             
-            start = time.time()
-            signed_headers = await self._generate_hmac_headers(purchase_data)
-            
-            async with self.session.post(f"{BACKEND_URL}:3000/api/track/purchase", 
-                                       json=purchase_data, headers=signed_headers) as resp:
-                response_time = time.time() - start
+            async with session.post(
+                f"http://localhost:{EXPRESS_PORT}/api/track/purchase",
+                json=payload,
+                headers=headers
+            ) as response:
+                response_time = time.time() - start_time
                 
-                if resp.status == 200:
-                    data = await resp.json()
-                    commission_data = data.get('commission', {})
-                    commission_amount = commission_data.get('amount', 0)
-                    
-                    # For luxury fashion (gold tier), expect 12% commission
-                    expected_commission = 2399.00 * 0.12
-                    commission_accurate = abs(commission_amount - expected_commission) <= 1.0
-                    
-                    self.log_test("Luxury Commerce Flow", commission_accurate,
-                                f"Purchase: $2399.00, Commission: ${commission_amount:.2f} (12% gold tier)", 
-                                response_time)
+                if response.status in [200, 201]:
+                    data = await response.json()
+                    self.log_result(
+                        "Valid HMAC Signature",
+                        True,
+                        f"Purchase successful: {data.get('purchaseId', 'N/A')}",
+                        response_time
+                    )
                 else:
-                    self.log_test("Luxury Commerce Flow", False, 
-                                f"HTTP {resp.status}", response_time)
-                        
+                    data = await response.json() if response.content_type == 'application/json' else {}
+                    self.log_result(
+                        "Valid HMAC Signature",
+                        False,
+                        f"Expected 200/201, got {response.status}: {data.get('error', '')}",
+                        response_time
+                    )
         except Exception as e:
-            self.log_test("Luxury Commerce Flow", False, f"Error: {str(e)}")
-    
-    async def _test_global_markets_validation(self):
-        """Test all 4 currencies (USD/EUR/GBP/JPY) for global markets"""
-        global_currencies = [
-            ("USD", 100.00, "United States"),
-            ("EUR", 100.00, "European Union"),
-            ("GBP", 100.00, "United Kingdom"),
-            ("JPY", 10000, "Japan")
+            self.log_result(
+                "Valid HMAC Signature",
+                False,
+                f"Error: {str(e)}",
+                time.time() - start_time
+            )
+
+        # Test 4: Schema violations should return 422 (not 500)
+        start_time = time.time()
+        try:
+            timestamp = int(time.time() * 1000)
+            # Invalid payload - missing required fields
+            payload = {"invalid": "payload"}
+            body_str = json.dumps(payload)
+            signature = self.generate_hmac_signature(timestamp, body_str)
+            
+            headers = {
+                'Content-Type': 'application/json',
+                'X-Timestamp': str(timestamp),
+                'X-Signature': signature
+            }
+            
+            async with session.post(
+                f"http://localhost:{EXPRESS_PORT}/api/track/purchase",
+                json=payload,
+                headers=headers
+            ) as response:
+                response_time = time.time() - start_time
+                
+                if response.status == 422:
+                    data = await response.json()
+                    self.log_result(
+                        "Schema Violation Error Code",
+                        True,
+                        f"Returns 422 for invalid schema: {data.get('error', '')}",
+                        response_time
+                    )
+                else:
+                    self.log_result(
+                        "Schema Violation Error Code",
+                        False,
+                        f"Expected 422, got {response.status}",
+                        response_time
+                    )
+        except Exception as e:
+            self.log_result(
+                "Schema Violation Error Code",
+                False,
+                f"Error: {str(e)}",
+                time.time() - start_time
+            )
+
+    async def test_idempotency_protection(self, session: aiohttp.ClientSession):
+        """Test idempotency replays return 409 (not 200 with cached response)"""
+        start_time = time.time()
+        try:
+            timestamp = int(time.time() * 1000)
+            idempotency_key = f'test-idempotency-{timestamp}'
+            payload = {"orderId": f"test-order-idem-{timestamp}", "userId": "test-user", "productId": "test-product", "amount": 100.00, "currency": "USD"}
+            body_str = json.dumps(payload)
+            signature = self.generate_hmac_signature(timestamp, body_str)
+            
+            headers = {
+                'Content-Type': 'application/json',
+                'X-Timestamp': str(timestamp),
+                'X-Signature': signature,
+                'Idempotency-Key': idempotency_key
+            }
+            
+            # First request should succeed
+            async with session.post(
+                f"http://localhost:{EXPRESS_PORT}/api/track/purchase",
+                json=payload,
+                headers=headers
+            ) as response:
+                first_status = response.status
+                first_data = await response.json() if response.content_type == 'application/json' else {}
+            
+            # Second request with same idempotency key should return 409
+            async with session.post(
+                f"http://localhost:{EXPRESS_PORT}/api/track/purchase",
+                json=payload,
+                headers=headers
+            ) as response:
+                response_time = time.time() - start_time
+                second_status = response.status
+                second_data = await response.json() if response.content_type == 'application/json' else {}
+                
+                if first_status in [200, 201] and second_status == 409:
+                    self.log_result(
+                        "Idempotency Protection",
+                        True,
+                        f"First: {first_status}, Second: {second_status} (409 conflict)",
+                        response_time
+                    )
+                else:
+                    self.log_result(
+                        "Idempotency Protection",
+                        False,
+                        f"First: {first_status}, Second: {second_status} (expected 409)",
+                        response_time
+                    )
+        except Exception as e:
+            self.log_result(
+                "Idempotency Protection",
+                False,
+                f"Error: {str(e)}",
+                time.time() - start_time
+            )
+
+    async def test_multi_currency_precision(self, session: aiohttp.ClientSession):
+        """Test Multi-Currency Precision with banker's rounding"""
+        
+        currencies_to_test = [
+            {"currency": "EUR", "amount": 123.456, "expected_decimals": 2},
+            {"currency": "GBP", "amount": 987.654, "expected_decimals": 2},
+            {"currency": "JPY", "amount": 1234.56, "expected_decimals": 0}
         ]
         
-        for currency, amount, market in global_currencies:
+        for test_case in currencies_to_test:
+            start_time = time.time()
             try:
-                purchase_data = {
-                    "orderId": f"global_{currency}_{uuid.uuid4().hex[:8]}",
-                    "userId": f"global_user_{currency}",
-                    "productId": "global_product",
-                    "amount": amount,
-                    "currency": currency
+                timestamp = int(time.time() * 1000)
+                payload = {
+                    "orderId": f"test-order-{test_case['currency']}-{timestamp}",
+                    "userId": "test-user",
+                    "productId": "test-product",
+                    "amount": test_case["amount"],
+                    "currency": test_case["currency"]
+                }
+                body_str = json.dumps(payload)
+                signature = self.generate_hmac_signature(timestamp, body_str)
+                
+                headers = {
+                    'Content-Type': 'application/json',
+                    'X-Timestamp': str(timestamp),
+                    'X-Signature': signature,
+                    'Idempotency-Key': f'test-currency-{test_case["currency"]}-{timestamp}'
                 }
                 
-                start = time.time()
-                signed_headers = await self._generate_hmac_headers(purchase_data)
-                
-                async with self.session.post(f"{BACKEND_URL}:3000/api/track/purchase", 
-                                           json=purchase_data, headers=signed_headers) as resp:
-                    response_time = time.time() - start
+                async with session.post(
+                    f"http://localhost:{EXPRESS_PORT}/api/track/purchase",
+                    json=payload,
+                    headers=headers
+                ) as response:
+                    response_time = time.time() - start_time
                     
-                    if resp.status == 200:
-                        data = await resp.json()
-                        has_usd_conversion = 'amountUSD' in data
-                        correct_currency = data.get('currency') == currency
+                    if response.status in [200, 201]:
+                        data = await response.json()
+                        returned_amount = data.get('amount', 0)
                         
-                        global_support = has_usd_conversion and correct_currency
-                        
-                        self.log_test(f"Global Markets: {market} ({currency})", global_support,
-                                    f"Amount: {amount} {currency}, USD: ${data.get('amountUSD', 0):.2f}", 
-                                    response_time)
+                        # Check decimal places
+                        if test_case["currency"] == "JPY":
+                            # JPY should be whole numbers (0 decimal places)
+                            if returned_amount == int(returned_amount):
+                                self.log_result(
+                                    f"Multi-Currency Precision ({test_case['currency']})",
+                                    True,
+                                    f"JPY rounded to whole number: {returned_amount}",
+                                    response_time
+                                )
+                            else:
+                                self.log_result(
+                                    f"Multi-Currency Precision ({test_case['currency']})",
+                                    False,
+                                    f"JPY should be whole number, got: {returned_amount}",
+                                    response_time
+                                )
+                        else:
+                            # EUR/GBP should have 2 decimal places
+                            decimal_places = len(str(returned_amount).split('.')[-1]) if '.' in str(returned_amount) else 0
+                            if decimal_places <= 2:
+                                self.log_result(
+                                    f"Multi-Currency Precision ({test_case['currency']})",
+                                    True,
+                                    f"{test_case['currency']} rounded to 2dp: {returned_amount}",
+                                    response_time
+                                )
+                            else:
+                                self.log_result(
+                                    f"Multi-Currency Precision ({test_case['currency']})",
+                                    False,
+                                    f"{test_case['currency']} should have ≤2dp, got: {returned_amount}",
+                                    response_time
+                                )
                     else:
-                        self.log_test(f"Global Markets: {market} ({currency})", False, 
-                                    f"HTTP {resp.status}", response_time)
-                        
+                        data = await response.json() if response.content_type == 'application/json' else {}
+                        self.log_result(
+                            f"Multi-Currency Precision ({test_case['currency']})",
+                            False,
+                            f"HTTP {response.status}: {data.get('error', '')}",
+                            response_time
+                        )
             except Exception as e:
-                self.log_test(f"Global Markets: {market} ({currency})", False, f"Error: {str(e)}")
-    
-    async def _test_error_resilience_scenarios(self):
-        """Test error resilience with various failure scenarios"""
-        resilience_tests = [
-            ("Invalid Product ID", {
-                "orderId": f"error_test_{uuid.uuid4().hex[:8]}",
-                "userId": "error_test_user",
-                "productId": "",  # Empty product ID
-                "amount": 100.00,
-                "currency": "USD"
-            }),
-            ("Negative Amount", {
-                "orderId": f"error_test_{uuid.uuid4().hex[:8]}",
-                "userId": "error_test_user",
-                "productId": "test_product",
-                "amount": -100.00,  # Negative amount
-                "currency": "USD"
-            }),
-            ("Unsupported Currency", {
-                "orderId": f"error_test_{uuid.uuid4().hex[:8]}",
-                "userId": "error_test_user",
-                "productId": "test_product",
-                "amount": 100.00,
-                "currency": "INVALID"  # Unsupported currency
-            })
+                self.log_result(
+                    f"Multi-Currency Precision ({test_case['currency']})",
+                    False,
+                    f"Error: {str(e)}",
+                    time.time() - start_time
+                )
+
+    async def test_commission_calculations(self, session: aiohttp.ClientSession):
+        """Test commission calculations with minor units precision"""
+        start_time = time.time()
+        try:
+            timestamp = int(time.time() * 1000)
+            payload = {
+                "orderId": f"test-commission-{timestamp}",
+                "userId": "test-user",
+                "productId": "test-product",
+                "amount": 1000.00,
+                "currency": "USD",
+                "referrerStoryId": 1  # Assuming story ID 1 exists
+            }
+            body_str = json.dumps(payload)
+            signature = self.generate_hmac_signature(timestamp, body_str)
+            
+            headers = {
+                'Content-Type': 'application/json',
+                'X-Timestamp': str(timestamp),
+                'X-Signature': signature,
+                'Idempotency-Key': f'test-commission-{timestamp}'
+            }
+            
+            async with session.post(
+                f"http://localhost:{EXPRESS_PORT}/api/track/purchase",
+                json=payload,
+                headers=headers
+            ) as response:
+                response_time = time.time() - start_time
+                
+                if response.status in [200, 201]:
+                    data = await response.json()
+                    commission = data.get('commission')
+                    
+                    if commission:
+                        commission_amount = commission.get('amount', 0)
+                        commission_rate = commission.get('rate', 0)
+                        creator_tier = commission.get('creatorTier', '')
+                        
+                        # Validate commission calculation
+                        expected_commission = 1000.00 * commission_rate
+                        if abs(commission_amount - expected_commission) < 0.01:  # Allow small floating point differences
+                            self.log_result(
+                                "Commission Calculation",
+                                True,
+                                f"Tier: {creator_tier}, Rate: {commission_rate*100}%, Amount: ${commission_amount}",
+                                response_time
+                            )
+                        else:
+                            self.log_result(
+                                "Commission Calculation",
+                                False,
+                                f"Expected ${expected_commission}, got ${commission_amount}",
+                                response_time
+                            )
+                    else:
+                        self.log_result(
+                            "Commission Calculation",
+                            False,
+                            "No commission data returned",
+                            response_time
+                        )
+                else:
+                    data = await response.json() if response.content_type == 'application/json' else {}
+                    self.log_result(
+                        "Commission Calculation",
+                        False,
+                        f"HTTP {response.status}: {data.get('error', '')}",
+                        response_time
+                    )
+        except Exception as e:
+            self.log_result(
+                "Commission Calculation",
+                False,
+                f"Error: {str(e)}",
+                time.time() - start_time
+            )
+
+    async def test_concurrent_performance(self, session: aiohttp.ClientSession):
+        """Test performance under concurrent requests"""
+        start_time = time.time()
+        
+        async def make_concurrent_request(request_id: int):
+            try:
+                timestamp = int(time.time() * 1000) + request_id  # Unique timestamp
+                payload = {
+                    "orderId": f"concurrent-order-{request_id}-{timestamp}",
+                    "userId": f"user-{request_id}",
+                    "productId": "test-product",
+                    "amount": 50.00,
+                    "currency": "USD"
+                }
+                body_str = json.dumps(payload)
+                signature = self.generate_hmac_signature(timestamp, body_str)
+                
+                headers = {
+                    'Content-Type': 'application/json',
+                    'X-Timestamp': str(timestamp),
+                    'X-Signature': signature,
+                    'Idempotency-Key': f'concurrent-{request_id}-{timestamp}'
+                }
+                
+                async with session.post(
+                    f"http://localhost:{EXPRESS_PORT}/api/track/purchase",
+                    json=payload,
+                    headers=headers
+                ) as response:
+                    return response.status in [200, 201]
+            except:
+                return False
+        
+        # Run 10 concurrent requests
+        tasks = [make_concurrent_request(i) for i in range(10)]
+        results = await asyncio.gather(*tasks)
+        
+        response_time = time.time() - start_time
+        success_count = sum(results)
+        success_rate = (success_count / len(results)) * 100
+        
+        if success_rate >= 90:  # 90% success rate threshold
+            self.log_result(
+                "Concurrent Performance Test",
+                True,
+                f"{success_count}/{len(results)} requests successful ({success_rate:.1f}%)",
+                response_time
+            )
+        else:
+            self.log_result(
+                "Concurrent Performance Test",
+                False,
+                f"Only {success_count}/{len(results)} requests successful ({success_rate:.1f}%)",
+                response_time
+            )
+
+    async def test_response_time_sla(self, session: aiohttp.ClientSession):
+        """Test all endpoints respond within SLA targets"""
+        endpoints_to_test = [
+            {"url": f"http://localhost:{EXPRESS_PORT}/health", "method": "GET", "sla_ms": 200},
+            {"url": f"http://localhost:{EXPRESS_PORT}/api/creators", "method": "GET", "sla_ms": 500},
+            {"url": f"http://localhost:{EXPRESS_PORT}/api/stories?limit=5", "method": "GET", "sla_ms": 500},
+            {"url": f"http://localhost:{FASTAPI_PORT}/api/health", "method": "GET", "sla_ms": 200}
         ]
         
-        for test_name, purchase_data in resilience_tests:
+        for endpoint in endpoints_to_test:
+            start_time = time.time()
             try:
-                start = time.time()
-                signed_headers = await self._generate_hmac_headers(purchase_data)
-                
-                async with self.session.post(f"{BACKEND_URL}:3000/api/track/purchase", 
-                                           json=purchase_data, headers=signed_headers) as resp:
-                    response_time = time.time() - start
-                    
-                    # Should return 4xx error for invalid data
-                    error_handled = 400 <= resp.status < 500
-                    
-                    self.log_test(f"Error Resilience: {test_name}", error_handled,
-                                f"HTTP {resp.status} (expected 4xx)", response_time)
+                if endpoint["method"] == "GET":
+                    async with session.get(endpoint["url"]) as response:
+                        response_time = time.time() - start_time
+                        response_time_ms = response_time * 1000
                         
+                        if response.status == 200 and response_time_ms <= endpoint["sla_ms"]:
+                            self.log_result(
+                                f"Response Time SLA ({endpoint['url'].split('/')[-1]})",
+                                True,
+                                f"{response_time_ms:.1f}ms (SLA: {endpoint['sla_ms']}ms)",
+                                response_time
+                            )
+                        else:
+                            self.log_result(
+                                f"Response Time SLA ({endpoint['url'].split('/')[-1]})",
+                                False,
+                                f"{response_time_ms:.1f}ms exceeds SLA of {endpoint['sla_ms']}ms",
+                                response_time
+                            )
             except Exception as e:
-                self.log_test(f"Error Resilience: {test_name}", False, f"Error: {str(e)}")
-    
-    async def _test_realtime_analytics_dashboard(self):
-        """Test real-time analytics dashboard functionality"""
-        try:
-            start = time.time()
-            async with self.session.get(f"{BACKEND_URL}:3000/api/analytics/dashboard") as resp:
-                response_time = time.time() - start
-                
-                if resp.status == 200:
-                    data = await resp.json()
-                    
-                    # Check for real-time analytics components
-                    has_stats = 'stats' in data
-                    has_funnel = 'funnel' in data
-                    has_timestamp = 'timestamp' in data
-                    is_recent = True  # Timestamp should be recent
-                    
-                    # Performance check: should load quickly for real-time use
-                    performance_ok = response_time <= 2.0
-                    
-                    realtime_working = has_stats and has_funnel and has_timestamp and performance_ok
-                    
-                    self.log_test("Real-time Analytics Dashboard", realtime_working,
-                                f"Stats: {has_stats}, Funnel: {has_funnel}, Performance: {response_time:.2f}s", 
-                                response_time)
-                else:
-                    self.log_test("Real-time Analytics Dashboard", False, 
-                                f"HTTP {resp.status}", response_time)
-                        
-        except Exception as e:
-            self.log_test("Real-time Analytics Dashboard", False, f"Error: {str(e)}")
-    
-    # ==================== MAIN TEST EXECUTION ====================
-    
+                self.log_result(
+                    f"Response Time SLA ({endpoint['url'].split('/')[-1]})",
+                    False,
+                    f"Error: {str(e)}",
+                    time.time() - start_time
+                )
+
     async def run_all_tests(self):
-        """Execute comprehensive Ultimate Operational Kit validation"""
-        print("🎯🚀 STARTING ULTIMATE OPERATIONAL KIT VALIDATION - FINAL PUSH TO 100% SERIES A READINESS")
-        print("=" * 90)
+        """Run all P0 hardening validation tests"""
+        print("🚀💎 P0 HARDENING VALIDATION - COMPREHENSIVE BACKEND TESTING")
+        print("=" * 80)
+        print(f"Target: 100% Series A readiness (up from 92.9%)")
+        print(f"Express Server: localhost:{EXPRESS_PORT}")
+        print(f"FastAPI Server: localhost:{FASTAPI_PORT}")
+        print(f"Backend URL: {BACKEND_URL}")
+        print("=" * 80)
         
-        # Authenticate first
-        auth_success = await self.authenticate()
-        if not auth_success:
-            print("❌ Authentication failed - cannot proceed with protected endpoint tests")
-            return
-        
-        # 1. Health & Infrastructure Checks
-        print("\n🏥 HEALTH & INFRASTRUCTURE CHECKS")
-        await self.test_core_api_health()
-        
-        # 2. Critical Fix Validation (Focus on 3 areas that were previously at 94.7%)
-        print("\n🎯 CRITICAL FIX VALIDATION")
-        await self.test_critical_fixes()
-        
-        # 3. Production Hardening Features
-        print("\n🛡️ PRODUCTION HARDENING FEATURES")
-        await self.test_production_hardening_features()
-        
-        # 4. Ultimate Kit Tools Validation
-        print("\n🔧 ULTIMATE KIT TOOLS VALIDATION")
-        await self.test_ultimate_kit_tools()
-        
-        # 5. Performance & Concurrency
-        print("\n⚡ PERFORMANCE & CONCURRENCY")
-        await self.test_performance_under_load()
-        
-        # 6. Series A Demo Scenarios
-        print("\n💎 SERIES A DEMO SCENARIOS")
-        await self.test_series_a_demo_scenarios()
+        timeout = aiohttp.ClientTimeout(total=30)
+        async with aiohttp.ClientSession(timeout=timeout) as session:
+            
+            # 1. Health Checks
+            print("\n🏥 HEALTH CHECKS")
+            print("-" * 40)
+            await self.test_express_server_health(session)
+            await self.test_fastapi_server_health(session)
+            
+            # 2. CORS Headers Validation
+            print("\n🌐 CORS HEADERS VALIDATION")
+            print("-" * 40)
+            await self.test_cors_headers(session)
+            
+            # 3. HMAC/Auth Error Code Standardization
+            print("\n🔐 HMAC/AUTH ERROR CODE STANDARDIZATION")
+            print("-" * 40)
+            await self.test_hmac_auth_error_codes(session)
+            await self.test_idempotency_protection(session)
+            
+            # 4. Multi-Currency Precision Testing
+            print("\n💰 MULTI-CURRENCY PRECISION TESTING")
+            print("-" * 40)
+            await self.test_multi_currency_precision(session)
+            await self.test_commission_calculations(session)
+            
+            # 5. Performance & Concurrent Load Testing
+            print("\n⚡ PERFORMANCE & CONCURRENT LOAD TESTING")
+            print("-" * 40)
+            await self.test_concurrent_performance(session)
+            await self.test_response_time_sla(session)
         
         # Generate final report
-        await self.generate_final_report()
-    
-    async def generate_final_report(self):
-        """Generate comprehensive Ultimate Operational Kit validation report"""
-        total_tests = len(self.test_results)
-        passed_tests = sum(1 for test in self.test_results if test['success'])
-        success_rate = (passed_tests / total_tests) * 100 if total_tests > 0 else 0
-        
+        return self.generate_final_report()
+
+    def generate_final_report(self):
+        """Generate comprehensive final report"""
         total_time = time.time() - self.start_time
-        avg_response_time = sum(test['response_time_ms'] for test in self.test_results) / total_tests if total_tests > 0 else 0
+        success_rate = (self.passed_tests / self.total_tests * 100) if self.total_tests > 0 else 0
         
-        # Categorize test results
-        critical_fixes = [t for t in self.test_results if 'Analytics Funnel' in t['test'] or '4xx Error' in t['test'] or 'Multi-Currency' in t['test']]
-        critical_fixes_passed = sum(1 for t in critical_fixes if t['success'])
-        critical_fixes_rate = (critical_fixes_passed / len(critical_fixes) * 100) if critical_fixes else 0
-        
-        performance_tests = [t for t in self.test_results if 'Performance' in t['test'] or 'Concurrent' in t['test']]
-        performance_passed = sum(1 for t in performance_tests if t['success'])
-        performance_rate = (performance_passed / len(performance_tests) * 100) if performance_tests else 0
-        
-        print("\n" + "=" * 90)
-        print("🎯🚀 ULTIMATE OPERATIONAL KIT VALIDATION REPORT - SERIES A READINESS")
-        print("=" * 90)
+        print("\n" + "=" * 80)
+        print("🏆 P0 HARDENING VALIDATION COMPLETE - FINAL REPORT")
+        print("=" * 80)
         
         print(f"📊 OVERALL RESULTS:")
-        print(f"   • Total Tests: {total_tests}")
-        print(f"   • Passed: {passed_tests}")
-        print(f"   • Failed: {total_tests - passed_tests}")
+        print(f"   • Total Tests: {self.total_tests}")
+        print(f"   • Passed: {self.passed_tests}")
+        print(f"   • Failed: {self.failed_tests}")
         print(f"   • Success Rate: {success_rate:.1f}%")
-        print(f"   • Total Testing Time: {total_time:.2f}s")
-        print(f"   • Average Response Time: {avg_response_time:.1f}ms")
+        print(f"   • Total Time: {total_time:.2f}s")
+        print(f"   • Average Response Time: {sum(r['response_time'] for r in self.results) / len(self.results):.3f}s")
         
-        print(f"\n🎯 CRITICAL FIXES VALIDATION:")
-        print(f"   • Critical Fixes Success Rate: {critical_fixes_rate:.1f}%")
-        print(f"   • Analytics Funnel Integrity: {'✅' if any('Analytics Funnel' in t['test'] and t['success'] for t in self.test_results) else '❌'}")
-        print(f"   • Proper 4xx Error Responses: {'✅' if any('4xx Error' in t['test'] and t['success'] for t in self.test_results) else '❌'}")
-        print(f"   • Multi-Currency Support: {'✅' if any('Multi-Currency' in t['test'] and t['success'] for t in self.test_results) else '❌'}")
-        
-        print(f"\n⚡ PERFORMANCE VALIDATION:")
-        print(f"   • Performance Tests Success Rate: {performance_rate:.1f}%")
-        print(f"   • Response Time Target (<200ms): {'✅' if avg_response_time < 200 else '❌'}")
-        
-        # Ultimate Operational Kit Readiness Assessment
-        ultimate_kit_ready = success_rate >= 98.0 and critical_fixes_rate == 100.0
-        print(f"\n🏆 ULTIMATE OPERATIONAL KIT READINESS: {'✅ 100% SERIES A READY' if ultimate_kit_ready else '❌ REQUIRES FIXES'}")
-        
-        if ultimate_kit_ready:
-            print("   • ✅ All 3 critical fixes at 100% (analytics, 4xx responses, multi-currency)")
-            print("   • ✅ Production hardening features operational")
-            print("   • ✅ Performance targets met (<200ms response times)")
-            print("   • ✅ Ultimate Kit tools validated")
-            print("   • ✅ Series A demo scenarios successful")
-            print("   • ✅ No critical production blockers")
-            print("   • ✅ Ready for immediate Series A investor demonstrations")
+        # Series A Readiness Assessment
+        if success_rate >= 100.0:
+            print(f"\n🎯 SERIES A READINESS: ✅ ACHIEVED - 100% SUCCESS RATE")
+            print(f"   All P0 hardening components validated and operational")
+        elif success_rate >= 95.0:
+            print(f"\n🎯 SERIES A READINESS: ⚠️ NEAR READY - {success_rate:.1f}% SUCCESS RATE")
+            print(f"   Minor issues identified, mostly ready for investor demonstrations")
         else:
-            print("   • ❌ Critical issues require resolution before Series A readiness")
-            failed_tests = [test for test in self.test_results if not test['success']]
-            print(f"   • Failed Tests: {len(failed_tests)}")
-            for test in failed_tests[:5]:  # Show first 5 failures
-                print(f"     - {test['test']}: {test['details']}")
+            print(f"\n🎯 SERIES A READINESS: ❌ NOT READY - {success_rate:.1f}% SUCCESS RATE")
+            print(f"   Critical issues require resolution before investor demonstrations")
         
-        print(f"\n💎 SERIES A INVESTOR DEMO QUALITY: {'ACHIEVED - 100% READY' if ultimate_kit_ready else 'REQUIRES FIXES'}")
-        print("=" * 90)
+        # Failed tests summary
+        failed_results = [r for r in self.results if not r['success']]
+        if failed_results:
+            print(f"\n❌ FAILED TESTS REQUIRING ATTENTION:")
+            for result in failed_results:
+                print(f"   • {result['test']}: {result['details']}")
+        
+        # Success summary
+        passed_results = [r for r in self.results if r['success']]
+        if passed_results:
+            print(f"\n✅ SUCCESSFUL VALIDATIONS:")
+            for result in passed_results:
+                print(f"   • {result['test']}: {result['details']}")
+        
+        print("\n" + "=" * 80)
+        
+        # Return success rate for external use
+        return success_rate
 
 async def main():
-    """Main test execution function"""
-    async with ProductionHardeningValidator() as validator:
-        await validator.run_all_tests()
+    """Main test execution"""
+    validator = P0HardeningValidator()
+    success_rate = await validator.run_all_tests()
+    
+    # Exit with appropriate code
+    if success_rate >= 100.0:
+        sys.exit(0)  # Perfect success
+    elif success_rate >= 95.0:
+        sys.exit(1)  # Near success but some issues
+    else:
+        sys.exit(2)  # Significant issues
 
 if __name__ == "__main__":
     asyncio.run(main())
