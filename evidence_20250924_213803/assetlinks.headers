@@ -1,0 +1,23 @@
+HTTP/2 301 
+date: Wed, 24 Sep 2025 21:38:04 GMT
+content-type: text/html; charset=UTF-8
+content-length: 0
+location: https://www.bedpage.com/404
+x-sucuri-id: 20006
+x-xss-protection: 1; mode=block
+x-frame-options: SAMEORIGIN
+x-content-type-options: nosniff
+content-security-policy: upgrade-insecure-requests;
+expires: Thu, 19 Nov 1981 08:52:00 GMT
+cache-control: no-store, no-cache, must-revalidate
+pragma: no-cache
+set-cookie: sessions=ads5k8v03qhdl6rmpjop83lal03djn2k; expires=Wed, 24-Sep-2025 23:38:03 GMT; Max-Age=7200; path=/; domain=.bedpage.com; HttpOnly; SameSite=Lax
+strict-transport-security: max-age=31536000; includeSubDomains; preload
+access-control-allow-origin: https://*.yourdomain.com
+access-control-allow-methods: GET, POST, OPTIONS, DELETE, PUT
+access-control-allow-headers: Content-Type, Authorization
+content-encoding: gzip
+server: Sucuri/Cloudproxy
+x-sucuri-cache: MISS
+alt-svc: h3=":443"; ma=2592000, h3-29=":443"; ma=2592000
+
