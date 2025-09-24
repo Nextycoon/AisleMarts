@@ -14,9 +14,9 @@ need(){ command -v "$1" >/dev/null 2>&1 || { echo "Missing: $1"; exit 1; }; }
 for b in node curl jq sed awk date; do need "$b"; done
 [ -f package.json ] || { echo "Run from your app root (package.json missing)."; exit 1; }
 
-say(){ printf "\n\033[1m%s\033[0m\n" "$*"; }
-ok(){  printf "  ✅ %s\n" "$*"; }
-warn(){printf "  ⚠️  %s\n" "$*"; }
+say() { printf "\n\033[1m%s\033[0m\n" "$*"; }
+ok() { printf "  ✅ %s\n" "$*"; }
+warn() { printf "  ⚠️  %s\n" "$*"; }
 
 mkdir -p e2e scripts patches src/mobile src/navigation src/infinity .github/workflows store/apple/en-US store/google/listing store/huawei/listing docs bin/ios bin/android .well-known reports
 
