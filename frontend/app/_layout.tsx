@@ -1,6 +1,5 @@
+import React, { useEffect, useRef } from 'react';
 import { Linking } from 'react-native';
-import { parseDeepLink } from '../src/navigation/deeplinks';
-import React, { useEffect } from 'react';
 import { Stack } from 'expo-router';
 import { StatusBar } from 'expo-status-bar';
 
@@ -10,31 +9,45 @@ import { AuthProvider } from '../src/context/AuthContext';
 
 // Import Triple Store Launch Kit components
 import { initPush } from '../src/mobile/pushBridge';
+import { parseDeepLink } from '../src/navigation/deeplinks';
+import { routeDeepLink } from '../src/navigation/deepLinkRouter';
 
 export default function RootLayout() {
-
   // Deep link handling
   const initialHandledRef = useRef(false);
+  
   useEffect(() => {
+    let mounted = true;
+
     (async () => {
       try {
         const initUrl = await Linking.getInitialURL();
-        if (initUrl && !initialHandledRef.current) {
+        if (mounted && initUrl && !initialHandledRef.current) {
           initialHandledRef.current = true;
           const dl = parseDeepLink(initUrl);
-          console.log([deeplink:init], initUrl, dl);
-          // TODO: navigate to story/product route based on dl
+          console.log('[deeplink:init]', initUrl, dl);
+          routeDeepLink(dl);
         }
-      } catch(e) { console.log([deeplink:init:error], e); }
+      } catch(e) { 
+        console.log('[deeplink:init:error]', e); 
+      }
     })();
-    const sub = Linking.addEventListener(url, (e) => {
+
+    const sub = Linking.addEventListener('url', (e) => {
       try {
         const dl = parseDeepLink(e.url);
-        console.log([deeplink:event], e.url, dl);
-        // TODO: navigate accordingly
-      } catch(err) { console.log([deeplink:event:error], err); }
+        console.log('[deeplink:event]', e.url, dl);
+        routeDeepLink(dl);
+      } catch(err) { 
+        console.log('[deeplink:event:error]', err); 
+      }
     });
-    return () => sub.remove && sub.remove();
+
+    return () => {
+      mounted = false;
+      // @ts-ignore - RN new/old API compatible cleanup
+      sub?.remove?.();
+    };
   }, []);
   useEffect(() => {
     // Initialize push notifications for multi-platform support
