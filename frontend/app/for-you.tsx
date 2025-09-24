@@ -635,40 +635,83 @@ export default function ForYouScreen() {
               <Text style={styles.storyLabel}>Your Story</Text>
             </TouchableOpacity>
 
-            {/* Brand/Vendor Stories */}
-            {[
-              { id: '1', name: 'LuxeFashion', hasNew: true, isVerified: true },
-              { id: '2', name: 'TechGadgets', hasNew: true, isVerified: true },
-              { id: '3', name: 'HomeDecor', hasNew: false, isVerified: false },
-              { id: '4', name: 'FitnessGear', hasNew: true, isVerified: true },
-              { id: '5', name: 'BeautyBox', hasNew: false, isVerified: false },
-              { id: '6', name: 'BookCorner', hasNew: true, isVerified: false }
-            ].map((story) => (
-              <TouchableOpacity 
-                key={story.id} 
-                style={styles.storyBubble} 
-                onPress={() => handleStoryPress(story)}
-              >
-                <View style={[
-                  styles.storyRing, 
-                  story.hasNew ? styles.activeStoryRing : styles.inactiveStoryRing
-                ]}>
-                  <View style={styles.storyImage}>
-                    <Text style={styles.storyImageText}>
-                      {story.name.charAt(0)}
-                    </Text>
-                    {story.isVerified && (
-                      <View style={styles.verifiedBadge}>
-                        <Text style={styles.verifiedIcon}>✓</Text>
-                      </View>
+            {/* Dynamic Infinity Stories */}
+            {infinityStories.map((story) => {
+              const creator = creatorPool.find(c => c.id === story.creatorId);
+              if (!creator) return null;
+              
+              return (
+                <TouchableOpacity 
+                  key={story.id}
+                  style={styles.storyBubble} 
+                  onPress={() => {
+                    markStoryAsViewed(story.id);
+                    handleStoryPress(story);
+                  }}
+                >
+                  <View style={[
+                    styles.storyRing,
+                    story.isViewed ? styles.viewedStoryRing : styles.activeStoryRing
+                  ]}>
+                    <View style={styles.storyImage}>
+                      <Text style={styles.storyImageText}>
+                        {story.creatorName.charAt(1)} {/* Skip @ symbol */}
+                      </Text>
+                      {/* Verification badge based on tier */}
+                      {story.verification !== 'unverified' && (
+                        <View style={[
+                          styles.verifiedBadge,
+                          story.verification === 'goldwave' && styles.goldVerifiedBadge,
+                          story.verification === 'bluewave' && styles.blueVerifiedBadge,
+                          story.verification === 'greywave' && styles.greyVerifiedBadge
+                        ]}>
+                          <Text style={styles.verifiedIcon}>✓</Text>
+                        </View>
+                      )}
+                      
+                      {/* Story type indicator */}
+                      {story.type === 'product_showcase' && (
+                        <View style={styles.commerceIndicator}>
+                          <Text style={styles.commerceIcon}>🛍️</Text>
+                        </View>
+                      )}
+                    </View>
+                    
+                    {/* Story expiry progress ring */}
+                    {!story.isViewed && story.expiryInfo.percentRemaining < 50 && (
+                      <View style={[
+                        styles.expiryRing,
+                        { 
+                          borderColor: story.expiryInfo.percentRemaining < 20 ? '#FF4444' : '#FFA500',
+                          opacity: 0.7
+                        }
+                      ]} />
                     )}
                   </View>
+                  <Text style={styles.storyLabel} numberOfLines={1}>
+                    {story.creatorName.substring(1)} {/* Remove @ symbol for display */}
+                  </Text>
+                  
+                  {/* Story content preview */}
+                  <Text style={styles.storyContentPreview} numberOfLines={1}>
+                    {story.template}
+                  </Text>
+                </TouchableOpacity>
+              );
+            })}
+
+            {/* Load more stories button */}
+            <TouchableOpacity 
+              style={styles.loadMoreStoriesButton} 
+              onPress={loadMoreStories}
+            >
+              <View style={styles.loadMoreRing}>
+                <View style={styles.loadMoreIcon}>
+                  <Text style={styles.loadMoreText}>...</Text>
                 </View>
-                <Text style={styles.storyLabel} numberOfLines={1}>
-                  {story.name}
-                </Text>
-              </TouchableOpacity>
-            ))}
+              </View>
+              <Text style={styles.storyLabel}>More</Text>
+            </TouchableOpacity>
           </ScrollView>
         </View>
       </Animated.View>
