@@ -26,11 +26,11 @@ export default function RootLayout() {
         if (mounted && initUrl && !initialHandledRef.current) {
           initialHandledRef.current = true;
           const dl = parseDeepLink(initUrl);
-          console.log('[deeplink:init]', initUrl, dl);
+          safeLog('[deeplink:init]', initUrl, dl);
           routeDeepLink(dl);
         }
-      } catch(e) { 
-        console.log('[deeplink:init:error]', e); 
+      } catch (e) {
+        safeError('[deeplink:init:error]', e);
       }
     })();
 
