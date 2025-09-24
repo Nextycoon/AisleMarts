@@ -116,32 +116,114 @@ class ProductionHardeningValidator:
     # ==================== CORE HEALTH CHECKS ====================
     
     async def test_core_api_health(self):
-        """Test core API health endpoints for Series A readiness"""
-        endpoints = [
-            ("/health", "Main API Health"),
-            ("/currency/health", "Currency-Infinity Engine"),
-            ("/ai-super-agent/health", "AI Super Agent"),
-            ("/rewards/health", "Rewards System"),
-            ("/clp-engine/health", "CLP Engine"),
-            ("/stories/health", "Infinity Stories System")
-        ]
+        """Test core API health endpoints for Ultimate Operational Kit validation"""
+        # Test Express Server Health Check (Ultimate Operational Kit)
+        await self._test_express_server_health()
         
-        for endpoint, name in endpoints:
-            try:
-                start = time.time()
-                async with self.session.get(f"{BASE_URL}{endpoint}") as resp:
-                    response_time = time.time() - start
+        # Test FastAPI Backend Health Check
+        await self._test_fastapi_backend_health()
+        
+        # Test Database Connectivity
+        await self._test_database_connectivity()
+        
+        # Test Prisma Client Functionality
+        await self._test_prisma_client_functionality()
+    
+    async def _test_express_server_health(self):
+        """Test Express Server Health Check with hardened features"""
+        try:
+            start = time.time()
+            # Test Express server on port 3000 (Ultimate Operational Kit)
+            express_url = f"{BACKEND_URL}:3000/health"
+            async with self.session.get(express_url) as resp:
+                response_time = time.time() - start
+                
+                if resp.status == 200:
+                    data = await resp.json()
+                    features = data.get('features', [])
+                    required_features = [
+                        'analytics_funnel_integrity',
+                        'proper_4xx_responses', 
+                        'multi_currency_support',
+                        'hmac_security',
+                        'idempotency_protection'
+                    ]
                     
-                    if resp.status == 200:
-                        data = await resp.json()
-                        self.log_test(f"Health Check: {name}", True, 
-                                    f"Status: {data.get('status', 'healthy')}", response_time)
-                    else:
-                        self.log_test(f"Health Check: {name}", False, 
-                                    f"HTTP {resp.status}", response_time)
+                    all_features_present = all(feature in features for feature in required_features)
+                    
+                    self.log_test("Express Server Health Check", all_features_present,
+                                f"Features: {len(features)}/5 hardened features present", response_time)
+                else:
+                    self.log_test("Express Server Health Check", False, 
+                                f"HTTP {resp.status}", response_time)
                         
-            except Exception as e:
-                self.log_test(f"Health Check: {name}", False, f"Error: {str(e)}")
+        except Exception as e:
+            self.log_test("Express Server Health Check", False, f"Error: {str(e)}")
+    
+    async def _test_fastapi_backend_health(self):
+        """Test FastAPI Backend Health Check"""
+        try:
+            start = time.time()
+            async with self.session.get(f"{BASE_URL}/health") as resp:
+                response_time = time.time() - start
+                
+                if resp.status == 200:
+                    data = await resp.json()
+                    service_name = data.get('service', '')
+                    is_aislemarts = 'AisleMarts' in service_name
+                    
+                    self.log_test("FastAPI Backend Health Check", is_aislemarts,
+                                f"Service: {service_name}", response_time)
+                else:
+                    self.log_test("FastAPI Backend Health Check", False, 
+                                f"HTTP {resp.status}", response_time)
+                        
+        except Exception as e:
+            self.log_test("FastAPI Backend Health Check", False, f"Error: {str(e)}")
+    
+    async def _test_database_connectivity(self):
+        """Test Database connectivity and Prisma client functionality"""
+        try:
+            start = time.time()
+            # Test creators endpoint to verify database connectivity
+            async with self.session.get(f"{BACKEND_URL}:3000/api/creators") as resp:
+                response_time = time.time() - start
+                
+                if resp.status == 200:
+                    data = await resp.json()
+                    creators = data.get('creators', [])
+                    has_creators = len(creators) > 0
+                    
+                    self.log_test("Database Connectivity", has_creators,
+                                f"Creators found: {len(creators)}", response_time)
+                else:
+                    self.log_test("Database Connectivity", False, 
+                                f"HTTP {resp.status}", response_time)
+                        
+        except Exception as e:
+            self.log_test("Database Connectivity", False, f"Error: {str(e)}")
+    
+    async def _test_prisma_client_functionality(self):
+        """Test Prisma client functionality with stories endpoint"""
+        try:
+            start = time.time()
+            # Test stories endpoint to verify Prisma client
+            async with self.session.get(f"{BACKEND_URL}:3000/api/stories?limit=5") as resp:
+                response_time = time.time() - start
+                
+                if resp.status == 200:
+                    data = await resp.json()
+                    stories = data.get('stories', [])
+                    has_pagination = 'nextCursor' in data and 'hasMore' in data
+                    
+                    self.log_test("Prisma Client Functionality", has_pagination,
+                                f"Stories: {len(stories)}, Pagination: {has_pagination}", response_time)
+                else:
+                    self.log_test("Prisma Client Functionality", False, 
+                                f"HTTP {resp.status}", response_time)
+                        
+        except Exception as e:
+            self.log_test("Prisma Client Functionality", False, f"Error: {str(e)}")
 
     # ==================== ATTRIBUTION EDGE CASES ====================
     
