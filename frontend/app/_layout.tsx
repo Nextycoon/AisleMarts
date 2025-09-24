@@ -37,10 +37,10 @@ export default function RootLayout() {
     const sub = Linking.addEventListener('url', (e) => {
       try {
         const dl = parseDeepLink(e.url);
-        console.log('[deeplink:event]', e.url, dl);
+        safeLog('[deeplink:event]', e.url, dl);
         routeDeepLink(dl);
-      } catch(err) { 
-        console.log('[deeplink:event:error]', err); 
+      } catch (err) {
+        safeError('[deeplink:event:error]', err);
       }
     });
 
