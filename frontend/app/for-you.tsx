@@ -839,7 +839,7 @@ export default function ForYouScreen() {
         {/* Music Button with Dynamic Count */}
         <TouchableOpacity 
           style={styles.compactActionButtonSpaced}
-          onPress={() => console.log('Music pressed:', currentVideo.sound.title)}
+          onPress={() => console.log('Music pressed:', currentVideo.music_info.title)}
         >
           <View style={styles.sharpIconContainer}>
             <Text style={styles.sharpMusicIcon}>🎵</Text>
