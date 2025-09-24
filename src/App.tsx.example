@@ -1,0 +1,6 @@
+import React from 'react';
+import { InfinityStoriesScreen } from './stories/InfinityStoriesScreen';
+
+export default function App() {
+  return <InfinityStoriesScreen />;
+}

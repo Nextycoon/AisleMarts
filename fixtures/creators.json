@@ -1,0 +1,64 @@
+{
+  "creators": [
+    {
+      "id": "mira.moda",
+      "displayName": "Mira Moda",
+      "tier": "blue"
+    },
+    {
+      "id": "techtarek",
+      "displayName": "Tech Tarek",
+      "tier": "gold"
+    },
+    {
+      "id": "linafit",
+      "displayName": "Lina Fit",
+      "tier": "blue"
+    },
+    {
+      "id": "chefzey",
+      "displayName": "Chef Zey",
+      "tier": "unverified"
+    },
+    {
+      "id": "nomadnour",
+      "displayName": "Nomad Nour",
+      "tier": "grey"
+    },
+    {
+      "id": "beautyberil",
+      "displayName": "Beauty Beril",
+      "tier": "blue"
+    },
+    {
+      "id": "fixwithfaris",
+      "displayName": "Fix with Faris",
+      "tier": "grey"
+    },
+    {
+      "id": "greenayla",
+      "displayName": "Green Ayla",
+      "tier": "blue"
+    },
+    {
+      "id": "gamerkaan",
+      "displayName": "Gamer Kaan",
+      "tier": "grey"
+    },
+    {
+      "id": "styleelif",
+      "displayName": "Style Elif",
+      "tier": "gold"
+    },
+    {
+      "id": "soundcem",
+      "displayName": "Sound Cem",
+      "tier": "blue"
+    },
+    {
+      "id": "runwithdeniz",
+      "displayName": "Run with Deniz",
+      "tier": "grey"
+    }
+  ]
+}
