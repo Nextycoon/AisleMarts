@@ -44,9 +44,32 @@
       "ios": {
         "resourceClass": "m-medium"
       }
+    },
+    "ios-prod": {
+      "extends": "production",
+      "platform": "ios"
+    },
+    "android-gms-prod": {
+      "extends": "production",
+      "platform": "android",
+      "gradleCommand": ":app:bundleGmsRelease"
+    },
+    "android-hms-prod": {
+      "extends": "production",
+      "platform": "android",
+      "gradleCommand": ":app:bundleHmsRelease"
     }
   },
   "submit": {
-    "production": {}
+    "production": {},
+    "ios-prod": {
+      "extends": "production"
+    },
+    "android-gms-prod": {
+      "extends": "production"
+    },
+    "android-hms-prod": {
+      "extends": "production"
+    }
   }
 }
