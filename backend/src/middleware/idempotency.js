@@ -19,8 +19,13 @@ export function idempotency() {
       });
 
       if (existing) {
-        // Return cached response
-        return res.status(existing.status).json(existing.response);
+        // Return 409 with cached response
+        return res.status(409).json({ 
+          error: 'idempotency_conflict',
+          message: 'Request already processed',
+          originalResponse: existing.response,
+          processedAt: existing.createdAt
+        });
       }
 
       // Store the key and continue
