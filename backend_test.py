@@ -579,10 +579,10 @@ class Phase3CommerceValidator:
         total_tests = 6  # Test 6 different creator-product combinations
         
         test_scenarios = [
-            ('fitnessjane', 'yoga-mat', 49.99, 'fitness_buyer'),
+            ('fitnessjane', 'protein-shaker', 14.99, 'fitness_buyer'),
             ('beautyqueen', 'silk-scarf', 89.00, 'beauty_lover'),
             ('foodiefun', 'protein-shaker', 14.99, 'health_enthusiast'),
-            ('traveladdict', 'trench-coat', 239.00, 'travel_lover'),
+            ('traveladdict', 'buds-x', 129.00, 'travel_lover'),
             ('homedecor', 'yoga-mat', 49.99, 'home_decorator'),
             ('artcreative', 'silk-scarf', 89.00, 'art_collector')
         ]
