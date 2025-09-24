@@ -17,7 +17,7 @@ import os
 from datetime import datetime
 
 # Configuration
-BACKEND_URL = os.getenv('EXPO_PUBLIC_BACKEND_URL', 'https://stories-marketplace.preview.emergentagent.com')
+BACKEND_URL = os.getenv('EXPO_PUBLIC_BACKEND_URL', 'https://aisle-superapp.preview.emergentagent.com')
 BASE_URL = f"{BACKEND_URL}/api"
 
 class FinalUltimateKitValidator:

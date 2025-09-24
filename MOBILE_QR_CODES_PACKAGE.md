@@ -4,7 +4,7 @@
 
 ### Web Preview (Desktop/Mobile Browser)
 ```
-🌐 Live Preview: https://stories-marketplace.preview.emergentagent.com
+🌐 Live Preview: https://aisle-superapp.preview.emergentagent.com
 ```
 
 ### Mobile App Testing (Expo Go)

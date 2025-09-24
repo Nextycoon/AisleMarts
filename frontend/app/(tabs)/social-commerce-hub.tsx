@@ -21,7 +21,7 @@ import { BlurView } from 'expo-blur';
 const { width, height } = Dimensions.get('window');
 
 // API configuration
-const API_BASE = process.env.EXPO_PUBLIC_BACKEND_URL || 'https://stories-marketplace.preview.emergentagent.com';
+const API_BASE = process.env.EXPO_PUBLIC_BACKEND_URL || 'https://aisle-superapp.preview.emergentagent.com';
 
 interface ShoppableContent {
   id: string;
