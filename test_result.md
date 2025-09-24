@@ -146,7 +146,56 @@
 # Testing Data - Main Agent and testing sub agent both should log testing data below this section
 #====================================================================================================
 
-user_problem_statement: "Test the backend systems to ensure they are operational before testing the new Infinity Stories System implementation. Focus on: 1. Core API Health Checks - Validate that main API, Currency System, AI Super Agent, and Rewards System are all responding correctly, 2. CLP Engine Functionality - Test the Content Lead Purchase engine that might support story analytics, 3. Universal AI Hub - Ensure AI systems are working for potential story personalization, 4. Authentication & User Profile - Verify user systems that track story viewing and engagement, 5. Concurrent Performance - Test system under load to ensure it can handle story interactions. Expected Outcome: 95%+ success rate on core systems to confirm backend is ready to support the new infinity stories features."
+user_problem_statement: "P0 HARDENING PHASE - CLOSE GAP TO 100% SERIES A READINESS: Apply precise P0 patches to achieve 100% backend validation success rate. Focus on: 1. Standardize HMAC/Auth Error Codes - Fix Express server to return consistent 400/401/409/422 responses instead of mixing error codes, 2. Multi-Currency Precision - Implement proper EUR/GBP 2dp, JPY 0dp rounding with banker's rounding and minor units system, 3. Commission Calculations - Add timezone-aware commission calculations with proper FX normalization, 4. Comprehensive Testing - Run validation suite to achieve 100% success rate vs current 92.9%. Expected Outcome: 100% backend validation success rate with enterprise-grade error handling and multi-currency precision suitable for Series A investor demonstrations."
+
+backend:
+  - task: "P0.1 - HMAC/Auth Error Code Standardization"
+    implemented: true
+    working: false
+    file: "/app/backend/src/middleware/hmac.js, /app/backend/src/middleware/idempotency.js, /app/backend/src/middleware/security.ts"
+    stuck_count: 0
+    priority: "critical"
+    needs_retesting: true
+    status_history:
+        - working: "NA"
+          agent: "main"
+          comment: "P0.1 IMPLEMENTATION STARTED: Implementing standardized auth/error code policy across Express server. Created new security middleware with proper error code mapping: 400 (missing/invalid headers), 401 (HMAC/timestamp verification fails), 409 (idempotency replay), 422 (schema validation fails). Updated HMAC middleware with constant-time comparison and proper timestamp skew checking. Enhanced idempotency middleware to return 409 with conflict information instead of original response."
+
+  - task: "P0.2 - Multi-Currency Precision & Commission System"
+    implemented: true
+    working: false
+    file: "/app/backend/src/shared/currency.js, /app/backend/src/shared/currency.ts"
+    stuck_count: 0
+    priority: "critical" 
+    needs_retesting: true
+    status_history:
+        - working: "NA"
+          agent: "main"
+          comment: "P0.2 IMPLEMENTATION STARTED: Implementing enhanced multi-currency system with proper minor units handling. Created shared/currency.js with toMinorUnits(), fromMinorUnits(), and commission() functions using decimal.js for banker's rounding. Added support for EUR/GBP 2dp and JPY 0dp precision. Enhanced commission calculations to use minor units and proper rounding. Maintained backward compatibility with existing currency functions."
+
+  - task: "Express Server Integration & Error Handling"
+    implemented: true
+    working: false
+    file: "/app/backend/src/server.js"
+    stuck_count: 0
+    priority: "critical"
+    needs_retesting: true
+    status_history:
+        - working: "NA"
+          agent: "main"
+          comment: "EXPRESS SERVER INTEGRATION: Updated main Express server to integrate all P0 hardening components. Added imports for new currency functions (toMinorUnits, fromMinorUnits, commission). Server running on port 3000 with all hardening features operational. Need comprehensive testing to validate 100% success rate achievement."
+
+  - task: "P0 Testing & Documentation"
+    implemented: true
+    working: false
+    file: "/app/docs/error-codes.md, /app/docs/currency.md, /app/backend/src/__tests__/"
+    stuck_count: 0
+    priority: "critical"
+    needs_retesting: true
+    status_history:
+        - working: "NA"
+          agent: "main"
+          comment: "P0 DOCUMENTATION & TESTING: Created comprehensive documentation for error codes policy (/app/docs/error-codes.md) and multi-currency support (/app/docs/currency.md). Added Jest test suites for purchase endpoint validation and currency precision testing. Ready for comprehensive backend testing to validate 100% P0 success rate achievement."
 
 backend:
   - task: "Infinity Stories System Backend Validation"
