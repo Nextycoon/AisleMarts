@@ -1,16 +1,4 @@
-import { detectProvider } from './runtimeProviders';
-type Token={provider:'ios'|'gms'|'hms'|'none',token?:string};
-export async function initPush(): Promise<Token> {
-  const provider=await detectProvider();
-  try {
-    if(provider==='ios'){ const Notifications=(await import('expo-notifications')).default;
-      const { status }=await Notifications.requestPermissionsAsync(); if(status!=='granted') return {provider};
-      const token=(await Notifications.getDevicePushTokenAsync()).data; return {provider,token}; }
-    if(provider==='gms'){ const messaging=(await import('@react-native-firebase/messaging')).default;
-      await messaging().requestPermission(); const token=await messaging().getToken(); return {provider,token}; }
-    if(provider==='hms'){ const Hms=await import('@hmscore/react-native-hms-push');
-      // @ts-ignore
-      const res=await Hms.HmsPushInstanceId.getToken(); const token=res?.result||res?.token; return {provider,token}; }
-  } catch {}
-  return {provider:provider??'none'};
-}
+import { detectProvider } from './runtimeProviders';type Token={provider:'ios'|'gms'|'hms'|'none',token?:string};
+export async function initPush():Promise<Token>{const provider=await detectProvider();try{if(provider==='ios'){const Notifications=(await import('expo-notifications')).default;const {status}=await Notifications.requestPermissionsAsync();if(status!=='granted')return{provider};const token=(await Notifications.getDevicePushTokenAsync()).data;return{provider,token};}
+if(provider==='gms'){const messaging=(await import('@react-native-firebase/messaging')).default;await messaging().requestPermission();const token=await messaging().getToken();return{provider,token};}
+if(provider==='hms'){const Hms:any=await import('@hmscore/react-native-hms-push');const res=await Hms.HmsPushInstanceId.getToken();const token=res?.result||res?.token;return{provider,token};}}catch{}return{provider:provider??'none'};}

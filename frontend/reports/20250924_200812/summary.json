@@ -1,0 +1,17 @@
+{
+  "base_url": "http://localhost:8001",
+  "pass": [
+    "stories",
+    "cta",
+    "multi_currency_EUR",
+    "multi_currency_GBP",
+    "multi_currency_JPY"
+  ],
+  "fail": [
+    "health",
+    "cors_preflight",
+    "idempotency_409",
+    "invalid_422"
+  ],
+  "score": 55
+}

@@ -1,0 +1,1 @@
+{"ok":true,"id":"purchase_23","commission":0.0,"commissionUsd":0.0,"creatorId":null,"creatorName":null,"productInfo":{"id":"yoga-mat","title":"Pro Yoga Mat","price":{"USD":49.99,"EUR":46.72,"GBP":39.68,"JPY":7462}},"attributionMethod":"CTA","currency":"USD","fxRateUsd":1.0,"message":"Purchase and attribution tracked successfully"}
