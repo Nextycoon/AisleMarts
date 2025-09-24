@@ -362,7 +362,11 @@ class Phase3CommerceValidator:
         user_id = "window_test_user"
         
         # Get a product story
-        stories_result, _, _ = await self.make_request('GET', '/stories', {'limit': 5})
+        stories_result, _, stories_success = await self.make_request('GET', '/stories', {'limit': 5})
+        if not stories_success:
+            await self.log_test("7-Day Attribution Window", False, "Could not fetch stories", 0)
+            return False
+            
         stories = stories_result.get('data', [])
         product_story = next((s for s in stories if s.get('productId')), None)
         
