@@ -498,13 +498,13 @@ class Phase3CommerceValidator:
         
         if success and result.get('creatorId') == 'luxefashion':
             commission = result.get('commission', 0)
-            expected_commission = 89.00 * 0.12  # 12% for gold tier
+            expected_commission = 239.00 * 0.12  # 12% for gold tier
             
             if abs(commission - expected_commission) < 0.01:  # Allow for rounding
                 await self.log_test(
                     "Luxury Fashion Scenario",
                     True,
-                    f"Lux Fashion silk scarf: ${commission:.2f} commission (12% gold tier)",
+                    f"Lux Fashion trench coat: ${commission:.2f} commission (12% gold tier)",
                     response_time
                 )
                 return True
