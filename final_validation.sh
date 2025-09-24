@@ -1,6 +1,6 @@
 #!/usr/bin/env bash
 set -euo pipefail
-BASE_URL="${BASE_URL:-http://localhost:3000}"
+BASE_URL="${BASE_URL:-http://localhost:8002}"
 HMAC_SECRET="${HMAC_SECRET:-}"
 ORIGIN="${ORIGIN:-https://app.aislemarts.dev}"
 USER_ID="${USER_ID:-u1}"
