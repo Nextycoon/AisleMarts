@@ -473,11 +473,12 @@ class HardeningValidator:
             start_time = time.time()
             try:
                 test_payload = {
-                    "user_id": f"test-user-{currency_test['currency'].lower()}",
-                    "creator_id": "creator-multi-currency",
-                    "product_id": f"product-{currency_test['currency'].lower()}",
+                    "orderId": f"test-order-{currency_test['currency'].lower()}",
+                    "productId": f"product-{currency_test['currency'].lower()}",
                     "amount": currency_test['amount'],
-                    "currency": currency_test['currency']
+                    "currency": currency_test['currency'],
+                    "userId": f"test-user-{currency_test['currency'].lower()}",
+                    "referrerStoryId": "story-multi-currency"
                 }
                 
                 headers = self.create_signed_headers(test_payload)
