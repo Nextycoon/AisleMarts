@@ -212,7 +212,7 @@ class HardeningValidator:
                 )
                 response_time = time.time() - start_time
                 
-                if response.status_code == 200:
+                if response.status_code in [200, 204]:  # 204 is correct for CORS preflight
                     # Check for Access-Control-Allow-Headers
                     allow_headers = response.headers.get('Access-Control-Allow-Headers', '')
                     
