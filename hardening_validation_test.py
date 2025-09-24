@@ -48,13 +48,14 @@ class HardeningValidator:
 
     def generate_hmac_signature(self, payload: str, timestamp: str) -> str:
         """Generate HMAC-SHA256 signature for authentication"""
-        message = f"{timestamp}{payload}"
+        # Use the same format as the signedPurchase.js tool: timestamp.payload
+        message = f"{timestamp}.{payload}"
         signature = hmac.new(
             self.hmac_secret.encode('utf-8'),
             message.encode('utf-8'),
             hashlib.sha256
         ).hexdigest()
-        return signature
+        return f"sha256={signature}"
 
     def create_signed_headers(self, payload: Dict[str, Any]) -> Dict[str, str]:
         """Create headers with proper HMAC signature"""
