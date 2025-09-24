@@ -636,11 +636,19 @@ class Phase3CommerceValidator:
     async def test_real_time_analytics(self):
         """Test real-time analytics updates"""
         # Get initial analytics
-        initial_result, _, _ = await self.make_request('GET', '/commerce/analytics')
+        initial_result, _, initial_success = await self.make_request('GET', '/commerce/analytics')
+        if not initial_success:
+            await self.log_test("Real-time Analytics Updates", False, "Could not fetch initial analytics", 0)
+            return False
+            
         initial_purchases = initial_result.get('summary', {}).get('totalPurchases', 0)
         
         # Make a test purchase
-        stories_result, _, _ = await self.make_request('GET', '/stories', {'limit': 5})
+        stories_result, _, stories_success = await self.make_request('GET', '/stories', {'limit': 5})
+        if not stories_success:
+            await self.log_test("Real-time Analytics Updates", False, "Could not fetch stories", 0)
+            return False
+            
         stories = stories_result.get('data', [])
         product_story = next((s for s in stories if s.get('productId')), None)
         
