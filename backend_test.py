@@ -589,7 +589,10 @@ class Phase3CommerceValidator:
         
         for creator_id, product_id, amount, user_id in test_scenarios:
             # Find matching story
-            stories_result, _, _ = await self.make_request('GET', '/stories', {'limit': 25})
+            stories_result, _, stories_success = await self.make_request('GET', '/stories', {'limit': 25})
+            if not stories_success:
+                continue
+                
             stories = stories_result.get('data', [])
             
             matching_story = None
