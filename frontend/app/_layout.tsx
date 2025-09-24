@@ -10,6 +10,15 @@ import { AuthProvider } from '../src/context/AuthContext';
 import { initPush } from '../src/mobile/pushBridge';
 
 export default function RootLayout() {
+  useEffect(() => {
+    // Initialize push notifications for multi-platform support
+    initPush().then((result) => {
+      if (result.token) {
+        console.log(`Push initialized: ${result.provider} - ${result.token.substring(0, 20)}...`);
+      }
+    }).catch(console.error);
+  }, []);
+
   return (
     <AuthProvider>
       <CurrencyProvider>
