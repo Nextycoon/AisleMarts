@@ -6,6 +6,9 @@ import { StatusBar } from 'expo-status-bar';
 import { CurrencyProvider } from '../lib/currency/CurrencyProvider';
 import { AuthProvider } from '../src/context/AuthContext';
 
+// Import Triple Store Launch Kit components
+import { initPush } from '../src/mobile/pushBridge';
+
 export default function RootLayout() {
   return (
     <AuthProvider>
