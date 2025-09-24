@@ -1,0 +1,25 @@
+{
+  "_comment": "PLACEHOLDER - Replace with actual google-services.json from Firebase Console",
+  "_instructions": [
+    "1. Go to Firebase Console: https://console.firebase.google.com/",
+    "2. Add Android app with package name: com.aislemarts.beta",
+    "3. Add SHA-1 and SHA-256 certificates (from EAS or Play Console)",
+    "4. Download google-services.json and replace this file",
+    "5. Ensure Push Notifications are enabled for the project"
+  ],
+  "project_info": {
+    "project_number": "YOUR_PROJECT_NUMBER",
+    "project_id": "aislemarts-app",
+    "storage_bucket": "aislemarts-app.appspot.com"
+  },
+  "client": [
+    {
+      "client_info": {
+        "mobilesdk_app_id": "1:YOUR_PROJECT_NUMBER:android:YOUR_APP_ID",
+        "android_client_info": {
+          "package_name": "com.aislemarts.beta"
+        }
+      }
+    }
+  ]
+}
