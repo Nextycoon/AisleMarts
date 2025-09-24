@@ -1590,12 +1590,204 @@ class ProductionHardeningValidator:
         except Exception as e:
             self.log_test("Revenue Attribution Accuracy", False, f"Error: {str(e)}")
 
+    # ==================== SERIES A DEMO SCENARIOS ====================
+    
+    async def test_series_a_demo_scenarios(self):
+        """Test Series A Demo Scenarios: Luxury commerce, global markets, error resilience"""
+        
+        # Test Luxury Commerce Transaction Flow
+        await self._test_luxury_commerce_flow()
+        
+        # Test Global Markets Validation
+        await self._test_global_markets_validation()
+        
+        # Test Error Resilience
+        await self._test_error_resilience_scenarios()
+        
+        # Test Real-time Analytics Dashboard
+        await self._test_realtime_analytics_dashboard()
+    
+    async def _test_luxury_commerce_flow(self):
+        """Test high-value luxury purchases with commission"""
+        try:
+            user_id = f"luxury_demo_{uuid.uuid4().hex[:8]}"
+            story_id = "luxefashion_story_0"
+            
+            # Create impression for luxury item
+            impression_data = {
+                "storyId": story_id,
+                "userId": user_id
+            }
+            await self.session.post(f"{BACKEND_URL}:3000/api/track/impression", json=impression_data)
+            
+            # Create CTA for luxury item
+            cta_data = {
+                "storyId": story_id,
+                "productId": "luxury-handbag",
+                "userId": user_id
+            }
+            await self.session.post(f"{BACKEND_URL}:3000/api/track/cta", json=cta_data)
+            
+            # High-value luxury purchase
+            purchase_data = {
+                "orderId": f"luxury_order_{uuid.uuid4().hex[:8]}",
+                "userId": user_id,
+                "productId": "luxury-handbag",
+                "amount": 2399.00,  # High-value luxury item
+                "currency": "USD",
+                "referrerStoryId": story_id
+            }
+            
+            start = time.time()
+            signed_headers = await self._generate_hmac_headers(purchase_data)
+            
+            async with self.session.post(f"{BACKEND_URL}:3000/api/track/purchase", 
+                                       json=purchase_data, headers=signed_headers) as resp:
+                response_time = time.time() - start
+                
+                if resp.status == 200:
+                    data = await resp.json()
+                    commission_data = data.get('commission', {})
+                    commission_amount = commission_data.get('amount', 0)
+                    
+                    # For luxury fashion (gold tier), expect 12% commission
+                    expected_commission = 2399.00 * 0.12
+                    commission_accurate = abs(commission_amount - expected_commission) <= 1.0
+                    
+                    self.log_test("Luxury Commerce Flow", commission_accurate,
+                                f"Purchase: $2399.00, Commission: ${commission_amount:.2f} (12% gold tier)", 
+                                response_time)
+                else:
+                    self.log_test("Luxury Commerce Flow", False, 
+                                f"HTTP {resp.status}", response_time)
+                        
+        except Exception as e:
+            self.log_test("Luxury Commerce Flow", False, f"Error: {str(e)}")
+    
+    async def _test_global_markets_validation(self):
+        """Test all 4 currencies (USD/EUR/GBP/JPY) for global markets"""
+        global_currencies = [
+            ("USD", 100.00, "United States"),
+            ("EUR", 100.00, "European Union"),
+            ("GBP", 100.00, "United Kingdom"),
+            ("JPY", 10000, "Japan")
+        ]
+        
+        for currency, amount, market in global_currencies:
+            try:
+                purchase_data = {
+                    "orderId": f"global_{currency}_{uuid.uuid4().hex[:8]}",
+                    "userId": f"global_user_{currency}",
+                    "productId": "global_product",
+                    "amount": amount,
+                    "currency": currency
+                }
+                
+                start = time.time()
+                signed_headers = await self._generate_hmac_headers(purchase_data)
+                
+                async with self.session.post(f"{BACKEND_URL}:3000/api/track/purchase", 
+                                           json=purchase_data, headers=signed_headers) as resp:
+                    response_time = time.time() - start
+                    
+                    if resp.status == 200:
+                        data = await resp.json()
+                        has_usd_conversion = 'amountUSD' in data
+                        correct_currency = data.get('currency') == currency
+                        
+                        global_support = has_usd_conversion and correct_currency
+                        
+                        self.log_test(f"Global Markets: {market} ({currency})", global_support,
+                                    f"Amount: {amount} {currency}, USD: ${data.get('amountUSD', 0):.2f}", 
+                                    response_time)
+                    else:
+                        self.log_test(f"Global Markets: {market} ({currency})", False, 
+                                    f"HTTP {resp.status}", response_time)
+                        
+            except Exception as e:
+                self.log_test(f"Global Markets: {market} ({currency})", False, f"Error: {str(e)}")
+    
+    async def _test_error_resilience_scenarios(self):
+        """Test error resilience with various failure scenarios"""
+        resilience_tests = [
+            ("Invalid Product ID", {
+                "orderId": f"error_test_{uuid.uuid4().hex[:8]}",
+                "userId": "error_test_user",
+                "productId": "",  # Empty product ID
+                "amount": 100.00,
+                "currency": "USD"
+            }),
+            ("Negative Amount", {
+                "orderId": f"error_test_{uuid.uuid4().hex[:8]}",
+                "userId": "error_test_user",
+                "productId": "test_product",
+                "amount": -100.00,  # Negative amount
+                "currency": "USD"
+            }),
+            ("Unsupported Currency", {
+                "orderId": f"error_test_{uuid.uuid4().hex[:8]}",
+                "userId": "error_test_user",
+                "productId": "test_product",
+                "amount": 100.00,
+                "currency": "INVALID"  # Unsupported currency
+            })
+        ]
+        
+        for test_name, purchase_data in resilience_tests:
+            try:
+                start = time.time()
+                signed_headers = await self._generate_hmac_headers(purchase_data)
+                
+                async with self.session.post(f"{BACKEND_URL}:3000/api/track/purchase", 
+                                           json=purchase_data, headers=signed_headers) as resp:
+                    response_time = time.time() - start
+                    
+                    # Should return 4xx error for invalid data
+                    error_handled = 400 <= resp.status < 500
+                    
+                    self.log_test(f"Error Resilience: {test_name}", error_handled,
+                                f"HTTP {resp.status} (expected 4xx)", response_time)
+                        
+            except Exception as e:
+                self.log_test(f"Error Resilience: {test_name}", False, f"Error: {str(e)}")
+    
+    async def _test_realtime_analytics_dashboard(self):
+        """Test real-time analytics dashboard functionality"""
+        try:
+            start = time.time()
+            async with self.session.get(f"{BACKEND_URL}:3000/api/analytics/dashboard") as resp:
+                response_time = time.time() - start
+                
+                if resp.status == 200:
+                    data = await resp.json()
+                    
+                    # Check for real-time analytics components
+                    has_stats = 'stats' in data
+                    has_funnel = 'funnel' in data
+                    has_timestamp = 'timestamp' in data
+                    is_recent = True  # Timestamp should be recent
+                    
+                    # Performance check: should load quickly for real-time use
+                    performance_ok = response_time <= 2.0
+                    
+                    realtime_working = has_stats and has_funnel and has_timestamp and performance_ok
+                    
+                    self.log_test("Real-time Analytics Dashboard", realtime_working,
+                                f"Stats: {has_stats}, Funnel: {has_funnel}, Performance: {response_time:.2f}s", 
+                                response_time)
+                else:
+                    self.log_test("Real-time Analytics Dashboard", False, 
+                                f"HTTP {resp.status}", response_time)
+                        
+        except Exception as e:
+            self.log_test("Real-time Analytics Dashboard", False, f"Error: {str(e)}")
+    
     # ==================== MAIN TEST EXECUTION ====================
     
     async def run_all_tests(self):
-        """Execute comprehensive production hardening validation"""
-        print("🏆💎 STARTING FINAL PRODUCTION HARDENING VALIDATION - SERIES A INVESTOR READY")
-        print("=" * 80)
+        """Execute comprehensive Ultimate Operational Kit validation"""
+        print("🎯🚀 STARTING ULTIMATE OPERATIONAL KIT VALIDATION - FINAL PUSH TO 100% SERIES A READINESS")
+        print("=" * 90)
         
         # Authenticate first
         auth_success = await self.authenticate()
@@ -1603,37 +1795,29 @@ class ProductionHardeningValidator:
             print("❌ Authentication failed - cannot proceed with protected endpoint tests")
             return
         
-        # Core Health Checks
-        print("\n🔍 CORE HEALTH CHECKS")
+        # 1. Health & Infrastructure Checks
+        print("\n🏥 HEALTH & INFRASTRUCTURE CHECKS")
         await self.test_core_api_health()
         
-        # Attribution Edge Cases
-        print("\n🎯 ATTRIBUTION EDGE CASES")
-        await self.test_attribution_edge_cases()
+        # 2. Critical Fix Validation (Focus on 3 areas that were previously at 94.7%)
+        print("\n🎯 CRITICAL FIX VALIDATION")
+        await self.test_critical_fixes()
         
-        # Commission Tier Accuracy
-        print("\n💰 COMMISSION TIER ACCURACY")
-        await self.test_commission_tier_accuracy()
+        # 3. Production Hardening Features
+        print("\n🛡️ PRODUCTION HARDENING FEATURES")
+        await self.test_production_hardening_features()
         
-        # Performance Under Load
-        print("\n⚡ PERFORMANCE UNDER LOAD")
+        # 4. Ultimate Kit Tools Validation
+        print("\n🔧 ULTIMATE KIT TOOLS VALIDATION")
+        await self.test_ultimate_kit_tools()
+        
+        # 5. Performance & Concurrency
+        print("\n⚡ PERFORMANCE & CONCURRENCY")
         await self.test_performance_under_load()
         
-        # Analytics Data Integrity
-        print("\n📊 ANALYTICS DATA INTEGRITY")
-        await self.test_analytics_data_integrity()
-        
-        # System Resilience
-        print("\n🛡️ SYSTEM RESILIENCE")
-        await self.test_system_resilience()
-        
-        # Enterprise-Grade Features
-        print("\n🏢 ENTERPRISE-GRADE FEATURES")
-        await self.test_enterprise_features()
-        
-        # Business Metrics Validation
-        print("\n📈 BUSINESS METRICS VALIDATION")
-        await self.test_business_metrics()
+        # 6. Series A Demo Scenarios
+        print("\n💎 SERIES A DEMO SCENARIOS")
+        await self.test_series_a_demo_scenarios()
         
         # Generate final report
         await self.generate_final_report()
