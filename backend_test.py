@@ -481,15 +481,15 @@ class Phase3CommerceValidator:
         await self.make_request('POST', '/track/impression', {'storyId': lux_fashion_story['id'], 'userId': user_id})
         await self.make_request('POST', '/track/cta', {
             'storyId': lux_fashion_story['id'],
-            'productId': 'silk-scarf',
+            'productId': 'trench-coat',
             'userId': user_id
         })
         
         purchase_data = {
             'orderId': f"luxury_demo_{int(time.time())}",
             'userId': user_id,
-            'productId': 'silk-scarf',
-            'amount': 89.00,  # Silk scarf price
+            'productId': 'trench-coat',
+            'amount': 239.00,  # Trench coat price
             'currency': 'USD',
             'referrerStoryId': lux_fashion_story['id']
         }
