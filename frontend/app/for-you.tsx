@@ -542,14 +542,16 @@ export default function ForYouScreen() {
   };
 
   const handleStoryPress = (story: any) => {
-    console.log('Story pressed:', story.name);
+    console.log('Story pressed:', story.creatorName || story.name);
     // Navigate to story viewer
     router.push({
       pathname: '/story-viewer',
       params: {
-        storyId: story.id,
-        storyName: story.name,
-        isVerified: story.isVerified,
+        storyId: story.id || story.creatorId,
+        storyName: story.creatorName || story.name,
+        isVerified: story.verification !== 'unverified' || story.isVerified,
+        storyType: story.type || 'default',
+        hasCommerce: story.hasCommerce || false,
       }
     });
   };
