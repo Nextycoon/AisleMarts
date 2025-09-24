@@ -852,22 +852,22 @@ export default function ForYouScreen() {
 
       {/* Product Pins - AisleMarts Shopping Feature */}
       <View style={styles.productPinsContainer}>
-        {showProducts && currentVideo.products.map((product, index) => (
+        {showProducts && currentVideo.products?.map((product, index) => (
           <TouchableOpacity
-            key={product.id}
+            key={`${product}_${index}`}
             style={[styles.productPin, { bottom: 200 + index * 80 }]}
-            onPress={() => handleProductPin(product)}
+            onPress={() => handleProductPin({ id: `${product}_${index}`, title: product, price: 99.99, currency: 'USD' })}
           >
             <View style={styles.productPinContainer}>
               <View style={styles.productPinHeader}>
-                <Text style={styles.productPinTitle}>{product.title}</Text>
+                <Text style={styles.productPinTitle}>{product}</Text>
                 <TouchableOpacity style={styles.quickBuyButton}>
                   <Text style={styles.quickBuyText}>Buy Now</Text>
                 </TouchableOpacity>
               </View>
               <View style={styles.productPinDetails}>
                 <Text style={styles.productPinPrice}>
-                  {product.currency} {product.price}
+                  USD 99.99
                 </Text>
                 <View style={styles.productPinActions}>
                   <TouchableOpacity style={styles.addToCartButton}>
@@ -878,9 +878,6 @@ export default function ForYouScreen() {
                   </TouchableOpacity>
                 </View>
               </View>
-              {currentVideo.safety.parentalApproval && (
-                <Text style={styles.approvalRequired}>👨‍👩‍👧‍👦 Approval Required</Text>
-              )}
             </View>
           </TouchableOpacity>
         ))}
