@@ -1,1 +1,1 @@
-{"error":"Validation failed","details":["Amount must be positive"]}
+{"error":"invalid_signature"}
