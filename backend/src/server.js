@@ -36,7 +36,13 @@ const prisma = new PrismaClient();
 const app = express();
 
 // Middleware setup
-app.use(cors());
+app.use(cors({
+  origin: true,
+  methods: ['GET','POST','PUT','PATCH','DELETE','OPTIONS'],
+  allowedHeaders: ['Content-Type','X-Timestamp','X-Signature','Idempotency-Key'],
+  maxAge: 86400,
+}));
+app.options('*', cors());
 app.use(express.json());
 app.use(idempotency());
 
