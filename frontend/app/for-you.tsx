@@ -1974,6 +1974,22 @@ const styles = StyleSheet.create({
     borderWidth: 2,
     borderColor: '#666666',
   },
+  // New story states for infinity system
+  viewedStoryRing: {
+    backgroundColor: '#444444',
+    borderWidth: 2,
+    borderColor: '#777777',
+    opacity: 0.6,
+  },
+  goldVerifiedBadge: {
+    backgroundColor: '#D4AF37',
+  },
+  blueVerifiedBadge: {
+    backgroundColor: '#1E90FF',
+  },
+  greyVerifiedBadge: {
+    backgroundColor: '#696969',
+  },
   storyImage: {
     width: 56,
     height: 56,
@@ -2006,12 +2022,80 @@ const styles = StyleSheet.create({
     color: '#FFFFFF',
     fontWeight: '900',
   },
+  // Commerce indicator for product showcase stories
+  commerceIndicator: {
+    position: 'absolute',
+    top: -2,
+    right: -2,
+    width: 18,
+    height: 18,
+    borderRadius: 9,
+    backgroundColor: '#22C55E',
+    alignItems: 'center',
+    justifyContent: 'center',
+    borderWidth: 2,
+    borderColor: '#000000',
+  },
+  commerceIcon: {
+    fontSize: 10,
+    color: '#FFFFFF',
+  },
+  // Story expiry progress ring
+  expiryRing: {
+    position: 'absolute',
+    top: 0,
+    left: 0,
+    width: 64,
+    height: 64,
+    borderRadius: 32,
+    borderWidth: 3,
+    borderStyle: 'dashed',
+  },
   storyLabel: {
     fontSize: 12,
     color: '#FFFFFF',
     fontWeight: '500',
     textAlign: 'center',
     maxWidth: 70,
+  },
+  // Story content preview under name
+  storyContentPreview: {
+    fontSize: 10,
+    color: '#CCCCCC',
+    fontWeight: '400',
+    textAlign: 'center',
+    maxWidth: 70,
+    marginTop: 2,
+  },
+  // Load more stories button
+  loadMoreStoriesButton: {
+    alignItems: 'center',
+    marginRight: 16,
+    width: 70,
+  },
+  loadMoreRing: {
+    width: 64,
+    height: 64,
+    borderRadius: 32,
+    borderWidth: 2,
+    borderColor: '#666666',
+    borderStyle: 'dashed',
+    alignItems: 'center',
+    justifyContent: 'center',
+    marginBottom: 6,
+  },
+  loadMoreIcon: {
+    width: 56,
+    height: 56,
+    borderRadius: 28,
+    backgroundColor: '#333333',
+    alignItems: 'center',
+    justifyContent: 'center',
+  },
+  loadMoreText: {
+    fontSize: 20,
+    color: '#CCCCCC',
+    fontWeight: '600',
   },
 
   // Repost pill - TikTok style above username for sharing
