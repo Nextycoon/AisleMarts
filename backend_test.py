@@ -517,7 +517,11 @@ class Phase3CommerceValidator:
         print("\n🏆 TESTING TECH PRODUCT SCENARIO")
         
         # Find Tech Guru smartwatch story
-        stories_result, _, _ = await self.make_request('GET', '/stories', {'limit': 20})
+        stories_result, _, stories_success = await self.make_request('GET', '/stories', {'limit': 20})
+        if not stories_success:
+            await self.log_test("Tech Product Scenario", False, "Could not fetch stories", 0)
+            return False
+            
         stories = stories_result.get('data', [])
         
         tech_guru_story = None
