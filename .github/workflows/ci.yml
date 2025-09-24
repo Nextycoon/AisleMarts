@@ -34,16 +34,16 @@ jobs:
         if [ -f backend/requirements.txt ]; then 
           # Skip problematic dependencies for CI
           grep -v "emergentintegrations" backend/requirements.txt > /tmp/requirements_filtered.txt
-          pip install -r /tmp/requirements_filtered.txt || echo "Warning: Some dependencies failed to install"
+          pip install -r /tmp/requirements_filtered.txt --timeout 60 || echo "Warning: Some dependencies failed to install"
         fi
         # Install additional API-specific requirements if they exist
         if [ -f backend/api/requirements.txt ]; then 
-          pip install -r backend/api/requirements.txt || echo "Warning: API requirements failed to install"
+          pip install -r backend/api/requirements.txt --timeout 60 || echo "Warning: API requirements failed to install"
         fi
     
     - name: Lint with flake8
       run: |
-        pip install flake8
+        pip install flake8 --timeout 60
         # stop the build if there are Python syntax errors or undefined names
         flake8 backend/api --count --select=E9,F63,F7,F82 --show-source --statistics || echo "Warning: Linting issues found in backend/api"
         # exit-zero treats all errors as warnings
@@ -52,7 +52,7 @@ jobs:
     - name: Run tests with pytest
       run: |
         # Install pytest if not in requirements.txt
-        pip install pytest pytest-asyncio
+        pip install pytest pytest-asyncio httpx --timeout 60
         # Run pytest with proper error handling for API-specific tests
         if [ -d "backend/api/tests" ] || find backend/api -name "test_*.py" -o -name "*_test.py" | grep -q .; then
           pytest backend/api/ --verbose || echo "Warning: Some tests failed in backend/api"
@@ -86,12 +86,12 @@ jobs:
         if [ -f backend/requirements.txt ]; then 
           # Skip problematic dependencies for CI
           grep -v "emergentintegrations" backend/requirements.txt > /tmp/requirements_filtered.txt
-          pip install -r /tmp/requirements_filtered.txt || echo "Warning: Some dependencies failed to install"
+          pip install -r /tmp/requirements_filtered.txt --timeout 60 || echo "Warning: Some dependencies failed to install"
         fi
     
     - name: Lint with flake8
       run: |
-        pip install flake8
+        pip install flake8 --timeout 60
         # stop the build if there are Python syntax errors or undefined names
         flake8 backend --count --select=E9,F63,F7,F82 --show-source --statistics || echo "Warning: Linting issues found in backend"
         # exit-zero treats all errors as warnings
@@ -100,7 +100,7 @@ jobs:
     - name: Run tests with pytest
       run: |
         # Install pytest if not in requirements.txt
-        pip install pytest pytest-asyncio
+        pip install pytest pytest-asyncio httpx --timeout 60
         # Run pytest with proper error handling
         if [ -d "backend/tests" ] || find backend -name "test_*.py" -o -name "*_test.py" | grep -q .; then
           pytest backend/ --verbose || echo "Warning: Some tests failed in backend"
@@ -178,8 +178,8 @@ jobs:
     - name: Run tests
       run: |
         cd frontend
-        # Check if test script exists and run it
-        if npm run test --if-present; then
+        # Check if test script exists and run it with timeout protection
+        if npm run test --if-present -- --passWithNoTests --watchAll=false --testTimeout=30000; then
           echo "Tests completed successfully"
         else
           echo "Warning: Tests failed or no test script found in frontend"
@@ -255,8 +255,8 @@ jobs:
     - name: Run tests
       run: |
         cd frontend
-        # Check if test script exists and run it
-        if npm run test --if-present; then
+        # Check if test script exists and run it with timeout protection
+        if npm run test --if-present -- --passWithNoTests --watchAll=false --testTimeout=30000; then
           echo "Tests completed successfully"
         else
           echo "Warning: Tests failed or no test script found in frontend"

@@ -316,7 +316,7 @@ export const MPesaLoading: React.FC<MPesaLoadingProps> = ({
           </Text>
         </View>
         <View style={styles.trustItem}>
-          <Text style={styles.trustIcon}>✅</text>
+          <Text style={styles.trustIcon}>✅</Text>
           <Text style={styles.trustText}>
             {locale === 'sw' ? 'Imeaminika' : 'Trusted'}
           </Text>
