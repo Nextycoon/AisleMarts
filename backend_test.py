@@ -458,7 +458,11 @@ class Phase3CommerceValidator:
         print("\n🏆 TESTING LUXURY FASHION SCENARIO")
         
         # Find Lux Fashion creator and silk scarf story
-        stories_result, _, _ = await self.make_request('GET', '/stories', {'limit': 20})
+        stories_result, _, stories_success = await self.make_request('GET', '/stories', {'limit': 20})
+        if not stories_success:
+            await self.log_test("Luxury Fashion Scenario", False, "Could not fetch stories", 0)
+            return False
+            
         stories = stories_result.get('data', [])
         
         lux_fashion_story = None
