@@ -1,0 +1,24 @@
+{
+  "_comment": "PLACEHOLDER - Replace with actual agconnect-services.json from Huawei AppGallery Connect",
+  "_instructions": [
+    "1. Go to Huawei AppGallery Connect: https://developer.huawei.com/consumer/en/console",
+    "2. Create app with package name: com.aislemarts.beta", 
+    "3. Enable Push Kit service",
+    "4. Download agconnect-services.json and replace this file",
+    "5. Configure signing certificate SHA-256 for production builds"
+  ],
+  "agcgw": {
+    "backurl": "https://connect-api.cloud.huawei.com",
+    "url": "https://connect-api.cloud.huawei.com"
+  },
+  "client": {
+    "cp_id": "YOUR_CP_ID",
+    "product_id": "YOUR_PRODUCT_ID",
+    "client_id": "YOUR_CLIENT_ID",
+    "client_secret": "YOUR_CLIENT_SECRET",
+    "project_id": "YOUR_PROJECT_ID",
+    "app_id": "YOUR_APP_ID",
+    "api_key": "YOUR_API_KEY",
+    "package_name": "com.aislemarts.beta"
+  }
+}
