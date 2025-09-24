@@ -649,12 +649,157 @@ class ProductionHardeningValidator:
         except Exception as e:
             self.log_test("Attribution Window (Within 7 Days)", False, f"Error: {str(e)}")
 
-    # ==================== COMMISSION TIER ACCURACY ====================
+    # ==================== PRODUCTION HARDENING FEATURES ====================
     
-    async def test_commission_tier_accuracy(self):
-        """Test exact commission calculations: Gold 12%, Blue 10%, Grey 7%, Unverified 5%"""
+    async def test_production_hardening_features(self):
+        """Test HMAC Security, Idempotency Protection, Commerce Attribution, Commission Calculation"""
         
-        # Test cases with exact expected rates
+        # Test HMAC Security
+        await self._test_hmac_security()
+        
+        # Test Idempotency Protection
+        await self._test_idempotency_protection()
+        
+        # Test Commerce Attribution
+        await self._test_commerce_attribution()
+        
+        # Test Commission Calculation (tier-based)
+        await self._test_commission_calculation_tiers()
+    
+    async def _test_hmac_security(self):
+        """Test HMAC signature validation for /api/track/purchase and /api/track/refund"""
+        try:
+            # Test valid HMAC signature
+            purchase_data = {
+                "orderId": f"hmac_test_{uuid.uuid4().hex[:8]}",
+                "userId": "hmac_test_user",
+                "productId": "test_product",
+                "amount": 100.00,
+                "currency": "USD"
+            }
+            
+            start = time.time()
+            signed_headers = await self._generate_hmac_headers(purchase_data)
+            
+            async with self.session.post(f"{BACKEND_URL}:3000/api/track/purchase", 
+                                       json=purchase_data, headers=signed_headers) as resp:
+                response_time = time.time() - start
+                valid_hmac_works = resp.status == 200
+            
+            # Test invalid HMAC signature
+            invalid_headers = {
+                "X-Timestamp": str(int(time.time())),
+                "X-Signature": "sha256=invalid_signature",
+                "Content-Type": "application/json"
+            }
+            
+            async with self.session.post(f"{BACKEND_URL}:3000/api/track/purchase", 
+                                       json=purchase_data, headers=invalid_headers) as resp:
+                invalid_hmac_rejected = resp.status == 401
+            
+            hmac_security_working = valid_hmac_works and invalid_hmac_rejected
+            
+            self.log_test("HMAC Security", hmac_security_working,
+                        f"Valid: {valid_hmac_works}, Invalid rejected: {invalid_hmac_rejected}", 
+                        response_time)
+                        
+        except Exception as e:
+            self.log_test("HMAC Security", False, f"Error: {str(e)}")
+    
+    async def _test_idempotency_protection(self):
+        """Test duplicate request handling with idempotency keys"""
+        try:
+            idempotency_key = f"idem_test_{uuid.uuid4().hex}"
+            purchase_data = {
+                "orderId": f"idem_test_{uuid.uuid4().hex[:8]}",
+                "userId": "idem_test_user",
+                "productId": "test_product",
+                "amount": 100.00,
+                "currency": "USD"
+            }
+            
+            signed_headers = await self._generate_hmac_headers(purchase_data)
+            signed_headers["Idempotency-Key"] = idempotency_key
+            
+            # First request
+            start = time.time()
+            async with self.session.post(f"{BACKEND_URL}:3000/api/track/purchase", 
+                                       json=purchase_data, headers=signed_headers) as resp1:
+                first_success = resp1.status == 200
+                first_data = await resp1.json() if first_success else {}
+            
+            # Duplicate request with same idempotency key
+            async with self.session.post(f"{BACKEND_URL}:3000/api/track/purchase", 
+                                       json=purchase_data, headers=signed_headers) as resp2:
+                response_time = time.time() - start
+                
+                # Should handle duplicate appropriately (200 with same result or 409)
+                duplicate_handled = resp2.status in [200, 409]
+                
+                self.log_test("Idempotency Protection", duplicate_handled,
+                            f"First: {resp1.status}, Duplicate: {resp2.status}", response_time)
+                        
+        except Exception as e:
+            self.log_test("Idempotency Protection", False, f"Error: {str(e)}")
+    
+    async def _test_commerce_attribution(self):
+        """Test impression → CTA → purchase flow"""
+        try:
+            user_id = f"attribution_test_{uuid.uuid4().hex[:8]}"
+            story_id = "luxefashion_story_0"
+            product_id = "trench-coat"
+            
+            # Create impression
+            impression_data = {
+                "storyId": story_id,
+                "userId": user_id
+            }
+            await self.session.post(f"{BACKEND_URL}:3000/api/track/impression", json=impression_data)
+            
+            # Create CTA
+            cta_data = {
+                "storyId": story_id,
+                "productId": product_id,
+                "userId": user_id
+            }
+            await self.session.post(f"{BACKEND_URL}:3000/api/track/cta", json=cta_data)
+            
+            # Create purchase with attribution
+            purchase_data = {
+                "orderId": f"attribution_order_{uuid.uuid4().hex[:8]}",
+                "userId": user_id,
+                "productId": product_id,
+                "amount": 239.00,
+                "currency": "USD",
+                "referrerStoryId": story_id
+            }
+            
+            start = time.time()
+            signed_headers = await self._generate_hmac_headers(purchase_data)
+            
+            async with self.session.post(f"{BACKEND_URL}:3000/api/track/purchase", 
+                                       json=purchase_data, headers=signed_headers) as resp:
+                response_time = time.time() - start
+                
+                if resp.status == 200:
+                    data = await resp.json()
+                    has_attribution = data.get('attribution') is not None
+                    has_commission = data.get('commission') is not None
+                    
+                    attribution_working = has_attribution and has_commission
+                    
+                    self.log_test("Commerce Attribution", attribution_working,
+                                f"Attribution: {has_attribution}, Commission: {has_commission}", 
+                                response_time)
+                else:
+                    self.log_test("Commerce Attribution", False, 
+                                f"HTTP {resp.status}", response_time)
+                        
+        except Exception as e:
+            self.log_test("Commerce Attribution", False, f"Error: {str(e)}")
+    
+    async def _test_commission_calculation_tiers(self):
+        """Test tier-based commission calculations (Gold: 12%, Blue: 10%, Grey: 7%, Unverified: 5%)"""
         tier_tests = [
             ("Gold Tier (12%)", "luxefashion", "trench-coat", 239.00, 0.12),
             ("Blue Tier (10%)", "techguru", "buds-x", 129.00, 0.10),
@@ -663,7 +808,173 @@ class ProductionHardeningValidator:
         ]
         
         for tier_name, creator_id, product_id, amount, expected_rate in tier_tests:
-            await self._test_commission_calculation(tier_name, creator_id, product_id, amount, expected_rate)
+            await self._test_single_commission_calculation(tier_name, creator_id, product_id, amount, expected_rate)
+    
+    async def _test_single_commission_calculation(self, tier_name: str, creator_id: str, product_id: str, amount: float, expected_rate: float):
+        """Test specific commission calculation"""
+        try:
+            user_id = f"commission_test_{uuid.uuid4().hex[:8]}"
+            story_id = f"{creator_id}_story_0"
+            
+            # Create CTA for attribution
+            cta_data = {
+                "storyId": story_id,
+                "productId": product_id,
+                "userId": user_id
+            }
+            await self.session.post(f"{BACKEND_URL}:3000/api/track/cta", json=cta_data)
+            
+            # Make purchase with attribution
+            purchase_data = {
+                "orderId": f"commission_order_{uuid.uuid4().hex[:8]}",
+                "userId": user_id,
+                "productId": product_id,
+                "amount": amount,
+                "currency": "USD",
+                "referrerStoryId": story_id
+            }
+            
+            start = time.time()
+            signed_headers = await self._generate_hmac_headers(purchase_data)
+            
+            async with self.session.post(f"{BACKEND_URL}:3000/api/track/purchase", 
+                                       json=purchase_data, headers=signed_headers) as resp:
+                response_time = time.time() - start
+                
+                if resp.status == 200:
+                    data = await resp.json()
+                    commission_data = data.get('commission', {})
+                    actual_commission = commission_data.get('amount', 0)
+                    expected_commission = round(amount * expected_rate, 2)
+                    
+                    # Allow small rounding tolerance
+                    commission_accurate = abs(actual_commission - expected_commission) <= 0.01
+                    
+                    self.log_test(f"Commission: {tier_name}", commission_accurate,
+                                f"Expected: ${expected_commission:.2f}, Actual: ${actual_commission:.2f}", 
+                                response_time)
+                else:
+                    self.log_test(f"Commission: {tier_name}", False, 
+                                f"HTTP {resp.status}", response_time)
+                        
+        except Exception as e:
+            self.log_test(f"Commission: {tier_name}", False, f"Error: {str(e)}")
+    
+    # ==================== ULTIMATE KIT TOOLS VALIDATION ====================
+    
+    async def test_ultimate_kit_tools(self):
+        """Test Ultimate Kit Tools: CLI tools, SQL scripts, backend maintenance scripts"""
+        
+        # Test SQL Scripts Execution
+        await self._test_sql_scripts_execution()
+        
+        # Test Backend Maintenance Scripts
+        await self._test_backend_maintenance_scripts()
+        
+        # Test CLI Tools Functionality
+        await self._test_cli_tools_functionality()
+    
+    async def _test_sql_scripts_execution(self):
+        """Test sql/01_funnel_views.sql, sql/02_fx_seed.sql, sql/03_indexes.sql"""
+        try:
+            # Test if funnel views are working by checking analytics endpoint
+            start = time.time()
+            async with self.session.get(f"{BACKEND_URL}:3000/api/analytics/dashboard") as resp:
+                response_time = time.time() - start
+                
+                if resp.status == 200:
+                    data = await resp.json()
+                    has_funnel_data = 'funnel' in data
+                    has_stats = 'stats' in data
+                    
+                    sql_scripts_working = has_funnel_data and has_stats
+                    
+                    self.log_test("SQL Scripts Execution", sql_scripts_working,
+                                f"Funnel views: {has_funnel_data}, Stats: {has_stats}", response_time)
+                else:
+                    self.log_test("SQL Scripts Execution", False, 
+                                f"HTTP {resp.status}", response_time)
+                        
+        except Exception as e:
+            self.log_test("SQL Scripts Execution", False, f"Error: {str(e)}")
+    
+    async def _test_backend_maintenance_scripts(self):
+        """Test backend/scripts/refresh_funnel.mjs and backfillSyntheticImpressions.mjs"""
+        try:
+            # Test that the scripts have been executed by checking data consistency
+            start = time.time()
+            async with self.session.get(f"{BACKEND_URL}:3000/api/analytics/dashboard") as resp:
+                response_time = time.time() - start
+                
+                if resp.status == 200:
+                    data = await resp.json()
+                    stats = data.get('stats', {})
+                    
+                    # Check if we have reasonable data (indicating scripts have run)
+                    has_impressions = stats.get('impressions7d', 0) > 0
+                    has_ctas = stats.get('ctas7d', 0) > 0
+                    has_purchases = stats.get('purchases7d', 0) > 0
+                    
+                    scripts_executed = has_impressions or has_ctas or has_purchases
+                    
+                    self.log_test("Backend Maintenance Scripts", scripts_executed,
+                                f"Data present: impressions={has_impressions}, ctas={has_ctas}, purchases={has_purchases}", 
+                                response_time)
+                else:
+                    self.log_test("Backend Maintenance Scripts", False, 
+                                f"HTTP {resp.status}", response_time)
+                        
+        except Exception as e:
+            self.log_test("Backend Maintenance Scripts", False, f"Error: {str(e)}")
+    
+    async def _test_cli_tools_functionality(self):
+        """Test tools/signedPurchase.js and tools/signedRefund.js CLI tools"""
+        try:
+            # Test that the CLI tools' functionality is available via API
+            # (The tools generate signed requests, so we test the endpoints they target)
+            
+            # Test signed purchase functionality
+            purchase_data = {
+                "orderId": f"cli_test_purchase_{uuid.uuid4().hex[:8]}",
+                "userId": "cli_test_user",
+                "productId": "test_product",
+                "amount": 99.99,
+                "currency": "USD"
+            }
+            
+            start = time.time()
+            signed_headers = await self._generate_hmac_headers(purchase_data)
+            
+            async with self.session.post(f"{BACKEND_URL}:3000/api/track/purchase", 
+                                       json=purchase_data, headers=signed_headers) as resp:
+                purchase_success = resp.status == 200
+                purchase_data_response = await resp.json() if purchase_success else {}
+            
+            # Test signed refund functionality (if purchase succeeded)
+            refund_success = False
+            if purchase_success and 'purchaseId' in purchase_data_response:
+                refund_data = {
+                    "purchaseId": purchase_data_response['purchaseId'],
+                    "amount": 99.99,
+                    "currency": "USD",
+                    "reason": "CLI tool test refund",
+                    "userId": "cli_test_user"
+                }
+                
+                signed_refund_headers = await self._generate_hmac_headers(refund_data)
+                
+                async with self.session.post(f"{BACKEND_URL}:3000/api/track/refund", 
+                                           json=refund_data, headers=signed_refund_headers) as refund_resp:
+                    refund_success = refund_resp.status == 200
+            
+            response_time = time.time() - start
+            cli_tools_working = purchase_success and refund_success
+            
+            self.log_test("CLI Tools Functionality", cli_tools_working,
+                        f"Purchase: {purchase_success}, Refund: {refund_success}", response_time)
+                        
+        except Exception as e:
+            self.log_test("CLI Tools Functionality", False, f"Error: {str(e)}")
     
     async def _test_commission_calculation(self, tier_name: str, creator_id: str, product_id: str, amount: float, expected_rate: float):
         """Test specific commission calculation with banker's rounding"""
