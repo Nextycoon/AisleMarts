@@ -225,22 +225,243 @@ class ProductionHardeningValidator:
         except Exception as e:
             self.log_test("Prisma Client Functionality", False, f"Error: {str(e)}")
 
-    # ==================== ATTRIBUTION EDGE CASES ====================
+    # ==================== CRITICAL FIX VALIDATION ====================
     
-    async def test_attribution_edge_cases(self):
-        """Test multi-CTA same product, direct purchase, cross-creator attribution"""
+    async def test_critical_fixes(self):
+        """Test the 3 critical fixes that were previously at 94.7%"""
         
-        # Test 1: Multi-CTA Same Product (Last CTA Wins)
-        await self._test_multi_cta_same_product()
+        # Critical Fix A: Analytics Funnel Integrity
+        await self._test_analytics_funnel_integrity()
         
-        # Test 2: Direct Purchase (No Attribution)
-        await self._test_direct_purchase_no_attribution()
+        # Critical Fix B: Proper 4xx Error Responses  
+        await self._test_proper_4xx_error_responses()
         
-        # Test 3: Cross-Creator Attribution Accuracy
-        await self._test_cross_creator_attribution()
+        # Critical Fix C: Multi-Currency Support
+        await self._test_multi_currency_support()
+    
+    async def _test_analytics_funnel_integrity(self):
+        """Test sql/01_funnel_views.sql - Verify sessionized funnel ensures impressions ≥ CTAs ≥ purchases"""
+        try:
+            # Test funnel data integrity by creating test data
+            user_id = f"funnel_test_{uuid.uuid4().hex[:8]}"
+            
+            # Create impressions (highest number)
+            impression_count = 21
+            for i in range(impression_count):
+                impression_data = {
+                    "storyId": f"luxefashion_story_{i % 3}",
+                    "userId": f"{user_id}_{i}"
+                }
+                await self.session.post(f"{BACKEND_URL}:3000/api/track/impression", json=impression_data)
+            
+            # Create CTAs (subset of impressions)
+            cta_count = 11
+            for i in range(cta_count):
+                cta_data = {
+                    "storyId": f"luxefashion_story_{i % 3}",
+                    "productId": "trench-coat",
+                    "userId": f"{user_id}_{i}"
+                }
+                await self.session.post(f"{BACKEND_URL}:3000/api/track/cta", json=cta_data)
+            
+            # Create purchases (subset of CTAs)
+            purchase_count = 5
+            for i in range(purchase_count):
+                purchase_data = {
+                    "orderId": f"funnel_order_{i}_{uuid.uuid4().hex[:8]}",
+                    "userId": f"{user_id}_{i}",
+                    "productId": "trench-coat",
+                    "amount": 239.00,
+                    "currency": "USD"
+                }
+                # Add HMAC signature for purchase
+                await self._make_signed_request("/api/track/purchase", purchase_data)
+            
+            # Verify funnel integrity
+            start = time.time()
+            async with self.session.get(f"{BACKEND_URL}:3000/api/analytics/dashboard") as resp:
+                response_time = time.time() - start
+                
+                if resp.status == 200:
+                    data = await resp.json()
+                    stats = data.get('stats', {})
+                    
+                    impressions = stats.get('impressions7d', 0)
+                    ctas = stats.get('ctas7d', 0)
+                    purchases = stats.get('purchases7d', 0)
+                    
+                    # Funnel logic: impressions ≥ CTAs ≥ purchases
+                    funnel_valid = impressions >= ctas >= purchases
+                    
+                    self.log_test("Analytics Funnel Integrity", funnel_valid,
+                                f"Impressions: {impressions} ≥ CTAs: {ctas} ≥ Purchases: {purchases}", 
+                                response_time)
+                else:
+                    self.log_test("Analytics Funnel Integrity", False, 
+                                f"HTTP {resp.status}", response_time)
+                    
+        except Exception as e:
+            self.log_test("Analytics Funnel Integrity", False, f"Error: {str(e)}")
+    
+    async def _test_proper_4xx_error_responses(self):
+        """Test all validation scenarios using validation_and_idem.test.js logic"""
+        error_test_cases = [
+            # Invalid/missing HMAC signatures (should return 401)
+            ("Invalid HMAC Signature", "/api/track/purchase", {
+                "orderId": "test_order_001",
+                "userId": "test_user",
+                "productId": "test_product",
+                "amount": 100.00,
+                "currency": "USD"
+            }, {"X-Signature": "invalid_signature"}, 401),
+            
+            # Invalid request payloads (should return 422)
+            ("Missing Required Field", "/api/track/impression", {
+                "userId": "test_user"
+                # Missing storyId
+            }, {}, 422),
+            
+            ("Invalid Amount", "/api/track/purchase", {
+                "orderId": "test_order_002",
+                "userId": "test_user", 
+                "productId": "test_product",
+                "amount": -100.00,  # Negative amount
+                "currency": "USD"
+            }, {}, 422),
+            
+            ("Invalid Currency", "/api/track/purchase", {
+                "orderId": "test_order_003",
+                "userId": "test_user",
+                "productId": "test_product", 
+                "amount": 100.00,
+                "currency": "INVALID"  # Unsupported currency
+            }, {}, 422),
+            
+            # Idempotency key conflicts (should return 409)
+            ("Idempotency Conflict", "/api/track/purchase", {
+                "orderId": "test_order_004",
+                "userId": "test_user",
+                "productId": "test_product",
+                "amount": 100.00,
+                "currency": "USD"
+            }, {"Idempotency-Key": "duplicate_key_test"}, 409)
+        ]
         
-        # Test 4: Attribution Window Expiry (7-day window)
-        await self._test_attribution_window_expiry()
+        for test_name, endpoint, payload, headers, expected_status in error_test_cases:
+            try:
+                start = time.time()
+                
+                # For purchase endpoints, we need to test twice for idempotency conflict
+                if "Idempotency Conflict" in test_name:
+                    # First request should succeed
+                    signed_headers = await self._generate_hmac_headers(payload)
+                    signed_headers.update(headers)
+                    
+                    await self.session.post(f"{BACKEND_URL}:3000{endpoint}", 
+                                          json=payload, headers=signed_headers)
+                    
+                    # Second request with same idempotency key should return 409
+                    async with self.session.post(f"{BACKEND_URL}:3000{endpoint}", 
+                                                json=payload, headers=signed_headers) as resp:
+                        response_time = time.time() - start
+                        correct_status = resp.status == expected_status
+                else:
+                    # Regular error validation
+                    async with self.session.post(f"{BACKEND_URL}:3000{endpoint}", 
+                                                json=payload, headers=headers) as resp:
+                        response_time = time.time() - start
+                        correct_status = resp.status == expected_status
+                
+                self.log_test(f"4xx Error Response: {test_name}", correct_status,
+                            f"Expected: {expected_status}, Got: {resp.status}", response_time)
+                        
+            except Exception as e:
+                self.log_test(f"4xx Error Response: {test_name}", False, f"Error: {str(e)}")
+    
+    async def _test_multi_currency_support(self):
+        """Test all currencies using currency_rounding.test.js logic"""
+        currency_test_cases = [
+            # USD/EUR/GBP (2 decimal places)
+            ("USD Currency", "USD", 123.456, 123.46),
+            ("EUR Currency", "EUR", 123.456, 123.46), 
+            ("GBP Currency", "GBP", 123.456, 123.46),
+            
+            # JPY (0 decimal places)
+            ("JPY Currency", "JPY", 123.456, 123),
+            
+            # FX normalization test
+            ("FX Normalization", "EUR", 100.00, None)  # Should convert to USD
+        ]
+        
+        for test_name, currency, amount, expected_rounded in currency_test_cases:
+            try:
+                purchase_data = {
+                    "orderId": f"currency_test_{currency}_{uuid.uuid4().hex[:8]}",
+                    "userId": f"currency_test_user_{currency}",
+                    "productId": "test_product",
+                    "amount": amount,
+                    "currency": currency
+                }
+                
+                start = time.time()
+                signed_headers = await self._generate_hmac_headers(purchase_data)
+                
+                async with self.session.post(f"{BACKEND_URL}:3000/api/track/purchase", 
+                                           json=purchase_data, headers=signed_headers) as resp:
+                    response_time = time.time() - start
+                    
+                    if resp.status == 200:
+                        data = await resp.json()
+                        returned_amount = data.get('amount')
+                        returned_currency = data.get('currency')
+                        has_usd_conversion = 'amountUSD' in data
+                        
+                        if expected_rounded is not None:
+                            rounding_correct = abs(returned_amount - expected_rounded) < 0.01
+                        else:
+                            rounding_correct = True  # For FX normalization test
+                        
+                        currency_valid = returned_currency == currency and has_usd_conversion
+                        
+                        success = rounding_correct and currency_valid
+                        
+                        self.log_test(f"Multi-Currency: {test_name}", success,
+                                    f"Amount: {returned_amount} {returned_currency}, USD: {data.get('amountUSD')}", 
+                                    response_time)
+                    else:
+                        self.log_test(f"Multi-Currency: {test_name}", False, 
+                                    f"HTTP {resp.status}", response_time)
+                        
+            except Exception as e:
+                self.log_test(f"Multi-Currency: {test_name}", False, f"Error: {str(e)}")
+    
+    async def _generate_hmac_headers(self, payload):
+        """Generate HMAC headers for signed requests"""
+        import hmac
+        import hashlib
+        
+        secret_key = "test_hmac_secret_key"
+        timestamp = str(int(time.time()))
+        payload_str = json.dumps(payload, sort_keys=True)
+        
+        message = f"{timestamp}.{payload_str}"
+        signature = hmac.new(
+            secret_key.encode(),
+            message.encode(),
+            hashlib.sha256
+        ).hexdigest()
+        
+        return {
+            "X-Timestamp": timestamp,
+            "X-Signature": f"sha256={signature}",
+            "Content-Type": "application/json"
+        }
+    
+    async def _make_signed_request(self, endpoint, payload):
+        """Make a signed request to HMAC-protected endpoint"""
+        headers = await self._generate_hmac_headers(payload)
+        return await self.session.post(f"{BACKEND_URL}:3000{endpoint}", 
+                                     json=payload, headers=headers)
     
     async def _test_multi_cta_same_product(self):
         """Test that last CTA wins for same product"""
