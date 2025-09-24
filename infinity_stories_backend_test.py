@@ -283,19 +283,19 @@ class InfinityStoriesBackendTester:
                 response_time
             )
             
-        # Test AI product recommendations
-        success, data, response_time = await self.make_request('GET', '/universal-ai/products/recommend?query=luxury+fashion')
+        # Test AI product search
+        success, data, response_time = await self.make_request('GET', '/universal-ai/products/search?query=luxury+fashion')
         
         if success:
             await self.log_test(
-                "Universal AI Product Recommendations", 
+                "Universal AI Product Search", 
                 True, 
-                f"Recommendations available", 
+                f"Product search available", 
                 response_time
             )
         else:
             await self.log_test(
-                "Universal AI Product Recommendations", 
+                "Universal AI Product Search", 
                 False, 
                 f"Failed: {data}", 
                 response_time
