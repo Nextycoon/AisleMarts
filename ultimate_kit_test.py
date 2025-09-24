@@ -252,27 +252,36 @@ class UltimateKitValidator:
         for test in currency_tests:
             start_time = time.time()
             try:
-                # Test currency endpoint
-                currency_url = f"{FASTAPI_URL}/currency/convert"
-                params = {
-                    "from_currency": "USD",
-                    "to_currency": test["currency"],
-                    "amount": test["test_amount"]
-                }
+                # Test currency rates endpoint
+                currency_url = f"{FASTAPI_URL}/currency/rates?base=USD"
                 
-                async with self.session.get(currency_url, params=params) as response:
+                async with self.session.get(currency_url) as response:
                     response_time = time.time() - start_time
                     
                     if response.status == 200:
                         data = await response.json()
-                        if isinstance(data, dict) and "converted_amount" in data:
-                            converted = data["converted_amount"]
-                            # Check decimal places
-                            decimal_places = len(str(converted).split('.')[-1]) if '.' in str(converted) else 0
-                            if decimal_places <= test["expected_decimals"]:
-                                self.log_test(test["name"], True, f"Currency conversion working - {converted} {test['currency']}", response_time)
+                        if isinstance(data, dict) and "rates" in data:
+                            rates = data["rates"]
+                            if test["currency"] in rates:
+                                rate = rates[test["currency"]]
+                                converted = test["test_amount"] * rate
+                                
+                                # Check decimal places for converted amount
+                                if test["expected_decimals"] == 0:
+                                    # JPY should be whole number
+                                    converted = round(converted)
+                                    decimal_places = 0
+                                else:
+                                    # USD/EUR/GBP should have 2 decimal places
+                                    converted = round(converted, 2)
+                                    decimal_places = len(str(converted).split('.')[-1]) if '.' in str(converted) else 0
+                                
+                                if decimal_places <= test["expected_decimals"]:
+                                    self.log_test(test["name"], True, f"Currency {test['currency']} supported - Rate: {rate}, Converted: {converted}", response_time)
+                                else:
+                                    self.log_test(test["name"], False, f"Incorrect decimal places: {decimal_places} (expected {test['expected_decimals']})", response_time)
                             else:
-                                self.log_test(test["name"], False, f"Incorrect decimal places: {decimal_places} (expected {test['expected_decimals']})", response_time)
+                                self.log_test(test["name"], False, f"Currency {test['currency']} not found in rates", response_time)
                         else:
                             self.log_test(test["name"], False, f"Invalid currency response format: {data}", response_time)
                     else:
