@@ -291,7 +291,7 @@ class HardeningValidator:
             try:
                 headers = {
                     'Content-Type': 'application/json',
-                    'Idempotency-Key': str(uuid.uuid4())
+                    'idempotency-key': str(uuid.uuid4())
                 }
                 
                 response = requests.post(
