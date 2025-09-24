@@ -274,6 +274,12 @@ class HardeningValidator:
             "currency": "USD"
         }
         
+        # CTA endpoint has different payload structure
+        cta_payload = {
+            "storyId": "test-story-123",
+            "userId": "test-user-456"
+        }
+        
         for endpoint in endpoints_to_test:
             # Test 1: Missing HMAC signature (should return 401)
             start_time = time.time()
