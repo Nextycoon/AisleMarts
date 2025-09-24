@@ -521,7 +521,7 @@ class HardeningValidator:
         total_time = time.time() - start_time
         
         # Generate final report
-        self.generate_report(total_time)
+        return self.generate_report(total_time)
 
     def generate_report(self, total_time: float):
         """Generate comprehensive validation report"""
