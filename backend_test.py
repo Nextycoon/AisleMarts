@@ -467,7 +467,7 @@ class Phase3CommerceValidator:
         
         lux_fashion_story = None
         for story in stories:
-            if 'luxefashion' in story.get('id', '') and story.get('productId') == 'silk-scarf':
+            if 'luxefashion' in story.get('id', '') and story.get('productId') == 'trench-coat':
                 lux_fashion_story = story
                 break
                 
