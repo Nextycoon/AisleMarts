@@ -533,9 +533,9 @@ export default function ForYouScreen() {
       pathname: '/remix-creator',
       params: {
         videoId: video.id,
-        soundId: video.sound.id,
-        soundTitle: video.sound.title,
-        soundArtist: video.sound.artist,
+        soundId: video.music_info?.title || 'default_sound',
+        soundTitle: video.music_info?.title || 'Unknown',
+        soundArtist: video.music_info?.artist || 'Unknown Artist',
         originalCreator: video.creator.name,
       }
     });
