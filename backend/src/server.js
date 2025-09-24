@@ -40,6 +40,34 @@ app.use(cors());
 app.use(express.json());
 app.use(idempotency());
 
+// Friendly root endpoint
+app.get('/', (req, res) => {
+  res.json({
+    ok: true,
+    name: '🏆 AisleMarts Production API',
+    version: '1.0.0',
+    status: 'Series A Ready - Ultimate Operational Kit Integrated',
+    endpoints: [
+      'GET /health',
+      'GET /api/creators',
+      'GET /api/stories?limit=24&cursor=...',
+      'POST /api/track/impression',
+      'POST /api/track/cta', 
+      'POST /api/track/purchase  (HMAC + Idempotency)',
+      'POST /api/track/refund    (HMAC + Idempotency)',
+      'GET /api/analytics/dashboard'
+    ],
+    features: [
+      'analytics_funnel_integrity',
+      'proper_4xx_responses',
+      'multi_currency_support', 
+      'hmac_security',
+      'idempotency_protection'
+    ],
+    timestamp: new Date().toISOString()
+  });
+});
+
 // Health check (no auth required)
 app.get('/health', (req, res) => {
   res.json({ 
