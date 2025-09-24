@@ -334,9 +334,9 @@ class HardeningValidator:
             try:
                 headers = {
                     'Content-Type': 'application/json',
-                    'X-Timestamp': str(int(time.time())),
-                    'X-Signature': 'invalid-signature-12345',
-                    'Idempotency-Key': str(uuid.uuid4())
+                    'x-timestamp': str(int(time.time())),
+                    'x-signature': 'invalid-signature-12345',
+                    'idempotency-key': str(uuid.uuid4())
                 }
                 
                 response = requests.post(
