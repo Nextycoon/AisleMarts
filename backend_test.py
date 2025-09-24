@@ -1,34 +1,36 @@
 #!/usr/bin/env python3
 """
-🚀💎 ULTIMATE OPERATIONAL KIT BACKEND VALIDATION - SERIES A READINESS
-Comprehensive backend validation focusing on final hardening patches and validation checklist
+P0 HARDENING VALIDATION - COMPREHENSIVE BACKEND TESTING
+========================================================
 
-PRIMARY GOAL: Validate hardening patches have been successfully applied and backend systems are Series A ready
+This test suite validates P0 hardening implementation to achieve 100% Series A readiness.
 
-TESTING FOCUS AREAS:
-1. Core System Health - FastAPI Backend (port 8001), Express Hardening Server (port 8002)
-2. Stories API functionality and Ultimate Operational Kit Validation
-3. Currency system operational status
-4. Production Hardening Features
-5. Series A Readiness Indicators
+Focus Areas:
+1. HMAC/Auth Error Code Standardization Validation
+2. Multi-Currency Precision Testing  
+3. Express Server Integration Validation
+4. Performance & Concurrent Load Testing
 
-SUCCESS CRITERIA: 90%+ success rate on core functionality, proper error handling, system stability
+Target: 100% success rate (up from 92.9%)
 """
 
 import asyncio
 import aiohttp
 import json
 import time
-import uuid
+import hashlib
+import hmac
+import concurrent.futures
 from datetime import datetime
 from typing import Dict, List, Any, Optional
 import os
+import sys
 
-# Configuration - Based on review request
+# Configuration
 BACKEND_URL = "https://infinity-stories.preview.emergentagent.com"
-EXPRESS_URL = "http://localhost:8002"  # Express server for Ultimate Kit
-FASTAPI_URL = f"{BACKEND_URL}/api"
-PERFORMANCE_THRESHOLD_MS = 200  # <200ms response times target
+EXPRESS_PORT = 3000
+FASTAPI_PORT = 8001
+HMAC_SECRET = "dev-secret"
 
 class UltimateOperationalKitValidator:
     def __init__(self):
