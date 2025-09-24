@@ -58,8 +58,9 @@ class HardeningValidator:
 
     def create_signed_headers(self, payload: Dict[str, Any]) -> Dict[str, str]:
         """Create headers with proper HMAC signature"""
+        # Use current timestamp to avoid timestamp_out_of_window errors
         timestamp = str(int(time.time()))
-        payload_str = json.dumps(payload, separators=(',', ':'))
+        payload_str = json.dumps(payload, separators=(',', ':'), sort_keys=True)
         signature = self.generate_hmac_signature(payload_str, timestamp)
         
         return {
