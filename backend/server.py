@@ -636,6 +636,10 @@ try:
     from routers.clp_engine_routes import router as clp_engine_router
     app.include_router(clp_engine_router, prefix="/api/clp-engine", tags=["clp_engine"])
     
+    # Import and include Stories router
+    from routers.stories_routes import router as stories_router
+    app.include_router(stories_router, tags=["Infinity Stories System"])
+    
     # Import and include Production Deployment router
     from routers.production_deployment_routes import router as production_deployment_router
     app.include_router(production_deployment_router, prefix="/api", tags=["production_deployment"])
