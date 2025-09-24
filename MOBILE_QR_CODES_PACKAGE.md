@@ -4,7 +4,7 @@
 
 ### Web Preview (Desktop/Mobile Browser)
 ```
-🌐 Live Preview: https://aisle-superapp.preview.emergentagent.com
+🌐 Live Preview: https://infinity-stories.preview.emergentagent.com
 ```
 
 ### Mobile App Testing (Expo Go)
