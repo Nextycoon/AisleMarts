@@ -1,529 +1,602 @@
 #!/usr/bin/env python3
 """
-Comprehensive Backend Testing for Infinity Stories System
-Testing Core API Health, Currency System, AI Super Agent, Rewards System, 
-CLP Engine, Universal AI Hub, Authentication, and Concurrent Performance
+🚀 PHASE 2 INFINITY STORIES BACKEND VALIDATION
+Comprehensive testing suite for Stories API endpoints and Phase 2 implementation
 """
 
 import asyncio
 import aiohttp
-import json
 import time
-from typing import Dict, List, Any
+import json
+from typing import List, Dict, Any
 import os
-from datetime import datetime
+from concurrent.futures import ThreadPoolExecutor
+import statistics
 
 # Get backend URL from environment
 BACKEND_URL = os.getenv('EXPO_PUBLIC_BACKEND_URL', 'https://social-ecosystem.preview.emergentagent.com')
-API_BASE = f"{BACKEND_URL}/api"
+BASE_URL = f"{BACKEND_URL}/api"
 
-class InfinityStoriesBackendTester:
+class InfinityStoriesValidator:
     def __init__(self):
         self.session = None
         self.test_results = []
-        self.auth_token = None
-        self.test_user_id = None
+        self.performance_metrics = []
         
-    async def setup_session(self):
-        """Setup HTTP session with proper headers"""
-        connector = aiohttp.TCPConnector(limit=100, limit_per_host=30)
-        timeout = aiohttp.ClientTimeout(total=30)
+    async def __aenter__(self):
         self.session = aiohttp.ClientSession(
-            connector=connector,
-            timeout=timeout,
-            headers={
-                'Content-Type': 'application/json',
-                'User-Agent': 'AisleMarts-InfinityStories-Tester/1.0'
-            }
+            timeout=aiohttp.ClientTimeout(total=30),
+            headers={'Content-Type': 'application/json'}
         )
+        return self
         
-    async def cleanup_session(self):
-        """Cleanup HTTP session"""
+    async def __aexit__(self, exc_type, exc_val, exc_tb):
         if self.session:
             await self.session.close()
-            
-    async def log_test(self, test_name: str, success: bool, details: str = "", response_time: float = 0):
+    
+    def log_test(self, test_name: str, success: bool, details: str = "", response_time: float = 0):
         """Log test result"""
-        result = {
-            'test_name': test_name,
+        status = "✅ PASS" if success else "❌ FAIL"
+        print(f"{status} {test_name}: {details}")
+        
+        self.test_results.append({
+            'test': test_name,
             'success': success,
             'details': details,
-            'response_time': response_time,
-            'timestamp': datetime.now().isoformat()
-        }
-        self.test_results.append(result)
-        status = "✅ PASS" if success else "❌ FAIL"
-        print(f"{status} {test_name} ({response_time:.3f}s) - {details}")
+            'response_time': response_time
+        })
         
-    async def make_request(self, method: str, endpoint: str, data: Dict = None, headers: Dict = None) -> tuple:
-        """Make HTTP request and return (success, response_data, response_time)"""
+        if response_time > 0:
+            self.performance_metrics.append(response_time)
+    
+    async def test_api_endpoint(self, endpoint: str, method: str = "GET", data: dict = None) -> tuple:
+        """Test API endpoint and return (success, response, response_time)"""
         start_time = time.time()
-        url = f"{API_BASE}{endpoint}"
-        
         try:
-            request_headers = {}
-            if self.auth_token:
-                request_headers['Authorization'] = f'Bearer {self.auth_token}'
-            if headers:
-                request_headers.update(headers)
-                
-            async with self.session.request(method, url, json=data, headers=request_headers) as response:
-                response_time = time.time() - start_time
-                
-                if response.status == 200:
-                    try:
-                        response_data = await response.json()
-                        return True, response_data, response_time
-                    except:
-                        response_text = await response.text()
-                        return True, {'text': response_text}, response_time
-                else:
-                    error_text = await response.text()
-                    return False, {'status': response.status, 'error': error_text}, response_time
-                    
+            if method == "GET":
+                async with self.session.get(f"{BASE_URL}{endpoint}") as response:
+                    response_time = time.time() - start_time
+                    if response.status == 200:
+                        json_data = await response.json()
+                        return True, json_data, response_time
+                    else:
+                        error_text = await response.text()
+                        return False, f"HTTP {response.status}: {error_text}", response_time
+            elif method == "POST":
+                async with self.session.post(f"{BASE_URL}{endpoint}", json=data) as response:
+                    response_time = time.time() - start_time
+                    if response.status == 200:
+                        json_data = await response.json()
+                        return True, json_data, response_time
+                    else:
+                        error_text = await response.text()
+                        return False, f"HTTP {response.status}: {error_text}", response_time
         except Exception as e:
             response_time = time.time() - start_time
-            return False, {'error': str(e)}, response_time
-            
-    async def test_main_api_health(self):
-        """Test main API health endpoint"""
-        success, data, response_time = await self.make_request('GET', '/health')
-        
-        if success and data.get('ok') == True:
-            await self.log_test(
-                "Main API Health Check", 
-                True, 
-                f"Service: {data.get('service', 'Unknown')}, Status: {data.get('status', 'Unknown')}", 
-                response_time
-            )
-        else:
-            await self.log_test(
-                "Main API Health Check", 
-                False, 
-                f"Failed: {data}", 
-                response_time
-            )
-            
-    async def test_currency_system(self):
-        """Test Currency-Infinity Engine v2.0"""
-        # Test currency health check
-        success, data, response_time = await self.make_request('GET', '/currency/health')
+            return False, f"Request failed: {str(e)}", response_time
+    
+    # 🎯 CORE STORIES API TESTING
+    async def test_creators_endpoint(self):
+        """Test GET /api/creators - Validate creator list with tiers"""
+        success, response, response_time = await self.test_api_endpoint("/creators")
         
         if success:
-            await self.log_test(
-                "Currency System Health", 
-                True, 
-                f"Currencies: {data.get('currencies_count', 0)}, Regions: {data.get('regions_count', 0)}", 
-                response_time
-            )
-        else:
-            await self.log_test(
-                "Currency System Health", 
-                False, 
-                f"Failed: {data}", 
-                response_time
-            )
+            # Validate creator structure and tiers
+            creators = response
+            if not isinstance(creators, list):
+                self.log_test("GET /api/creators", False, "Response is not a list", response_time)
+                return
             
-        # Test currency conversion
-        success, data, response_time = await self.make_request('GET', '/currency/convert?from=USD&to=EUR&amount=100')
-        
-        if success and ('converted_amount' in data or 'result' in data):
-            converted = data.get('converted_amount', data.get('result', 0))
-            await self.log_test(
-                "Currency Conversion", 
-                True, 
-                f"100 USD = {converted} EUR", 
-                response_time
-            )
-        else:
-            await self.log_test(
-                "Currency Conversion", 
-                False, 
-                f"Failed: {data}", 
-                response_time
-            )
+            # Check for required tiers
+            tiers_found = set()
+            required_fields = ['id', 'displayName', 'tier', 'avatarUrl', 'popularity']
             
-    async def test_ai_super_agent(self):
-        """Test AI Super Agent system"""
-        # Test AI Super Agent health
-        success, data, response_time = await self.make_request('GET', '/ai-super-agent/health')
-        
-        if success:
-            await self.log_test(
-                "AI Super Agent Health", 
-                True, 
-                f"Status: {data.get('status', 'Unknown')}, Capabilities: {len(data.get('capabilities', []))}", 
-                response_time
-            )
-        else:
-            await self.log_test(
-                "AI Super Agent Health", 
-                False, 
-                f"Failed: {data}", 
-                response_time
-            )
-            
-        # Test AI features (from health endpoint)
-        if success and isinstance(data.get('features'), list):
-            await self.log_test(
-                "AI Super Agent Features", 
-                True, 
-                f"Available features: {len(data.get('features', []))}", 
-                response_time
-            )
-        else:
-            await self.log_test(
-                "AI Super Agent Features", 
-                False, 
-                f"No features found in health response", 
-                response_time
-            )
-            
-    async def test_rewards_system(self):
-        """Test Rewards System"""
-        # Test rewards health
-        success, data, response_time = await self.make_request('GET', '/rewards/health')
-        
-        if success:
-            await self.log_test(
-                "Rewards System Health", 
-                True, 
-                f"Status: {data.get('status', 'Unknown')}, Features: {len(data.get('features', []))}", 
-                response_time
-            )
-        else:
-            await self.log_test(
-                "Rewards System Health", 
-                False, 
-                f"Failed: {data}", 
-                response_time
-            )
-            
-        # Test rewards balance (requires auth)
-        if self.auth_token:
-            success, data, response_time = await self.make_request('GET', '/rewards/balance')
-            
-            if success:
-                await self.log_test(
-                    "Rewards Balance Check", 
-                    True, 
-                    f"Balance retrieved successfully", 
-                    response_time
-                )
-            else:
-                await self.log_test(
-                    "Rewards Balance Check", 
-                    False, 
-                    f"Failed: {data}", 
-                    response_time
-                )
+            for creator in creators:
+                # Validate required fields
+                missing_fields = [field for field in required_fields if field not in creator]
+                if missing_fields:
+                    self.log_test("GET /api/creators", False, f"Missing fields in creator: {missing_fields}", response_time)
+                    return
                 
-    async def test_clp_engine(self):
-        """Test CLP Engine (Content Lead Purchase)"""
-        # Test CLP Engine health
-        success, data, response_time = await self.make_request('GET', '/clp-engine/health')
+                tiers_found.add(creator['tier'])
+            
+            # Validate tier diversity
+            expected_tiers = {'gold', 'blue', 'grey', 'unverified'}
+            if not expected_tiers.issubset(tiers_found):
+                missing_tiers = expected_tiers - tiers_found
+                self.log_test("GET /api/creators", False, f"Missing tiers: {missing_tiers}", response_time)
+                return
+            
+            self.log_test("GET /api/creators", True, f"Found {len(creators)} creators with all required tiers: {tiers_found}", response_time)
+        else:
+            self.log_test("GET /api/creators", False, str(response), response_time)
+    
+    async def test_stories_endpoint(self):
+        """Test GET /api/stories - Test cursor-based pagination with proper story structure"""
+        success, response, response_time = await self.test_api_endpoint("/stories")
         
         if success:
-            await self.log_test(
-                "CLP Engine Health", 
-                True, 
-                f"Status: {data.get('status', 'Unknown')}, Features: {len(data.get('features', []))}", 
-                response_time
-            )
-        else:
-            await self.log_test(
-                "CLP Engine Health", 
-                False, 
-                f"Failed: {data}", 
-                response_time
-            )
+            # Validate response structure
+            if 'data' not in response or 'cursor' not in response:
+                self.log_test("GET /api/stories", False, "Missing 'data' or 'cursor' in response", response_time)
+                return
             
-        # Test content optimization with POST request
-        content_data = {
-            "content_type": "video",
-            "title": "Luxury Fashion Collection - Limited Edition",
-            "description": "Exclusive designer pieces with premium quality",
-            "creator_id": "test_creator_123",
-            "featured_products": ["product_1", "product_2"]
-        }
-        
-        success, data, response_time = await self.make_request('POST', '/clp-engine/content/optimize', content_data)
+            stories = response['data']
+            if not isinstance(stories, list):
+                self.log_test("GET /api/stories", False, "'data' is not a list", response_time)
+                return
+            
+            # Validate story structure
+            required_story_fields = ['id', 'creatorId', 'type', 'mediaUrl', 'expiresAt']
+            story_types_found = set()
+            
+            for story in stories:
+                # Check required fields
+                missing_fields = [field for field in required_story_fields if field not in story]
+                if missing_fields:
+                    self.log_test("GET /api/stories", False, f"Missing fields in story: {missing_fields}", response_time)
+                    return
+                
+                story_types_found.add(story['type'])
+                
+                # Validate story types
+                if story['type'] not in ['moment', 'product', 'bts']:
+                    self.log_test("GET /api/stories", False, f"Invalid story type: {story['type']}", response_time)
+                    return
+                
+                # Validate product stories have productId
+                if story['type'] == 'product' and 'productId' not in story:
+                    self.log_test("GET /api/stories", False, "Product story missing productId", response_time)
+                    return
+            
+            self.log_test("GET /api/stories", True, f"Found {len(stories)} stories with types: {story_types_found}, cursor: {response.get('cursor')}", response_time)
+        else:
+            self.log_test("GET /api/stories", False, str(response), response_time)
+    
+    async def test_stories_health_check(self):
+        """Test Stories Health Check - Verify stories system status and feature support"""
+        success, response, response_time = await self.test_api_endpoint("/stories/health")
         
         if success:
-            await self.log_test(
-                "CLP Content Optimization", 
-                True, 
-                f"Content optimization successful", 
-                response_time
-            )
+            # Validate health check structure
+            required_fields = ['status', 'creators_count', 'stories_per_creator', 'total_stories', 'features']
+            missing_fields = [field for field in required_fields if field not in response]
+            
+            if missing_fields:
+                self.log_test("GET /api/stories/health", False, f"Missing fields: {missing_fields}", response_time)
+                return
+            
+            # Validate required features
+            required_features = [
+                'cursor_pagination',
+                'virtual_scrolling_ready', 
+                'preload_coordinator_compatible',
+                '24h_expiry_simulation',
+                'commerce_integration'
+            ]
+            
+            features = response.get('features', [])
+            missing_features = [feature for feature in required_features if feature not in features]
+            
+            if missing_features:
+                self.log_test("GET /api/stories/health", False, f"Missing features: {missing_features}", response_time)
+                return
+            
+            self.log_test("GET /api/stories/health", True, f"Status: {response['status']}, Features: {len(features)}, Total Stories: {response['total_stories']}", response_time)
         else:
-            await self.log_test(
-                "CLP Content Optimization", 
-                False, 
-                f"Failed: {data}", 
-                response_time
-            )
-            
-    async def test_universal_ai_hub(self):
-        """Test Universal AI Hub"""
-        # Test Universal AI health
-        success, data, response_time = await self.make_request('GET', '/universal-ai/health')
+            self.log_test("GET /api/stories/health", False, str(response), response_time)
+    
+    async def test_cursor_pagination(self):
+        """Test Cursor Pagination - Test multiple pages with cursor parameter"""
+        # Get first page
+        success1, response1, response_time1 = await self.test_api_endpoint("/stories?limit=5")
         
-        if success:
-            await self.log_test(
-                "Universal AI Hub Health", 
-                True, 
-                f"Status: {data.get('status', 'Unknown')}, Platforms: {data.get('platforms_count', 0)}", 
-                response_time
-            )
-        else:
-            await self.log_test(
-                "Universal AI Hub Health", 
-                False, 
-                f"Failed: {data}", 
-                response_time
-            )
-            
-        # Test AI product search
-        success, data, response_time = await self.make_request('GET', '/universal-ai/products/search?query=luxury+fashion')
+        if not success1:
+            self.log_test("Cursor Pagination - Page 1", False, str(response1), response_time1)
+            return
         
-        if success:
-            await self.log_test(
-                "Universal AI Product Search", 
-                True, 
-                f"Product search available", 
-                response_time
-            )
-        else:
-            await self.log_test(
-                "Universal AI Product Search", 
-                False, 
-                f"Failed: {data}", 
-                response_time
-            )
-            
-    async def test_authentication_system(self):
-        """Test Authentication & User Profile system"""
-        # Test user registration
-        test_email = f"infinity_user_{int(time.time())}@aislemarts.com"
-        test_password = "InfinityStories2024!"
+        first_page_cursor = response1.get('cursor')
+        first_page_count = len(response1.get('data', []))
         
-        register_data = {
-            "email": test_email,
-            "name": "Infinity Stories User",
-            "password": test_password
-        }
+        if not first_page_cursor:
+            self.log_test("Cursor Pagination - Page 1", False, "No cursor returned for pagination", response_time1)
+            return
         
-        success, data, response_time = await self.make_request('POST', '/auth/register', register_data)
+        # Get second page using cursor
+        success2, response2, response_time2 = await self.test_api_endpoint(f"/stories?cursor={first_page_cursor}&limit=5")
         
-        if success and 'access_token' in data:
-            self.auth_token = data['access_token']
-            await self.log_test(
-                "User Registration", 
-                True, 
-                f"User registered successfully", 
-                response_time
-            )
-            
-            # Test user profile retrieval
-            success, profile_data, response_time = await self.make_request('GET', '/auth/me')
-            
-            if success and 'email' in profile_data:
-                self.test_user_id = profile_data.get('id')
-                await self.log_test(
-                    "User Profile Retrieval", 
-                    True, 
-                    f"Profile retrieved for: {profile_data.get('email')}", 
-                    response_time
-                )
-            else:
-                await self.log_test(
-                    "User Profile Retrieval", 
-                    False, 
-                    f"Failed: {profile_data}", 
-                    response_time
-                )
-        else:
-            await self.log_test(
-                "User Registration", 
-                False, 
-                f"Failed: {data}", 
-                response_time
-            )
-            
-    async def test_concurrent_performance(self):
-        """Test system under concurrent load"""
-        print("\n🚀 Starting Concurrent Performance Testing...")
+        if not success2:
+            self.log_test("Cursor Pagination - Page 2", False, str(response2), response_time2)
+            return
         
-        # Test concurrent requests to main health endpoint
-        concurrent_requests = 20
-        tasks = []
+        second_page_count = len(response2.get('data', []))
+        
+        # Validate pagination works
+        if first_page_count == 0 or second_page_count == 0:
+            self.log_test("Cursor Pagination", False, f"Empty pages: Page1={first_page_count}, Page2={second_page_count}", response_time1 + response_time2)
+            return
+        
+        # Check for different content (no duplicates)
+        first_page_ids = {story['id'] for story in response1.get('data', [])}
+        second_page_ids = {story['id'] for story in response2.get('data', [])}
+        
+        if first_page_ids.intersection(second_page_ids):
+            self.log_test("Cursor Pagination", False, "Duplicate stories found between pages", response_time1 + response_time2)
+            return
+        
+        self.log_test("Cursor Pagination", True, f"Page1: {first_page_count} stories, Page2: {second_page_count} stories, No duplicates", response_time1 + response_time2)
+    
+    async def test_story_data_integrity(self):
+        """Test Story Data Integrity - Validate story types and metadata"""
+        success, response, response_time = await self.test_api_endpoint("/stories?limit=50")
+        
+        if not success:
+            self.log_test("Story Data Integrity", False, str(response), response_time)
+            return
+        
+        stories = response.get('data', [])
+        
+        # Count story types
+        type_counts = {'moment': 0, 'product': 0, 'bts': 0}
+        product_stories_with_id = 0
+        expired_stories = 0
+        current_time = int(time.time() * 1000)
+        
+        for story in stories:
+            story_type = story.get('type')
+            if story_type in type_counts:
+                type_counts[story_type] += 1
+            
+            # Check product stories have productId
+            if story_type == 'product' and 'productId' in story:
+                product_stories_with_id += 1
+            
+            # Check expiry logic (24h simulation)
+            expires_at = story.get('expiresAt', 0)
+            if expires_at < current_time:
+                expired_stories += 1
+        
+        # Validate distribution
+        total_stories = len(stories)
+        if total_stories == 0:
+            self.log_test("Story Data Integrity", False, "No stories found", response_time)
+            return
+        
+        # Check all story types are present
+        missing_types = [t for t, count in type_counts.items() if count == 0]
+        if missing_types:
+            self.log_test("Story Data Integrity", False, f"Missing story types: {missing_types}", response_time)
+            return
+        
+        # Validate product stories have productId
+        if type_counts['product'] > 0 and product_stories_with_id != type_counts['product']:
+            self.log_test("Story Data Integrity", False, f"Product stories without productId: {type_counts['product'] - product_stories_with_id}", response_time)
+            return
+        
+        self.log_test("Story Data Integrity", True, f"Types: {type_counts}, Product IDs: {product_stories_with_id}/{type_counts['product']}, Expired: {expired_stories}", response_time)
+    
+    # 📊 PHASE 2 PERFORMANCE TESTING
+    async def test_concurrent_story_requests(self):
+        """Test Concurrent Story Requests - Test multiple simultaneous API calls for preloading"""
+        concurrent_requests = 10
+        
+        async def make_request():
+            return await self.test_api_endpoint("/stories?limit=10")
         
         start_time = time.time()
         
-        for i in range(concurrent_requests):
-            task = self.make_request('GET', '/health')
-            tasks.append(task)
-            
+        # Execute concurrent requests
+        tasks = [make_request() for _ in range(concurrent_requests)]
         results = await asyncio.gather(*tasks, return_exceptions=True)
         
         total_time = time.time() - start_time
-        successful_requests = sum(1 for result in results if not isinstance(result, Exception) and result[0])
+        
+        # Analyze results
+        successful_requests = 0
+        failed_requests = 0
+        response_times = []
+        
+        for result in results:
+            if isinstance(result, Exception):
+                failed_requests += 1
+            else:
+                success, response, response_time = result
+                if success:
+                    successful_requests += 1
+                    response_times.append(response_time)
+                else:
+                    failed_requests += 1
         
         success_rate = (successful_requests / concurrent_requests) * 100
-        avg_response_time = total_time / concurrent_requests
+        avg_response_time = statistics.mean(response_times) if response_times else 0
         
-        if success_rate >= 95:
-            await self.log_test(
-                "Concurrent Performance Test", 
-                True, 
-                f"Success rate: {success_rate:.1f}% ({successful_requests}/{concurrent_requests}), Avg time: {avg_response_time:.3f}s", 
-                total_time
-            )
+        if success_rate >= 90:  # 90% success rate threshold
+            self.log_test("Concurrent Story Requests", True, f"Success rate: {success_rate:.1f}%, Avg response: {avg_response_time:.3f}s, Total time: {total_time:.3f}s", total_time)
         else:
-            await self.log_test(
-                "Concurrent Performance Test", 
-                False, 
-                f"Success rate: {success_rate:.1f}% ({successful_requests}/{concurrent_requests}) - Below 95% threshold", 
-                total_time
-            )
-            
-    async def test_additional_systems(self):
-        """Test additional backend systems"""
-        # Test Advanced AI & Personalization Engine
-        success, data, response_time = await self.make_request('GET', '/advanced-ai/health')
+            self.log_test("Concurrent Story Requests", False, f"Low success rate: {success_rate:.1f}%, Failed: {failed_requests}/{concurrent_requests}", total_time)
+    
+    async def test_large_dataset_handling(self):
+        """Test Large Dataset Handling - Test pagination with different limit sizes"""
+        limit_sizes = [10, 25, 50, 100]
         
-        if success:
-            await self.log_test(
-                "Advanced AI Engine Health", 
-                True, 
-                f"AI capabilities operational", 
-                response_time
-            )
-        else:
-            await self.log_test(
-                "Advanced AI Engine Health", 
-                False, 
-                f"Failed: {data}", 
-                response_time
-            )
+        for limit in limit_sizes:
+            success, response, response_time = await self.test_api_endpoint(f"/stories?limit={limit}")
             
-        # Test Global Monetization Suite
-        success, data, response_time = await self.make_request('GET', '/monetization/health')
+            if not success:
+                self.log_test(f"Large Dataset (limit={limit})", False, str(response), response_time)
+                continue
+            
+            stories_count = len(response.get('data', []))
+            has_cursor = response.get('cursor') is not None
+            
+            # Validate response
+            if stories_count == 0:
+                self.log_test(f"Large Dataset (limit={limit})", False, "No stories returned", response_time)
+                continue
+            
+            self.log_test(f"Large Dataset (limit={limit})", True, f"Returned {stories_count} stories, Has cursor: {has_cursor}", response_time)
+    
+    async def test_response_time_validation(self):
+        """Test Response Time Validation - Ensure sub-200ms response times for mobile UX"""
+        endpoints = ["/creators", "/stories", "/stories/health"]
+        fast_responses = 0
+        total_tests = len(endpoints)
         
-        if success:
-            await self.log_test(
-                "Global Monetization Suite Health", 
-                True, 
-                f"Monetization systems operational", 
-                response_time
-            )
-        else:
-            await self.log_test(
-                "Global Monetization Suite Health", 
-                False, 
-                f"Failed: {data}", 
-                response_time
-            )
+        for endpoint in endpoints:
+            success, response, response_time = await self.test_api_endpoint(endpoint)
             
-        # Test Live Streaming Commerce
-        success, data, response_time = await self.make_request('GET', '/live-streaming/health')
+            if success and response_time < 0.2:  # Sub-200ms
+                fast_responses += 1
+                self.log_test(f"Response Time {endpoint}", True, f"{response_time*1000:.1f}ms (target: <200ms)", response_time)
+            else:
+                self.log_test(f"Response Time {endpoint}", False, f"{response_time*1000:.1f}ms (target: <200ms)", response_time)
         
-        if success:
-            await self.log_test(
-                "Live Streaming Commerce Health", 
-                True, 
-                f"Live streaming systems operational", 
-                response_time
-            )
+        # Overall performance assessment
+        performance_rate = (fast_responses / total_tests) * 100
+        if performance_rate >= 80:  # 80% of endpoints should be fast
+            self.log_test("Overall Response Time Performance", True, f"{performance_rate:.1f}% of endpoints under 200ms", 0)
         else:
-            await self.log_test(
-                "Live Streaming Commerce Health", 
-                False, 
-                f"Failed: {data}", 
-                response_time
-            )
+            self.log_test("Overall Response Time Performance", False, f"Only {performance_rate:.1f}% of endpoints under 200ms", 0)
+    
+    async def test_error_handling(self):
+        """Test Error Handling - Test invalid cursor and pagination edge cases"""
+        error_test_cases = [
+            ("/stories?cursor=invalid_cursor", "Invalid cursor handling"),
+            ("/stories?limit=-1", "Negative limit handling"),
+            ("/stories?limit=0", "Zero limit handling"),
+            ("/stories?cursor=999999", "Out of range cursor handling"),
+        ]
+        
+        for endpoint, test_name in error_test_cases:
+            success, response, response_time = await self.test_api_endpoint(endpoint)
             
+            # For error handling, we expect either success with graceful handling or proper error response
+            if success:
+                # Check if response is valid (graceful error handling)
+                if isinstance(response, dict) and 'data' in response:
+                    self.log_test(test_name, True, f"Graceful handling - returned valid response", response_time)
+                else:
+                    self.log_test(test_name, False, f"Invalid response structure", response_time)
+            else:
+                # Check if it's a proper error response (not a server crash)
+                if "500" not in str(response):  # Not internal server error
+                    self.log_test(test_name, True, f"Proper error response: {response}", response_time)
+                else:
+                    self.log_test(test_name, False, f"Server error: {response}", response_time)
+    
+    # 🛍️ COMMERCE INTEGRATION
+    async def test_product_stories_validation(self):
+        """Test Product Stories - Validate product-type stories include productId metadata"""
+        success, response, response_time = await self.test_api_endpoint("/stories?limit=50")
+        
+        if not success:
+            self.log_test("Product Stories Validation", False, str(response), response_time)
+            return
+        
+        stories = response.get('data', [])
+        product_stories = [story for story in stories if story.get('type') == 'product']
+        
+        if not product_stories:
+            self.log_test("Product Stories Validation", False, "No product stories found", response_time)
+            return
+        
+        # Validate all product stories have productId
+        stories_with_product_id = [story for story in product_stories if 'productId' in story]
+        
+        if len(stories_with_product_id) != len(product_stories):
+            missing_count = len(product_stories) - len(stories_with_product_id)
+            self.log_test("Product Stories Validation", False, f"{missing_count} product stories missing productId", response_time)
+            return
+        
+        # Validate productId format
+        valid_product_ids = 0
+        for story in stories_with_product_id:
+            product_id = story.get('productId', '')
+            if product_id.startswith('product_') and len(product_id) > 8:
+                valid_product_ids += 1
+        
+        if valid_product_ids == len(stories_with_product_id):
+            self.log_test("Product Stories Validation", True, f"All {len(product_stories)} product stories have valid productId", response_time)
+        else:
+            invalid_count = len(stories_with_product_id) - valid_product_ids
+            self.log_test("Product Stories Validation", False, f"{invalid_count} product stories have invalid productId format", response_time)
+    
+    async def test_creator_product_mapping(self):
+        """Test Creator-Product Mapping - Test product catalog per creator correlation"""
+        # Get creators
+        success1, creators_response, response_time1 = await self.test_api_endpoint("/creators")
+        if not success1:
+            self.log_test("Creator-Product Mapping", False, f"Failed to get creators: {creators_response}", response_time1)
+            return
+        
+        # Get stories
+        success2, stories_response, response_time2 = await self.test_api_endpoint("/stories?limit=100")
+        if not success2:
+            self.log_test("Creator-Product Mapping", False, f"Failed to get stories: {stories_response}", response_time2)
+            return
+        
+        creators = creators_response
+        stories = stories_response.get('data', [])
+        
+        # Map creators to their product stories
+        creator_product_mapping = {}
+        for story in stories:
+            if story.get('type') == 'product':
+                creator_id = story.get('creatorId')
+                if creator_id not in creator_product_mapping:
+                    creator_product_mapping[creator_id] = []
+                creator_product_mapping[creator_id].append(story.get('productId'))
+        
+        # Validate mapping
+        creators_with_products = len(creator_product_mapping)
+        total_creators = len(creators)
+        
+        if creators_with_products == 0:
+            self.log_test("Creator-Product Mapping", False, "No creators have product stories", response_time1 + response_time2)
+            return
+        
+        # Check that product IDs are unique per creator
+        unique_products_per_creator = {}
+        for creator_id, product_ids in creator_product_mapping.items():
+            unique_products_per_creator[creator_id] = len(set(product_ids))
+        
+        avg_products_per_creator = sum(unique_products_per_creator.values()) / len(unique_products_per_creator)
+        
+        self.log_test("Creator-Product Mapping", True, f"{creators_with_products}/{total_creators} creators have products, Avg {avg_products_per_creator:.1f} products/creator", response_time1 + response_time2)
+    
+    async def test_story_expiry_logic(self):
+        """Test Story Expiry Logic - Validate 24h expiry simulation works correctly"""
+        success, response, response_time = await self.test_api_endpoint("/stories?limit=50")
+        
+        if not success:
+            self.log_test("Story Expiry Logic", False, str(response), response_time)
+            return
+        
+        stories = response.get('data', [])
+        current_time = int(time.time() * 1000)  # Current time in milliseconds
+        
+        # Analyze expiry times
+        valid_expiry_stories = 0
+        future_expiry_stories = 0
+        expiry_times = []
+        
+        for story in stories:
+            expires_at = story.get('expiresAt', 0)
+            
+            if expires_at > 0:
+                valid_expiry_stories += 1
+                expiry_times.append(expires_at)
+                
+                # Check if expiry is in the future (24h simulation)
+                if expires_at > current_time:
+                    future_expiry_stories += 1
+        
+        if valid_expiry_stories == 0:
+            self.log_test("Story Expiry Logic", False, "No stories have expiry times", response_time)
+            return
+        
+        # Calculate expiry range (should be around 24 hours from now)
+        min_expiry = min(expiry_times)
+        max_expiry = max(expiry_times)
+        
+        # 24 hours in milliseconds
+        twenty_four_hours = 24 * 60 * 60 * 1000
+        
+        # Check if expiry times are reasonable (within 24-25 hours from now)
+        reasonable_expiry_stories = 0
+        for expires_at in expiry_times:
+            time_until_expiry = expires_at - current_time
+            if 0 < time_until_expiry <= (twenty_four_hours + 3600000):  # 24h + 1h buffer
+                reasonable_expiry_stories += 1
+        
+        expiry_percentage = (reasonable_expiry_stories / valid_expiry_stories) * 100
+        
+        if expiry_percentage >= 90:  # 90% should have reasonable expiry times
+            self.log_test("Story Expiry Logic", True, f"{expiry_percentage:.1f}% stories have valid 24h expiry, Future expiry: {future_expiry_stories}/{valid_expiry_stories}", response_time)
+        else:
+            self.log_test("Story Expiry Logic", False, f"Only {expiry_percentage:.1f}% stories have valid 24h expiry", response_time)
+    
     async def run_all_tests(self):
-        """Run all backend tests"""
-        print("🌊⚡ INFINITY STORIES SYSTEM - BACKEND TESTING INITIATED")
-        print(f"Testing backend at: {API_BASE}")
+        """Run all Phase 2 Infinity Stories tests"""
+        print("🚀 PHASE 2 INFINITY STORIES BACKEND VALIDATION STARTING...")
+        print(f"Testing against: {BASE_URL}")
         print("=" * 80)
         
-        await self.setup_session()
+        # 🎯 CORE STORIES API TESTING
+        print("\n🎯 CORE STORIES API TESTING:")
+        await self.test_creators_endpoint()
+        await self.test_stories_endpoint()
+        await self.test_stories_health_check()
+        await self.test_cursor_pagination()
+        await self.test_story_data_integrity()
         
-        try:
-            # Core API Health Checks
-            print("\n1️⃣ CORE API HEALTH CHECKS")
-            await self.test_main_api_health()
-            await self.test_currency_system()
-            await self.test_ai_super_agent()
-            await self.test_rewards_system()
-            
-            # CLP Engine Functionality
-            print("\n2️⃣ CLP ENGINE FUNCTIONALITY")
-            await self.test_clp_engine()
-            
-            # Universal AI Hub
-            print("\n3️⃣ UNIVERSAL AI HUB")
-            await self.test_universal_ai_hub()
-            
-            # Authentication & User Profile
-            print("\n4️⃣ AUTHENTICATION & USER PROFILE")
-            await self.test_authentication_system()
-            
-            # Additional Systems
-            print("\n5️⃣ ADDITIONAL BACKEND SYSTEMS")
-            await self.test_additional_systems()
-            
-            # Concurrent Performance
-            print("\n6️⃣ CONCURRENT PERFORMANCE TESTING")
-            await self.test_concurrent_performance()
-            
-        finally:
-            await self.cleanup_session()
-            
+        # 📊 PHASE 2 PERFORMANCE TESTING
+        print("\n📊 PHASE 2 PERFORMANCE TESTING:")
+        await self.test_concurrent_story_requests()
+        await self.test_large_dataset_handling()
+        await self.test_response_time_validation()
+        await self.test_error_handling()
+        
+        # 🛍️ COMMERCE INTEGRATION
+        print("\n🛍️ COMMERCE INTEGRATION:")
+        await self.test_product_stories_validation()
+        await self.test_creator_product_mapping()
+        await self.test_story_expiry_logic()
+        
         # Generate summary
         self.generate_summary()
-        
+    
     def generate_summary(self):
         """Generate test summary"""
+        print("\n" + "=" * 80)
+        print("🎯 PHASE 2 INFINITY STORIES BACKEND VALIDATION SUMMARY")
+        print("=" * 80)
+        
         total_tests = len(self.test_results)
         passed_tests = sum(1 for result in self.test_results if result['success'])
         failed_tests = total_tests - passed_tests
         success_rate = (passed_tests / total_tests) * 100 if total_tests > 0 else 0
         
-        avg_response_time = sum(result['response_time'] for result in self.test_results) / total_tests if total_tests > 0 else 0
+        print(f"📊 OVERALL RESULTS:")
+        print(f"   Total Tests: {total_tests}")
+        print(f"   Passed: {passed_tests}")
+        print(f"   Failed: {failed_tests}")
+        print(f"   Success Rate: {success_rate:.1f}%")
         
-        print("\n" + "=" * 80)
-        print("🎯 INFINITY STORIES BACKEND TESTING SUMMARY")
-        print("=" * 80)
-        print(f"Total Tests: {total_tests}")
-        print(f"Passed: {passed_tests} ✅")
-        print(f"Failed: {failed_tests} ❌")
-        print(f"Success Rate: {success_rate:.1f}%")
-        print(f"Average Response Time: {avg_response_time:.3f}s")
-        
-        if success_rate >= 95:
-            print(f"\n🎉 BACKEND READY FOR INFINITY STORIES SYSTEM!")
-            print(f"✅ {success_rate:.1f}% success rate exceeds 95% target")
-        else:
-            print(f"\n⚠️ BACKEND NEEDS ATTENTION")
-            print(f"❌ {success_rate:.1f}% success rate below 95% target")
+        if self.performance_metrics:
+            avg_response_time = statistics.mean(self.performance_metrics)
+            max_response_time = max(self.performance_metrics)
+            min_response_time = min(self.performance_metrics)
             
+            print(f"\n⚡ PERFORMANCE METRICS:")
+            print(f"   Average Response Time: {avg_response_time*1000:.1f}ms")
+            print(f"   Fastest Response: {min_response_time*1000:.1f}ms")
+            print(f"   Slowest Response: {max_response_time*1000:.1f}ms")
+        
         # Show failed tests
         if failed_tests > 0:
-            print(f"\n❌ FAILED TESTS ({failed_tests}):")
+            print(f"\n❌ FAILED TESTS:")
             for result in self.test_results:
                 if not result['success']:
-                    print(f"  • {result['test_name']}: {result['details']}")
-                    
+                    print(f"   • {result['test']}: {result['details']}")
+        
+        # Series A readiness assessment
+        print(f"\n🏆 SERIES A READINESS ASSESSMENT:")
+        if success_rate >= 95:
+            print("   ✅ EXCELLENT - Ready for Series A investor demonstrations")
+        elif success_rate >= 90:
+            print("   ✅ GOOD - Ready for Series A with minor improvements needed")
+        elif success_rate >= 80:
+            print("   ⚠️  ACCEPTABLE - Address critical issues before Series A")
+        else:
+            print("   ❌ NOT READY - Significant issues need resolution")
+        
         print("=" * 80)
 
 async def main():
     """Main test execution"""
-    tester = InfinityStoriesBackendTester()
-    await tester.run_all_tests()
+    async with InfinityStoriesValidator() as validator:
+        await validator.run_all_tests()
 
 if __name__ == "__main__":
     asyncio.run(main())
