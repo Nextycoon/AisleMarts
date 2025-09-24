@@ -66,9 +66,9 @@ class HardeningValidator:
         
         return {
             'Content-Type': 'application/json',
-            'X-Timestamp': timestamp,
-            'X-Signature': signature,
-            'Idempotency-Key': str(uuid.uuid4())
+            'x-timestamp': timestamp,
+            'x-signature': signature,
+            'idempotency-key': str(uuid.uuid4())
         }
 
     def log_result(self, category: str, test_name: str, success: bool, 
