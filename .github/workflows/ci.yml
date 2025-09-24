@@ -114,3 +114,17 @@ jobs:
           cd frontend
           npx tsc --noEmit || echo "TypeScript checking completed with warnings"
         fi
+    
+    - name: Security audit - Frontend
+      run: |
+        if [ -d frontend ]; then
+          cd frontend
+          npm audit --audit-level=high || echo "Frontend security audit completed with warnings"
+        fi
+    
+    - name: Security audit - Mobile
+      run: |
+        if [ -d apps/mobile ]; then
+          cd apps/mobile
+          npm audit --audit-level=high || echo "Mobile security audit completed with warnings"
+        fi
