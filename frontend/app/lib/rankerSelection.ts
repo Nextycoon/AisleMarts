@@ -2,32 +2,81 @@ import { ranker, ucb1Ranker, Story, RankerContext, RANKER_CONFIG } from "./ranke
 import { assignRankerTreatment } from "./bucketing";
 
 /**
- * Ranker Selection System with Canary Rollout
- * Handles stable user assignment and algorithm selection
+ * Ranker Selection System with Server-Side Integration
+ * Handles client-side + server-side ranking with fallback
  */
 
 export interface RankerSelection {
   stories: Story[];
-  algorithm: 'identity' | 'ucb1';
+  algorithm: 'identity' | 'ucb1' | 'server';
   inCanary: boolean;
   userId?: string;
+  source: 'client' | 'server';
 }
 
-export function selectRanker(stories: Story[], userId: string, context?: RankerContext): RankerSelection {
+// Server-side ranking integration
+export async function fetchServerRank(userId: string, limit = 20): Promise<any | null> {
+  try {
+    const API_URL = process.env.EXPO_PUBLIC_BACKEND_URL || 'http://localhost:8001';
+    const res = await fetch(`${API_URL}/api/rank`, {
+      method: "POST",
+      headers: { "content-type": "application/json" },
+      body: JSON.stringify({ user_id: userId, limit }),
+      timeout: 5000 // 5 second timeout
+    });
+    
+    if (!res.ok) return null;
+    return await res.json(); // { algo, items:[{story_id,score,creator_id}], ttl }
+  } catch (error) {
+    console.warn('[ranker] Server ranking failed, falling back to client:', error);
+    return null;
+  }
+}
+
+export async function selectRanker(stories: Story[], userId: string, context?: RankerContext): Promise<RankerSelection> {
   // Feature flag check
   if (!RANKER_CONFIG.enabled) {
     return {
       stories,
       algorithm: 'identity',
       inCanary: false,
-      userId
+      userId,
+      source: 'client'
     };
   }
 
-  // Get user assignment (stable hash-based bucketing)
+  // Check if server-side ranking is preferred
+  const useServerRanking = process.env.EXPO_PUBLIC_USE_SERVER_RANKING === "1";
+  
+  if (useServerRanking) {
+    // Try server-side ranking first
+    const serverResult = await fetchServerRank(userId, stories.length);
+    if (serverResult && serverResult.items) {
+      // Map server results back to story objects
+      const rankedStories = serverResult.items
+        .map((item: any) => stories.find(s => s.id === item.story_id))
+        .filter(Boolean) as Story[];
+      
+      // Add any stories not returned by server (fallback)
+      const serverStoryIds = new Set(serverResult.items.map((item: any) => item.story_id));
+      const remainingStories = stories.filter(s => !serverStoryIds.has(s.id));
+      
+      return {
+        stories: [...rankedStories, ...remainingStories],
+        algorithm: serverResult.algo as 'identity' | 'ucb1',
+        inCanary: serverResult.algo === 'ucb1',
+        userId,
+        source: 'server'
+      };
+    }
+    
+    // Server failed, fall back to client-side
+    console.warn('[ranker] Server ranking unavailable, using client fallback');
+  }
+
+  // Client-side ranking (existing logic)
   const assignment = assignRankerTreatment(userId);
   
-  // Apply selected ranker
   let rankedStories: Story[];
   const rankerContext = {
     ...context,
@@ -66,6 +115,7 @@ export function selectRanker(stories: Story[], userId: string, context?: RankerC
       userId,
       algorithm: assignment.algorithm,
       inCanary: assignment.inCanary,
+      source: 'client',
       storyCount: stories.length,
       timestamp: Date.now()
     });
@@ -75,7 +125,8 @@ export function selectRanker(stories: Story[], userId: string, context?: RankerC
     stories: rankedStories,
     algorithm: assignment.algorithm,
     inCanary: assignment.inCanary,
-    userId
+    userId,
+    source: 'client'
   };
 }
 
