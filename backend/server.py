@@ -162,8 +162,16 @@ async def startup_event():
 
 @app.on_event("shutdown")
 async def shutdown_event():
-    """Enhanced shutdown with Shop services cleanup"""
+    """Enhanced shutdown with Shop services cleanup and Observability"""
     try:
+        # Shutdown observability event system
+        try:
+            from observability.events import stop_event_system
+            await stop_event_system()
+            print("🛑 Event analytics system shutdown")
+        except ImportError as e:
+            print(f"⚠️ Event analytics system not available: {e}")
+            
         print("🛍️ AisleMarts Shop Backend shutdown complete")
     except Exception as e:
         print(f"Shutdown error: {e}")
