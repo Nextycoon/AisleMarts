@@ -1,705 +1,479 @@
 #!/usr/bin/env python3
 """
-🎬 VERTICAL STORIES P1/P2 BACKEND VALIDATION SUITE
-Testing the newly integrated vertical stories system with focus on:
-- Event ingestion pipeline (impression/CTA/purchase tracking)
-- AI ranking system validation (UCB1 algorithm)
-- P1 performance infrastructure
-- P0 hardening verification (HMAC, multi-currency, idempotency)
+AisleMarts Backend Testing Suite - B2B RFQ & Affiliate Systems Validation
+Comprehensive testing for Series A investor demonstration readiness
 """
 
-import asyncio
-import aiohttp
+import requests
 import json
 import time
-import hmac
-import hashlib
+from datetime import datetime, timedelta
 from typing import Dict, List, Any
-import os
-from datetime import datetime
+import sys
 
 # Configuration
-BACKEND_URL = "https://aislemart-shop.preview.emergentagent.com"  # FastAPI on port 8001
-EXPRESS_URL = "http://localhost:8002"  # Express server on port 8002
-HMAC_SECRET = "dev-secret-key-change-in-production"
+BACKEND_URL = "https://aislemart-shop.preview.emergentagent.com"
+API_BASE = f"{BACKEND_URL}/api"
 
-class VerticalStoriesValidator:
+class BackendTester:
     def __init__(self):
-        self.session = None
-        self.test_results = []
-        self.total_tests = 0
-        self.passed_tests = 0
-        
-    async def __aenter__(self):
-        self.session = aiohttp.ClientSession(
-            timeout=aiohttp.ClientTimeout(total=30),
-            connector=aiohttp.TCPConnector(limit=100)
-        )
-        return self
-        
-    async def __aexit__(self, exc_type, exc_val, exc_tb):
-        if self.session:
-            await self.session.close()
+        self.results = {
+            "total_tests": 0,
+            "passed": 0,
+            "failed": 0,
+            "errors": [],
+            "test_details": []
+        }
+        self.start_time = time.time()
     
     def log_test(self, test_name: str, success: bool, details: str = "", response_time: float = 0):
         """Log test result"""
-        self.total_tests += 1
+        self.results["total_tests"] += 1
         if success:
-            self.passed_tests += 1
-            
-        status = "✅ PASS" if success else "❌ FAIL"
-        time_info = f" ({response_time:.3f}s)" if response_time > 0 else ""
-        print(f"{status}: {test_name}{time_info}")
-        if details:
-            print(f"    {details}")
-            
-        self.test_results.append({
-            "test": test_name,
-            "success": success,
-            "details": details,
-            "response_time": response_time
-        })
-    
-    def generate_hmac_signature(self, timestamp: int, payload: str) -> str:
-        """Generate HMAC signature for authenticated endpoints"""
-        to_sign = f"{timestamp}.{payload}"
-        signature = hmac.new(
-            HMAC_SECRET.encode('utf-8'),
-            to_sign.encode('utf-8'),
-            hashlib.sha256
-        ).hexdigest()
-        return signature
-    
-    async def test_endpoint(self, method: str, url: str, data: Dict = None, 
-                          headers: Dict = None, require_hmac: bool = False) -> Dict:
-        """Test an endpoint with proper error handling"""
-        start_time = time.time()
+            self.results["passed"] += 1
+            status = "✅ PASS"
+        else:
+            self.results["failed"] += 1
+            status = "❌ FAIL"
+            self.results["errors"].append(f"{test_name}: {details}")
         
+        self.results["test_details"].append({
+            "test": test_name,
+            "status": status,
+            "details": details,
+            "response_time_ms": round(response_time * 1000, 2)
+        })
+        
+        print(f"{status} | {test_name} | {details} | {round(response_time * 1000, 2)}ms")
+    
+    def make_request(self, method: str, endpoint: str, data: Dict = None, params: Dict = None) -> tuple:
+        """Make HTTP request and return response, success, time"""
+        start_time = time.time()
         try:
-            # Prepare headers
-            test_headers = {"Content-Type": "application/json"}
-            if headers:
-                test_headers.update(headers)
-            
-            # Add HMAC authentication if required
-            if require_hmac and data:
-                timestamp = int(time.time() * 1000)
-                payload = json.dumps(data)
-                signature = self.generate_hmac_signature(timestamp, payload)
-                
-                test_headers.update({
-                    "X-Timestamp": str(timestamp),
-                    "X-Signature": signature,
-                    "Idempotency-Key": f"test-{timestamp}-{hash(payload)}"
-                })
-            
-            # Make request
+            url = f"{API_BASE}{endpoint}"
             if method.upper() == "GET":
-                async with self.session.get(url, headers=test_headers) as response:
-                    response_time = time.time() - start_time
-                    text = await response.text()
-                    try:
-                        json_data = json.loads(text) if text else {}
-                    except json.JSONDecodeError:
-                        json_data = {"raw_response": text}
-                    
-                    return {
-                        "status": response.status,
-                        "data": json_data,
-                        "response_time": response_time,
-                        "success": 200 <= response.status < 300
-                    }
+                response = requests.get(url, params=params, timeout=10)
+            elif method.upper() == "POST":
+                response = requests.post(url, json=data, params=params, timeout=10)
+            elif method.upper() == "PUT":
+                response = requests.put(url, json=data, params=params, timeout=10)
             else:
-                async with self.session.request(method, url, json=data, headers=test_headers) as response:
-                    response_time = time.time() - start_time
-                    text = await response.text()
-                    try:
-                        json_data = json.loads(text) if text else {}
-                    except json.JSONDecodeError:
-                        json_data = {"raw_response": text}
-                    
-                    return {
-                        "status": response.status,
-                        "data": json_data,
-                        "response_time": response_time,
-                        "success": 200 <= response.status < 300
-                    }
-                    
+                raise ValueError(f"Unsupported method: {method}")
+            
+            response_time = time.time() - start_time
+            return response, True, response_time
         except Exception as e:
             response_time = time.time() - start_time
-            return {
-                "status": 0,
-                "data": {"error": str(e)},
-                "response_time": response_time,
-                "success": False
-            }
+            return str(e), False, response_time
 
-    async def test_event_ingestion_pipeline(self):
-        """Test all 3 event endpoints that VerticalStoriesScreen sends to"""
-        print("\n🎯 TESTING EVENT INGESTION PIPELINE")
-        
-        # Test data for realistic vertical stories events
-        test_user_id = "user_vertical_test_123"
-        test_story_id = "luxefashion_story_0"
-        test_product_id = "silk-scarf"
-        test_creator_id = "luxefashion"
-        
-        # 1. Test POST /api/track/impression (story impressions with viewport=vertical_stories)
-        impression_data = {
-            "story_id": test_story_id,
-            "creator_id": test_creator_id,
-            "product_id": test_product_id,
-            "timestamp": int(time.time() * 1000),
-            "user_id": test_user_id,
-            "viewport": "vertical_stories"
-        }
-        
-        # Test FastAPI impression endpoint
-        result = await self.test_endpoint(
-            "POST", 
-            f"{BACKEND_URL}/api/track/impression",
-            data={"storyId": test_story_id, "userId": test_user_id}
-        )
-        
-        self.log_test(
-            "POST /api/track/impression (FastAPI)",
-            result["success"],
-            f"Status: {result['status']}, Response: {result['data']}",
-            result["response_time"]
-        )
-        
-        # Test Express impression endpoint
-        result = await self.test_endpoint(
-            "POST",
-            f"{EXPRESS_URL}/api/track/impression", 
-            data={"storyId": test_story_id, "userId": test_user_id}
-        )
-        
-        self.log_test(
-            "POST /api/track/impression (Express)",
-            result["success"],
-            f"Status: {result['status']}, Response: {result['data']}",
-            result["response_time"]
-        )
-        
-        # 2. Test POST /api/track/cta (like/comment/share/shop actions)
-        cta_data = {
-            "story_id": test_story_id,
-            "creator_id": test_creator_id,
-            "cta_type": "shop",
-            "product_id": test_product_id,
-            "timestamp": int(time.time() * 1000),
-            "user_id": test_user_id
-        }
-        
-        # Test FastAPI CTA endpoint
-        result = await self.test_endpoint(
-            "POST",
-            f"{BACKEND_URL}/api/track/cta",
-            data={"storyId": test_story_id, "productId": test_product_id, "userId": test_user_id}
-        )
-        
-        self.log_test(
-            "POST /api/track/cta (FastAPI)",
-            result["success"],
-            f"Status: {result['status']}, Response: {result['data']}",
-            result["response_time"]
-        )
-        
-        # Test Express CTA endpoint
-        result = await self.test_endpoint(
-            "POST",
-            f"{EXPRESS_URL}/api/track/cta",
-            data={"storyId": test_story_id, "productId": test_product_id, "userId": test_user_id}
-        )
-        
-        self.log_test(
-            "POST /api/track/cta (Express)",
-            result["success"],
-            f"Status: {result['status']}, Response: {result['data']}",
-            result["response_time"]
-        )
-        
-        # 3. Test POST /api/track/purchase (shop button taps with commission tracking)
-        purchase_data = {
-            "story_id": test_story_id,
-            "creator_id": test_creator_id,
-            "product_id": test_product_id,
-            "purchase_amount": 999,
-            "commission_rate": 0.12,
-            "timestamp": int(time.time() * 1000),
-            "user_id": test_user_id
-        }
-        
-        # Test FastAPI purchase endpoint
-        result = await self.test_endpoint(
-            "POST",
-            f"{BACKEND_URL}/api/track/purchase",
-            data={
-                "orderId": f"order_{int(time.time())}",
-                "userId": test_user_id,
-                "productId": test_product_id,
-                "amount": 89.00,
-                "currency": "USD",
-                "referrerStoryId": test_story_id
-            }
-        )
-        
-        self.log_test(
-            "POST /api/track/purchase (FastAPI)",
-            result["success"],
-            f"Status: {result['status']}, Response: {result['data']}",
-            result["response_time"]
-        )
-        
-        # Test Express purchase endpoint with HMAC
-        result = await self.test_endpoint(
-            "POST",
-            f"{EXPRESS_URL}/api/track/purchase",
-            data={
-                "orderId": f"order_express_{int(time.time())}",
-                "userId": test_user_id,
-                "productId": test_product_id,
-                "amount": 89.00,
-                "currency": "USD",
-                "referrerStoryId": test_story_id
-            },
-            require_hmac=True
-        )
-        
-        self.log_test(
-            "POST /api/track/purchase (Express + HMAC)",
-            result["success"],
-            f"Status: {result['status']}, Response: {result['data']}",
-            result["response_time"]
-        )
-
-    async def test_ai_ranking_system(self):
-        """Test the P2 ranker endpoints and UCB1 algorithm integration"""
-        print("\n🤖 TESTING AI RANKING SYSTEM VALIDATION")
-        
-        # Test POST /api/rank (server-side UCB1 ranking for stories)
-        rank_data = {
-            "user_id": "test_user_ranking_123",
-            "limit": 20,
-            "country": "US",
-            "currency": "USD"
-        }
-        
-        result = await self.test_endpoint(
-            "POST",
-            f"{BACKEND_URL}/api/rank",
-            data=rank_data
-        )
-        
-        self.log_test(
-            "POST /api/rank (UCB1 Algorithm)",
-            result["success"],
-            f"Status: {result['status']}, Algorithm: {result['data'].get('algo', 'unknown')}, Items: {len(result['data'].get('items', []))}",
-            result["response_time"]
-        )
-        
-        # Test creator fairness by checking if different creators are represented
-        if result["success"] and "items" in result["data"]:
-            items = result["data"]["items"]
-            creator_ids = set(item.get("creator_id") for item in items if item.get("creator_id"))
-            
-            self.log_test(
-                "UCB1 Creator Fairness Check",
-                len(creator_ids) > 1,
-                f"Unique creators in ranking: {len(creator_ids)} (should be > 1 for fairness)",
-                0
-            )
-        
-        # Test server-side ranking performance (should be < 500ms)
-        performance_threshold = 0.5  # 500ms
-        self.log_test(
-            "Ranker Performance (<500ms)",
-            result["response_time"] < performance_threshold,
-            f"Response time: {result['response_time']:.3f}s (threshold: {performance_threshold}s)",
-            0
-        )
-        
-        # Test fallback behavior by testing with invalid user_id
-        result = await self.test_endpoint(
-            "POST",
-            f"{BACKEND_URL}/api/rank",
-            data={"user_id": "", "limit": 10}
-        )
-        
-        self.log_test(
-            "Ranker Fallback Behavior",
-            result["status"] in [200, 400, 422],  # Should handle gracefully
-            f"Status: {result['status']} for invalid user_id",
-            result["response_time"]
-        )
-
-    async def test_p1_performance_infrastructure(self):
-        """Test P1 performance infrastructure components"""
-        print("\n⚡ TESTING P1 PERFORMANCE INFRASTRUCTURE")
-        
-        # Test Stories API performance under load (5+ concurrent requests)
-        print("Testing Stories API concurrent performance...")
-        
-        async def fetch_stories():
-            return await self.test_endpoint("GET", f"{BACKEND_URL}/api/stories?limit=10")
-        
-        # Run 5 concurrent requests
-        start_time = time.time()
-        tasks = [fetch_stories() for _ in range(5)]
-        results = await asyncio.gather(*tasks)
-        total_time = time.time() - start_time
-        
-        successful_requests = sum(1 for r in results if r["success"])
-        avg_response_time = sum(r["response_time"] for r in results) / len(results)
-        
-        self.log_test(
-            "Stories API Concurrent Load (5 requests)",
-            successful_requests >= 4,  # At least 4/5 should succeed
-            f"Success rate: {successful_requests}/5, Avg response time: {avg_response_time:.3f}s, Total time: {total_time:.3f}s",
-            total_time
-        )
-        
-        # Test event ingestion performance (batch event processing)
-        print("Testing batch event ingestion performance...")
-        
-        async def send_impression():
-            return await self.test_endpoint(
-                "POST",
-                f"{BACKEND_URL}/api/track/impression",
-                data={"storyId": f"test_story_{int(time.time() * 1000)}", "userId": "batch_test_user"}
-            )
-        
-        # Send 10 impression events concurrently
-        start_time = time.time()
-        tasks = [send_impression() for _ in range(10)]
-        results = await asyncio.gather(*tasks)
-        total_time = time.time() - start_time
-        
-        successful_events = sum(1 for r in results if r["success"])
-        
-        self.log_test(
-            "Batch Event Ingestion (10 impressions)",
-            successful_events >= 8,  # At least 8/10 should succeed
-            f"Success rate: {successful_events}/10, Total time: {total_time:.3f}s",
-            total_time
-        )
-        
-        # Test HMAC authentication on tracking endpoints
-        print("Testing HMAC authentication performance...")
-        
-        start_time = time.time()
-        result = await self.test_endpoint(
-            "POST",
-            f"{EXPRESS_URL}/api/track/purchase",
-            data={
-                "orderId": f"perf_test_{int(time.time())}",
-                "userId": "perf_test_user",
-                "productId": "test-product",
-                "amount": 50.00,
-                "currency": "USD"
-            },
-            require_hmac=True
-        )
-        
-        self.log_test(
-            "HMAC Authentication Performance",
-            result["success"] and result["response_time"] < 1.0,  # Should be under 1 second
-            f"HMAC verification time: {result['response_time']:.3f}s",
-            result["response_time"]
-        )
-
-    async def test_p0_hardening_verification(self):
-        """Test P0 hardening features are still operational"""
-        print("\n🛡️ TESTING P0 HARDENING VERIFICATION")
-        
-        # Test HMAC signature validation on purchase/CTA endpoints
-        print("Testing HMAC signature validation...")
-        
-        # Test with missing HMAC signature (should return 400/401)
-        result = await self.test_endpoint(
-            "POST",
-            f"{EXPRESS_URL}/api/track/purchase",
-            data={
-                "orderId": "test_no_hmac",
-                "userId": "test_user",
-                "productId": "test-product",
-                "amount": 25.00,
-                "currency": "USD"
-            }
-        )
-        
-        self.log_test(
-            "HMAC Missing Signature Validation",
-            result["status"] in [400, 401],
-            f"Status: {result['status']} (expected 400/401 for missing HMAC)",
-            result["response_time"]
-        )
-        
-        # Test with invalid HMAC signature (should return 401)
-        result = await self.test_endpoint(
-            "POST",
-            f"{EXPRESS_URL}/api/track/purchase",
-            data={
-                "orderId": "test_invalid_hmac",
-                "userId": "test_user", 
-                "productId": "test-product",
-                "amount": 25.00,
-                "currency": "USD"
-            },
-            headers={
-                "X-Timestamp": str(int(time.time() * 1000)),
-                "X-Signature": "invalid_signature_12345",
-                "Idempotency-Key": "test-invalid-hmac"
-            }
-        )
-        
-        self.log_test(
-            "HMAC Invalid Signature Validation",
-            result["status"] == 401,
-            f"Status: {result['status']} (expected 401 for invalid HMAC)",
-            result["response_time"]
-        )
-        
-        # Test multi-currency support
-        print("Testing multi-currency support...")
-        
-        currencies = ["USD", "EUR", "GBP", "JPY"]
-        amounts = [100.00, 92.50, 79.25, 15000]  # Appropriate amounts for each currency
-        
-        for currency, amount in zip(currencies, amounts):
-            result = await self.test_endpoint(
-                "POST",
-                f"{EXPRESS_URL}/api/track/purchase",
-                data={
-                    "orderId": f"multicurrency_{currency}_{int(time.time())}",
-                    "userId": "multicurrency_test_user",
-                    "productId": "multicurrency-product",
-                    "amount": amount,
-                    "currency": currency
-                },
-                require_hmac=True
-            )
-            
-            self.log_test(
-                f"Multi-Currency Support ({currency})",
-                result["success"],
-                f"Status: {result['status']}, Amount: {amount} {currency}",
-                result["response_time"]
-            )
-        
-        # Test idempotency protection
-        print("Testing idempotency protection...")
-        
-        idempotency_key = f"idempotency_test_{int(time.time())}"
-        purchase_data = {
-            "orderId": f"idempotency_order_{int(time.time())}",
-            "userId": "idempotency_test_user",
-            "productId": "idempotency-product",
-            "amount": 75.00,
-            "currency": "USD"
-        }
-        
-        # First request
-        result1 = await self.test_endpoint(
-            "POST",
-            f"{EXPRESS_URL}/api/track/purchase",
-            data=purchase_data,
-            headers={"Idempotency-Key": idempotency_key},
-            require_hmac=True
-        )
-        
-        # Second request with same idempotency key
-        result2 = await self.test_endpoint(
-            "POST",
-            f"{EXPRESS_URL}/api/track/purchase",
-            data=purchase_data,
-            headers={"Idempotency-Key": idempotency_key},
-            require_hmac=True
-        )
-        
-        self.log_test(
-            "Idempotency Protection",
-            result1["success"] and (result2["status"] in [200, 409]),  # Second should be same response or conflict
-            f"First: {result1['status']}, Second: {result2['status']} (expected 200 or 409 for duplicate)",
-            result1["response_time"] + result2["response_time"]
-        )
-        
-        # Test proper 4xx error responses
-        print("Testing proper 4xx error responses...")
-        
-        # Test invalid currency
-        result = await self.test_endpoint(
-            "POST",
-            f"{EXPRESS_URL}/api/track/purchase",
-            data={
-                "orderId": "invalid_currency_test",
-                "userId": "test_user",
-                "productId": "test-product",
-                "amount": 50.00,
-                "currency": "INVALID"
-            },
-            require_hmac=True
-        )
-        
-        self.log_test(
-            "Proper 4xx Error Response (Invalid Currency)",
-            result["status"] == 422,
-            f"Status: {result['status']} (expected 422 for invalid currency)",
-            result["response_time"]
-        )
-
-    async def test_stories_api_endpoints(self):
-        """Test core stories API endpoints"""
-        print("\n📚 TESTING STORIES API ENDPOINTS")
-        
-        # Test GET /api/creators
-        result = await self.test_endpoint("GET", f"{BACKEND_URL}/api/creators")
-        
-        creators_count = len(result["data"]) if result["success"] and isinstance(result["data"], list) else 0
-        self.log_test(
-            "GET /api/creators",
-            result["success"] and creators_count > 0,
-            f"Status: {result['status']}, Creators count: {creators_count}",
-            result["response_time"]
-        )
-        
-        # Test GET /api/stories with pagination
-        result = await self.test_endpoint("GET", f"{BACKEND_URL}/api/stories?limit=5")
-        
-        stories_data = result["data"].get("data", []) if result["success"] else []
-        self.log_test(
-            "GET /api/stories (pagination)",
-            result["success"] and len(stories_data) > 0,
-            f"Status: {result['status']}, Stories count: {len(stories_data)}",
-            result["response_time"]
-        )
-        
-        # Test stories health endpoint
-        result = await self.test_endpoint("GET", f"{BACKEND_URL}/api/stories/health")
-        
-        features = result["data"].get("features", []) if result["success"] else []
-        self.log_test(
-            "GET /api/stories/health",
-            result["success"] and len(features) > 10,  # Should have many features
-            f"Status: {result['status']}, Features count: {len(features)}",
-            result["response_time"]
-        )
-        
-        # Test commerce analytics
-        result = await self.test_endpoint("GET", f"{BACKEND_URL}/api/commerce/analytics")
-        
-        has_summary = "summary" in result["data"] if result["success"] else False
-        self.log_test(
-            "GET /api/commerce/analytics",
-            result["success"] and has_summary,
-            f"Status: {result['status']}, Has summary: {has_summary}",
-            result["response_time"]
-        )
-
-    async def test_express_server_endpoints(self):
-        """Test Express server endpoints"""
-        print("\n🚀 TESTING EXPRESS SERVER ENDPOINTS")
-        
-        # Test Express server health
-        result = await self.test_endpoint("GET", f"{EXPRESS_URL}/health")
-        
-        features = result["data"].get("features", []) if result["success"] else []
-        self.log_test(
-            "Express Server Health Check",
-            result["success"] and len(features) >= 5,
-            f"Status: {result['status']}, Features: {features}",
-            result["response_time"]
-        )
-        
-        # Test Express root endpoint
-        result = await self.test_endpoint("GET", f"{EXPRESS_URL}/")
-        
-        endpoints = result["data"].get("endpoints", []) if result["success"] else []
-        self.log_test(
-            "Express Server Root Endpoint",
-            result["success"] and len(endpoints) > 5,
-            f"Status: {result['status']}, Available endpoints: {len(endpoints)}",
-            result["response_time"]
-        )
-        
-        # Test Express creators endpoint
-        result = await self.test_endpoint("GET", f"{EXPRESS_URL}/api/creators")
-        
-        creators = result["data"].get("creators", []) if result["success"] else []
-        self.log_test(
-            "Express GET /api/creators",
-            result["success"] and len(creators) > 0,
-            f"Status: {result['status']}, Creators count: {len(creators)}",
-            result["response_time"]
-        )
-        
-        # Test Express stories endpoint
-        result = await self.test_endpoint("GET", f"{EXPRESS_URL}/api/stories?limit=5")
-        
-        stories = result["data"].get("stories", []) if result["success"] else []
-        self.log_test(
-            "Express GET /api/stories",
-            result["success"] and len(stories) > 0,
-            f"Status: {result['status']}, Stories count: {len(stories)}",
-            result["response_time"]
-        )
-
-    async def run_all_tests(self):
-        """Run all test suites"""
-        print("🎬 STARTING VERTICAL STORIES P1/P2 BACKEND VALIDATION")
-        print("=" * 80)
-        
-        start_time = time.time()
-        
-        # Run all test suites
-        await self.test_stories_api_endpoints()
-        await self.test_express_server_endpoints()
-        await self.test_event_ingestion_pipeline()
-        await self.test_ai_ranking_system()
-        await self.test_p1_performance_infrastructure()
-        await self.test_p0_hardening_verification()
-        
-        total_time = time.time() - start_time
-        
-        # Print summary
-        print("\n" + "=" * 80)
-        print("🏆 VERTICAL STORIES BACKEND VALIDATION SUMMARY")
-        print("=" * 80)
-        
-        success_rate = (self.passed_tests / self.total_tests * 100) if self.total_tests > 0 else 0
-        
-        print(f"📊 OVERALL RESULTS:")
-        print(f"   Total Tests: {self.total_tests}")
-        print(f"   Passed: {self.passed_tests}")
-        print(f"   Failed: {self.total_tests - self.passed_tests}")
-        print(f"   Success Rate: {success_rate:.1f}%")
-        print(f"   Total Time: {total_time:.2f}s")
-        
-        # Success criteria check
-        target_success_rate = 95.0
-        if success_rate >= target_success_rate:
-            print(f"\n✅ SUCCESS: {success_rate:.1f}% success rate EXCEEDS {target_success_rate}% target")
-            print("🎯 VERTICAL STORIES SYSTEM IS READY FOR PRODUCTION")
+    def test_rfq_system(self):
+        """Test B2B RFQ System Endpoints"""
+        print("\n🏭 TESTING B2B RFQ SYSTEM")
+        print("=" * 50)
+        
+        # 1. RFQ Health Check
+        response, success, response_time = self.make_request("GET", "/b2b/health")
+        if success and response.status_code == 200:
+            data = response.json()
+            self.log_test("RFQ Health Check", True, 
+                         f"Service: {data.get('service', 'Unknown')}, RFQs: {data.get('stats', {}).get('rfqs', 0)}", 
+                         response_time)
         else:
-            print(f"\n❌ NEEDS WORK: {success_rate:.1f}% success rate below {target_success_rate}% target")
-            print("🔧 ISSUES NEED TO BE ADDRESSED BEFORE PRODUCTION")
+            self.log_test("RFQ Health Check", False, f"Failed: {response}", response_time)
         
-        # Print failed tests for debugging
-        failed_tests = [t for t in self.test_results if not t["success"]]
-        if failed_tests:
-            print(f"\n🚨 FAILED TESTS ({len(failed_tests)}):")
-            for test in failed_tests:
-                print(f"   ❌ {test['test']}: {test['details']}")
+        # 2. List RFQs
+        response, success, response_time = self.make_request("GET", "/b2b/rfq", params={"limit": 10})
+        if success and response.status_code == 200:
+            data = response.json()
+            rfq_count = len(data.get("rfqs", []))
+            self.log_test("List RFQs", True, f"Retrieved {rfq_count} RFQs", response_time)
+            
+            # Store first RFQ ID for further testing
+            if rfq_count > 0:
+                self.first_rfq_id = data["rfqs"][0]["id"]
+        else:
+            self.log_test("List RFQs", False, f"Failed: {response}", response_time)
+            self.first_rfq_id = None
         
-        return success_rate >= target_success_rate
+        # 3. Get specific RFQ details
+        if hasattr(self, 'first_rfq_id') and self.first_rfq_id:
+            response, success, response_time = self.make_request("GET", f"/b2b/rfq/{self.first_rfq_id}")
+            if success and response.status_code == 200:
+                data = response.json()
+                quote_count = data.get("quote_count", 0)
+                self.log_test("Get RFQ Details", True, f"RFQ loaded with {quote_count} quotes", response_time)
+            else:
+                self.log_test("Get RFQ Details", False, f"Failed: {response}", response_time)
+        
+        # 4. Create new RFQ
+        new_rfq_data = {
+            "title": "Test RFQ - Bluetooth Headphones",
+            "category": "electronics",
+            "description": "Testing RFQ creation for Series A demo",
+            "specifications": {
+                "material": "Plastic + Metal",
+                "color": "Black",
+                "certifications": ["FCC", "CE"],
+                "sample_required": True
+            },
+            "quantity": 1000,
+            "target_price": 25.00,
+            "currency": "USD",
+            "shipping_destination": "San Francisco, CA, USA"
+        }
+        
+        response, success, response_time = self.make_request("POST", "/b2b/rfq", data=new_rfq_data)
+        if success and response.status_code == 200:
+            data = response.json()
+            if data.get("success"):
+                new_rfq_id = data["rfq"]["id"]
+                self.log_test("Create RFQ", True, f"Created RFQ: {new_rfq_id}", response_time)
+                self.new_rfq_id = new_rfq_id
+            else:
+                self.log_test("Create RFQ", False, "Success flag false", response_time)
+        else:
+            self.log_test("Create RFQ", False, f"Failed: {response}", response_time)
+            self.new_rfq_id = None
+        
+        # 5. Submit quote for RFQ
+        if hasattr(self, 'new_rfq_id') and self.new_rfq_id:
+            quote_data = {
+                "supplier_message": "We can provide high-quality Bluetooth headphones with competitive pricing.",
+                "items": [
+                    {
+                        "description": "Bluetooth Headphones - Custom Design",
+                        "unit_price": 23.50,
+                        "quantity": 1000,
+                        "total_price": 23500.00,
+                        "lead_time_days": 30,
+                        "notes": "Includes custom packaging"
+                    }
+                ],
+                "total_amount": 23500.00,
+                "currency": "USD",
+                "lead_time_days": 30,
+                "payment_terms": "30% T/T deposit, 70% before shipment",
+                "shipping_terms": "FOB Shanghai",
+                "validity_days": 15,
+                "certifications": ["FCC", "CE", "RoHS"],
+                "sample_available": True,
+                "sample_cost": 100.00
+            }
+            
+            response, success, response_time = self.make_request("POST", f"/b2b/rfq/{self.new_rfq_id}/quote", data=quote_data)
+            if success and response.status_code == 200:
+                data = response.json()
+                if data.get("success"):
+                    quote_id = data["quote"]["id"]
+                    self.log_test("Submit Quote", True, f"Quote submitted: {quote_id}", response_time)
+                    self.new_quote_id = quote_id
+                else:
+                    self.log_test("Submit Quote", False, "Success flag false", response_time)
+            else:
+                self.log_test("Submit Quote", False, f"Failed: {response}", response_time)
+        
+        # 6. RFQ Analytics
+        response, success, response_time = self.make_request("GET", "/b2b/analytics/rfq")
+        if success and response.status_code == 200:
+            data = response.json()
+            total_rfqs = data.get("total_rfqs", 0)
+            total_quotes = data.get("total_quotes", 0)
+            self.log_test("RFQ Analytics", True, f"Analytics: {total_rfqs} RFQs, {total_quotes} quotes", response_time)
+        else:
+            self.log_test("RFQ Analytics", False, f"Failed: {response}", response_time)
+        
+        # 7. Filter RFQs by category
+        response, success, response_time = self.make_request("GET", "/b2b/rfq", params={"category": "electronics", "limit": 5})
+        if success and response.status_code == 200:
+            data = response.json()
+            electronics_count = len(data.get("rfqs", []))
+            self.log_test("Filter RFQs by Category", True, f"Found {electronics_count} electronics RFQs", response_time)
+        else:
+            self.log_test("Filter RFQs by Category", False, f"Failed: {response}", response_time)
 
-async def main():
-    """Main test execution"""
-    async with VerticalStoriesValidator() as validator:
-        success = await validator.run_all_tests()
-        return success
+    def test_affiliate_system(self):
+        """Test Affiliate Marketing System Endpoints"""
+        print("\n🎯 TESTING AFFILIATE SYSTEM")
+        print("=" * 50)
+        
+        # 1. Affiliate Health Check
+        response, success, response_time = self.make_request("GET", "/affiliate/health")
+        if success and response.status_code == 200:
+            data = response.json()
+            self.log_test("Affiliate Health Check", True, 
+                         f"Service: {data.get('service', 'Unknown')}, Campaigns: {data.get('stats', {}).get('campaigns', 0)}", 
+                         response_time)
+        else:
+            self.log_test("Affiliate Health Check", False, f"Failed: {response}", response_time)
+        
+        # 2. List Campaigns
+        response, success, response_time = self.make_request("GET", "/affiliate/campaigns", params={"limit": 10})
+        if success and response.status_code == 200:
+            data = response.json()
+            campaign_count = len(data.get("campaigns", []))
+            self.log_test("List Campaigns", True, f"Retrieved {campaign_count} campaigns", response_time)
+            
+            # Store first campaign ID for further testing
+            if campaign_count > 0:
+                self.first_campaign_id = data["campaigns"][0]["id"]
+        else:
+            self.log_test("List Campaigns", False, f"Failed: {response}", response_time)
+            self.first_campaign_id = None
+        
+        # 3. Get specific campaign details
+        if hasattr(self, 'first_campaign_id') and self.first_campaign_id:
+            response, success, response_time = self.make_request("GET", f"/affiliate/campaigns/{self.first_campaign_id}")
+            if success and response.status_code == 200:
+                data = response.json()
+                total_creators = data.get("performance", {}).get("total_creators", 0)
+                self.log_test("Get Campaign Details", True, f"Campaign loaded with {total_creators} creators", response_time)
+            else:
+                self.log_test("Get Campaign Details", False, f"Failed: {response}", response_time)
+        
+        # 4. Create new campaign
+        new_campaign_data = {
+            "name": "Test Campaign - Series A Demo",
+            "description": "Testing campaign creation for investor demonstration",
+            "base_rate_bps": 2000,  # 20%
+            "open_collaboration": True,
+            "invited_creators": [],
+            "product_ids": ["test_product_001"]
+        }
+        
+        response, success, response_time = self.make_request("POST", "/affiliate/campaigns", data=new_campaign_data)
+        if success and response.status_code == 200:
+            data = response.json()
+            if data.get("success"):
+                new_campaign_id = data["campaign"]["id"]
+                self.log_test("Create Campaign", True, f"Created campaign: {new_campaign_id}", response_time)
+                self.new_campaign_id = new_campaign_id
+            else:
+                self.log_test("Create Campaign", False, "Success flag false", response_time)
+        else:
+            self.log_test("Create Campaign", False, f"Failed: {response}", response_time)
+            self.new_campaign_id = None
+        
+        # 5. Create affiliate link
+        if hasattr(self, 'new_campaign_id') and self.new_campaign_id:
+            link_data = {
+                "campaign_id": self.new_campaign_id,
+                "custom_code": "TESTDEMO"
+            }
+            
+            response, success, response_time = self.make_request("POST", "/affiliate/links", data=link_data)
+            if success and response.status_code == 200:
+                data = response.json()
+                if data.get("success"):
+                    link_id = data["link"]["id"]
+                    tracking_code = data["link"]["code"]
+                    self.log_test("Create Affiliate Link", True, f"Link created: {tracking_code}", response_time)
+                    self.new_link_code = tracking_code
+                else:
+                    self.log_test("Create Affiliate Link", False, "Success flag false", response_time)
+            else:
+                self.log_test("Create Affiliate Link", False, f"Failed: {response}", response_time)
+        
+        # 6. Track affiliate click
+        if hasattr(self, 'new_link_code') and self.new_link_code:
+            response, success, response_time = self.make_request("GET", f"/affiliate/track/{self.new_link_code}")
+            if success and response.status_code == 200:
+                data = response.json()
+                redirect_url = data.get("redirect_to", "")
+                self.log_test("Track Affiliate Click", True, f"Click tracked, redirect: {redirect_url}", response_time)
+            else:
+                self.log_test("Track Affiliate Click", False, f"Failed: {response}", response_time)
+        
+        # 7. Track affiliate purchase
+        if hasattr(self, 'new_link_code') and self.new_link_code:
+            purchase_data = {
+                "order_id": "test_order_001",
+                "tracking_code": self.new_link_code,
+                "amount": 150.00,
+                "product_ids": ["test_product_001"]
+            }
+            
+            response, success, response_time = self.make_request("POST", "/affiliate/track/purchase", data=purchase_data)
+            if success and response.status_code == 200:
+                data = response.json()
+                if data.get("success"):
+                    commission = data.get("commission_earned", 0)
+                    self.log_test("Track Purchase", True, f"Purchase tracked, commission: ${commission}", response_time)
+                else:
+                    self.log_test("Track Purchase", False, "Success flag false", response_time)
+            else:
+                self.log_test("Track Purchase", False, f"Failed: {response}", response_time)
+        
+        # 8. Get creator links
+        response, success, response_time = self.make_request("GET", "/affiliate/creators/demo_creator/links")
+        if success and response.status_code == 200:
+            data = response.json()
+            total_links = data.get("total_links", 0)
+            total_commissions = data.get("stats", {}).get("total_commissions", 0)
+            self.log_test("Get Creator Links", True, f"Creator has {total_links} links, ${total_commissions} commissions", response_time)
+        else:
+            self.log_test("Get Creator Links", False, f"Failed: {response}", response_time)
+        
+        # 9. Creators leaderboard
+        response, success, response_time = self.make_request("GET", "/affiliate/analytics/creators", params={"limit": 5})
+        if success and response.status_code == 200:
+            data = response.json()
+            total_creators = data.get("total_creators", 0)
+            self.log_test("Creators Leaderboard", True, f"Leaderboard with {total_creators} creators", response_time)
+        else:
+            self.log_test("Creators Leaderboard", False, f"Failed: {response}", response_time)
+        
+        # 10. Performance analytics
+        response, success, response_time = self.make_request("GET", "/affiliate/analytics/performance", params={"days": 30})
+        if success and response.status_code == 200:
+            data = response.json()
+            metrics = data.get("metrics", {})
+            total_clicks = metrics.get("total_clicks", 0)
+            conversion_rate = metrics.get("conversion_rate_percent", 0)
+            self.log_test("Performance Analytics", True, f"{total_clicks} clicks, {conversion_rate}% conversion", response_time)
+        else:
+            self.log_test("Performance Analytics", False, f"Failed: {response}", response_time)
+
+    def test_performance_benchmarks(self):
+        """Test performance benchmarks for Series A readiness"""
+        print("\n⚡ TESTING PERFORMANCE BENCHMARKS")
+        print("=" * 50)
+        
+        # Test concurrent requests
+        import threading
+        import queue
+        
+        def make_concurrent_request(endpoint, result_queue):
+            start_time = time.time()
+            response, success, _ = self.make_request("GET", endpoint)
+            response_time = time.time() - start_time
+            result_queue.put((success and response.status_code == 200, response_time))
+        
+        # Test 5 concurrent health checks
+        result_queue = queue.Queue()
+        threads = []
+        
+        for _ in range(5):
+            thread = threading.Thread(target=make_concurrent_request, args=("/b2b/health", result_queue))
+            threads.append(thread)
+            thread.start()
+        
+        for thread in threads:
+            thread.join()
+        
+        # Collect results
+        concurrent_results = []
+        while not result_queue.empty():
+            concurrent_results.append(result_queue.get())
+        
+        successful_requests = sum(1 for success, _ in concurrent_results if success)
+        avg_response_time = sum(rt for _, rt in concurrent_results) / len(concurrent_results)
+        
+        if successful_requests == 5 and avg_response_time < 0.5:  # 500ms target
+            self.log_test("Concurrent Load Test", True, 
+                         f"{successful_requests}/5 success, avg {round(avg_response_time*1000, 2)}ms", 
+                         avg_response_time)
+        else:
+            self.log_test("Concurrent Load Test", False, 
+                         f"{successful_requests}/5 success, avg {round(avg_response_time*1000, 2)}ms", 
+                         avg_response_time)
+
+    def test_sample_data_integrity(self):
+        """Test sample data integrity for demo scenarios"""
+        print("\n📊 TESTING SAMPLE DATA INTEGRITY")
+        print("=" * 50)
+        
+        # Check RFQ sample data
+        response, success, response_time = self.make_request("GET", "/b2b/rfq")
+        if success and response.status_code == 200:
+            data = response.json()
+            rfqs = data.get("rfqs", [])
+            
+            # Verify we have at least 3 RFQs as specified
+            if len(rfqs) >= 3:
+                categories = set(rfq.get("category") for rfq in rfqs)
+                self.log_test("RFQ Sample Data", True, 
+                             f"{len(rfqs)} RFQs across {len(categories)} categories", response_time)
+            else:
+                self.log_test("RFQ Sample Data", False, f"Only {len(rfqs)} RFQs found, need 3+", response_time)
+        else:
+            self.log_test("RFQ Sample Data", False, f"Failed to retrieve RFQs: {response}", response_time)
+        
+        # Check Affiliate sample data
+        response, success, response_time = self.make_request("GET", "/affiliate/campaigns")
+        if success and response.status_code == 200:
+            data = response.json()
+            campaigns = data.get("campaigns", [])
+            
+            # Verify we have at least 3 campaigns as specified
+            if len(campaigns) >= 3:
+                active_campaigns = sum(1 for c in campaigns if c.get("status") == "active")
+                self.log_test("Affiliate Sample Data", True, 
+                             f"{len(campaigns)} campaigns, {active_campaigns} active", response_time)
+            else:
+                self.log_test("Affiliate Sample Data", False, f"Only {len(campaigns)} campaigns found, need 3+", response_time)
+        else:
+            self.log_test("Affiliate Sample Data", False, f"Failed to retrieve campaigns: {response}", response_time)
+        
+        # Check affiliate links
+        response, success, response_time = self.make_request("GET", "/affiliate/creators/creator_fashion_001/links")
+        if success and response.status_code == 200:
+            data = response.json()
+            total_links = data.get("total_links", 0)
+            
+            if total_links >= 1:
+                self.log_test("Affiliate Links Data", True, f"Creator has {total_links} links", response_time)
+            else:
+                self.log_test("Affiliate Links Data", False, f"Creator has no links", response_time)
+        else:
+            self.log_test("Affiliate Links Data", False, f"Failed to retrieve creator links: {response}", response_time)
+
+    def run_all_tests(self):
+        """Run comprehensive test suite"""
+        print("🚀💎 AISLEMARTS B2B RFQ & AFFILIATE BACKEND TESTING")
+        print("Series A Investor Demo Validation")
+        print("=" * 60)
+        
+        # Run test suites
+        self.test_rfq_system()
+        self.test_affiliate_system()
+        self.test_performance_benchmarks()
+        self.test_sample_data_integrity()
+        
+        # Calculate final results
+        total_time = time.time() - self.start_time
+        success_rate = (self.results["passed"] / self.results["total_tests"]) * 100 if self.results["total_tests"] > 0 else 0
+        
+        print("\n" + "=" * 60)
+        print("🏆 FINAL RESULTS")
+        print("=" * 60)
+        print(f"Total Tests: {self.results['total_tests']}")
+        print(f"Passed: {self.results['passed']} ✅")
+        print(f"Failed: {self.results['failed']} ❌")
+        print(f"Success Rate: {success_rate:.1f}%")
+        print(f"Total Time: {total_time:.2f}s")
+        
+        # Series A readiness assessment
+        if success_rate >= 95:
+            print(f"\n🎯 SERIES A READINESS: ✅ READY ({success_rate:.1f}% success rate)")
+        elif success_rate >= 90:
+            print(f"\n🎯 SERIES A READINESS: ⚠️ MOSTLY READY ({success_rate:.1f}% success rate)")
+        else:
+            print(f"\n🎯 SERIES A READINESS: ❌ NOT READY ({success_rate:.1f}% success rate)")
+        
+        # Show errors if any
+        if self.results["errors"]:
+            print("\n❌ ERRORS ENCOUNTERED:")
+            for error in self.results["errors"]:
+                print(f"  • {error}")
+        
+        return self.results
 
 if __name__ == "__main__":
-    success = asyncio.run(main())
-    exit(0 if success else 1)
+    tester = BackendTester()
+    results = tester.run_all_tests()
+    
+    # Exit with appropriate code
+    if results["failed"] == 0:
+        sys.exit(0)
+    else:
+        sys.exit(1)
