@@ -150,110 +150,35 @@ const styles = StyleSheet.create({
   // Main App Styles
   container: {
     flex: 1,
-    backgroundColor: '#0a0a0a',
-  },
-  header: {
-    paddingTop: 20,
-    paddingBottom: 20,
-    paddingHorizontal: 20,
-    borderBottomWidth: 1,
-    borderBottomColor: '#1a1a1a',
+    backgroundColor: '#1a1a1a',
+    alignItems: 'center',
+    justifyContent: 'center',
+    padding: 20,
   },
   title: {
-    fontSize: 28,
-    fontWeight: 'bold',
-    color: '#fff',
-    marginBottom: 12,
-  },
-  searchBar: {
-    backgroundColor: '#1a1a1a',
-    color: '#888',
-    fontSize: 16,
-    paddingVertical: 12,
-    paddingHorizontal: 16,
-    borderRadius: 8,
-    borderWidth: 1,
-    borderColor: '#2a2a2a',
-  },
-
-  // Quick Actions
-  quickActions: {
-    flexDirection: 'row',
-    justifyContent: 'space-around',
-    paddingVertical: 20,
-    paddingHorizontal: 20,
-    backgroundColor: '#0f0f0f',
-  },
-  quickActionButton: {
-    alignItems: 'center',
-    flex: 1,
-  },
-  quickActionEmoji: {
-    fontSize: 24,
-    marginBottom: 8,
-  },
-  quickActionText: {
-    fontSize: 12,
-    color: '#ccc',
-    fontWeight: '500',
-  },
-
-  // Categories
-  categoriesSection: {
-    paddingHorizontal: 20,
-    paddingVertical: 16,
-  },
-  sectionTitle: {
-    fontSize: 18,
-    fontWeight: 'bold',
-    color: '#fff',
-    marginBottom: 16,
-  },
-  categoriesGrid: {
-    flexDirection: 'row',
-    flexWrap: 'wrap',
-    justifyContent: 'space-between',
-  },
-  categoryButton: {
-    width: (width - 60) / 4,
-    alignItems: 'center',
-    paddingVertical: 16,
-    backgroundColor: '#1a1a1a',
-    borderRadius: 12,
-    marginBottom: 12,
-  },
-  categoryEmoji: {
     fontSize: 32,
-    marginBottom: 8,
-  },
-  categoryText: {
-    fontSize: 12,
-    color: '#ccc',
-    fontWeight: '500',
-  },
-
-  // Featured Section
-  featuredSection: {
-    paddingHorizontal: 20,
-    paddingVertical: 16,
-  },
-  trendingBanner: {
-    backgroundColor: '#6366F1',
-    paddingVertical: 20,
-    paddingHorizontal: 20,
-    borderRadius: 12,
-    alignItems: 'center',
-  },
-  trendingText: {
-    fontSize: 16,
     fontWeight: 'bold',
     color: '#fff',
-    marginBottom: 4,
+    marginBottom: 10,
   },
-  trendingSubtext: {
-    fontSize: 14,
-    color: '#E0E0FF',
-    fontWeight: '500',
+  subtitle: {
+    fontSize: 16,
+    color: '#888',
+    marginBottom: 40,
+  },
+  button: {
+    backgroundColor: '#007AFF',
+    paddingHorizontal: 30,
+    paddingVertical: 15,
+    borderRadius: 25,
+    marginVertical: 10,
+    width: width * 0.7,
+  },
+  buttonText: {
+    color: '#fff',
+    fontSize: 16,
+    fontWeight: '600',
+    textAlign: 'center',
   },
 
   // Main Content
