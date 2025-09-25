@@ -17,7 +17,7 @@ AisleMarts is a production-ready AI-powered global commerce platform featuring T
   - "Network ready..." (100%)
 
 ### Access URLs
-- **Web Preview**: https://aislefeed.preview.emergentagent.com
+- **Web Preview**: https://tiktok-commerce-1.preview.emergentagent.com
 - **Mobile (Expo Go)**: exp://aislefeed.ngrok.io:80
 
 ## 🏗️ Technical Architecture Implemented

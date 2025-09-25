@@ -14,7 +14,7 @@ from concurrent.futures import ThreadPoolExecutor
 import statistics
 
 # Get backend URL from environment
-BACKEND_URL = os.getenv('EXPO_PUBLIC_BACKEND_URL', 'https://aislefeed.preview.emergentagent.com')
+BACKEND_URL = os.getenv('EXPO_PUBLIC_BACKEND_URL', 'https://tiktok-commerce-1.preview.emergentagent.com')
 BASE_URL = f"{BACKEND_URL}/api"
 
 class InfinityStoriesValidator:

@@ -139,7 +139,7 @@ const getBaseUrl = (): string => {
     return window.location.origin;
   }
   // React Native or server environment
-  return process.env.EXPO_PUBLIC_BACKEND_URL || 'https://aislefeed.preview.emergentagent.com';
+  return process.env.EXPO_PUBLIC_BACKEND_URL || 'https://tiktok-commerce-1.preview.emergentagent.com';
 };
 
 const BASE_URL = `${getBaseUrl()}/api/rewards`;

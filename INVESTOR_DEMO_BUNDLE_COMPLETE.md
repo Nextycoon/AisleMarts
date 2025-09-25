@@ -13,7 +13,7 @@
 cd /app/frontend
 
 # 1. Production Environment Setup
-export EXPO_PUBLIC_API_URL="https://aislefeed.preview.emergentagent.com"
+export EXPO_PUBLIC_API_URL="https://tiktok-commerce-1.preview.emergentagent.com"
 export NODE_ENV="production"
 export EAS_BUILD_PROFILE="investor-demo"
 
@@ -128,7 +128,7 @@ eas submit -p ios --latest
 - **Installation Instructions**: Step-by-step setup guide
 
 ### **2. Demo Environment Access**:
-- **Staging URL**: https://aislefeed.preview.emergentagent.com
+- **Staging URL**: https://tiktok-commerce-1.preview.emergentagent.com
 - **Demo Credentials**: Pre-configured test accounts
 - **Admin Dashboard**: Backend metrics and analytics view
 - **API Documentation**: Live API explorer and testing interface
@@ -174,10 +174,10 @@ Demo Account: investor@aislemarts.com / DemoPass123
 ## **🌐 Web Demo Environment**:
 ```
 💻 STAGING ENVIRONMENT
-URL: https://aislefeed.preview.emergentagent.com
-Admin Portal: https://aislefeed.preview.emergentagent.com/admin
-API Explorer: https://aislefeed.preview.emergentagent.com/docs
-Monitoring: https://aislefeed.preview.emergentagent.com/metrics
+URL: https://tiktok-commerce-1.preview.emergentagent.com
+Admin Portal: https://tiktok-commerce-1.preview.emergentagent.com/admin
+API Explorer: https://tiktok-commerce-1.preview.emergentagent.com/docs
+Monitoring: https://tiktok-commerce-1.preview.emergentagent.com/metrics
 ```
 
 ---

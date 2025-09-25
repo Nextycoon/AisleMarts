@@ -156,7 +156,7 @@ tail -10 /var/log/supervisor/expo.out.log
 
 ### Expo Go Configuration
 - **Tunnel URL**: `exp://aislefeed.ngrok.io:80`
-- **Web Preview**: `https://aislefeed.preview.emergentagent.com`
+- **Web Preview**: `https://tiktok-commerce-1.preview.emergentagent.com`
 - **Mobile Viewport**: 390x844 (iPhone) / 360x800 (Android)
 
 ### Testing Protocol

@@ -4,7 +4,7 @@
 
 ### Web Preview (Desktop/Mobile Browser)
 ```
-🌐 Live Preview: https://aislefeed.preview.emergentagent.com
+🌐 Live Preview: https://tiktok-commerce-1.preview.emergentagent.com
 ```
 
 ### Mobile App Testing (Expo Go)

@@ -11,49 +11,49 @@
 
 ### 1. Awareness-Enhanced Home (Start Here)
 ```
-https://aislefeed.preview.emergentagent.com/?locale=en-US&currency=USD&tz=America/Los_Angeles&device=desktop&utm_source=investor&utm_medium=email&utm_campaign=series_a&utm_bundle=SEQUOIA_ROELOF_BOTHA&utm_content=home
+https://tiktok-commerce-1.preview.emergentagent.com/?locale=en-US&currency=USD&tz=America/Los_Angeles&device=desktop&utm_source=investor&utm_medium=email&utm_campaign=series_a&utm_bundle=SEQUOIA_ROELOF_BOTHA&utm_content=home
 ```
 **Focus**: Time-based personalization, AI context awareness, network growth indicators
 
 ### 2. AI Mood-to-Cart™ Network Intelligence
 ```
-https://aislefeed.preview.emergentagent.com/mood-to-cart?preset=luxurious&locale=en-US&currency=USD&network_effects=true&utm_bundle=SEQUOIA_ROELOF_BOTHA&utm_content=ai_mood_cart
+https://tiktok-commerce-1.preview.emergentagent.com/mood-to-cart?preset=luxurious&locale=en-US&currency=USD&network_effects=true&utm_bundle=SEQUOIA_ROELOF_BOTHA&utm_content=ai_mood_cart
 ```
 **Focus**: AI recommendations improve with each user, collective intelligence
 
 ### 3. Social Commerce Network Feed
 ```
-https://aislefeed.preview.emergentagent.com/social?feed_type=shop_the_look&locale=en-US&currency=USD&network_density=high&utm_bundle=SEQUOIA_ROELOF_BOTHA&utm_content=social_feed
+https://tiktok-commerce-1.preview.emergentagent.com/social?feed_type=shop_the_look&locale=en-US&currency=USD&network_density=high&utm_bundle=SEQUOIA_ROELOF_BOTHA&utm_content=social_feed
 ```
 **Focus**: User-generated content drives discovery, viral loops visible
 
 ### 4. LiveSale Network Effects
 ```
-https://aislefeed.preview.emergentagent.com/livesale/LS-SEQ-001?locale=en-US&currency=USD&show_network_metrics=true&utm_bundle=SEQUOIA_ROELOF_BOTHA&utm_content=livesale
+https://tiktok-commerce-1.preview.emergentagent.com/livesale/LS-SEQ-001?locale=en-US&currency=USD&show_network_metrics=true&utm_bundle=SEQUOIA_ROELOF_BOTHA&utm_content=livesale
 ```
 **Focus**: Viewer count increases value, social proof cascading
 
 ### 5. Business Analytics - Network Metrics
 ```
-https://aislefeed.preview.emergentagent.com/analytics?view=investor&currency=USD&focus=network_effects&timeframe=30d&utm_bundle=SEQUOIA_ROELOF_BOTHA&utm_content=analytics
+https://tiktok-commerce-1.preview.emergentagent.com/analytics?view=investor&currency=USD&focus=network_effects&timeframe=30d&utm_bundle=SEQUOIA_ROELOF_BOTHA&utm_content=analytics
 ```
 **Focus**: Viral coefficient, network density, B2B vendor growth
 
 ### 6. Creator Economy (80/20 Revenue Model)
 ```
-https://aislefeed.preview.emergentagent.com/channels/creator-001?creator_spotlight=true&locale=en-US&revenue_model=true&utm_bundle=SEQUOIA_ROELOF_BOTHA&utm_content=creator_channel
+https://tiktok-commerce-1.preview.emergentagent.com/channels/creator-001?creator_spotlight=true&locale=en-US&revenue_model=true&utm_bundle=SEQUOIA_ROELOF_BOTHA&utm_content=creator_channel
 ```
 **Focus**: Creator incentives drive content creation, platform network effects
 
 ### 7. Communication Suite Hub
 ```
-https://aislefeed.preview.emergentagent.com/chat?demo_mode=investor&locale=en-US&network_view=true&utm_bundle=SEQUOIA_ROELOF_BOTHA&utm_content=communication_suite
+https://tiktok-commerce-1.preview.emergentagent.com/chat?demo_mode=investor&locale=en-US&network_view=true&utm_bundle=SEQUOIA_ROELOF_BOTHA&utm_content=communication_suite
 ```
 **Focus**: DMs create connections, group formation, business lead generation
 
 ### 8. Business Leads Network
 ```
-https://aislefeed.preview.emergentagent.com/business/leads?view=kanban&network_effects=true&utm_bundle=SEQUOIA_ROELOF_BOTHA&utm_content=leads_kanban
+https://tiktok-commerce-1.preview.emergentagent.com/business/leads?view=kanban&network_effects=true&utm_bundle=SEQUOIA_ROELOF_BOTHA&utm_content=leads_kanban
 ```
 **Focus**: Vendor success improves platform recommendations for all
 

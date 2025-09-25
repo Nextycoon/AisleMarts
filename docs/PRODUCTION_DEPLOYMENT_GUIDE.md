@@ -41,9 +41,9 @@ Analytics: https://analytics.aislemarts.com
 
 ### **Development/Staging**
 ```
-Development: https://aislefeed.preview.emergentagent.com
-Staging API: https://aislefeed.preview.emergentagent.com/api
-Testing Suite: https://aislefeed.preview.emergentagent.com/test
+Development: https://tiktok-commerce-1.preview.emergentagent.com
+Staging API: https://tiktok-commerce-1.preview.emergentagent.com/api
+Testing Suite: https://tiktok-commerce-1.preview.emergentagent.com/test
 ```
 
 ---

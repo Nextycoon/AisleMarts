@@ -9,7 +9,7 @@
 - **Device**: Desktop
 
 ## Pre-Test Setup ✅
-- [ ] Demo environment: https://aislefeed.preview.emergentagent.com
+- [ ] Demo environment: https://tiktok-commerce-1.preview.emergentagent.com
 - [ ] Credentials: sequoia.demo@aislemarts.luxury / Seq8#mB9kL2pQw7$vN3x
 - [ ] Fresh seed data confirmed (daily 3:00 AM PST reset)
 - [ ] Network effects demo data populated
@@ -20,7 +20,7 @@
 
 ### Test URL
 ```
-https://aislefeed.preview.emergentagent.com/?locale=en-US&currency=USD&tz=America/Los_Angeles&device=desktop&utm_source=investor&utm_medium=email&utm_campaign=series_a&utm_bundle=SEQUOIA_ROELOF_BOTHA
+https://tiktok-commerce-1.preview.emergentagent.com/?locale=en-US&currency=USD&tz=America/Los_Angeles&device=desktop&utm_source=investor&utm_medium=email&utm_campaign=series_a&utm_bundle=SEQUOIA_ROELOF_BOTHA
 ```
 
 ### Validation Checklist
@@ -51,7 +51,7 @@ https://aislefeed.preview.emergentagent.com/?locale=en-US&currency=USD&tz=Americ
 
 ### Test URL
 ```
-https://aislefeed.preview.emergentagent.com/mood-to-cart?preset=luxurious&locale=en-US&currency=USD&network_effects=true&utm_bundle=SEQUOIA_ROELOF_BOTHA
+https://tiktok-commerce-1.preview.emergentagent.com/mood-to-cart?preset=luxurious&locale=en-US&currency=USD&network_effects=true&utm_bundle=SEQUOIA_ROELOF_BOTHA
 ```
 
 ### Test Procedure
@@ -84,7 +84,7 @@ https://aislefeed.preview.emergentagent.com/mood-to-cart?preset=luxurious&locale
 
 ### Test URL
 ```
-https://aislefeed.preview.emergentagent.com/livesale/LS-SEQ-001?locale=en-US&currency=USD&show_network_metrics=true&utm_bundle=SEQUOIA_ROELOF_BOTHA
+https://tiktok-commerce-1.preview.emergentagent.com/livesale/LS-SEQ-001?locale=en-US&currency=USD&show_network_metrics=true&utm_bundle=SEQUOIA_ROELOF_BOTHA
 ```
 
 ### Test Procedure
@@ -116,9 +116,9 @@ https://aislefeed.preview.emergentagent.com/livesale/LS-SEQ-001?locale=en-US&cur
 ## Step 4: DM→Leads Flow Creates Network-Aware Lead ✅
 
 ### Test Procedure
-1. Access: `https://aislefeed.preview.emergentagent.com/chat?demo_mode=investor&locale=en-US`
+1. Access: `https://tiktok-commerce-1.preview.emergentagent.com/chat?demo_mode=investor&locale=en-US`
 2. Start conversation with demo prospect
-3. Convert to business lead: `https://aislefeed.preview.emergentagent.com/business/leads`
+3. Convert to business lead: `https://tiktok-commerce-1.preview.emergentagent.com/business/leads`
 
 ### Validation Checklist
 - [ ] **DM Interface**: English language, USD context preserved
@@ -160,7 +160,7 @@ https://aislefeed.preview.emergentagent.com/livesale/LS-SEQ-001?locale=en-US&cur
 
 ### Test URL
 ```
-https://aislefeed.preview.emergentagent.com/analytics?view=investor&currency=USD&focus=network_effects&timeframe=30d&utm_bundle=SEQUOIA_ROELOF_BOTHA
+https://tiktok-commerce-1.preview.emergentagent.com/analytics?view=investor&currency=USD&focus=network_effects&timeframe=30d&utm_bundle=SEQUOIA_ROELOF_BOTHA
 ```
 
 ### Validation Checklist
