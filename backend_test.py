@@ -67,6 +67,7 @@ class P0TestSuite:
         
     def make_hmac_request(self, method: str, url: str, payload: Dict[str, Any]) -> Tuple[requests.Response, float]:
         """Make HMAC-authenticated request with proper headers"""
+        # Generate timestamp and signature right before request to avoid timing issues
         timestamp = int(time.time() * 1000)  # Milliseconds
         payload_str = json.dumps(payload, separators=(',', ':'))
         signature = self.generate_hmac_signature(timestamp, payload_str)
@@ -81,7 +82,8 @@ class P0TestSuite:
         
         start_time = time.time()
         if method.upper() == 'POST':
-            response = requests.post(url, json=payload, headers=headers, timeout=10)
+            # Use the exact payload string for consistency
+            response = requests.post(url, data=payload_str, headers=headers, timeout=10)
         else:
             response = requests.get(url, headers=headers, timeout=10)
         end_time = time.time()
