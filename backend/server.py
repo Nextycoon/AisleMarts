@@ -100,14 +100,14 @@ except Exception as e:
 
 try:
     from routers.affiliate_router import router as affiliate_router
-    app.include_router(affiliate_router, prefix="/api", tags=["affiliate"])
+    app.include_router(affiliate_router, tags=["affiliate"])
     print("✅ Affiliate system loaded successfully")
 except ImportError as e:
     print(f"⚠️ Affiliate system not available: {e}")
 
 try:
     from routers.rfq_router import router as rfq_router
-    app.include_router(rfq_router, prefix="/api", tags=["b2b_rfq"])
+    app.include_router(rfq_router, tags=["b2b_rfq"])
     print("✅ B2B RFQ system loaded successfully")
 except ImportError as e:
     print(f"⚠️ B2B RFQ system not available: {e}")
