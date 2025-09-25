@@ -223,30 +223,106 @@ const styles = StyleSheet.create({
     backgroundColor: '#0a0a0a',
   },
   header: {
-    alignItems: 'center',
     paddingTop: 20,
-    paddingBottom: 30,
+    paddingBottom: 20,
     paddingHorizontal: 20,
     borderBottomWidth: 1,
     borderBottomColor: '#1a1a1a',
   },
   title: {
-    fontSize: 38,
-    fontWeight: '900',
+    fontSize: 28,
+    fontWeight: 'bold',
     color: '#fff',
-    marginBottom: 8,
-    letterSpacing: 1.5,
-  },
-  subtitle: {
-    fontSize: 18,
-    color: '#A0A0A0',
     marginBottom: 12,
-    fontWeight: '600',
   },
-  tagline: {
-    fontSize: 13,
-    color: '#666',
-    textAlign: 'center',
+  searchBar: {
+    backgroundColor: '#1a1a1a',
+    color: '#888',
+    fontSize: 16,
+    paddingVertical: 12,
+    paddingHorizontal: 16,
+    borderRadius: 8,
+    borderWidth: 1,
+    borderColor: '#2a2a2a',
+  },
+
+  // Quick Actions
+  quickActions: {
+    flexDirection: 'row',
+    justifyContent: 'space-around',
+    paddingVertical: 20,
+    paddingHorizontal: 20,
+    backgroundColor: '#0f0f0f',
+  },
+  quickActionButton: {
+    alignItems: 'center',
+    flex: 1,
+  },
+  quickActionEmoji: {
+    fontSize: 24,
+    marginBottom: 8,
+  },
+  quickActionText: {
+    fontSize: 12,
+    color: '#ccc',
+    fontWeight: '500',
+  },
+
+  // Categories
+  categoriesSection: {
+    paddingHorizontal: 20,
+    paddingVertical: 16,
+  },
+  sectionTitle: {
+    fontSize: 18,
+    fontWeight: 'bold',
+    color: '#fff',
+    marginBottom: 16,
+  },
+  categoriesGrid: {
+    flexDirection: 'row',
+    flexWrap: 'wrap',
+    justifyContent: 'space-between',
+  },
+  categoryButton: {
+    width: (width - 60) / 4,
+    alignItems: 'center',
+    paddingVertical: 16,
+    backgroundColor: '#1a1a1a',
+    borderRadius: 12,
+    marginBottom: 12,
+  },
+  categoryEmoji: {
+    fontSize: 32,
+    marginBottom: 8,
+  },
+  categoryText: {
+    fontSize: 12,
+    color: '#ccc',
+    fontWeight: '500',
+  },
+
+  // Featured Section
+  featuredSection: {
+    paddingHorizontal: 20,
+    paddingVertical: 16,
+  },
+  trendingBanner: {
+    backgroundColor: '#6366F1',
+    paddingVertical: 20,
+    paddingHorizontal: 20,
+    borderRadius: 12,
+    alignItems: 'center',
+  },
+  trendingText: {
+    fontSize: 16,
+    fontWeight: 'bold',
+    color: '#fff',
+    marginBottom: 4,
+  },
+  trendingSubtext: {
+    fontSize: 14,
+    color: '#E0E0FF',
     fontWeight: '500',
   },
 
