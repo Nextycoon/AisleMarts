@@ -326,7 +326,13 @@ export default function VerticalStoriesScreen() {
         });
 
         if (!cancelled) {
-          setStories(rankerResult.stories);
+          // Convert back to original format
+          const originalFormatStories = rankerResult.stories.map(story => ({
+            ...story,
+            videoUrl: story.mediaUrl
+          }));
+          
+          setStories(originalFormatStories);
           setRankerMeta({
             source: rankerResult.source,
             algorithm: rankerResult.algorithm
