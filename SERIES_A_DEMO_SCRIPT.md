@@ -82,21 +82,29 @@
 
 **Market Positioning:** *"Amazon charges 15%+ fees. We're disrupting that model."*
 
-### **Scene 2.2: Product Discovery & Trust (60 seconds)**
-*"Trust is everything in commerce..."*
+### **Scene 2.2: Product Discovery, Trust & Buyer Protection (90 seconds)**
+*"Trust and protection are everything in commerce..."*
 
 **Actions:**
 1. **Tap on luxury smartwatch** → Full PDP opens
    - **Show:** Multiple images, variants, detailed specs
    - **Point to:** Gold Seller badge, verification marks
    
-2. **Scroll to reviews** → Verified purchase reviews visible
+2. **Scroll to trust signals** → Verification badges visible
+   - *"Multi-tier verification: Verified → Gold → Diamond sellers"*
+   - *"Each tier earns trust through performance, not payment"*
+   
+3. **Highlight buyer protection** → Protection guarantee banner
+   - *"Every purchase is backed by our buyer protection guarantee"*
+   - *"Damaged goods, wrong items, or delivery issues—we cover it all"*
+   
+4. **Scroll to reviews** → Verified purchase reviews visible
    - *"Social proof integrated with purchase verification"*
    
-3. **Add to Cart** → Cart updates with count badge
+5. **Add to Cart** → Cart updates with count badge
    - *"Persistent cart across all app sections"*
 
-**Trust Framework:** *"Multi-tier verification: Verified → Gold → Diamond sellers"*
+**Risk Mitigation Message:** *"Investors love platforms that reduce buyer risk while increasing seller trust—it's the foundation of sustainable GMV growth."*
 
 ### **Scene 2.3: Cart & Checkout (30 seconds)**
 *"Streamlined purchase completion..."*
