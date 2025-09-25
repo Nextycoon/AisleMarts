@@ -41,9 +41,9 @@ Analytics: https://analytics.aislemarts.com
 
 ### **Development/Staging**
 ```
-Development: https://infinity-stories.preview.emergentagent.com
-Staging API: https://infinity-stories.preview.emergentagent.com/api
-Testing Suite: https://infinity-stories.preview.emergentagent.com/test
+Development: https://aislefeed.preview.emergentagent.com
+Staging API: https://aislefeed.preview.emergentagent.com/api
+Testing Suite: https://aislefeed.preview.emergentagent.com/test
 ```
 
 ---

@@ -18,7 +18,7 @@ import os
 from datetime import datetime
 
 # Configuration
-BACKEND_URL = os.getenv('EXPO_PUBLIC_BACKEND_URL', 'https://infinity-stories.preview.emergentagent.com')
+BACKEND_URL = os.getenv('EXPO_PUBLIC_BACKEND_URL', 'https://aislefeed.preview.emergentagent.com')
 BASE_URL = f"{BACKEND_URL}/api"
 EXPRESS_URL = f"{BACKEND_URL}:3000"
 

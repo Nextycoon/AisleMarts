@@ -45,7 +45,7 @@ class RealtimeService {
   private getWebSocketUrl(endpoint: string): string {
     const baseUrl = typeof window !== 'undefined' 
       ? window.location.origin 
-      : process.env.EXPO_PUBLIC_BACKEND_URL || 'https://infinity-stories.preview.emergentagent.com';
+      : process.env.EXPO_PUBLIC_BACKEND_URL || 'https://aislefeed.preview.emergentagent.com';
     
     const protocol = baseUrl.startsWith('https:') ? 'wss:' : 'ws:';
     const wsUrl = baseUrl.replace(/^https?:/, protocol);

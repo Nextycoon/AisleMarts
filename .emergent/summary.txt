@@ -1,101 +1,72 @@
 <analysis>
-The AI engineer successfully transformed the AisleMarts app into a Series A-ready social commerce platform. Initial work focused on core features like Infinity Stories with advanced UX (preloading, pagination) and a Commerce Layer for tracking. Subsequent efforts concentrated on production hardening, integrating an Ultimate Operational Kit and Triple Store Launch Kit. This involved robust backend middleware (HMAC, idempotency), multi-currency support, comprehensive testing (Detox E2E, backend validation), and multi-platform deployment setup (EAS profiles, push bridge, deep linking).
-
-Key fixes included resolving backend/frontend port conflicts, correcting TypeScript errors in deep link handling, and gracefully managing dynamic imports in the push notification bridge. The engineer then implemented production-safe logging, a network resilience wrapper, and refined CORS/HMAC/idempotency in the Express.js server to achieve a 92.9% validation success rate. The final phase focused on delivering a complete automated deployment pipeline, including scripts for universal link generation, external config verification, and a master orchestrator for builds and smoke tests, alongside detailed UAT and release runbooks.
+The previous AI engineer successfully transformed AisleMarts into a Series A-ready social commerce platform, implementing robust P0 hardening, P1 performance, and P2 AI recommendations. P0 involved standardizing HMAC, idempotency, multi-currency support, and 4xx API responses, troubleshooting critical database and HMAC configuration issues. P1 focused on zero-jank stories with FlatList optimizations, LRU media caching, video preloading, an offline event queue, and a performance HUD. P2 established a hybrid AI ranking system (client/server UCB1) with creator fairness, event ingestion ETL, and canary rollout capabilities. The engineer also generated architectural diagrams and launch presentation materials. Most recently, the user provided a  scaffold for TikTok-style vertical stories, which the AI engineer is now tasked with integrating into the existing P0-P2 infrastructure, including wiring events, implementing feature flags, and setting up performance checks.
 </analysis>
 
 <product_requirements>
-AisleMarts aims to be an AI-powered global marketplace and lifestyle ecosystem featuring 0% commission, pay-per-lead, TikTok-inspired social commerce, and gamified rewards, targeting Series A readiness. The previous AI engineer built an irresistible super app with AI analytics, monetization, and personalization.
+AisleMarts is envisioned as an AI-powered global marketplace and lifestyle ecosystem aiming for Series A readiness, offering 0% commission, pay-per-lead, TikTok-inspired social commerce, and gamified rewards. The core problem addressed is enabling frictionless global trade and social commerce.
 
-Implementations so far include:
-*   **AisleMarts Stories System**: Instagram-style stories with 7 header icons, synchronous scrolling, full-screen video, time-based expiry, dynamic story types, viewed/unviewed rings, dynamic creator order, tap/hold/swipe mechanics, and commerce integration via swipe-up. This evolved into an Infinity Content Engine with virtual scrolling, content preloading, cursor-based pagination, and memory management. An Infinity Commerce Layer provides backend models for tracking impressions, CTAs, purchases, and commission calculation with attribution.
-*   **Production Hardening**: Addressing attribution edge cases, commission accuracy, idempotency/replay protection, load testing, mobile UX stress, analytics correctness, security (HMAC), proper 4xx API responses, and multi-currency support (USD, EUR, GBP, JPY with rounding and FX normalization).
-*   **Deployment & Operational Readiness**: Integration of an Ultimate Operational Kit (backend middleware, SQL scripts, testing tools, Docker) and a Triple Store Launch Kit (EAS profiles, Android Gradle patches, iOS Info.plist keys, push bridge, deep links, preload coordinator, store listing templates, CI workflows).
-*   **Frontend Fixes**: Resolved display issues in  and implemented Remix/Repost features. The frontend was also patched to correctly handle the backend's root () endpoint response.
+Implementations to date include:
+1.  **AisleMarts Stories System**: An Infinity Content Engine with features like Instagram-style stories, virtual scrolling, preloading, cursor-based pagination, dynamic types, and a Commerce Layer for tracking impressions, CTAs, purchases, and commission.
+2.  **Production Hardening**: Addressed attribution, commission accuracy, idempotency, load testing, mobile UX stress, analytics correctness, security (HMAC), proper 4xx API responses, and multi-currency support (USD, EUR, GBP, JPY with rounding and FX normalization).
+3.  **Deployment & Operational Readiness**: Integrated an Ultimate Operational Kit (backend middleware, SQL, testing, Docker) and a Triple Store Launch Kit (EAS profiles, push bridge, deep links, CI workflows).
+4.  **Frontend Fixes**: Resolved display issues in , implemented Remix/Repost features, and patched frontend to correctly handle backend responses.
 </product_requirements>
 
 <key_technical_concepts>
--   **Frontend**: Expo, React Native, Expo Router, TypeScript, , , Detox.
--   **Backend**: FastAPI (Python), MongoDB, Express.js (Node.js), Prisma/PostgreSQL, HMAC security, Idempotency.
--   **Architecture**: Monorepo, API-driven, Microservices.
--   **UI/UX Patterns**: Social commerce, infinite scrolling, deep linking, push notifications.
--   **Ops**: Docker, CI/CD, EAS (Expo Application Services), Kubernetes.
+-   **Frontend**: Expo, React Native, Expo Router, TypeScript, FlatList, , , Detox, , , , .
+-   **Backend**: FastAPI (Python), Express.js (Node.js), MongoDB (for dev), PostgreSQL (for ranker stats), Prisma, HMAC, Idempotency, UCB1 algorithm.
+-   **Architecture**: Monorepo, API-driven, Microservices, Hybrid Client/Server AI.
+-   **Ops**: Docker, CI/CD, EAS, Kubernetes, Feature Flags.
 </key_technical_concepts>
 
 <code_architecture>
-The application utilizes a monorepo structure with  (FastAPI/Express) and  (Expo/React Native).
+The application uses a monorepo structure with  (FastAPI/Express) and  (Expo/React Native).
 
-
-
-**Key Files and their importance/changes:**
-*   ****: Main Express backend. Integrates hardening middleware.
-    *   **Changes**: Updated CORS configuration to allow specific headers (, , , ). Added robust HMAC authentication (signature and timestamp skew checks) and idempotency middleware to return 401/409/422 as appropriate. The server was explicitly set to run on port 8002 to avoid conflicts.
-*   ****: Main entry for Expo Router app.
-    *   **Changes**: Updated  for deep link handling to use  and  for production-safe logging, and improved error handling.
-*   ****: Utility for conditional logging.
-    *   **Changes**: Expanded to include  and  alongside , all guarded by .
-*   ****: New file for a network resilience wrapper.
-    *   **Importance**: Provides a  function with retry, timeout, and automatic  header support for API calls.
-*   ****: New CI workflow.
-    *   **Importance**: Implements a Readiness Gate to fail the CI pipeline if the validation score is below 95%, ensuring quality.
-*   **
-[1mHealth[0m
-time_total:0.000162 http:000
-
-[1mStories[0m
-time_total:0.000152 http:000
-
-[1mCORS (OPTIONS /api/track/cta)[0m
-
-[1mCTA[0m
-time_total:0.000180 http:000
-
-Report → reports/summary_20250924_231553.md**: New comprehensive validation script.
-    *   **Importance**: Automates testing of backend health, stories, CORS, CTA, HMAC, idempotency, and multi-currency.
-    *   **Changes**: Updated  to target the Express server on port 8002 and fixed a Node.js  usage issue for HMAC.
-*   ****: New script to verify external configurations.
-    *   **Importance**: Checks presence and correctness of , , AASA, and AssetLinks files, including hosted URL checks and content-type.
-*   ****: New script.
-    *   **Importance**: Automates the local generation of  and  files for universal link hosting.
-*   ****: New master orchestrator script.
-    *   **Importance**: Ties together universal link generation, external config verification, EAS builds (iOS, Android GMS/HMS), and prompts for smoke tests into a single, automated workflow.
-*   **✅ Store assets present**: New script.
-    *   **Importance**: Lints app store listing assets (screenshots, descriptions) to catch missing files before submission.
-*   **Usage: /app/scripts/tag_release.sh 1.0.0**: New script.
-    *   **Importance**: Helps manage Git version tags for releases.
-*   ****: New script.
-    *   **Importance**: Collects diagnostic evidence (headers, body content of AASA/AssetLinks, local config file presence) for troubleshooting external configuration issues.
+decimal.js@types/decimal.jsEXPO_PUBLIC_SHOW_PERF_HUDEXPO_PUBLIC_VIDEO_PREFETCHEXPO_PUBLIC_RANKER_ENABLEDEXPO_PUBLIC_LOOKAHEAD@react-native-community/netinfo@react-native-async-storage/async-storagecrypto-jsexpo-assetexpo-avdecimal.js
+**Summary of why files are important/changed:**
+*   : Main Express backend, modified to integrate new security and currency middleware, and handle database connection gracefully by abstracting Prisma client calls.
+*   : **NEW** Critical component for P0 hardening. Implements ,  (with timestamp skew, constant-time compare), and  with proper 400/401/409 error responses.
+*    and : **NEW** P0 utility for precise multi-currency handling, including , , and  calculation with currency-specific decimal places (e.g., JPY 0dp, EUR/USD 2dp) using .
+*   : **NEW** Example route showing how security and validation middleware are applied to a critical endpoint, ensuring 400/401/409/422 responses.
+*    & : **NEW** Jest unit tests to validate P0 hardening (HMAC, idempotency, schema validation, currency rounding).
+*   : **NEW** FastAPI endpoint for server-side AI ranking (UCB1 algorithm, creator fairness, caching, feature flags). Central to P2.
+*   : **NEW** Defines  PostgreSQL table for collecting aggregated event data used by the ranker.
+*   : **NEW directory** containing scripts (, , ) for the AI ranker's data pipeline, handling event aggregation and nightly decay of stats to maintain freshness.
+*   : Modified to include the  for offline queue initialization, ensuring network resilience from app start.
+*   : **NEW** This component acts as the main stories view, integrating  for smooth scrolling, , , and dynamically displaying stories. It was a step towards .
+*   : **NEW** (Scaffold provided by user) Implements vertical, edge-to-edge, TikTok-style stories with a moving header, auto-play/pause videos, and integrates with the server-side ranker (with client fallback). It is the latest and most significant UI component.
+*   : **NEW** Implements a fixed-size (75MB) LRU cache to manage media assets for prefetching, crucial for P1 performance.
+*   : **NEW** Manages prefetching of upcoming stories (images/videos) to minimize loading spinners, integrated with LRU cache and viewability changes.
+*   : **NEW** Provides  and  for resilient offline event tracking, central to P1. It stores events locally and retries sending them when online.
+*   : **NEW** Wrapper around API calls to integrate the  for offline event handling.
+*   : **NEW** Client-side UCB1 ranker, serving as a fallback and part of the hybrid P2 architecture.
+*    & : **NEW** Components for user bucketing (e.g., 5% canary) and logic to select between client/server ranking.
+*   : **NEW** An optional overlay displaying real-time FPS, cache usage, and story counts, vital for P1 performance monitoring.
+*   : **NEW** A reusable React Native component to render individual story media (image or video), handling autoplay/pause logic for video.
+*   : Modified to manage feature flags (, , , ) for P1/P2 rollout.
+*   : Updated with new dependencies (, , , , , ) required for P1/P1b/P2 features.
 </code_architecture>
 
 <pending_tasks>
-The immediate pending tasks were:
-*   Applying hardening patches for  utility and robust deep-link effect.
-*   Running the 30-minute ship checklist for final validation.
-These tasks have been addressed by the AI engineer through code modifications and script creation.
+- Integrate the provided  scaffold into the main app structure, including:
+    - Wiring event tracking (impressions, shop taps, likes) to the existing ingestion pipeline.
+    - Implementing feature flags for controlled rollout.
+    - Conducting performance budget checks and CTR experiments.
+- Package the  into a PR-ready patch set with file paths, imports, and navigation wiring.
 </pending_tasks>
 
 <current_work>
-Immediately before this summary request, the AI engineer had completed developing and integrating a comprehensive deployment and operational pipeline for the AisleMarts application, achieving a Series A investor-ready state. This involved:
+The AI engineer has completed the implementation and initial programmatic validation of all P0, P1, P1b, and P2 features, bringing the AisleMarts app to a highly hardened, performant, and AI-driven state.
 
-1.  **Implementing Critical Hardening Patches**:
-    *   Enhanced  to include  and  functions.
-    *   Updated  to use  for robust deep-link handling, improving error reporting.
-    *   Created  as a network resilience wrapper for API calls, incorporating timeouts, retries, and idempotency headers.
-    *   Refined  with comprehensive CORS handling, HMAC signature validation, timestamp skew checks, and idempotency middleware, ensuring proper 4xx API responses (401 for auth, 409 for idempotency, 422 for invalid payloads).
+Specifically, the AI engineer has:
+1.  **Hardened the backend (P0)** with comprehensive HMAC authentication, idempotency, multi-currency support, and precise 4xx error responses, resolving various configuration and database issues encountered during testing.
+2.  **Optimized frontend performance and resilience (P1, P1b)** by implementing a zero-jank  for stories, a  with  (75MB limit), video preloading and auto-pause, an  for offline event persistence, and a  for monitoring.
+3.  **Developed the AI recommendation system (P2)** with a hybrid client-server architecture, utilizing a UCB1 algorithm, creator fairness, A/B bucketing, and an ETL pipeline for  (ingestion and nightly decay).
+4.  **Prepared rollout artifacts** including architectural diagrams (PNG, SVG, PDF) and a launch presentation deck (PowerPoint, PDF).
 
-2.  **Developing a Complete Automation & Verification Suite**:
-    *   Created  for comprehensive backend testing, which achieved a 92.9% success rate.
-    *   Created  to automate local generation of  and  files.
-    *   Developed  to validate the correctness of Firebase (), Huawei (), and hosted Universal Links configurations.
-    *   Created  as a master orchestrator script, unifying link generation, external config verification, EAS builds (iOS, Android GMS/HMS), and smoke test prompts.
-    *   Added  for app store asset validation and  for version management.
-    *   Introduced  to gather diagnostic information for troubleshooting.
-
-The AI engineer successfully fixed initial issues like the Express server port conflict (moving it to 8002) and Node.js  syntax in the validation script. The frontend loads successfully, and the backend has passed extensive validation checks.
-
-The current work concluded with the AI engineer presenting a robust, push-button deployment pipeline to the user, providing detailed Final Packet instructions, runbooks, and troubleshooting guides. The AI engineer is now in a support role, awaiting the user to complete external configurations and execute the provided scripts for final builds and smoke tests, ready to provide pinpoint fixes based on reported deviations.
+Immediately before this summary request, the user provided a full  scaffold for a TikTok/Reels-style vertical stories feed. The AI engineer has just acknowledged this and is poised to begin integrating this new screen into the existing P0-P2 infrastructure, including wiring events, implementing feature flags, and performing performance checks. The current state is that all core components are built and the user has provided the final UI piece to integrate.
 </current_work>
 
 <optional_next_step>
-The next step is to continue providing real-time support as the user executes the final launch packet, diagnosing any deviations.
+Implement the  scaffold into the app, integrating event wiring, feature flags, and performance checks.
 </optional_next_step>
