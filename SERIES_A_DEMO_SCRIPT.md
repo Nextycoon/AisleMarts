@@ -226,6 +226,10 @@
 
 **Total Duration:** 15 minutes (demo) + 5 minutes (slides) + 10 minutes (Q&A)
 
+---
+
+## **📱 Technical Demo Setup**
+
 ### **Device Setup:**
 - **Screen Recording:** 1080p at 60fps
 - **Audio:** Clear voiceover with demo device audio
