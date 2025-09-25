@@ -3,9 +3,9 @@ import { View, Dimensions, Pressable, FlatList, StyleSheet, StatusBar, ViewToken
 import { Video } from "expo-av";
 import { useSafeAreaInsets } from "react-native-safe-area-context";
 import type { AVPlaybackStatus } from "expo-av";
-import { selectRanker } from "../lib/rankerSelection";
-import { trackRankerEvent } from "../lib/ranker";
-import { PerfHUD } from "../components/PerfHUD";
+import { selectRanker } from "./lib/rankerSelection";
+import { trackRankerEvent } from "./lib/ranker";
+import { PerfHUD } from "./components/PerfHUD";
 
 // ---- Types ----
 type Story = {
