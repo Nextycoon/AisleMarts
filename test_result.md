@@ -176,6 +176,18 @@ backend:
           agent: "main"
           comment: "VERTICAL STORIES INTEGRATION COMPLETE: Successfully integrated VerticalStoriesScreen.tsx into main app structure with complete P0-P2 infrastructure wiring. MAJOR ACHIEVEMENTS: ✅ Navigation Integration: Added VerticalStoriesScreen to tab navigation as 'Stories' tab with proper routing, ✅ P2 Feature Activation: Enabled EXPO_PUBLIC_RANKER_ENABLED=1, EXPO_PUBLIC_USE_SERVER_RANKING=1, EXPO_PUBLIC_RANKER_DEBUG=1 for full AI ranking capabilities, ✅ Event Tracking Integration: Connected impression/CTA/purchase events to backend APIs via trackingService.ts with HMAC authentication and offline queuing, ✅ Mock Story Data: Added 5 sample stories with valid Google Storage video URLs and proper creator tiers (gold/blue/grey/unverified), ✅ Performance Features: Integrated PerfHUD for real-time monitoring, video preloading, and FlatList optimizations. TECHNICAL DETAILS: Stories now use hybrid client/server ranking with UCB1 algorithm, automatic fallback to client-side ranking, comprehensive event ingestion pipeline for AI learning, feature flags for controlled rollout. Ready for backend validation testing."
 
+  - task: "VerticalStoriesScreen Integration & Event Wiring"
+    implemented: true
+    working: false
+    file: "/app/frontend/app/VerticalStoriesScreen.tsx, /app/frontend/app/(tabs)/stories.tsx, /app/frontend/.env"
+    stuck_count: 0
+    priority: "high"
+    needs_retesting: true
+    status_history:
+        - working: "NA"
+          agent: "main"
+          comment: "VERTICAL STORIES SCREEN INTEGRATION COMPLETE: Successfully integrated TikTok-style vertical stories with full P0-P2 infrastructure. INTEGRATION COMPONENTS: ✅ Navigation: Added /app/frontend/app/(tabs)/stories.tsx that exports VerticalStoriesScreen, added 'Stories' tab to main navigation with play-circle icon, ✅ Event Wiring: Connected impression tracking (on video first frame), CTA tracking (like/comment/share/shop), purchase tracking (shop button) to backend APIs with proper payload structure, ✅ P2 Ranker Integration: Using selectRanker with server/client hybrid fallback, UCB1 algorithm enabled, trackRankerEvent for analytics feedback loop, ✅ Performance: FlatList with windowSize=5, video preloading for next 3 stories, PerfHUD overlay showing FPS/cache/creator stats, ✅ Mock Data: 5 stories with Google Cloud video URLs, different creator tiers, engagement metrics for ranking algorithm. READY FOR TESTING: Backend event ingestion (/api/track/impression, /api/track/cta, /api/track/purchase), AI ranking system validation, performance monitoring verification."
+
 frontend:
   - task: "P1 Stories Performance Optimizations"
     implemented: true
