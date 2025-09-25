@@ -19,11 +19,11 @@ export default function IndexScreen() {
       
       // Progressive loading simulation
       const loadingSteps = [
-        { progress: 0.2, message: 'Initializing AI Commerce Engine...', delay: 400 },
-        { progress: 0.4, message: 'Connecting to Global Marketplace...', delay: 400 },
-        { progress: 0.6, message: 'Loading Creator Networks...', delay: 400 },
-        { progress: 0.8, message: 'Setting up 0% Commission Platform...', delay: 400 },
-        { progress: 1.0, message: 'Ready for Luxury Commerce...', delay: 500 }
+        { progress: 0.2, message: 'Loading user preferences...', delay: 400 },
+        { progress: 0.4, message: 'Connecting to services...', delay: 400 },
+        { progress: 0.6, message: 'Initializing awareness engine...', delay: 400 },
+        { progress: 0.8, message: 'Setting up luxury experience...', delay: 400 },
+        { progress: 1.0, message: 'Ready...', delay: 500 }
       ];
 
       for (const step of loadingSteps) {
