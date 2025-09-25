@@ -1,35 +1,26 @@
 #!/usr/bin/env python3
 """
-AisleMarts P0 Hardening Comprehensive Backend Testing Suite
-Series A Readiness Validation - 100% Success Rate Target
-
-Focus Areas:
-1. HMAC/Auth validation (PRIORITY 1) - Test corrected HMAC signature generation
-2. Multi-currency precision testing (PRIORITY 2) - Test EUR/GBP/JPY rounding  
-3. Idempotency protection validation (PRIORITY 3) - Test 409 responses
-4. Error code standardization (PRIORITY 4) - Test 400/401/409/422 codes
-5. Performance & concurrent testing
-
-Test Configuration:
-- HMAC Secret: 'dev-secret-key-change-in-production'
-- Timestamp Format: Milliseconds since epoch (Date.now())
-- Signature Format: Raw hex (no sha256= prefix)
-- Server Endpoints: localhost:3000 (Express) and localhost:8001 (FastAPI)
+🎬 VERTICAL STORIES P1/P2 BACKEND VALIDATION SUITE
+Testing the newly integrated vertical stories system with focus on:
+- Event ingestion pipeline (impression/CTA/purchase tracking)
+- AI ranking system validation (UCB1 algorithm)
+- P1 performance infrastructure
+- P0 hardening verification (HMAC, multi-currency, idempotency)
 """
 
-import requests
+import asyncio
+import aiohttp
 import json
 import time
-import hashlib
 import hmac
-import uuid
-import concurrent.futures
-from typing import Dict, Any, List, Tuple
-from decimal import Decimal, ROUND_HALF_UP
+import hashlib
+from typing import Dict, List, Any
+import os
+from datetime import datetime
 
-# Test Configuration
-EXPRESS_BASE_URL = "http://localhost:3000"
-FASTAPI_BASE_URL = "http://localhost:8001"
+# Configuration
+BACKEND_URL = "https://aislefeed.preview.emergentagent.com"
+EXPRESS_URL = "https://aislefeed.preview.emergentagent.com"  # Express server on port 8002 mapped to same domain
 HMAC_SECRET = "dev-secret-key-change-in-production"
 
 class P0TestSuite:
