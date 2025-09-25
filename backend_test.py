@@ -19,8 +19,8 @@ import os
 from datetime import datetime
 
 # Configuration
-BACKEND_URL = "https://aislefeed.preview.emergentagent.com"
-EXPRESS_URL = "https://aislefeed.preview.emergentagent.com"  # Express server on port 8002 mapped to same domain
+BACKEND_URL = "https://aislefeed.preview.emergentagent.com"  # FastAPI on port 8001
+EXPRESS_URL = "http://localhost:8002"  # Express server on port 8002
 HMAC_SECRET = "dev-secret-key-change-in-production"
 
 class VerticalStoriesValidator:
