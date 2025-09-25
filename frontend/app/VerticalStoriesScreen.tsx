@@ -105,12 +105,27 @@ const StoryPage: React.FC<{
   }, [isActive]);
 
   const handleStatusUpdate = useCallback(
-    (status: AVPlaybackStatus) => {
+    async (status: AVPlaybackStatus) => {
       if (!status.isLoaded) return;
       if (status.isLoaded && status.positionMillis === 0 && status.durationMillis) {
         // First frame ready - track impression
         onReady?.(story.id);
         trackRankerEvent(story.id, 'impression');
+        
+        // Track impression to backend
+        try {
+          const { trackImpression } = await import('./lib/trackingService');
+          await trackImpression(`${process.env.EXPO_PUBLIC_BACKEND_URL}/api/track/impression`, {
+            story_id: story.id,
+            creator_id: story.creatorId,
+            product_id: story.productId,
+            timestamp: Date.now(),
+            user_id: 'user_' + Date.now(), // In production, use actual user ID
+            viewport: 'vertical_stories'
+          });
+        } catch (error) {
+          console.warn('[impression-tracking] Failed:', error);
+        }
       }
     },
     [onReady, story.id]
