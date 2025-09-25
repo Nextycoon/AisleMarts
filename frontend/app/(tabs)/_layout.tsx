@@ -46,6 +46,15 @@ export default function TabsLayout() {
         }}
       />
       <Tabs.Screen
+        name="stories"
+        options={{
+          title: 'Stories',
+          tabBarIcon: ({ color, size }) => (
+            <Ionicons name="play-circle" size={size} color={color} />
+          ),
+        }}
+      />
+      <Tabs.Screen
         name="aisle-agent"
         options={{
           title: 'Aisle',
