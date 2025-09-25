@@ -451,7 +451,7 @@ export default function VerticalStoriesScreen() {
   );
 
   const getItemLayout = useCallback(
-    (_: Story[] | null | undefined, index: number) => ({
+    (_: ArrayLike<Story> | null | undefined, index: number) => ({
       length: SCREEN_H,
       offset: SCREEN_H * index,
       index,
