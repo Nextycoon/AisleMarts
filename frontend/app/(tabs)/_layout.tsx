@@ -55,6 +55,15 @@ export default function TabsLayout() {
         }}
       />
       <Tabs.Screen
+        name="marketplace"
+        options={{
+          title: 'Marts',
+          tabBarIcon: ({ color, size }) => (
+            <Ionicons name="storefront" size={size} color={color} />
+          ),
+        }}
+      />
+      <Tabs.Screen
         name="aisle-agent"
         options={{
           title: 'Aisle',
