@@ -629,14 +629,6 @@ if __name__ == "__main__":
     else:
         print("\n🔧 ADDITIONAL WORK REQUIRED BEFORE SERIES A READINESS")
         exit(1)
-            "status": status
-        })
-        
-        self.total_tests += 1
-        if success:
-            self.passed_tests += 1
-        else:
-            self.failed_tests += 1
             
         print(f"{status} {test_name} ({response_time:.3f}s) - {details}")
 
