@@ -20,82 +20,22 @@ export default function IndexScreen() {
     router.push('/for-you');
   };
 
-  if (isInitializing) {
-    return (
-      <SafeAreaView style={[styles.container, styles.loadingContainer]}>
-        <Text style={styles.loadingTitle}>AisleMarts</Text>
-        <Text style={styles.loadingSubtitle}>Luxury Shopping Experience</Text>
-        <View style={styles.progressBar}>
-          <View style={[styles.progressFill, { width: `${loadingProgress * 100}%` }]} />
-        </View>
-        <Text style={styles.progressText}>{Math.round(loadingProgress * 100)}%</Text>
-      </SafeAreaView>
-    );
-  }
-
-  if (loading) {
-    return (
-      <SafeAreaView style={[styles.container, styles.loadingContainer]}>
-        <Text style={styles.loadingTitle}>AisleMarts</Text>
-        <Text style={styles.loadingSubtitle}>Setting up your experience</Text>
-        <View style={styles.progressBar}>
-          <View style={[styles.progressFill, { width: '80%' }]} />
-        </View>
-      </SafeAreaView>
-    );
-  }
-
   return (
     <SafeAreaView style={styles.container}>
-      <View style={styles.header}>
-        <Text style={styles.title}>AisleMarts</Text>
-        <Text style={styles.subtitle}>AI-Powered Social Commerce</Text>
-        <Text style={styles.tagline}>TikTok-Style Stories • 0% Commission • Series A Ready</Text>
-      </View>
-
-      <View style={styles.mainContent}>
-        <TouchableOpacity 
-          style={[styles.primaryButton, styles.storiesButton]} 
-          onPress={handleQuickStart}
-        >
-          <Text style={styles.primaryButtonText}>🎬 Vertical Stories</Text>
-          <Text style={styles.buttonSubtext}>Experience TikTok-style shopping</Text>
-        </TouchableOpacity>
-
-        <View style={styles.buttonGrid}>
-          <TouchableOpacity 
-            style={styles.button} 
-            onPress={() => handleNavigation('/for-you')}
-          >
-            <Text style={styles.buttonText}>📱 For You Feed</Text>
-          </TouchableOpacity>
-          
-          <TouchableOpacity 
-            style={styles.button} 
-            onPress={() => handleNavigation('/(tabs)/home')}
-          >
-            <Text style={styles.buttonText}>🏠 Home</Text>
-          </TouchableOpacity>
-          
-          <TouchableOpacity 
-            style={styles.button} 
-            onPress={() => handleNavigation('/discover')}
-          >
-            <Text style={styles.buttonText}>🔍 Discover</Text>
-          </TouchableOpacity>
-          
-          <TouchableOpacity 
-            style={styles.button} 
-            onPress={() => handleNavigation('/profile')}
-          >
-            <Text style={styles.buttonText}>👤 Profile</Text>
-          </TouchableOpacity>
-        </View>
-      </View>
-
-      <View style={styles.footer}>
-        <Text style={styles.footerText}>P0 Hardened • P1 Performance • P2 AI Rankings</Text>
-      </View>
+      <Text style={styles.title}>AisleMarts</Text>
+      <Text style={styles.subtitle}>Testing Vertical Stories</Text>
+      <TouchableOpacity 
+        style={styles.button} 
+        onPress={handleStoriesPress}
+      >
+        <Text style={styles.buttonText}>Go to Stories</Text>
+      </TouchableOpacity>
+      <TouchableOpacity 
+        style={styles.button} 
+        onPress={handleForYouPress}
+      >
+        <Text style={styles.buttonText}>Go to For You</Text>
+      </TouchableOpacity>
     </SafeAreaView>
   );
 }
