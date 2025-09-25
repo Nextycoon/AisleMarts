@@ -215,17 +215,18 @@ export default function CreateRFQScreen() {
 
             <View style={styles.inputGroup}>
               <Text style={styles.label}>Category *</Text>
-              <View style={styles.pickerContainer}>
-                <Picker
-                  selectedValue={formData.category}
-                  onValueChange={(value) => updateField('category', value)}
-                  style={styles.picker}
-                >
-                  {categories.map((cat) => (
-                    <Picker.Item key={cat.value} label={cat.label} value={cat.value} />
-                  ))}
-                </Picker>
-              </View>
+              <TouchableOpacity
+                style={styles.categorySelector}
+                onPress={() => setShowCategoryModal(true)}
+              >
+                <Text style={[styles.categoryText, !formData.category && styles.placeholderText]}>
+                  {formData.category 
+                    ? categories.find(cat => cat.value === formData.category)?.label
+                    : 'Select Category'
+                  }
+                </Text>
+                <Ionicons name="chevron-down" size={20} color="#666" />
+              </TouchableOpacity>
             </View>
 
             <View style={styles.inputGroup}>
