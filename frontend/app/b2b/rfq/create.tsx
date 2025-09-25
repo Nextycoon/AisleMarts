@@ -365,41 +365,6 @@ export default function CreateRFQScreen() {
           </View>
         </ScrollView>
 
-        {/* Category Selection Modal */}
-        <Modal
-          visible={showCategoryModal}
-          transparent={true}
-          animationType="slide"
-        >
-          <View style={styles.modalOverlay}>
-            <View style={styles.modalContent}>
-              <View style={styles.modalHeader}>
-                <Text style={styles.modalTitle}>Select Category</Text>
-                <TouchableOpacity onPress={() => setShowCategoryModal(false)}>
-                  <Ionicons name="close" size={24} color="#666" />
-                </TouchableOpacity>
-              </View>
-              <ScrollView>
-                {categories.slice(1).map((category) => (
-                  <TouchableOpacity
-                    key={category.value}
-                    style={styles.categoryOption}
-                    onPress={() => {
-                      updateField('category', category.value);
-                      setShowCategoryModal(false);
-                    }}
-                  >
-                    <Text style={styles.categoryOptionText}>{category.label}</Text>
-                    {formData.category === category.value && (
-                      <Ionicons name="checkmark" size={20} color="#667eea" />
-                    )}
-                  </TouchableOpacity>
-                ))}
-              </ScrollView>
-            </View>
-          </View>
-        </Modal>
-
         {/* Submit Button */}
         <View style={styles.submitContainer}>
           <TouchableOpacity
