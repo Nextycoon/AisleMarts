@@ -67,9 +67,7 @@ export default function IndexScreen() {
             <Text style={styles.progressText}>{Math.round(loadingProgress * 100)}%</Text>
           </View>
           
-          <Text style={styles.loadingFeatures}>
-            TikTok-Style Stories • 0% Commission • Series A Ready
-          </Text>
+          {/* Removed tagline as requested */}
         </View>
       </SafeAreaView>
     );
