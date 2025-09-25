@@ -324,7 +324,7 @@ class ShopTestSuite:
             "user_id": "test_user_cart"
         }
         
-        add_result = await self.test_request('POST', '/shop/cart/add', cart_data)
+        add_result = await self.test_request('POST', '/shop/cart/add', cart_data, use_query_params=True)
         
         if add_result['success']:
             cart_response = add_result['data']
