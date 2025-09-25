@@ -241,17 +241,7 @@ export default function CartScreen() {
           </Text>
         </View>
 
-        {/* Production Notes */}
-        <View style={styles.notesSection}>
-          <Text style={styles.notesTitle}>💎 Production Features Active</Text>
-          <Text style={styles.notesText}>
-            • Banker's rounding for precision currencies{'\n'}
-            • FX margin applied to converted amounts{'\n'}
-            • Canonical pricing prevents rounding drift{'\n'}
-            • Real-time rate monitoring with alerts{'\n'}
-            • Regional lazy-loading for performance
-          </Text>
-        </View>
+
       </ScrollView>
     </SafeAreaView>
   );
