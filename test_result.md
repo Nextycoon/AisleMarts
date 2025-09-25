@@ -348,6 +348,30 @@ backend:
           comment: "P0 DOCUMENTATION & TESTING: Created comprehensive documentation for error codes policy (/app/docs/error-codes.md) and multi-currency support (/app/docs/currency.md). Added Jest test suites for purchase endpoint validation and currency precision testing. Ready for comprehensive backend testing to validate 100% P0 success rate achievement."
 
 backend:
+  - task: "RFQ Router Integration & API Endpoints"
+    implemented: true
+    working: false
+    file: "/app/backend/routers/rfq_router.py, /app/backend/server.py"
+    stuck_count: 0
+    priority: "high"
+    needs_retesting: true
+    status_history:
+        - working: "NA"
+          agent: "main"
+          comment: "RFQ ROUTER INTEGRATION COMPLETE: Successfully updated server.py to include rfq_router with proper /api prefix. Router contains comprehensive B2B RFQ system with 3 sample RFQs, 3 sample quotes, full CRUD operations, analytics endpoints, and proper business logic for quote submission, acceptance, and tracking. All endpoints prefixed with /api/b2b/ for proper routing. Ready for comprehensive testing."
+
+  - task: "Affiliate Router Integration & API Endpoints"
+    implemented: true
+    working: false
+    file: "/app/backend/routers/affiliate_router.py, /app/backend/server.py"
+    stuck_count: 0
+    priority: "high"
+    needs_retesting: true
+    status_history:
+        - working: "NA"
+          agent: "main"
+          comment: "AFFILIATE ROUTER INTEGRATION COMPLETE: Successfully updated server.py to include affiliate_router with proper /api prefix. Router contains comprehensive affiliate marketing system with 3 sample campaigns, 4 sample affiliate links, commission calculation engine, tracking system, analytics, and creator leaderboard. All endpoints prefixed with /api/affiliate/ for proper routing. Ready for comprehensive testing."
+
   - task: "Comprehensive Restart & Refresh Validation"
     implemented: true
     working: true
