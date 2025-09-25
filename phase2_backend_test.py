@@ -57,7 +57,7 @@ class ShopTestSuite:
         })
         print(f"{status} | {test_name} | {details} | {response_time:.3f}s")
     
-    async def test_request(self, method: str, endpoint: str, data: Dict = None, expected_status: int = 200) -> Dict:
+    async def test_request(self, method: str, endpoint: str, data: Dict = None, expected_status: int = 200, use_query_params: bool = False) -> Dict:
         """Make HTTP request and measure response time"""
         url = f"{API_BASE}{endpoint}"
         start = time.time()
@@ -74,14 +74,27 @@ class ShopTestSuite:
                         return {'success': False, 'error': f"Expected {expected_status}, got {response.status}", 'response_time': response_time, 'status': response.status}
                         
             elif method.upper() == 'POST':
-                async with self.session.post(url, json=data) as response:
-                    response_time = time.time() - start
-                    response_data = await response.json()
-                    
-                    if response.status == expected_status:
-                        return {'success': True, 'data': response_data, 'response_time': response_time, 'status': response.status}
-                    else:
-                        return {'success': False, 'error': f"Expected {expected_status}, got {response.status}", 'response_time': response_time, 'status': response.status}
+                if use_query_params and data:
+                    # Convert data to query parameters
+                    query_params = '&'.join([f"{k}={v}" for k, v in data.items() if v is not None])
+                    url = f"{url}?{query_params}"
+                    async with self.session.post(url) as response:
+                        response_time = time.time() - start
+                        response_data = await response.json()
+                        
+                        if response.status == expected_status:
+                            return {'success': True, 'data': response_data, 'response_time': response_time, 'status': response.status}
+                        else:
+                            return {'success': False, 'error': f"Expected {expected_status}, got {response.status}", 'response_time': response_time, 'status': response.status}
+                else:
+                    async with self.session.post(url, json=data) as response:
+                        response_time = time.time() - start
+                        response_data = await response.json()
+                        
+                        if response.status == expected_status:
+                            return {'success': True, 'data': response_data, 'response_time': response_time, 'status': response.status}
+                        else:
+                            return {'success': False, 'error': f"Expected {expected_status}, got {response.status}", 'response_time': response_time, 'status': response.status}
                         
         except Exception as e:
             response_time = time.time() - start
