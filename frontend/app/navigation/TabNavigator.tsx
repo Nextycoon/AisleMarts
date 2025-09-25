@@ -52,7 +52,8 @@ export default function TabNavigator() {
             ]}>
               <Text style={[
                 styles.tabIcon,
-                isActive(tab.route) && styles.activeTabIcon
+                isActive(tab.route) && styles.activeTabIcon,
+                tab.name === 'business' && styles.businessIcon
               ]}>
                 {tab.icon}
               </Text>
