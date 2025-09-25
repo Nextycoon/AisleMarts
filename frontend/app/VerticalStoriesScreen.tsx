@@ -260,7 +260,7 @@ export default function VerticalStoriesScreen() {
         const mockStories: Story[] = [
           {
             id: 's1',
-            videoUrl: 'https://sample-videos.com/zip/10/mp4/SampleVideo_1280x720_1mb.mp4',
+            videoUrl: 'https://commondatastorage.googleapis.com/gtv-videos-bucket/sample/BigBuckBunny.mp4',
             creatorId: 'c1',
             creatorName: 'luxefashion',
             creatorAvatar: 'https://i.pravatar.cc/100?u=c1',
@@ -270,7 +270,7 @@ export default function VerticalStoriesScreen() {
           },
           {
             id: 's2',
-            videoUrl: 'https://sample-videos.com/zip/10/mp4/SampleVideo_1280x720_2mb.mp4',
+            videoUrl: 'https://commondatastorage.googleapis.com/gtv-videos-bucket/sample/ElephantsDream.mp4',
             creatorId: 'c2',
             creatorName: 'techguru',
             creatorAvatar: 'https://i.pravatar.cc/100?u=c2',
@@ -278,7 +278,35 @@ export default function VerticalStoriesScreen() {
             engagement: { impressions: 89, ctas: 8, purchases: 1, views: 82 },
             metadata: { creator_tier: 'blue', commission_rate: 0.10, repetition_penalty: 0.05 }
           },
-          // Add more mock stories...
+          {
+            id: 's3',
+            videoUrl: 'https://commondatastorage.googleapis.com/gtv-videos-bucket/sample/ForBiggerBlazes.mp4',
+            creatorId: 'c3',
+            creatorName: 'fashionista',
+            creatorAvatar: 'https://i.pravatar.cc/100?u=c3',
+            productId: 'p3',
+            engagement: { impressions: 234, ctas: 18, purchases: 4, views: 220 },
+            metadata: { creator_tier: 'gold', commission_rate: 0.13, repetition_penalty: 0.02 }
+          },
+          {
+            id: 's4',
+            videoUrl: 'https://commondatastorage.googleapis.com/gtv-videos-bucket/sample/ForBiggerEscapes.mp4',
+            creatorId: 'c4',
+            creatorName: 'techreviewer',
+            creatorAvatar: 'https://i.pravatar.cc/100?u=c4',
+            productId: 'p4',
+            engagement: { impressions: 67, ctas: 5, purchases: 1, views: 65 },
+            metadata: { creator_tier: 'grey', commission_rate: 0.07, repetition_penalty: 0.08 }
+          },
+          {
+            id: 's5',
+            videoUrl: 'https://commondatastorage.googleapis.com/gtv-videos-bucket/sample/ForBiggerFun.mp4',
+            creatorId: 'c5',
+            creatorName: 'lifestyleblogger',
+            creatorAvatar: 'https://i.pravatar.cc/100?u=c5',
+            engagement: { impressions: 45, ctas: 2, purchases: 0, views: 43 },
+            metadata: { creator_tier: 'unverified', commission_rate: 0.05, repetition_penalty: 0.0 }
+          }
         ];
 
         // Apply AI ranking using our P2 system
