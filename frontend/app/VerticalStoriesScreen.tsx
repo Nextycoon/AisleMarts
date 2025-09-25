@@ -1,6 +1,6 @@
 import React, { useCallback, useMemo, useRef, useState, useEffect } from "react";
 import { View, Dimensions, Pressable, FlatList, StyleSheet, StatusBar, ViewToken, Text } from "react-native";
-import { Video } from "expo-av";
+import { Video, ResizeMode } from "expo-av";
 import { useSafeAreaInsets } from "react-native-safe-area-context";
 import type { AVPlaybackStatus } from "expo-av";
 import { selectRanker } from "./lib/rankerSelection";
