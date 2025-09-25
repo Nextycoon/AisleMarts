@@ -127,4 +127,9 @@ const styles = StyleSheet.create({
     backgroundColor: '#D4AF37',
     borderRadius: 1,
   },
+  businessIcon: {
+    color: '#FFD700',
+    fontWeight: 'bold',
+    fontSize: 18,
+  },
 });
