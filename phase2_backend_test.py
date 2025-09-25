@@ -391,7 +391,7 @@ class ShopTestSuite:
             "creator_id": "test_creator_001"
         }
         
-        pin_result = await self.test_request('POST', f'/shop/live/{stream_id}/pin', pin_data)
+        pin_result = await self.test_request('POST', f'/shop/live/{stream_id}/pin', pin_data, use_query_params=True)
         
         if pin_result['success']:
             pin_response = pin_result['data']
