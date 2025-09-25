@@ -590,6 +590,7 @@ const styles = StyleSheet.create({
     alignItems: "center", justifyContent: "center",
   },
   actionTxt: { color: "white", fontSize: 20, fontWeight: "700" },
+  actionCount: { color: "white", fontSize: 10, fontWeight: "600", marginTop: 2 },
   shopBtn: { backgroundColor: "#ff2d55" },
   shopTxt: { color: "white", fontWeight: "800", fontSize: 12 },
   bottomMeta: {
