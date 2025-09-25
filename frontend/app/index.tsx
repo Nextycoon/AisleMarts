@@ -38,22 +38,9 @@ export default function IndexScreen() {
       setLoadingProgress(1);
       await new Promise(resolve => setTimeout(resolve, 300));
 
-      // Check if user has completed onboarding
-      const hasCompletedOnboarding = await AsyncStorage.getItem('hasCompletedOnboarding');
-      
       console.log('✅ App initialization complete');
       setIsInitializing(false);
-      
-      // Navigate based on onboarding status or show main menu
-      if (hasCompletedOnboarding === 'true') {
-        // Show main menu for user choice
-        setShowMainMenu(true);
-      } else {
-        // Auto-navigate to onboarding
-        setTimeout(() => {
-          router.replace('/onboarding');
-        }, 500);
-      }
+      setShowMainMenu(true); // Always show main menu for full app experience
 
     } catch (error) {
       console.error('❌ Error initializing app:', error);
