@@ -9,9 +9,15 @@ const { width, height } = Dimensions.get('window');
 
 export default function IndexScreen() {
   const { loading, hasCompletedAvatarSetup } = useAuth();
-  const [isInitializing, setIsInitializing] = useState(true);
-  const [loadingProgress, setLoadingProgress] = useState(0);
+  const [isInitializing, setIsInitializing] = useState(false); // Skip initialization
+  const [loadingProgress, setLoadingProgress] = useState(1); // Complete
   const [showDebug, setShowDebug] = useState(false);
+  
+  // Immediate navigation to stories
+  useEffect(() => {
+    console.log('🚀 Direct navigation to stories');
+    router.replace('/(tabs)/stories');
+  }, []);
 
   useEffect(() => {
     initializeApp();
