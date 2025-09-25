@@ -1,7 +1,9 @@
 import React, { useMemo, useRef, useCallback, useEffect } from "react";
-import { FlatList, ViewToken } from "react-native";
+import { FlatList, ViewToken, View, Text, Image, Dimensions } from "react-native";
 import { PrefetchCoordinator } from "../lib/PrefetchCoordinator";
 import { PerfHUD } from "../components/PerfHUD";
+
+const { width, height } = Dimensions.get('window');
 
 type Story = { id: string; mediaUrl: string; type: "image" | "video" };
 
@@ -9,26 +11,51 @@ interface StoryCardProps {
   story: Story;
 }
 
-// Simple StoryCard component for now - can be enhanced later
+// Proper React Native StoryCard component
 const StoryCard: React.FC<StoryCardProps> = ({ story }) => {
   return (
-    <div style={{ 
-      width: '100vw', 
-      height: '100vh', 
-      backgroundImage: `url(${story.mediaUrl})`, 
-      backgroundSize: 'cover', 
-      backgroundPosition: 'center' 
+    <View style={{ 
+      width, 
+      height, 
+      backgroundColor: '#1A1A1A',
+      justifyContent: 'center',
+      alignItems: 'center'
     }}>
-      <div style={{ 
+      <Image 
+        source={{ uri: story.mediaUrl }}
+        style={{ 
+          width: width * 0.9,
+          height: height * 0.8,
+          borderRadius: 12,
+          backgroundColor: '#333'
+        }}
+        resizeMode="cover"
+      />
+      <View style={{ 
         position: 'absolute', 
-        bottom: '20px', 
-        left: '20px', 
-        color: 'white', 
-        fontSize: '18px' 
+        bottom: 60, 
+        left: 20, 
+        paddingHorizontal: 16,
+        paddingVertical: 8,
+        backgroundColor: 'rgba(0,0,0,0.6)',
+        borderRadius: 8
       }}>
-        Story ID: {story.id}
-      </div>
-    </div>
+        <Text style={{ 
+          color: '#fff', 
+          fontSize: 14,
+          fontWeight: '500'
+        }}>
+          Story {story.id}
+        </Text>
+        <Text style={{ 
+          color: '#ccc', 
+          fontSize: 12,
+          marginTop: 2
+        }}>
+          {story.type === 'video' ? '📹' : '📸'} {story.type.toUpperCase()}
+        </Text>
+      </View>
+    </View>
   );
 };
 
@@ -51,7 +78,7 @@ export default function StoriesScreen({ stories }: { stories: Story[] }) {
   ), []);
 
   const getItemLayout = useCallback((_: any, i: number) => (
-    { length: 1, offset: i, index: i } // full-screen paging; avoids re-measure
+    { length: width, offset: width * i, index: i } // horizontal paging with screen width
   ), []);
 
   const onEndReached = useCallback(() => {
@@ -60,7 +87,7 @@ export default function StoriesScreen({ stories }: { stories: Story[] }) {
   }, []);
 
   return (
-    <>
+    <View style={{ flex: 1, backgroundColor: '#1A1A1A' }}>
       <FlatList
         data={stories}
         renderItem={renderItem}
@@ -83,6 +110,6 @@ export default function StoriesScreen({ stories }: { stories: Story[] }) {
       {process.env.EXPO_PUBLIC_SHOW_PERF_HUD === "1" && (
         <PerfHUD creators={1} stories={stories.length} />
       )}
-    </>
+    </View>
   );
 }
