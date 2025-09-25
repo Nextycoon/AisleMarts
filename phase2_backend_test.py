@@ -264,7 +264,7 @@ class ShopTestSuite:
             "user_id": "test_user_001"
         }
         
-        session_result = await self.test_request('POST', '/shop/checkout/mini', checkout_data)
+        session_result = await self.test_request('POST', '/shop/checkout/mini', checkout_data, use_query_params=True)
         
         if session_result['success']:
             session_data = session_result['data']
