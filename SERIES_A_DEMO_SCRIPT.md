@@ -160,7 +160,7 @@
 
 ## **🎯 ACT 4: The Big Picture - Why This Wins (2 mins)**
 
-### **Scene 4.1: Technical Excellence (60 seconds)**
+### **Scene 4.1: Technical Excellence (75 seconds)**
 *"Behind this seamless experience is enterprise-grade infrastructure..."*
 
 **Key Metrics to Mention:**
@@ -171,13 +171,16 @@
 
 **Demo Evidence:** *"Everything you just saw is live, not a prototype"*
 
-### **Scene 4.2: Revenue Revolution (30 seconds)**
-*"The zero-commission model isn't charity—it's strategy..."*
+### **Scene 4.2: Unit Economics & Revenue Revolution (45 seconds)**
+*"The zero-commission model isn't charity—it's strategy backed by math..."*
 
-**Business Model:**
+**Business Model + Unit Economics:**
 - **Volume Play:** "10x transaction volume when fees disappear"
 - **Service Revenue:** "Premium analytics, logistics, advertising"
 - **Network Effects:** "More sellers → more creators → more buyers"
+- **Magic Number:** *"Every $1 spent in ads drives $6 in GMV because of the 0% commission stickiness"*
+
+**Scalability Proof:** *"Traditional platforms optimize for take rate. We optimize for velocity. Higher velocity = higher lifetime value."*
 
 ### **Scene 4.3: Series A Opportunity (30 seconds)**
 *"We're not just building another marketplace..."*
