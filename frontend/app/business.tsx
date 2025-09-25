@@ -425,39 +425,6 @@ const styles = StyleSheet.create({
   selectedCategoryText: {
     color: '#fff',
   },
-  b2bBanner: {
-    backgroundColor: '#1565C0',
-    margin: 10,
-    padding: 15,
-    borderRadius: 8,
-    flexDirection: 'row',
-    alignItems: 'center',
-    justifyContent: 'space-between',
-  },
-  bannerContent: {
-    flex: 1,
-  },
-  bannerTitle: {
-    color: '#fff',
-    fontSize: 16,
-    fontWeight: 'bold',
-    marginBottom: 5,
-  },
-  bannerSubtitle: {
-    color: '#BBDEFB',
-    fontSize: 12,
-  },
-  sourcingButton: {
-    backgroundColor: '#fff',
-    paddingHorizontal: 16,
-    paddingVertical: 8,
-    borderRadius: 16,
-  },
-  sourcingButtonText: {
-    color: '#1565C0',
-    fontSize: 12,
-    fontWeight: '600',
-  },
   trendingSection: {
     backgroundColor: '#fff',
     margin: 10,
