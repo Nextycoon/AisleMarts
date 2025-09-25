@@ -31,7 +31,7 @@ export const CURRENCY_DECIMALS = MINOR_UNITS;
 export const SUPPORTED_CURRENCIES = ['USD', 'EUR', 'GBP', 'JPY'];
 
 export function roundMinor(amount, currencyCode) {
-  const decimals = MINOR_UNITS[currencyCode] || 2;
+  const decimals = MINOR_UNITS[currencyCode] !== undefined ? MINOR_UNITS[currencyCode] : 2;
   const factor = Math.pow(10, decimals);
   return Math.round(parseFloat(amount.toString()) * factor) / factor;
 }
