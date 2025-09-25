@@ -29,7 +29,7 @@ export default function IndexScreen() {
       >
         <Text style={styles.buttonText}>Go to For You</Text>
       </TouchableOpacity>
-    </View>
+    </SafeAreaView>
   );
 }
 
