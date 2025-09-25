@@ -8,10 +8,14 @@ import AsyncStorage from '@react-native-async-storage/async-storage';
 const { width, height } = Dimensions.get('window');
 
 export default function IndexScreen() {
-  const { loading, hasCompletedAvatarSetup } = useAuth();
+  // const { loading, hasCompletedAvatarSetup } = useAuth();
   const [isInitializing, setIsInitializing] = useState(true);
   const [loadingProgress, setLoadingProgress] = useState(0);
   const [showMainMenu, setShowMainMenu] = useState(false);
+  
+  // Mock auth state for now
+  const loading = false;
+  const hasCompletedAvatarSetup = true;
 
   useEffect(() => {
     initializeApp();
