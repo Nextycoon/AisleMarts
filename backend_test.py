@@ -610,9 +610,9 @@ class P0HardeningValidator:
                 
                 headers = {
                     'Content-Type': 'application/json',
-                    'X-Timestamp': str(timestamp),
-                    'X-Signature': signature,
-                    'Idempotency-Key': f'concurrent-{request_id}-{timestamp}'
+                    'x-timestamp': str(timestamp),
+                    'x-signature': signature,
+                    'idempotency-key': f'concurrent-{request_id}-{timestamp}'
                 }
                 
                 async with session.post(
