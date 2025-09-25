@@ -94,9 +94,23 @@ try:
     import rfq_routes
     if hasattr(rfq_routes, 'router'):
         app.include_router(rfq_routes.router, prefix="/api", tags=["rfq"])
-    print("✅ RFQ routes loaded")  
+    print("✅ RFQ routes loaded")
 except Exception as e:
     print(f"⚠️ RFQ routes not available: {e}")
+
+try:
+    from routers.affiliate_router import router as affiliate_router
+    app.include_router(affiliate_router, tags=["affiliate"])
+    print("✅ Affiliate system loaded successfully")
+except ImportError as e:
+    print(f"⚠️ Affiliate system not available: {e}")
+
+try:
+    from routers.rfq_router import router as rfq_router
+    app.include_router(rfq_router, tags=["b2b_rfq"])
+    print("✅ B2B RFQ system loaded successfully")
+except ImportError as e:
+    print(f"⚠️ B2B RFQ system not available: {e}")
 
 # Include AI Ranking System router
 try:
