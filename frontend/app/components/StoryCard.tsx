@@ -95,3 +95,5 @@ export const StoryCard: React.FC<StoryCardProps> = ({ story }) => {
     </View>
   );
 };
+
+export default StoryCard;
