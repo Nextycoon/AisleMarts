@@ -320,6 +320,9 @@ export default function BusinessScreen() {
           </TouchableOpacity>
         </View>
       </ScrollView>
+      
+      {/* Bottom Navigation */}
+      <TabNavigator />
     </SafeAreaView>
   );
 }
