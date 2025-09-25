@@ -21,19 +21,12 @@ export default function IndexScreen() {
     try {
       console.log('🚀 Starting app initialization...');
       
-      // Simulate initialization steps with progress
-      const steps = [
-        { message: 'Loading user preferences...', duration: 200 },
-        { message: 'Connecting to services...', duration: 200 },
-        { message: 'Initializing awareness engine...', duration: 200 },
-        { message: 'Setting up luxury experience...', duration: 200 },
-      ];
-
-      for (let i = 0; i < steps.length; i++) {
-        console.log(`📊 Loading step ${i + 1}/${steps.length}: ${steps[i].message}`);
-        setLoadingProgress((i + 1) / steps.length);
-        await new Promise(resolve => setTimeout(resolve, steps[i].duration));
-      }
+      // Quick initialization for testing
+      console.log('📊 Quick initialization started...');
+      setLoadingProgress(0.5);
+      await new Promise(resolve => setTimeout(resolve, 100));
+      console.log('📊 Almost ready...');
+      setLoadingProgress(1);
 
       console.log('✅ Loading complete');
       setLoadingProgress(1);
