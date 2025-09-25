@@ -310,7 +310,14 @@ export default function VerticalStoriesScreen() {
         ];
 
         // Apply AI ranking using our P2 system
-        const rankerResult = await selectRanker(mockStories, userId, {
+        // Convert to ranker format
+        const rankerFormatStories = mockStories.map(story => ({
+          ...story,
+          mediaUrl: story.videoUrl,
+          type: "video" as const
+        }));
+        
+        const rankerResult = await selectRanker(rankerFormatStories, userId, {
           sessionId: `session_${Date.now()}`,
           previousStories: [],
           track: (event: string, data: any) => {
