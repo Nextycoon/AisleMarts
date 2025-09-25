@@ -334,7 +334,7 @@ async def track_rfq_event(event_type: str, data: Dict[str, Any]):
 @router.post("/api/b2b/rfq", tags=["b2b_rfq"])
 async def create_rfq(
     request: Request,
-    rfq_create: RFQRequest,
+    rfq_create: RFQCreate,
     current_user: AuthToken = Depends(get_buyer_user),
     _: bool = Depends(rate_limit_rfq_create)
 ):
