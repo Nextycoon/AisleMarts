@@ -78,7 +78,6 @@ export default function IndexScreen() {
       <StatusBar barStyle="light-content" backgroundColor="#0a0a0a" />
       
       <Text style={styles.title}>AisleMarts</Text>
-      <Text style={styles.subtitle}>Testing Vertical Stories</Text>
       <TouchableOpacity 
         style={styles.button} 
         onPress={() => handleNavigation('/(tabs)/stories', 'Stories')}
