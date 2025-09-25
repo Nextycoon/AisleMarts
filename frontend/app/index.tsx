@@ -144,11 +144,12 @@ const styles = StyleSheet.create({
     fontSize: 16,
     fontWeight: '600',
   },
-  loadingFeatures: {
-    fontSize: 14,
-    color: '#666',
+  brandMessage: {
+    fontSize: 16,
+    color: '#6366F1',
     textAlign: 'center',
-    fontWeight: '500',
+    fontWeight: '600',
+    marginTop: 20,
   },
 
   // Main App Styles
