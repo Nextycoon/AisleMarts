@@ -1,6 +1,6 @@
 import React, { useRef, useEffect } from "react";
 import { View, Text, Image, Dimensions } from "react-native";
-import { Video } from "expo-av";
+import { Video, ResizeMode } from "expo-av";
 
 const { width, height } = Dimensions.get('window');
 
