@@ -2,8 +2,8 @@ import React, { useEffect, useState } from 'react';
 import { View, Text, StyleSheet, TouchableOpacity, Dimensions, SafeAreaView } from 'react-native';
 import { router } from 'expo-router';
 import AsyncStorage from '@react-native-async-storage/async-storage';
-import { useAuth } from '../src/context/AuthContext';
-import AppLoader from '../src/components/AppLoader';
+// import { useAuth } from '../src/context/AuthContext';
+// import AppLoader from '../src/components/AppLoader';
 
 const { width, height } = Dimensions.get('window');
 
