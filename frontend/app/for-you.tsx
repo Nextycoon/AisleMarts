@@ -40,9 +40,18 @@ export default function ForYouScreen() {
   const [currentPlayingIndex, setCurrentPlayingIndex] = useState<number | null>(null);
   const [isLiked, setIsLiked] = useState(false);
   const [isSaved, setIsSaved] = useState(false);
+  
+  // NEW: Shoppable Video State
+  const [showShoppableOverlay, setShowShoppableOverlay] = useState(false);
+  const [currentVideoId, setCurrentVideoId] = useState<string | null>(null);
+  
   const videoRefs = useRef<any[]>([]);
   const translateY = useRef(new Animated.Value(0)).current;
   const api = useTikTokAPI();
+
+  // Feature flags
+  const infeedCheckoutEnabled = process.env.EXPO_PUBLIC_INFEED_CHECKOUT === '1';
+  const shopEnabled = process.env.EXPO_PUBLIC_SHOP_ENABLED === '1';
 
   // Format count function for dynamic display
   const formatCount = (count: number): string => {
