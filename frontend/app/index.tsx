@@ -76,91 +76,86 @@ export default function IndexScreen() {
       {/* Header */}
       <View style={styles.header}>
         <Text style={styles.title}>AisleMarts</Text>
-        <Text style={styles.subtitle}>AI-Powered Global Commerce</Text>
-        <Text style={styles.tagline}>
-          🌍 Global Marketplace • 🤖 AI Rankings • 💳 0% Commission
-        </Text>
+        <Text style={styles.searchBar}>🔍 Search for products, brands, creators...</Text>
       </View>
 
-      {/* Main Features */}
-      <View style={styles.mainContent}>
-        {/* Hero Feature - Vertical Stories */}
+      {/* Quick Actions */}
+      <View style={styles.quickActions}>
         <TouchableOpacity 
-          style={[styles.heroButton, styles.storiesButton]} 
-          onPress={() => handleNavigation('/(tabs)/stories', 'Vertical Stories')}
+          style={styles.quickActionButton}
+          onPress={() => handleNavigation('/(tabs)/stories', 'Stories')}
         >
-          <View style={styles.heroContent}>
-            <Text style={styles.heroEmoji}>🎬</Text>
-            <Text style={styles.heroTitle}>Vertical Stories</Text>
-            <Text style={styles.heroSubtitle}>TikTok-Style Shopping Experience</Text>
-          </View>
+          <Text style={styles.quickActionEmoji}>📺</Text>
+          <Text style={styles.quickActionText}>Stories</Text>
         </TouchableOpacity>
+        <TouchableOpacity 
+          style={styles.quickActionButton}
+          onPress={() => handleNavigation('/deals', 'Deals')}
+        >
+          <Text style={styles.quickActionEmoji}>⚡</Text>
+          <Text style={styles.quickActionText}>Deals</Text>
+        </TouchableOpacity>
+        <TouchableOpacity 
+          style={styles.quickActionButton}
+          onPress={() => handleNavigation('/cart', 'Cart')}
+        >
+          <Text style={styles.quickActionEmoji}>🛒</Text>
+          <Text style={styles.quickActionText}>Cart</Text>
+        </TouchableOpacity>
+        <TouchableOpacity 
+          style={styles.quickActionButton}
+          onPress={() => handleNavigation('/wishlist', 'Wishlist')}
+        >
+          <Text style={styles.quickActionEmoji}>❤️</Text>
+          <Text style={styles.quickActionText}>Wishlist</Text>
+        </TouchableOpacity>
+      </View>
 
-        {/* Feature Grid */}
-        <View style={styles.featureGrid}>
+      {/* Categories */}
+      <View style={styles.categoriesSection}>
+        <Text style={styles.sectionTitle}>Shop by Category</Text>
+        <View style={styles.categoriesGrid}>
           <TouchableOpacity 
-            style={styles.featureButton} 
-            onPress={() => handleNavigation('/for-you', 'For You Feed')}
+            style={styles.categoryButton}
+            onPress={() => handleNavigation('/category/fashion', 'Fashion')}
           >
-            <Text style={styles.featureEmoji}>📱</Text>
-            <Text style={styles.featureText}>For You</Text>
-            <Text style={styles.featureSubtext}>Personalized</Text>
+            <Text style={styles.categoryEmoji}>👗</Text>
+            <Text style={styles.categoryText}>Fashion</Text>
           </TouchableOpacity>
-          
           <TouchableOpacity 
-            style={styles.featureButton} 
-            onPress={() => handleNavigation('/(tabs)/home', 'Home Dashboard')}
+            style={styles.categoryButton}
+            onPress={() => handleNavigation('/category/electronics', 'Electronics')}
           >
-            <Text style={styles.featureEmoji}>🏠</Text>
-            <Text style={styles.featureText}>Home</Text>
-            <Text style={styles.featureSubtext}>Dashboard</Text>
+            <Text style={styles.categoryEmoji}>📱</Text>
+            <Text style={styles.categoryText}>Electronics</Text>
           </TouchableOpacity>
-          
           <TouchableOpacity 
-            style={styles.featureButton} 
-            onPress={() => handleNavigation('/discover', 'Discover')}
+            style={styles.categoryButton}
+            onPress={() => handleNavigation('/category/home', 'Home & Living')}
           >
-            <Text style={styles.featureEmoji}>🔍</Text>
-            <Text style={styles.featureText}>Discover</Text>
-            <Text style={styles.featureSubtext}>Explore</Text>
+            <Text style={styles.categoryEmoji}>🏠</Text>
+            <Text style={styles.categoryText}>Home</Text>
           </TouchableOpacity>
-          
           <TouchableOpacity 
-            style={styles.featureButton} 
-            onPress={() => handleNavigation('/profile', 'Profile')}
+            style={styles.categoryButton}
+            onPress={() => handleNavigation('/category/beauty', 'Beauty')}
           >
-            <Text style={styles.featureEmoji}>👤</Text>
-            <Text style={styles.featureText}>Profile</Text>
-            <Text style={styles.featureSubtext}>Account</Text>
-          </TouchableOpacity>
-        </View>
-
-        {/* Secondary Features */}
-        <View style={styles.secondaryGrid}>
-          <TouchableOpacity 
-            style={styles.secondaryButton} 
-            onPress={() => handleNavigation('/marketplace', 'Marketplace')}
-          >
-            <Text style={styles.secondaryEmoji}>🛍️</Text>
-            <Text style={styles.secondaryText}>Marketplace</Text>
-          </TouchableOpacity>
-          
-          <TouchableOpacity 
-            style={styles.secondaryButton} 
-            onPress={() => handleNavigation('/creators', 'Creators Hub')}
-          >
-            <Text style={styles.secondaryEmoji}>⭐</Text>
-            <Text style={styles.secondaryText}>Creators</Text>
+            <Text style={styles.categoryEmoji}>💄</Text>
+            <Text style={styles.categoryText}>Beauty</Text>
           </TouchableOpacity>
         </View>
       </View>
 
-      {/* Footer */}
-      <View style={styles.footer}>
-        <Text style={styles.footerBadge}>🏆 Series A Ready</Text>
-        <Text style={styles.footerText}>
-          P0 Hardened • P1 Performance • P2 AI Rankings
-        </Text>
+      {/* Featured */}
+      <View style={styles.featuredSection}>
+        <Text style={styles.sectionTitle}>Trending Now</Text>
+        <TouchableOpacity 
+          style={styles.trendingBanner}
+          onPress={() => handleNavigation('/trending', 'Trending Products')}
+        >
+          <Text style={styles.trendingText}>🔥 Hot Products This Week</Text>
+          <Text style={styles.trendingSubtext}>0% commission • Direct from creators</Text>
+        </TouchableOpacity>
       </View>
     </SafeAreaView>
   );
