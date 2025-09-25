@@ -73,25 +73,8 @@ export default function IndexScreen() {
     );
   }
 
-  return (
-    <SafeAreaView style={styles.container}>
-      <StatusBar barStyle="light-content" backgroundColor="#0a0a0a" />
-      
-      <Text style={styles.title}>AisleMarts</Text>
-      <TouchableOpacity 
-        style={styles.button} 
-        onPress={() => handleNavigation('/(tabs)/stories', 'Stories')}
-      >
-        <Text style={styles.buttonText}>Go to Stories</Text>
-      </TouchableOpacity>
-      <TouchableOpacity 
-        style={styles.button} 
-        onPress={() => handleNavigation('/for-you', 'For You')}
-      >
-        <Text style={styles.buttonText}>Go to For You</Text>
-      </TouchableOpacity>
-    </SafeAreaView>
-  );
+  // This component should never be visible - auto-navigation should happen immediately
+  return null;
 }
 
 const styles = StyleSheet.create({
