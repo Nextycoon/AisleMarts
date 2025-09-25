@@ -76,6 +76,52 @@ const CreatorHeader: React.FC<{
 };
 
 // ---- Single full-screen page (video + overlays) ----
+// Creator-specific icon configurations
+const getCreatorSpecificIcons = (story: Story) => {
+  const creatorTier = story.metadata?.creator_tier || 'unverified';
+  const engagement = story.engagement || { impressions: 0, ctas: 0, purchases: 0, views: 0 };
+  
+  // Base icons for all creators
+  const baseIcons = [
+    { emoji: '❤️', action: 'like' as const, count: engagement.ctas > 10 ? `${Math.floor(engagement.ctas)}` : '', isShop: false },
+    { emoji: '💬', action: 'comment' as const, count: engagement.views > 20 ? `${Math.floor(engagement.views/2)}` : '', isShop: false },
+    { emoji: '↗️', action: 'share' as const, count: '', isShop: false },
+  ];
+
+  // Creator tier-specific icons (4 additional icons based on creator)
+  const tierSpecificIcons = {
+    'gold': [
+      { emoji: '👑', action: 'like' as const, count: '', isShop: false },
+      { emoji: '⭐', action: 'comment' as const, count: '', isShop: false },
+      { emoji: '💎', action: 'share' as const, count: '', isShop: false },
+      { emoji: 'Shop', action: 'shop' as const, count: '', isShop: true }
+    ],
+    'blue': [
+      { emoji: '🎯', action: 'like' as const, count: '', isShop: false },
+      { emoji: '🔥', action: 'comment' as const, count: '', isShop: false },
+      { emoji: '✨', action: 'share' as const, count: '', isShop: false },
+      { emoji: 'Shop', action: 'shop' as const, count: '', isShop: true }
+    ],
+    'grey': [
+      { emoji: '👍', action: 'like' as const, count: '', isShop: false },
+      { emoji: '📢', action: 'comment' as const, count: '', isShop: false },
+      { emoji: '💫', action: 'share' as const, count: '', isShop: false },
+      { emoji: 'Shop', action: 'shop' as const, count: '', isShop: true }
+    ],
+    'unverified': [
+      { emoji: '👏', action: 'like' as const, count: '', isShop: false },
+      { emoji: '💭', action: 'comment' as const, count: '', isShop: false },
+      { emoji: '🔄', action: 'share' as const, count: '', isShop: false },
+      { emoji: 'Shop', action: 'shop' as const, count: '', isShop: true }
+    ]
+  };
+
+  const specificIcons = tierSpecificIcons[creatorTier] || tierSpecificIcons['unverified'];
+  
+  // Combine base icons with tier-specific icons to make exactly 7
+  return [...baseIcons, ...specificIcons];
+};
+
 const StoryPage: React.FC<{
   story: Story;
   isActive: boolean;
