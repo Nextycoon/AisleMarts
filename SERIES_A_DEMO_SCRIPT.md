@@ -15,7 +15,7 @@
 
 ## **🎬 ACT 1: ForYou Feed → Shoppable Video → Instant Checkout (3 mins)**
 
-### **Scene 1.1: The Magic Moment (60 seconds)**
+### **Scene 1.1: The Magic Moment + Social Proof Layer (90 seconds)**
 *"Let me show you something no other platform can do..."*
 
 **Actions:**
@@ -26,11 +26,15 @@
    - *"But notice something different—see this shopping bag icon?"* 
    - **Point to 🛍️ "Shop" button in right-side actions**
    
-3. **Tap the Shop button** → Shoppable overlay appears
-   - *"Instantly, we surface products featured in this video"*
-   - *"No leaving the feed, no interrupting the experience"*
+3. **Highlight engagement metrics** → Point to likes, comments, shares
+   - *"These aren't just vanity metrics—they're commerce signals"*
+   - *"Every like, share, and comment feeds our AI Commerce Ranker"*
+   
+4. **Tap the Shop button** → Shoppable overlay appears
+   - *"The AI learned this video converts 3x higher than average"*
+   - *"So it surfaces these products to similar users automatically"*
 
-**Investor Value Prop:** *"This is discovery commerce—$2.1B market growing 15% annually"*
+**Investor Value Prop:** *"This is the flywheel: engagement → conversion → AI learning → more sales. $2.1B discovery commerce market growing 15% annually."*
 
 ### **Scene 1.2: Instant Purchase Flow (90 seconds)**
 *"Watch how fast we convert intent to purchase..."*
