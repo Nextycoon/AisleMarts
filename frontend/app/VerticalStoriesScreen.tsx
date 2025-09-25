@@ -185,7 +185,7 @@ const StoryPage: React.FC<{
 
       {/* Full-bleed video */}
       <Video
-        ref={(r) => (videoRef.current = r)}
+        ref={videoRef}
         style={StyleSheet.absoluteFill}
         source={{ uri: story.videoUrl }}
         resizeMode="cover"
