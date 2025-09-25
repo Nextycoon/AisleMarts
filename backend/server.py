@@ -120,6 +120,35 @@ try:
 except ImportError as e:
     print(f"⚠️ AI Ranking System not available: {e}")
 
+# Include Observability System
+try:
+    from routers.observability_router import router as observability_router
+    app.include_router(observability_router, prefix="", tags=["observability"])
+    print("✅ Observability system loaded successfully")
+except ImportError as e:
+    print(f"⚠️ Observability system not available: {e}")
+
+# Add observability middleware
+try:
+    from observability.metrics import metrics_middleware
+    from observability.events import start_event_system, stop_event_system
+    
+    app.middleware("http")(metrics_middleware)
+    
+    @app.on_event("startup")
+    async def startup_event():
+        await start_event_system()
+        print("🚀 Event analytics system initialized")
+    
+    @app.on_event("shutdown") 
+    async def shutdown_event():
+        await stop_event_system()
+        print("🛑 Event analytics system shutdown")
+        
+    print("✅ Observability middleware activated")
+except ImportError as e:
+    print(f"⚠️ Observability middleware not available: {e}")
+
 # NEW: Include Shop Router - Priority Integration
 app.include_router(shop_router, tags=["shop"])
 print("🛍️ AisleMarts Shop (TikTok Enhanced) loaded successfully")
