@@ -36,45 +36,55 @@ import {
 } from './schemas.js';
 
 const { PrismaClient } = pkg;
-let prisma;
+let prisma = null;
 
-// Initialize Prisma with error handling
+// Initialize Prisma with proper error handling
 try {
   prisma = new PrismaClient();
+  // Test connection
+  await prisma.$connect();
+  console.log('✅ Database connected successfully');
 } catch (error) {
   console.warn('⚠️ Database connection failed - using mock data for testing:', error.message);
-  // Mock prisma for testing purposes
-  prisma = {
-    creators: {
-      findMany: () => Promise.resolve([
-        { id: 'c1', username: 'luxefashion', displayName: 'Luxe Fashion', avatar: 'https://example.com/avatar1.jpg', tier: 'gold', verificationLevel: 'verified', isActive: true },
-        { id: 'c2', username: 'techguru', displayName: 'Tech Guru', avatar: 'https://example.com/avatar2.jpg', tier: 'blue', verificationLevel: 'verified', isActive: true }
-      ])
-    },
-    stories: {
-      findMany: () => Promise.resolve([
-        { id: 1, creatorId: 'c1', type: 'product', content: 'Check out this amazing product!', mediaUrl: 'https://example.com/media1.mp4', productId: 'p1', expiresAt: new Date(Date.now() + 86400000), createdAt: new Date(), creator: { id: 'c1', username: 'luxefashion', displayName: 'Luxe Fashion', avatar: 'https://example.com/avatar1.jpg', tier: 'gold', verificationLevel: 'verified' } }
-      ])
-    },
-    story_impressions: {
-      create: (data) => Promise.resolve({ id: 'imp-' + Date.now(), ...data.data })
-    },
-    story_ctas: {
-      create: (data) => Promise.resolve({ id: 'cta-' + Date.now(), ...data.data })
-    },
-    purchases: {
-      findUnique: () => Promise.resolve(null),
-      create: (data) => Promise.resolve({ id: 'purch-' + Date.now(), ...data.data })
-    },
-    purchase_refunds: {
-      create: (data) => Promise.resolve({ id: 'ref-' + Date.now(), ...data.data })
-    },
-    $queryRaw: () => Promise.resolve([
-      { impressions_7d: 100, impressions_24h: 20 },
-      { impressions_7d: 50, impressions_24h: 10 },
-      { impressions_7d: 25, impressions_24h: 5 }
+  prisma = null;
+}
+
+// Mock prisma for testing purposes
+const mockPrisma = {
+  creators: {
+    findMany: () => Promise.resolve([
+      { id: 'c1', username: 'luxefashion', displayName: 'Luxe Fashion', avatar: 'https://example.com/avatar1.jpg', tier: 'gold', verificationLevel: 'verified', isActive: true },
+      { id: 'c2', username: 'techguru', displayName: 'Tech Guru', avatar: 'https://example.com/avatar2.jpg', tier: 'blue', verificationLevel: 'verified', isActive: true }
     ])
-  };
+  },
+  stories: {
+    findMany: () => Promise.resolve([
+      { id: 1, creatorId: 'c1', type: 'product', content: 'Check out this amazing product!', mediaUrl: 'https://example.com/media1.mp4', productId: 'p1', expiresAt: new Date(Date.now() + 86400000), createdAt: new Date(), creator: { id: 'c1', username: 'luxefashion', displayName: 'Luxe Fashion', avatar: 'https://example.com/avatar1.jpg', tier: 'gold', verificationLevel: 'verified' } }
+    ])
+  },
+  story_impressions: {
+    create: (data) => Promise.resolve({ id: 'imp-' + Date.now(), ...data.data })
+  },
+  story_ctas: {
+    create: (data) => Promise.resolve({ id: 'cta-' + Date.now(), ...data.data })
+  },
+  purchases: {
+    findUnique: () => Promise.resolve(null),
+    create: (data) => Promise.resolve({ id: 'purch-' + Date.now(), ...data.data })
+  },
+  purchase_refunds: {
+    create: (data) => Promise.resolve({ id: 'ref-' + Date.now(), ...data.data })
+  },
+  $queryRaw: () => Promise.resolve([
+    { impressions_7d: 100, impressions_24h: 20 },
+    { impressions_7d: 50, impressions_24h: 10 },
+    { impressions_7d: 25, impressions_24h: 5 }
+  ])
+};
+
+// Use mock if real prisma is not available
+if (!prisma) {
+  prisma = mockPrisma;
 }
 const app = express();
 
