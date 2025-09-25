@@ -1,84 +1,40 @@
-import React, { useMemo, useRef, useCallback, useEffect } from "react";
-import { FlatList, ViewToken, View, Text, Image, Dimensions } from "react-native";
+import React, { useMemo, useRef, useCallback, useEffect, useState } from "react";
+import { FlatList, ViewToken, View, Dimensions } from "react-native";
 import { PrefetchCoordinator } from "../lib/PrefetchCoordinator";
 import { PerfHUD } from "../components/PerfHUD";
+import { StoryCard } from "../components/StoryCard";
 
-const { width, height } = Dimensions.get('window');
+const { width } = Dimensions.get('window');
 
 type Story = { id: string; mediaUrl: string; type: "image" | "video" };
 
-interface StoryCardProps {
-  story: Story;
-}
-
-// Proper React Native StoryCard component
-const StoryCard: React.FC<StoryCardProps> = ({ story }) => {
-  return (
-    <View style={{ 
-      width, 
-      height, 
-      backgroundColor: '#1A1A1A',
-      justifyContent: 'center',
-      alignItems: 'center'
-    }}>
-      <Image 
-        source={{ uri: story.mediaUrl }}
-        style={{ 
-          width: width * 0.9,
-          height: height * 0.8,
-          borderRadius: 12,
-          backgroundColor: '#333'
-        }}
-        resizeMode="cover"
-      />
-      <View style={{ 
-        position: 'absolute', 
-        bottom: 60, 
-        left: 20, 
-        paddingHorizontal: 16,
-        paddingVertical: 8,
-        backgroundColor: 'rgba(0,0,0,0.6)',
-        borderRadius: 8
-      }}>
-        <Text style={{ 
-          color: '#fff', 
-          fontSize: 14,
-          fontWeight: '500'
-        }}>
-          Story {story.id}
-        </Text>
-        <Text style={{ 
-          color: '#ccc', 
-          fontSize: 12,
-          marginTop: 2
-        }}>
-          {story.type === 'video' ? '📹' : '📸'} {story.type.toUpperCase()}
-        </Text>
-      </View>
-    </View>
-  );
-};
-
 export default function StoriesScreen({ stories }: { stories: Story[] }) {
-  // --- Prefetcher (3-item lookahead)
+  const [visibleIndex, setVisibleIndex] = useState(0);
+  
+  // --- Prefetcher (3-item lookahead with video support)
   const prefetchRef = useRef(new PrefetchCoordinator(stories, 3)).current;
-  useEffect(() => { prefetchRef.attachGlobal(); prefetchRef.updateStories(stories); }, [stories]);
+  useEffect(() => { 
+    prefetchRef.attachGlobal(); 
+    prefetchRef.updateStories(stories); 
+  }, [stories]);
 
-  // --- Viewability → inform prefetch focus
+  // --- Viewability → inform prefetch focus & track visible videos
   const viewabilityConfig = useMemo(() => ({ itemVisiblePercentThreshold: 80 }), []);
   const onViewableItemsChanged = useRef(
     ({ viewableItems }: { viewableItems: ViewToken[] }) => {
       const idx = viewableItems[0]?.index ?? 0;
+      setVisibleIndex(idx);
       prefetchRef.focus(idx);
+      (globalThis as any).__visibleIndex = idx;
     }
   ).current;
 
-  const renderItem = useCallback(({ item }: { item: Story }) => (
-    <StoryCard story={item} />
-  ), []);
+  const renderItem = useCallback(({ item, index }: { item: Story; index: number }) => (
+    <StoryCard story={{ ...item, __visible: index === visibleIndex }} />
+  ), [visibleIndex]);
 
   const getItemLayout = useCallback((_: any, i: number) => (
-    { length: width, offset: width * i, index: i } // horizontal paging with screen width
+    { length: width, offset: width * i, index: i }
   ), []);
 
   const onEndReached = useCallback(() => {
