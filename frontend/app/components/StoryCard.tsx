@@ -60,14 +60,14 @@ export const StoryCard: React.FC<StoryCardProps> = ({ story }) => {
         <Image 
           source={{ uri: story.mediaUrl }}
           style={mediaStyle}
-          resizeMode="cover"
+          resizeMode={ResizeMode.COVER}
         />
       ) : (
         <Video
           ref={videoRef}
           source={{ uri: story.mediaUrl }}
           style={mediaStyle}
-          resizeMode="cover"
+          resizeMode={ResizeMode.COVER}
           shouldPlay={story.__visible === true}
           isLooping
           useNativeControls={false}
