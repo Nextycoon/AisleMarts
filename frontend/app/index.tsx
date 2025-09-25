@@ -443,10 +443,4 @@ const styles = StyleSheet.create({
     color: '#FFD700',
     marginBottom: 8,
   },
-  footerText: {
-    fontSize: 12,
-    color: '#666',
-    fontWeight: '500',
-    textAlign: 'center',
-  },
 });
