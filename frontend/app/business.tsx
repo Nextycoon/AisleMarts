@@ -240,17 +240,6 @@ export default function BusinessScreen() {
           </ScrollView>
         </View>
 
-        {/* AisleMarts B2B Banner */}
-        <View style={styles.b2bBanner}>
-          <View style={styles.bannerContent}>
-            <Text style={styles.bannerTitle}>🏭 Direct from Creators & Factories</Text>
-            <Text style={styles.bannerSubtitle}>0% Commission • Trade Assurance • Global Sourcing</Text>
-          </View>
-          <TouchableOpacity style={styles.sourcingButton} onPress={() => router.push('/(tabs)/stories')}>
-            <Text style={styles.sourcingButtonText}>Watch Creator Tours</Text>
-          </TouchableOpacity>
-        </View>
-
         {/* Trending Industries */}
         <View style={styles.trendingSection}>
           <View style={styles.trendingHeader}>
