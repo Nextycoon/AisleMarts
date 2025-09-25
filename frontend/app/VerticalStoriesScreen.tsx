@@ -188,7 +188,7 @@ const StoryPage: React.FC<{
         ref={videoRef}
         style={StyleSheet.absoluteFill}
         source={{ uri: story.videoUrl }}
-        resizeMode="cover"
+        resizeMode={ResizeMode.COVER}
         shouldPlay={false}
         isLooping
         onError={(e) => onError?.(story.id, e)}
