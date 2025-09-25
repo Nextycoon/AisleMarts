@@ -64,6 +64,15 @@ export default function TabsLayout() {
         }}
       />
       <Tabs.Screen
+        name="business"
+        options={{
+          title: 'Business',
+          tabBarIcon: ({ color, size }) => (
+            <Text style={{ fontSize: size, color: '#FFD700', fontWeight: 'bold' }}>B</Text>
+          ),
+        }}
+      />
+      <Tabs.Screen
         name="aisle-agent"
         options={{
           title: 'Aisle',
