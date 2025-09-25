@@ -116,13 +116,46 @@ const StoryPage: React.FC<{
     [onReady, story.id]
   );
 
-  const handleCTA = (type: 'like' | 'comment' | 'share' | 'shop') => {
+  const handleCTA = async (type: 'like' | 'comment' | 'share' | 'shop') => {
     trackRankerEvent(story.id, 'cta');
+    
+    // Track CTA event to backend
+    try {
+      const { trackCTA } = await import('./lib/trackingService');
+      await trackCTA(`${process.env.EXPO_PUBLIC_BACKEND_URL}/api/track/cta`, {
+        story_id: story.id,
+        creator_id: story.creatorId,
+        cta_type: type,
+        product_id: story.productId,
+        timestamp: Date.now(),
+        user_id: 'user_' + Date.now() // In production, use actual user ID
+      });
+    } catch (error) {
+      console.warn('[cta-tracking] Failed:', error);
+    }
+    
     onCTA?.(story.id, type);
   };
 
-  const handleShop = () => {
+  const handleShop = async () => {
     trackRankerEvent(story.id, 'purchase');
+    
+    // Track purchase event to backend
+    try {
+      const { trackPurchase } = await import('./lib/trackingService');
+      await trackPurchase(`${process.env.EXPO_PUBLIC_BACKEND_URL}/api/track/purchase`, {
+        story_id: story.id,
+        creator_id: story.creatorId,
+        product_id: story.productId,
+        purchase_amount: 999, // Mock amount, would come from product data
+        commission_rate: story.metadata?.commission_rate || 0.05,
+        timestamp: Date.now(),
+        user_id: 'user_' + Date.now() // In production, use actual user ID
+      });
+    } catch (error) {
+      console.warn('[purchase-tracking] Failed:', error);
+    }
+    
     handleCTA('shop');
   };
 
