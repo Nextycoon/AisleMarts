@@ -36,17 +36,16 @@ import {
 } from './schemas.js';
 
 const { PrismaClient } = pkg;
-let prisma = null;
+let prisma;
+let useMockData = false;
 
-// Initialize Prisma with proper error handling
+// Initialize Prisma with error handling
 try {
   prisma = new PrismaClient();
-  // Test connection
-  await prisma.$connect();
-  console.log('✅ Database connected successfully');
+  console.log('✅ Prisma client initialized');
 } catch (error) {
-  console.warn('⚠️ Database connection failed - using mock data for testing:', error.message);
-  prisma = null;
+  console.warn('⚠️ Prisma client initialization failed - using mock data:', error.message);
+  useMockData = true;
 }
 
 // Mock prisma for testing purposes
@@ -82,9 +81,9 @@ const mockPrisma = {
   ])
 };
 
-// Use mock if real prisma is not available
-if (!prisma) {
-  prisma = mockPrisma;
+// Helper function to get the right prisma client
+function getPrisma() {
+  return useMockData ? mockPrisma : prisma;
 }
 const app = express();
 
