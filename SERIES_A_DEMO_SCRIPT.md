@@ -136,15 +136,25 @@
 
 **B2B Market Size:** *"Global B2B marketplace is $6.2T—10x larger than B2C"*
 
-### **Scene 3.2: Trust & Verification (45 seconds)**
-*"Enterprise-grade trust infrastructure..."*
+### **Scene 3.2: Trust, Verification & Creator Factory Tours (60 seconds)**
+*"Enterprise-grade trust with human transparency..."*
 
 **Actions:**
 1. **Show verification badges** → Factory Direct, Trade Assurance
+   - *"Each supplier undergoes multi-level verification"*
+   
 2. **Point to response times** → "< 1 hour response"
-3. **Highlight zero commission model** → "0% platform fees on wholesale"
+   - *"Real-time communication standards"*
+   
+3. **Highlight Creator Factory Tours** → "Watch Creator Tours" button
+   - *"Here's what no B2B platform offers—creator-led factory tours"*
+   - *"Buyers get behind-the-scenes transparency from trusted creators"*
+   - *"Alibaba shows you certificates. We show you the actual factory floor."*
+   
+4. **Show zero commission** → "0% platform fees on wholesale"
+   - *"Suppliers keep 100% margins, creators get 100% commissions"*
 
-**Competitive Advantage:** *"Alibaba charges 3-5% + payment fees. We charge nothing."*
+**Unique Differentiator:** *"Creator Factory Tours humanize B2B commerce—building trust through transparency, not just badges."*
 
 ---
 
