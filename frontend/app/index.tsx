@@ -58,7 +58,7 @@ export default function IndexScreen() {
         <StatusBar barStyle="light-content" backgroundColor="#000" />
         <View style={styles.loadingContent}>
           <Text style={styles.loadingTitle}>AisleMarts</Text>
-          <Text style={styles.loadingTagline}>Luxury Shopping Experience</Text>
+          <Text style={styles.loadingTagline}>Connecting Global Commerce</Text>
           
           <View style={styles.progressContainer}>
             <View style={styles.progressBar}>
@@ -67,7 +67,7 @@ export default function IndexScreen() {
             <Text style={styles.progressText}>{Math.round(loadingProgress * 100)}%</Text>
           </View>
           
-          {/* Removed tagline as requested */}
+          <Text style={styles.brandMessage}>Your Global Marketplace Network</Text>
         </View>
       </SafeAreaView>
     );
