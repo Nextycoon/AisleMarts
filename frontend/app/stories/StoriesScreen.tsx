@@ -100,6 +100,7 @@ export default function StoriesScreen({ stories }: { stories: Story[] }) {
         maxToRenderPerBatch={4}
         updateCellsBatchingPeriod={50}
         removeClippedSubviews
+        overScrollMode="never"
         viewabilityConfig={viewabilityConfig}
         onViewableItemsChanged={onViewableItemsChanged}
         getItemLayout={getItemLayout}
