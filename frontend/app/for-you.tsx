@@ -17,6 +17,7 @@ import { Video, ResizeMode } from 'expo-av';
 import TopNavigation from '../src/components/TopNavigation';
 import FloatingAIAssistant from '../src/components/FloatingAIAssistant';
 import TabNavigator from './navigation/TabNavigator';
+import ShoppableVideoOverlay from '../src/components/ShoppableVideoOverlay';
 import { useForYouFeed, useTikTokAPI } from '../src/hooks/useTikTokAPI';
 
 const { width, height } = Dimensions.get('window');
