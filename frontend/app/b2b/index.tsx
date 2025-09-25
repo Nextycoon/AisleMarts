@@ -93,10 +93,25 @@ export default function B2BPortalScreen() {
           <View>
             <Text style={styles.sectionTitle}>RFQ Management System</Text>
             
-            <TouchableOpacity style={styles.actionButton}>
-              <Ionicons name="add-circle" size={24} color="white" />
-              <Text style={styles.actionButtonText}>Create New RFQ</Text>
-            </TouchableOpacity>
+            <View style={styles.actionButtonsRow}>
+              <TouchableOpacity 
+                style={styles.actionButton}
+                onPress={() => router.push('/b2b/rfq/create')}
+              >
+                <Ionicons name="add-circle" size={24} color="white" />
+                <Text style={styles.actionButtonText}>Create New RFQ</Text>
+              </TouchableOpacity>
+              
+              <TouchableOpacity 
+                style={[styles.actionButton, styles.secondaryButton]}
+                onPress={() => router.push('/b2b/rfq/list')}
+              >
+                <Ionicons name="list" size={24} color="#667eea" />
+                <Text style={[styles.actionButtonText, styles.secondaryButtonText]}>Browse All RFQs</Text>
+              </TouchableOpacity>
+            </View>
+
+            <Text style={styles.subSectionTitle}>Recent RFQ Activity</Text>
 
             <View style={styles.rfqList}>
               <View style={styles.rfqItem}>
