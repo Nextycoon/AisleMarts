@@ -880,6 +880,19 @@ export default function ForYouScreen() {
           </View>
           <Text style={styles.compactActionText}>{formatCount(currentVideo.music)}</Text>
         </TouchableOpacity>
+
+        {/* NEW: Shop Button - Shoppable Video Feature */}
+        {shopEnabled && (
+          <TouchableOpacity 
+            style={styles.compactActionButtonSpaced}
+            onPress={() => handleShopPress(currentVideo)}
+          >
+            <View style={styles.sharpIconContainer}>
+              <Text style={styles.sharpShopIcon}>🛍️</Text>
+            </View>
+            <Text style={styles.compactActionText}>Shop</Text>
+          </TouchableOpacity>
+        )}
       </View>
 
       {/* Product Pins - AisleMarts Shopping Feature */}
