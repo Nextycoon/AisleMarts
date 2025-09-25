@@ -2198,4 +2198,14 @@ const styles = StyleSheet.create({
     textAlign: 'center',
     opacity: 0.8,
   },
+
+  // NEW: Shoppable Video Shop Icon Style
+  sharpShopIcon: {
+    fontSize: 24,
+    color: '#FFFFFF',
+    fontWeight: '700',
+    textShadowColor: 'rgba(255, 193, 7, 0.8)',
+    textShadowOffset: { width: 0, height: 2 },
+    textShadowRadius: 6,
+  },
 });
