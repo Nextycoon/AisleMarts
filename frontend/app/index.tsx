@@ -248,4 +248,35 @@ const styles = StyleSheet.create({
     fontWeight: '500',
     textAlign: 'center',
   },
+  loadingContainer: {
+    justifyContent: 'center',
+    alignItems: 'center',
+  },
+  loadingTitle: {
+    fontSize: 36,
+    fontWeight: 'bold',
+    color: '#fff',
+    marginBottom: 8,
+  },
+  loadingSubtitle: {
+    fontSize: 16,
+    color: '#A0A0A0',
+    marginBottom: 40,
+  },
+  progressBar: {
+    width: width * 0.7,
+    height: 4,
+    backgroundColor: '#333',
+    borderRadius: 2,
+    marginBottom: 16,
+  },
+  progressFill: {
+    height: '100%',
+    backgroundColor: '#6366F1',
+    borderRadius: 2,
+  },
+  progressText: {
+    color: '#A0A0A0',
+    fontSize: 14,
+  },
 });
