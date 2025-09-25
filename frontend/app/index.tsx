@@ -52,7 +52,7 @@ export default function IndexScreen() {
         <StatusBar barStyle="light-content" backgroundColor="#000" />
         <View style={styles.loadingContent}>
           <Text style={styles.loadingTitle}>AisleMarts</Text>
-          <Text style={styles.loadingTagline}>AI-Powered Global Commerce</Text>
+          <Text style={styles.loadingTagline}>Luxury Shopping Experience</Text>
           
           <View style={styles.progressContainer}>
             <View style={styles.progressBar}>
