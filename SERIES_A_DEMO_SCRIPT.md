@@ -192,7 +192,39 @@
 
 ---
 
-## **📱 Technical Demo Notes**
+## **📹 Optimal Recording Flow Strategy**
+
+### **Phase 1: Live Demo First (8-10 minutes)**
+- **Screen capture device:** iPhone/Android in portrait mode at 1080p 60fps
+- **Audio setup:** Clear voiceover with ambient device audio
+- **No slides initially** → Pure product demonstration builds credibility
+- **Live API calls** → Shows real functionality, not smoke and mirrors
+- **Real-time interaction** → Tap, scroll, purchase - all live
+
+**Psychology:** *Investors see working product before business model = instant credibility*
+
+### **Phase 2: Minimal Slides Transition (2-3 slides max)**
+**Slide 1: Market Opportunity**
+- B2C Social Commerce: $2.1B (15% growth)  
+- B2B Digital Marketplaces: $6.2T (infrastructure play)
+- Creator Economy: $104B (monetization bridge)
+
+**Slide 2: Unit Economics**
+- $1 ad spend → $6 GMV (proven in demo)
+- 0% commission → 10x transaction velocity
+- 60% gross margin on premium services
+
+**Slide 3: Series A Vision** 
+- $15M to scale globally
+- Target: 10 markets, 100K sellers, $1B GMV run-rate
+- Exit: Infrastructure acquisition by major platform
+
+### **Phase 3: Live Q&A**
+- **Device still visible** → Can demonstrate any follow-up questions live
+- **Financial projections** → Share under NDA if interest confirmed
+- **Technical deep-dive** → Schedule follow-up with engineering team
+
+**Total Duration:** 15 minutes (demo) + 5 minutes (slides) + 10 minutes (Q&A)
 
 ### **Device Setup:**
 - **Screen Recording:** 1080p at 60fps
