@@ -73,90 +73,20 @@ export default function IndexScreen() {
     <SafeAreaView style={styles.container}>
       <StatusBar barStyle="light-content" backgroundColor="#0a0a0a" />
       
-      {/* Header */}
-      <View style={styles.header}>
-        <Text style={styles.title}>AisleMarts</Text>
-        <Text style={styles.searchBar}>🔍 Search for products, brands, creators...</Text>
-      </View>
-
-      {/* Quick Actions */}
-      <View style={styles.quickActions}>
-        <TouchableOpacity 
-          style={styles.quickActionButton}
-          onPress={() => handleNavigation('/(tabs)/stories', 'Stories')}
-        >
-          <Text style={styles.quickActionEmoji}>📺</Text>
-          <Text style={styles.quickActionText}>Stories</Text>
-        </TouchableOpacity>
-        <TouchableOpacity 
-          style={styles.quickActionButton}
-          onPress={() => handleNavigation('/deals', 'Deals')}
-        >
-          <Text style={styles.quickActionEmoji}>⚡</Text>
-          <Text style={styles.quickActionText}>Deals</Text>
-        </TouchableOpacity>
-        <TouchableOpacity 
-          style={styles.quickActionButton}
-          onPress={() => handleNavigation('/cart', 'Cart')}
-        >
-          <Text style={styles.quickActionEmoji}>🛒</Text>
-          <Text style={styles.quickActionText}>Cart</Text>
-        </TouchableOpacity>
-        <TouchableOpacity 
-          style={styles.quickActionButton}
-          onPress={() => handleNavigation('/wishlist', 'Wishlist')}
-        >
-          <Text style={styles.quickActionEmoji}>❤️</Text>
-          <Text style={styles.quickActionText}>Wishlist</Text>
-        </TouchableOpacity>
-      </View>
-
-      {/* Categories */}
-      <View style={styles.categoriesSection}>
-        <Text style={styles.sectionTitle}>Shop by Category</Text>
-        <View style={styles.categoriesGrid}>
-          <TouchableOpacity 
-            style={styles.categoryButton}
-            onPress={() => handleNavigation('/category/fashion', 'Fashion')}
-          >
-            <Text style={styles.categoryEmoji}>👗</Text>
-            <Text style={styles.categoryText}>Fashion</Text>
-          </TouchableOpacity>
-          <TouchableOpacity 
-            style={styles.categoryButton}
-            onPress={() => handleNavigation('/category/electronics', 'Electronics')}
-          >
-            <Text style={styles.categoryEmoji}>📱</Text>
-            <Text style={styles.categoryText}>Electronics</Text>
-          </TouchableOpacity>
-          <TouchableOpacity 
-            style={styles.categoryButton}
-            onPress={() => handleNavigation('/category/home', 'Home & Living')}
-          >
-            <Text style={styles.categoryEmoji}>🏠</Text>
-            <Text style={styles.categoryText}>Home</Text>
-          </TouchableOpacity>
-          <TouchableOpacity 
-            style={styles.categoryButton}
-            onPress={() => handleNavigation('/category/beauty', 'Beauty')}
-          >
-            <Text style={styles.categoryEmoji}>💄</Text>
-            <Text style={styles.categoryText}>Beauty</Text>
-          </TouchableOpacity>
-        </View>
-      </View>
-
-      {/* Featured */}
-      <View style={styles.featuredSection}>
-        <Text style={styles.sectionTitle}>Trending Now</Text>
-        <TouchableOpacity 
-          style={styles.trendingBanner}
-          onPress={() => handleNavigation('/trending', 'Trending Products')}
-        >
-          <Text style={styles.trendingText}>🔥 Hot Products This Week</Text>
-          <Text style={styles.trendingSubtext}>0% commission • Direct from creators</Text>
-        </TouchableOpacity>
-      </View>
+      <Text style={styles.title}>AisleMarts</Text>
+      <Text style={styles.subtitle}>Testing Vertical Stories</Text>
+      <TouchableOpacity 
+        style={styles.button} 
+        onPress={() => handleNavigation('/(tabs)/stories', 'Stories')}
+      >
+        <Text style={styles.buttonText}>Go to Stories</Text>
+      </TouchableOpacity>
+      <TouchableOpacity 
+        style={styles.button} 
+        onPress={() => handleNavigation('/for-you', 'For You')}
+      >
+        <Text style={styles.buttonText}>Go to For You</Text>
+      </TouchableOpacity>
     </SafeAreaView>
   );
 }
