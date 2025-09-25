@@ -82,7 +82,14 @@ export default function IndexScreen() {
     router.push(route as any);
   };
 
+  // Skip loading for now and go straight to main app
   if (isInitializing) {
+    // Auto navigate after a short delay
+    setTimeout(() => {
+      console.log('🚀 Quick navigation to for-you');
+      router.replace('/for-you');
+    }, 1000);
+    
     return (
       <AppLoader
         message="AisleMarts"
