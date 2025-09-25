@@ -47,8 +47,8 @@ export default function IndexScreen() {
         // Navigate based on onboarding state
         setTimeout(() => {
           if (hasCompletedOnboarding === 'true') {
-            console.log('🎯 Navigating to /for-you (TikTok-style main feed)');
-            router.replace('/for-you');
+            console.log('🎯 Navigating to /(tabs)/stories (VerticalStoriesScreen)');
+            router.replace('/(tabs)/stories');
           } else {
             console.log('🎯 Navigating to /onboarding');
             router.replace('/onboarding');
