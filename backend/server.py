@@ -434,7 +434,7 @@ app.include_router(ai_super_agent_router)
 
 # Include AI Ranking System router
 try:
-    from ranker import router as ranker_router
+    from ranker_mongodb import router as ranker_router
     app.include_router(ranker_router, tags=["ai_ranking"])
     print("✅ AI Ranking System (UCB1) loaded successfully")
 except ImportError as e:
