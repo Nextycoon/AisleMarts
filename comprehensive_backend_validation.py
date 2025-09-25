@@ -25,8 +25,8 @@ from typing import Dict, List, Any, Optional
 import uuid
 
 # Configuration
-FASTAPI_BASE_URL = "https://tiktok-commerce-1.preview.emergentagent.com/api"
-EXPRESS_BASE_URL = "https://tiktok-commerce-1.preview.emergentagent.com"  # Express server on port 8002 if available
+FASTAPI_BASE_URL = "https://aislemart-shop.preview.emergentagent.com/api"
+EXPRESS_BASE_URL = "https://aislemart-shop.preview.emergentagent.com"  # Express server on port 8002 if available
 EXPRESS_PORT_8002_URL = "http://localhost:8002"  # Direct port 8002 access
 
 class BackendValidator:

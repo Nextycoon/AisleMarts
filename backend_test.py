@@ -19,7 +19,7 @@ import os
 from datetime import datetime
 
 # Configuration
-BACKEND_URL = "https://tiktok-commerce-1.preview.emergentagent.com"  # FastAPI on port 8001
+BACKEND_URL = "https://aislemart-shop.preview.emergentagent.com"  # FastAPI on port 8001
 EXPRESS_URL = "http://localhost:8002"  # Express server on port 8002
 HMAC_SECRET = "dev-secret-key-change-in-production"
 

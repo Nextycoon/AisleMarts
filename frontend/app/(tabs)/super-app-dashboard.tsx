@@ -19,7 +19,7 @@ import { BlurView } from 'expo-blur';
 const { width, height } = Dimensions.get('window');
 
 // API configuration
-const API_BASE = process.env.EXPO_PUBLIC_BACKEND_URL || 'https://tiktok-commerce-1.preview.emergentagent.com';
+const API_BASE = process.env.EXPO_PUBLIC_BACKEND_URL || 'https://aislemart-shop.preview.emergentagent.com';
 
 interface WalletData {
   user_id: string;
