@@ -61,6 +61,7 @@ class P0HardeningValidator:
 
     def generate_hmac_signature(self, timestamp: int, body: str) -> str:
         """Generate HMAC signature for authenticated requests"""
+        # Use milliseconds timestamp and correct payload format
         message = f"{timestamp}.{body}"
         signature = hmac.new(
             HMAC_SECRET.encode(),
