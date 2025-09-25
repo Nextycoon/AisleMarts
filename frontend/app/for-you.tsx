@@ -931,6 +931,14 @@ export default function ForYouScreen() {
       {/* AI Assistant Overlay - Positioned in exact alignment with 7 action icons */}
       <FloatingAIAssistant bottom={485} right={10} />
 
+      {/* NEW: Shoppable Video Overlay */}
+      <ShoppableVideoOverlay
+        videoId={currentVideoId || ''}
+        visible={showShoppableOverlay}
+        onClose={handleShoppableOverlayClose}
+        onProductSelect={handleProductSelect}
+      />
+
       {/* Bottom Navigation Overlay */}
       <View style={styles.bottomNavOverlay}>
         <TabNavigator />
