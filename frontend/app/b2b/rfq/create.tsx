@@ -52,6 +52,7 @@ const categories = [
 
 export default function CreateRFQScreen() {
   const [loading, setLoading] = useState(false);
+  const [showCategoryModal, setShowCategoryModal] = useState(false);
   const [formData, setFormData] = useState<RFQFormData>({
     title: '',
     category: '',
