@@ -1,15 +1,23 @@
 """
-AisleMarts RFQ (Request for Quote) Router - B2B Marketplace Enhancement
-Implements Alibaba-style B2B quoting system for wholesale buyers and suppliers
+AisleMarts RFQ (Request for Quote) Router - PRODUCTION HARDENED
+Implements secure B2B quoting system with authentication and validation
 """
 
-from fastapi import APIRouter, HTTPException, BackgroundTasks
+from fastapi import APIRouter, HTTPException, BackgroundTasks, Depends, Request
 from pydantic import BaseModel, Field
 from typing import List, Dict, Any, Optional
 import uuid
 from datetime import datetime, timedelta
 from enum import Enum
 import json
+
+# Import security and validation
+from middleware.auth import get_current_user, get_buyer_user, get_supplier_user, AuthToken, require_resource_ownership
+from middleware.rate_limiting import rate_limit_rfq_create, rate_limit_rfq_quote, rate_limit_general
+from validation.rfq_validation import (
+    RFQCreateValidated, QuoteSubmissionValidated, RFQValidationError,
+    validate_rfq_update_permission, validate_quote_submission_permission, validate_business_rules
+)
 
 router = APIRouter()
 
