@@ -551,6 +551,28 @@ export default function ForYouScreen() {
     });
   };
 
+  // NEW: Shoppable Video Handlers
+  const handleShopPress = (video: any) => {
+    if (!shopEnabled) return;
+    
+    console.log('Shop pressed for video:', video.id);
+    setCurrentVideoId(video.id || `video_${video.creator?.name?.toLowerCase()}_001`);
+    setShowShoppableOverlay(true);
+  };
+
+  const handleShoppableOverlayClose = () => {
+    setShowShoppableOverlay(false);
+    setCurrentVideoId(null);
+  };
+
+  const handleProductSelect = (productId: string) => {
+    console.log('Product selected:', productId);
+    router.push({
+      pathname: '/product-detail',
+      params: { productId }
+    });
+  };
+
   const handleStoryPress = (story: any) => {
     console.log('Story pressed:', story.creatorName || story.name);
     // Navigate to story viewer
