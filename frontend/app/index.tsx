@@ -8,7 +8,7 @@ export default function IndexScreen() {
   console.log('🚀 Minimal app entry loaded');
   
   return (
-    <View style={styles.container}>
+    <SafeAreaView style={styles.container}>
       <Text style={styles.title}>AisleMarts</Text>
       <Text style={styles.subtitle}>Testing Vertical Stories</Text>
       <TouchableOpacity 
