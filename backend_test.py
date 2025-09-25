@@ -30,7 +30,7 @@ import sys
 BACKEND_URL = "https://infinity-stories.preview.emergentagent.com"
 EXPRESS_PORT = 3000
 FASTAPI_PORT = 8001
-HMAC_SECRET = "dev-secret"
+HMAC_SECRET = "dev-secret-key-change-in-production"
 
 class P0HardeningValidator:
     def __init__(self):
