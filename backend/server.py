@@ -142,12 +142,20 @@ print("🛍️ AisleMarts Shop (TikTok Enhanced) loaded successfully")
 
 @app.on_event("startup")
 async def startup_event():
-    """Enhanced startup with Shop services"""
+    """Enhanced startup with Shop services and Observability"""
     try:
         print("🛍️💎🚀 AISLEMARTS SHOP ENHANCED BACKEND LIVE")
         print("✅ TikTok Shop Features: Shoppable Video + In-Feed Checkout + Live Shopping")
         print("✅ 0% Commission Model | AI Commerce Ranker | Social Commerce Integration")
         print("🎯 Phase 2 Priority: Scroll → Tap → Buy Experience Ready")
+        
+        # Initialize observability event system
+        try:
+            from observability.events import start_event_system
+            await start_event_system()
+            print("🚀 Event analytics system initialized")
+        except ImportError as e:
+            print(f"⚠️ Event analytics system not available: {e}")
         
     except Exception as e:
         print(f"⚠️ Startup warning: {e}")
