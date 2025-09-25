@@ -195,22 +195,18 @@ const StoryPage: React.FC<{
         onPlaybackStatusUpdate={handleStatusUpdate}
       />
 
-      {/* Right-side actions (like, comment, repost, shop) */}
+      {/* Right-side actions - 7 creator-specific icons */}
       <View style={styles.rightActions}>
-        <Pressable style={styles.actionBtn} onPress={() => handleCTA('like')}>
-          <Text style={styles.actionTxt}>♥</Text>
-        </Pressable>
-        <Pressable style={styles.actionBtn} onPress={() => handleCTA('comment')}>
-          <Text style={styles.actionTxt}>💬</Text>
-        </Pressable>
-        <Pressable style={styles.actionBtn} onPress={() => handleCTA('share')}>
-          <Text style={styles.actionTxt}>🔄</Text>
-        </Pressable>
-        {story.productId && (
-          <Pressable style={[styles.actionBtn, styles.shopBtn]} onPress={handleShop}>
-            <Text style={styles.shopTxt}>Shop</Text>
+        {getCreatorSpecificIcons(story).map((icon, index) => (
+          <Pressable 
+            key={index}
+            style={[styles.actionBtn, icon.isShop && styles.shopBtn]} 
+            onPress={() => icon.isShop ? handleShop() : handleCTA(icon.action)}
+          >
+            <Text style={icon.isShop ? styles.shopTxt : styles.actionTxt}>{icon.emoji}</Text>
+            {icon.count && <Text style={styles.actionCount}>{icon.count}</Text>}
           </Pressable>
-        )}
+        ))}
       </View>
 
       {/* Bottom meta (creator + caption + AI score debug) */}
