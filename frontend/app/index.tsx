@@ -74,23 +74,26 @@ export default function IndexScreen() {
 
   if (isInitializing) {
     return (
-      <AppLoader
-        message="AisleMarts"
-        subMessage="Luxury Shopping Experience"
-        showProgress={true}
-        progress={loadingProgress}
-      />
+      <SafeAreaView style={[styles.container, styles.loadingContainer]}>
+        <Text style={styles.loadingTitle}>AisleMarts</Text>
+        <Text style={styles.loadingSubtitle}>Luxury Shopping Experience</Text>
+        <View style={styles.progressBar}>
+          <View style={[styles.progressFill, { width: `${loadingProgress * 100}%` }]} />
+        </View>
+        <Text style={styles.progressText}>{Math.round(loadingProgress * 100)}%</Text>
+      </SafeAreaView>
     );
   }
 
   if (loading) {
     return (
-      <AppLoader
-        message="AisleMarts"
-        subMessage="Setting up your experience"
-        showProgress={true}
-        progress={0.8}
-      />
+      <SafeAreaView style={[styles.container, styles.loadingContainer]}>
+        <Text style={styles.loadingTitle}>AisleMarts</Text>
+        <Text style={styles.loadingSubtitle}>Setting up your experience</Text>
+        <View style={styles.progressBar}>
+          <View style={[styles.progressFill, { width: '80%' }]} />
+        </View>
+      </SafeAreaView>
     );
   }
 
