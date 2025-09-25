@@ -12,6 +12,7 @@ import { initPush } from '../src/mobile/pushBridge';
 import { parseDeepLink } from '../src/navigation/deeplinks';
 import { routeDeepLink } from '../src/navigation/deepLinkRouter';
 import { safeLog, safeError } from '../src/util/safeLog';
+import { bootFlusher } from './lib/httpQueue';
 
 export default function RootLayout() {
   // Deep link handling
