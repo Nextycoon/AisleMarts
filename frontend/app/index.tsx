@@ -8,55 +8,16 @@ import AsyncStorage from '@react-native-async-storage/async-storage';
 const { width, height } = Dimensions.get('window');
 
 export default function IndexScreen() {
-  // const { loading, hasCompletedAvatarSetup } = useAuth();
-  const [isInitializing, setIsInitializing] = useState(true);
-  const [loadingProgress, setLoadingProgress] = useState(0);
-  const [showMainMenu, setShowMainMenu] = useState(false);
+  console.log('🚀 AisleMarts app entry loaded');
   
-  // Mock auth state for now
-  const loading = false;
-  const hasCompletedAvatarSetup = true;
-
-  useEffect(() => {
-    initializeApp();
-  }, []);
-
-  const initializeApp = async () => {
-    try {
-      console.log('🚀 AisleMarts App Initializing...');
-      
-      // Quick initialization steps
-      setLoadingProgress(0.25);
-      await new Promise(resolve => setTimeout(resolve, 300));
-      
-      setLoadingProgress(0.5);
-      await new Promise(resolve => setTimeout(resolve, 300));
-      
-      setLoadingProgress(0.75);
-      await new Promise(resolve => setTimeout(resolve, 300));
-      
-      setLoadingProgress(1);
-      await new Promise(resolve => setTimeout(resolve, 300));
-
-      console.log('✅ App initialization complete');
-      setIsInitializing(false);
-      setShowMainMenu(true); // Always show main menu for full app experience
-
-    } catch (error) {
-      console.error('❌ Error initializing app:', error);
-      setIsInitializing(false);
-      setShowMainMenu(true); // Show main menu as fallback
-    }
-  };
-
-  const handleNavigation = (route: string) => {
-    console.log(`🎯 Navigating to ${route}`);
-    router.push(route as any);
-  };
-
-  const handleQuickStart = () => {
-    console.log('🚀 Quick start - going to vertical stories');
+  const handleStoriesPress = () => {
+    console.log('🎯 Manual navigation to stories');
     router.push('/(tabs)/stories');
+  };
+
+  const handleForYouPress = () => {
+    console.log('🎯 Manual navigation to for-you'); 
+    router.push('/for-you');
   };
 
   if (isInitializing) {
