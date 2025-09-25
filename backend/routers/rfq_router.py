@@ -331,34 +331,53 @@ async def track_rfq_event(event_type: str, data: Dict[str, Any]):
 
 # RFQ Endpoints
 @router.post("/api/b2b/rfq", tags=["b2b_rfq"])
-async def create_rfq(request: RFQRequest, user_id: str = "demo_business_user"):
-    """Create a new RFQ (Request for Quote)"""
-    rfq = RFQ(
-        business_user_id=user_id,
-        business_name="Demo Business Corp",
-        title=request.title,
-        category=request.category,
-        description=request.description,
-        specifications=request.specifications,
-        quantity=request.quantity,
-        target_price=request.target_price,
-        currency=request.currency,
-        deadline=request.deadline,
-        shipping_destination=request.shipping_destination,
-        attachments=request.attachments
-    )
-    
-    RFQS_DB[rfq.id] = rfq
-    
-    await track_rfq_event("rfq_created", {
-        "rfq_id": rfq.id,
-        "business_user_id": user_id,
-        "category": rfq.category,
-        "quantity": rfq.quantity,
-        "target_price": rfq.target_price
-    })
-    
-    return {"success": True, "rfq": rfq}
+async def create_rfq(
+    request: Request,
+    rfq_create: RFQRequest,
+    current_user: AuthToken = Depends(get_buyer_user),
+    _: bool = Depends(rate_limit_rfq_create)
+):
+    """Create a new RFQ with authentication and validation"""
+    try:
+        # Validate RFQ data
+        validated_data = RFQCreateValidated(**rfq_create.dict())
+        
+        # Validate business rules
+        validate_business_rules(validated_data, user_business_tier="verified")  # Mock tier
+        
+        # Create RFQ
+        rfq_id = f"rfq_{uuid.uuid4().hex[:12]}"
+        rfq = RFQ(
+            id=rfq_id,
+            business_user_id=current_user.user_id,
+            business_name=current_user.business_id or "Business Name",
+            title=validated_data.title,
+            category=RFQCategory(validated_data.category),
+            description=validated_data.description,
+            specifications=RFQSpec(**validated_data.specifications.dict()),
+            quantity=validated_data.quantity,
+            target_price=validated_data.target_price,
+            currency=validated_data.currency,
+            deadline=validated_data.deadline,
+            shipping_destination=validated_data.shipping_destination,
+            attachments=validated_data.attachments,
+            status=RFQStatus.PUBLISHED,
+            quote_count=0,
+            views=0
+        )
+        
+        RFQS_DB[rfq_id] = rfq
+        
+        return {
+            "success": True,
+            "rfq": rfq,
+            "message": "RFQ created successfully and published to suppliers"
+        }
+        
+    except RFQValidationError as e:
+        raise e
+    except Exception as e:
+        raise HTTPException(status_code=500, detail="Failed to create RFQ")
 
 @router.get("/api/b2b/rfq", tags=["b2b_rfq"])
 async def list_rfqs(
