@@ -424,25 +424,4 @@ const styles = StyleSheet.create({
     color: 'rgba(255, 255, 255, 0.6)',
     textAlign: 'center',
   },
-  notesSection: {
-    marginHorizontal: 20,
-    marginBottom: 40,
-    padding: 16,
-    backgroundColor: 'rgba(15, 15, 35, 0.8)',
-    borderWidth: 1,
-    borderColor: 'rgba(212, 175, 55, 0.2)',
-    borderRadius: 16,
-  },
-  notesTitle: {
-    fontSize: 14,
-    fontWeight: '700',
-    color: '#D4AF37',
-    marginBottom: 8,
-    textAlign: 'center',
-  },
-  notesText: {
-    fontSize: 12,
-    color: 'rgba(255, 255, 255, 0.8)',
-    lineHeight: 18,
-  },
 });
