@@ -58,6 +58,9 @@ export default function RootLayout() {
         console.log(`Push initialized: ${result.provider} - ${result.token.substring(0, 20)}...`);
       }
     }).catch(console.error);
+
+    // Initialize offline queue flusher
+    bootFlusher();
   }, []);
 
   return (
