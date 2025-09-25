@@ -34,6 +34,12 @@ export default function IndexScreen() {
 
       console.log('✅ AisleMarts Platform Ready');
       setIsInitializing(false);
+      
+      // Auto-navigate to for-you after loading completes
+      setTimeout(() => {
+        console.log('🎯 Auto-navigating to For You feed');
+        router.replace('/for-you');
+      }, 800);
 
     } catch (error) {
       console.error('❌ Initialization error:', error);
