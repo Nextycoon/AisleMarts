@@ -8,16 +8,33 @@ import AppLoader from '../src/components/AppLoader';
 const { width, height } = Dimensions.get('window');
 
 export default function IndexScreen() {
-  const { loading, hasCompletedAvatarSetup } = useAuth();
-  const [isInitializing, setIsInitializing] = useState(false); // Skip initialization
-  const [loadingProgress, setLoadingProgress] = useState(1); // Complete
-  const [showDebug, setShowDebug] = useState(false);
+  // Minimal app entry - bypass all complex initialization
+  console.log('🚀 Minimal app entry loaded');
   
-  // Immediate navigation to stories
-  useEffect(() => {
-    console.log('🚀 Direct navigation to stories');
-    router.replace('/(tabs)/stories');
-  }, []);
+  return (
+    <View style={styles.container}>
+      <Text style={styles.title}>AisleMarts</Text>
+      <Text style={styles.subtitle}>Testing Vertical Stories</Text>
+      <TouchableOpacity 
+        style={styles.button} 
+        onPress={() => {
+          console.log('🎯 Manual navigation to stories');
+          router.push('/(tabs)/stories');
+        }}
+      >
+        <Text style={styles.buttonText}>Go to Stories</Text>
+      </TouchableOpacity>
+      <TouchableOpacity 
+        style={styles.button} 
+        onPress={() => {
+          console.log('🎯 Manual navigation to for-you');
+          router.push('/for-you');
+        }}
+      >
+        <Text style={styles.buttonText}>Go to For You</Text>
+      </TouchableOpacity>
+    </View>
+  );
 
   useEffect(() => {
     initializeApp();
