@@ -12,6 +12,7 @@ import {
   Dimensions,
 } from 'react-native';
 import { useRouter } from 'expo-router';
+import TabNavigator from './navigation/TabNavigator';
 
 const { width } = Dimensions.get('window');
 
