@@ -376,9 +376,9 @@ class P0HardeningValidator:
             
             headers = {
                 'Content-Type': 'application/json',
-                'X-Timestamp': str(timestamp),
-                'X-Signature': signature,
-                'Idempotency-Key': idempotency_key
+                'x-timestamp': str(timestamp),
+                'x-signature': signature,
+                'idempotency-key': idempotency_key
             }
             
             # First request should succeed
