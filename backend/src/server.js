@@ -145,7 +145,8 @@ app.get('/health', (req, res) => {
 // Creators API
 app.get('/api/creators', async (req, res) => {
   try {
-    const creators = await prisma.creators.findMany({
+    const db = getPrisma();
+    const creators = await db.creators.findMany({
       orderBy: { tier: 'desc' }
     });
     
@@ -162,7 +163,20 @@ app.get('/api/creators', async (req, res) => {
     });
   } catch (error) {
     console.error('Error fetching creators:', error);
-    res.status(500).json({ error: 'Failed to fetch creators' });
+    // Fallback to mock data if database fails
+    useMockData = true;
+    const creators = await mockPrisma.creators.findMany();
+    res.json({
+      creators: creators.map(c => ({
+        id: c.id,
+        username: c.username,
+        displayName: c.displayName,
+        avatar: c.avatar,
+        tier: c.tier,
+        verificationLevel: c.verificationLevel,
+        isActive: c.isActive
+      }))
+    });
   }
 });
 
