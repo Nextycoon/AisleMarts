@@ -18,6 +18,7 @@ from validation.rfq_validation import (
     RFQCreateValidated, QuoteSubmissionValidated, RFQValidationError,
     validate_rfq_update_permission, validate_quote_submission_permission, validate_business_rules
 )
+from rfq_models import RFQCreate
 
 router = APIRouter()
 
