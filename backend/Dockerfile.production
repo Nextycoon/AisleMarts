@@ -1,0 +1,54 @@
+FROM python:3.12-slim
+
+# Set environment variables
+ENV PYTHONUNBUFFERED=1
+ENV PIP_NO_CACHE_DIR=1
+ENV PIP_DISABLE_PIP_VERSION_CHECK=1
+
+# Set work directory
+WORKDIR /app
+
+# Install system dependencies
+RUN apt-get update \
+    && apt-get install -y --no-install-recommends \
+        build-essential \
+        curl \
+        && rm -rf /var/lib/apt/lists/*
+
+# Copy requirements and install Python dependencies
+COPY requirements.txt /app/
+RUN pip install --upgrade pip \
+    && pip install --no-cache-dir -r requirements.txt \
+    && pip install gunicorn
+
+# Create non-root user
+RUN useradd -m -u 1000 appuser && chown -R appuser:appuser /app
+USER appuser
+
+# Copy application code
+COPY --chown=appuser:appuser . /app/
+
+# Health check
+HEALTHCHECK --interval=30s --timeout=3s --start-period=5s --retries=3 \
+    CMD curl -f http://localhost:8000/api/health || exit 1
+
+# Expose port
+EXPOSE 8000
+
+# Production environment variables defaults
+ENV WORKERS=4
+ENV TIMEOUT=30
+ENV MAX_REQUESTS=1000
+ENV MAX_REQUESTS_JITTER=50
+
+# Run gunicorn with uvicorn workers
+CMD gunicorn server:app \
+    -k uvicorn.workers.UvicornWorker \
+    -b 0.0.0.0:8000 \
+    --workers ${WORKERS} \
+    --timeout ${TIMEOUT} \
+    --max-requests ${MAX_REQUESTS} \
+    --max-requests-jitter ${MAX_REQUESTS_JITTER} \
+    --access-logfile - \
+    --error-logfile - \
+    --log-level info
