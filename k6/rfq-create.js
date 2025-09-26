@@ -19,7 +19,7 @@ export const options = {
 // Mock JWT token for testing (replace with actual token)
 const BUYER_TOKEN = "eyJ0eXAiOiJKV1QiLCJhbGciOiJIUzI1NiJ9.eyJ1c2VyX2lkIjoiYnV5ZXJfMDAxIiwicm9sZSI6ImJ1eWVyIiwiZW1haWwiOiJidXllckB0ZXN0LmNvbSIsImJ1c2luZXNzX2lkIjoiYnVzaW5lc3NfMDAxIiwiZXhwIjoxNzI3MzE2NzIxLCJpYXQiOjE3MjcyMzAzMjF9.fake-signature-for-testing";
 
-const API_BASE = __ENV.API_BASE || 'https://aislemarts.preview.emergentagent.com';
+const API_BASE = __ENV.API_BASE || 'https://marketplace-docs.preview.emergentagent.com';
 
 const categories = ['electronics', 'fashion', 'home_garden', 'machinery', 'automotive'];
 const materials = ['Plastic', 'Metal', 'Fabric', 'Ceramic', 'Composite'];

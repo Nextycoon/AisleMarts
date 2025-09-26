@@ -114,7 +114,7 @@ Where real meets virtual, and one lifestyle spans both worlds.
 ## 🌊 **DEPLOYMENT OPTIONS**
 
 ### **Live Demo Access:**
-- **URL**: `https://aislemart-shop.preview.emergentagent.com/fusion-dashboard`
+- **URL**: `https://marketplace-docs.preview.emergentagent.com/fusion-dashboard`
 - **QR Code**: Available for mobile device testing
 - **Responsive**: Adapts to phone, tablet, desktop viewing
 

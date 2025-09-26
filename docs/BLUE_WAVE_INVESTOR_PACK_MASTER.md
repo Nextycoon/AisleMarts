@@ -42,7 +42,7 @@ AisleMarts represents the convergence of **AI curation**, **social commerce**, a
 - **Frontend Service**: `/app/frontend/lib/investorDemoService.ts` - Awareness integration
 - **[Provisioning Summary](BW-04_EMAIL_OUTREACH_SEQUENCES/INVESTOR_BUNDLES/Investor_Demo_Provisioning_Summary.md)** - Complete system overview
 
-**Demo Base URL**: `https://aislemart-shop.preview.emergentagent.com`  
+**Demo Base URL**: `https://marketplace-docs.preview.emergentagent.com`  
 **API Health**: `GET /api/demo/health`  
 **All Bundles**: `GET /api/demo/all-bundles`
 

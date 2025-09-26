@@ -7,7 +7,7 @@ import * as DocumentPicker from 'expo-document-picker';
 import * as ImagePicker from 'expo-image-picker';
 import * as FileSystem from 'expo-file-system';
 
-const API_BASE = process.env.EXPO_PUBLIC_BACKEND_URL || 'https://aislemarts.preview.emergentagent.com';
+const API_BASE = process.env.EXPO_PUBLIC_BACKEND_URL || 'https://marketplace-docs.preview.emergentagent.com';
 
 interface UploadConfig {
   maxFileSizeMB: number;

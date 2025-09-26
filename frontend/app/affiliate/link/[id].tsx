@@ -14,7 +14,7 @@ import {
 import { router, useLocalSearchParams } from 'expo-router';
 import AsyncStorage from '@react-native-async-storage/async-storage';
 
-const API_BASE = process.env.EXPO_PUBLIC_BACKEND_URL || 'https://aislemarts.preview.emergentagent.com';
+const API_BASE = process.env.EXPO_PUBLIC_BACKEND_URL || 'https://marketplace-docs.preview.emergentagent.com';
 
 interface AffiliateLinkData {
   id: string;

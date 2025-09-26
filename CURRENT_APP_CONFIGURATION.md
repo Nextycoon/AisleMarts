@@ -6,7 +6,7 @@
 ```env
 # Core Expo Configuration
 EXPO_TUNNEL_SUBDOMAIN=aislefeed
-EXPO_PACKAGER_PROXY_URL=https://aislemart-shop.preview.emergentagent.com
+EXPO_PACKAGER_PROXY_URL=https://marketplace-docs.preview.emergentagent.com
 EXPO_PACKAGER_HOSTNAME=aislefeed.preview.emergentagent.com
 
 # Backend Integration
@@ -81,7 +81,7 @@ autorestart=true
 ## 🌐 Network Configuration
 
 ### Access Points
-- **Web Preview**: https://aislemart-shop.preview.emergentagent.com
+- **Web Preview**: https://marketplace-docs.preview.emergentagent.com
 - **Tunnel URL**: https://aislefeed.ngrok.io
 - **Mobile Access**: exp://aislefeed.ngrok.io:80
 - **Backend API**: http://localhost:8001 (internal)

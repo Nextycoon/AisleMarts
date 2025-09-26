@@ -25,7 +25,7 @@ import os
 from datetime import datetime
 
 # Configuration
-BACKEND_URL = "https://aislemart-shop.preview.emergentagent.com"  # FastAPI on port 8001
+BACKEND_URL = "https://marketplace-docs.preview.emergentagent.com"  # FastAPI on port 8001
 HMAC_SECRET = "dev-secret-key-change-in-production"
 
 class ComprehensiveValidator:
