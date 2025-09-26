@@ -67,6 +67,13 @@ async def health_check():
 
 # Include existing routes dynamically
 try:
+    from routers.uploads_router import router as uploads_router
+    app.include_router(uploads_router, prefix="", tags=["uploads"])
+    print("✅ Signed upload system loaded successfully")
+except ImportError as e:
+    print(f"⚠️ Upload system not available: {e}")
+
+try:
     import ai_routes
     if hasattr(ai_routes, 'router'):
         app.include_router(ai_routes.router, prefix="/api", tags=["ai"])
