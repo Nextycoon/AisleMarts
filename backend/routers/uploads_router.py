@@ -95,7 +95,7 @@ class UploadConfirmRequest(BaseModel):
     upload_id: str = Field(..., min_length=10)
     file_key: str = Field(..., min_length=10) 
     actual_size: Optional[int] = Field(None, ge=1)
-    upload_context: str = Field(..., regex=r'^(rfq|affiliate|product|profile|general)$')
+    upload_context: str = Field(..., pattern=r'^(rfq|affiliate|product|profile|general)$')
 
 # In-memory store for upload tracking (use Redis/DB in production)
 upload_sessions = {}
