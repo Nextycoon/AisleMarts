@@ -1,0 +1,91 @@
+{
+  "total_tests": 12,
+  "passed_tests": 12,
+  "success_rate": 100.0,
+  "results": [
+    {
+      "test": "Legal Health Check",
+      "success": true,
+      "details": "All documents available, 5 features enabled",
+      "response_time": 0.15391850471496582,
+      "timestamp": "2025-09-26T01:55:35.274299"
+    },
+    {
+      "test": "Privacy Policy Endpoint",
+      "success": true,
+      "details": "Valid HTML document (17.2KB) with all required headers",
+      "response_time": 0.058625221252441406,
+      "timestamp": "2025-09-26T01:55:35.334201"
+    },
+    {
+      "test": "Terms of Service Endpoint",
+      "success": true,
+      "details": "Valid HTML document (24.9KB) with all required headers",
+      "response_time": 0.07251477241516113,
+      "timestamp": "2025-09-26T01:55:35.407963"
+    },
+    {
+      "test": "ETag Caching - Privacy Policy",
+      "success": true,
+      "details": "304 Not Modified returned correctly (ETag: \"a51f2d61c859\")",
+      "response_time": 0.12671852111816406,
+      "timestamp": "2025-09-26T01:55:35.535896"
+    },
+    {
+      "test": "ETag Caching - Terms of Service",
+      "success": true,
+      "details": "304 Not Modified returned correctly (ETag: \"9d3a1a2559c4\")",
+      "response_time": 0.13511371612548828,
+      "timestamp": "2025-09-26T01:55:35.673657"
+    },
+    {
+      "test": "Privacy Policy Version",
+      "success": true,
+      "details": "Version: a51f2d61c859, Last Modified: 2025-09-26T01:30:23.282411",
+      "response_time": 0.060800790786743164,
+      "timestamp": "2025-09-26T01:55:35.737127"
+    },
+    {
+      "test": "Terms of Service Version",
+      "success": true,
+      "details": "Version: 9d3a1a2559c4, Last Modified: 2025-09-26T01:30:23.282411",
+      "response_time": 0.0639193058013916,
+      "timestamp": "2025-09-26T01:55:35.801338"
+    },
+    {
+      "test": "Error Handling - 404 for Missing Document",
+      "success": true,
+      "details": "Correctly returns 404 for nonexistent document",
+      "response_time": 0.07808256149291992,
+      "timestamp": "2025-09-26T01:55:35.880517"
+    },
+    {
+      "test": "Privacy Policy Performance",
+      "success": true,
+      "details": "Response time: 0.060s (under 2s requirement)",
+      "response_time": 0.06047821044921875,
+      "timestamp": "2025-09-26T01:55:35.942438"
+    },
+    {
+      "test": "Terms of Service Performance",
+      "success": true,
+      "details": "Response time: 0.072s (under 2s requirement)",
+      "response_time": 0.0716238021850586,
+      "timestamp": "2025-09-26T01:55:36.014121"
+    },
+    {
+      "test": "Health Check Performance",
+      "success": true,
+      "details": "Response time: 0.093s (under 2s requirement)",
+      "response_time": 0.09326386451721191,
+      "timestamp": "2025-09-26T01:55:36.107437"
+    },
+    {
+      "test": "Mobile Responsiveness",
+      "success": true,
+      "details": "Found 3/3 mobile design indicators",
+      "response_time": 0.06666326522827148,
+      "timestamp": "2025-09-26T01:55:36.175332"
+    }
+  ]
+}
