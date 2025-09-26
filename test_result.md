@@ -284,6 +284,66 @@ frontend:
           agent: "main"
           comment: "P1 PERFORMANCE MONITORING IMPLEMENTATION: Created real-time performance HUD with FPS tracking using requestAnimationFrame, cache usage monitoring via globalThis.__prefetch integration, 1-second update intervals for live metrics. Positioned as overlay (top-right, semi-transparent) with creators/stories count, cache usage in MB, and current FPS display. Opt-in via EXPO_PUBLIC_SHOW_PERF_HUD=1 environment variable for testing/validation."
 
+  - task: "Legal Document Hosting Endpoints - Privacy Policy"
+    implemented: true
+    working: true
+    file: "/app/backend/routers/legal_router.py"
+    stuck_count: 0
+    priority: "critical"
+    needs_retesting: false
+    status_history:
+        - working: true
+          agent: "testing"
+          comment: "✅ WORKING: Privacy Policy Endpoint FULLY OPERATIONAL - Valid HTML document (17.2KB) with all required App Store compliance headers (Cache-Control: public, max-age=3600, ETag, Last-Modified, X-Doc-Version, Content-Security-Policy, X-Content-Type-Options, Referrer-Policy, X-Frame-Options). ETag caching working correctly (304 Not Modified responses). Response time 0.060s (well under 2s requirement). Mobile responsive design with proper viewport and CSS media queries."
+
+  - task: "Legal Document Hosting Endpoints - Terms of Service"
+    implemented: true
+    working: true
+    file: "/app/backend/routers/legal_router.py"
+    stuck_count: 0
+    priority: "critical"
+    needs_retesting: false
+    status_history:
+        - working: true
+          agent: "testing"
+          comment: "✅ WORKING: Terms of Service Endpoint FULLY OPERATIONAL - Valid HTML document (24.9KB) with all required App Store compliance headers. ETag caching working correctly (304 Not Modified responses). Response time 0.072s (well under 2s requirement). All security headers present and correctly configured for App Store submission requirements."
+
+  - task: "Legal Document Health Check & Version Tracking"
+    implemented: true
+    working: true
+    file: "/app/backend/routers/legal_router.py"
+    stuck_count: 0
+    priority: "high"
+    needs_retesting: false
+    status_history:
+        - working: true
+          agent: "testing"
+          comment: "✅ WORKING: Legal Health Check & Version Tracking FULLY OPERATIONAL - Health endpoint operational with all 5 features enabled (html_rendering, etag_caching, version_tracking, app_store_headers, mobile_responsive). Version endpoints working for both documents with proper version hashes and last-modified timestamps. Response time 0.093s (well under 2s requirement)."
+
+  - task: "Legal Document ETag Caching & Performance"
+    implemented: true
+    working: true
+    file: "/app/backend/routers/legal_router.py"
+    stuck_count: 0
+    priority: "high"
+    needs_retesting: false
+    status_history:
+        - working: true
+          agent: "testing"
+          comment: "✅ WORKING: ETag Caching & Performance FULLY OPERATIONAL - ETag conditional requests working correctly for both Privacy Policy and Terms of Service (304 Not Modified responses). ETag consistency validated (matches X-Doc-Version header). Concurrent performance excellent (5 concurrent requests, 0.336s average response time). All performance benchmarks under 2s requirement met."
+
+  - task: "Legal Document Error Handling & App Store Compliance"
+    implemented: true
+    working: true
+    file: "/app/backend/routers/legal_router.py"
+    stuck_count: 0
+    priority: "high"
+    needs_retesting: false
+    status_history:
+        - working: true
+          agent: "testing"
+          comment: "✅ WORKING: Error Handling & App Store Compliance FULLY OPERATIONAL - Proper 404 responses for missing documents. All required security headers present and correctly configured (Content-Security-Policy, X-Frame-Options, X-Content-Type-Options, Referrer-Policy). Mobile responsiveness validated with proper viewport and CSS media queries. 100% App Store compliance achieved."
+
 backend:
   - task: "P0.1 - HMAC/Auth Error Code Standardization"
     implemented: true
