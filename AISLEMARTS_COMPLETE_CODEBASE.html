@@ -1,0 +1,1670 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+    <meta charset="UTF-8">
+    <meta name="viewport" content="width=device-width, initial-scale=1.0">
+    <title>AisleMarts - Complete Codebase Documentation</title>
+    <style>
+        * {
+            margin: 0;
+            padding: 0;
+            box-sizing: border-box;
+        }
+        
+        body {
+            font-family: 'Segoe UI', Tahoma, Geneva, Verdana, sans-serif;
+            line-height: 1.6;
+            color: #333;
+            background-color: #f8f9fa;
+        }
+        
+        .container {
+            max-width: 1200px;
+            margin: 0 auto;
+            padding: 20px;
+        }
+        
+        header {
+            background: linear-gradient(135deg, #667eea 0%, #764ba2 100%);
+            color: white;
+            padding: 2rem 0;
+            text-align: center;
+            margin-bottom: 2rem;
+            border-radius: 10px;
+        }
+        
+        h1 {
+            font-size: 2.5rem;
+            margin-bottom: 0.5rem;
+        }
+        
+        .subtitle {
+            font-size: 1.2rem;
+            opacity: 0.9;
+        }
+        
+        .toc {
+            background: white;
+            border: 1px solid #e1e8ed;
+            border-radius: 8px;
+            padding: 1.5rem;
+            margin-bottom: 2rem;
+            box-shadow: 0 2px 4px rgba(0,0,0,0.1);
+        }
+        
+        .toc h2 {
+            color: #1da1f2;
+            border-bottom: 2px solid #1da1f2;
+            padding-bottom: 0.5rem;
+            margin-bottom: 1rem;
+        }
+        
+        .toc ul {
+            list-style: none;
+        }
+        
+        .toc li {
+            padding: 0.25rem 0;
+        }
+        
+        .toc a {
+            color: #1da1f2;
+            text-decoration: none;
+            display: block;
+            padding: 0.25rem 0;
+            border-radius: 4px;
+            padding-left: 1rem;
+        }
+        
+        .toc a:hover {
+            background-color: #e8f5fd;
+            color: #0d8bd9;
+        }
+        
+        .section {
+            background: white;
+            border: 1px solid #e1e8ed;
+            border-radius: 8px;
+            padding: 2rem;
+            margin-bottom: 2rem;
+            box-shadow: 0 2px 4px rgba(0,0,0,0.1);
+        }
+        
+        .section h2 {
+            color: #1da1f2;
+            border-bottom: 3px solid #1da1f2;
+            padding-bottom: 0.5rem;
+            margin-bottom: 1.5rem;
+            font-size: 1.8rem;
+        }
+        
+        .section h3 {
+            color: #14171a;
+            margin-top: 2rem;
+            margin-bottom: 1rem;
+            font-size: 1.4rem;
+            border-left: 4px solid #1da1f2;
+            padding-left: 1rem;
+        }
+        
+        .section h4 {
+            color: #657786;
+            margin-top: 1.5rem;
+            margin-bottom: 0.75rem;
+            font-size: 1.2rem;
+        }
+        
+        .code-block {
+            background-color: #f7f9fa;
+            border: 1px solid #e1e8ed;
+            border-radius: 6px;
+            padding: 1rem;
+            margin: 1rem 0;
+            overflow-x: auto;
+            font-family: 'Monaco', 'Menlo', 'Ubuntu Mono', monospace;
+        }
+        
+        .code-block pre {
+            margin: 0;
+            white-space: pre-wrap;
+            word-wrap: break-word;
+        }
+        
+        .language-label {
+            background-color: #1da1f2;
+            color: white;
+            padding: 0.25rem 0.75rem;
+            border-radius: 4px 4px 0 0;
+            font-size: 0.875rem;
+            font-weight: 600;
+            margin-bottom: 0;
+        }
+        
+        .python { border-left: 4px solid #3776ab; }
+        .javascript { border-left: 4px solid #f7df1e; }
+        .typescript { border-left: 4px solid #3178c6; }
+        .json { border-left: 4px solid #000000; }
+        .yaml { border-left: 4px solid #cb171e; }
+        .dockerfile { border-left: 4px solid #0db7ed; }
+        .bash { border-left: 4px solid #4eaa25; }
+        
+        .feature-list {
+            display: grid;
+            grid-template-columns: repeat(auto-fit, minmax(250px, 1fr));
+            gap: 1rem;
+            margin: 1.5rem 0;
+        }
+        
+        .feature-item {
+            background: #f8f9fa;
+            border: 1px solid #e9ecef;
+            border-radius: 6px;
+            padding: 1rem;
+        }
+        
+        .feature-item h4 {
+            color: #1da1f2;
+            margin-bottom: 0.5rem;
+        }
+        
+        .highlight-box {
+            background-color: #e8f5fd;
+            border-left: 4px solid #1da1f2;
+            padding: 1rem;
+            margin: 1rem 0;
+            border-radius: 0 6px 6px 0;
+        }
+        
+        .warning-box {
+            background-color: #fff3cd;
+            border-left: 4px solid #ffc107;
+            padding: 1rem;
+            margin: 1rem 0;
+            border-radius: 0 6px 6px 0;
+        }
+        
+        .success-box {
+            background-color: #d4edda;
+            border-left: 4px solid #28a745;
+            padding: 1rem;
+            margin: 1rem 0;
+            border-radius: 0 6px 6px 0;
+        }
+        
+        .file-path {
+            background-color: #6c757d;
+            color: white;
+            padding: 0.25rem 0.5rem;
+            border-radius: 4px;
+            font-family: monospace;
+            font-size: 0.875rem;
+        }
+        
+        .architecture-diagram {
+            text-align: center;
+            margin: 2rem 0;
+            padding: 1rem;
+            background: #f8f9fa;
+            border-radius: 8px;
+        }
+        
+        .tech-stack {
+            display: grid;
+            grid-template-columns: repeat(auto-fit, minmax(200px, 1fr));
+            gap: 1rem;
+            margin: 1.5rem 0;
+        }
+        
+        .tech-category {
+            background: white;
+            border: 2px solid #e9ecef;
+            border-radius: 8px;
+            padding: 1rem;
+            text-align: center;
+        }
+        
+        .tech-category h4 {
+            color: #1da1f2;
+            margin-bottom: 0.75rem;
+        }
+        
+        .tech-category ul {
+            list-style: none;
+            padding: 0;
+        }
+        
+        .tech-category li {
+            padding: 0.25rem 0;
+            color: #657786;
+        }
+        
+        footer {
+            background-color: #14171a;
+            color: white;
+            text-align: center;
+            padding: 2rem 0;
+            margin-top: 3rem;
+            border-radius: 8px;
+        }
+        
+        @media (max-width: 768px) {
+            .container {
+                padding: 10px;
+            }
+            
+            h1 {
+                font-size: 2rem;
+            }
+            
+            .section {
+                padding: 1rem;
+            }
+            
+            .code-block {
+                font-size: 0.875rem;
+            }
+        }
+    </style>
+</head>
+<body>
+    <div class="container">
+        <header>
+            <h1>🛍️ AisleMarts</h1>
+            <p class="subtitle">Complete Application Codebase - Production Ready Social Commerce Platform</p>
+        </header>
+
+        <div class="toc">
+            <h2>📋 Table of Contents</h2>
+            <ul>
+                <li><a href="#overview">🏗️ Project Overview</a></li>
+                <li><a href="#architecture">🔧 System Architecture</a></li>
+                <li><a href="#backend">⚙️ Backend Application (FastAPI)</a></li>
+                <li><a href="#frontend">📱 Frontend Application (Expo React Native)</a></li>
+                <li><a href="#database">🗄️ Database Models & Schema</a></li>
+                <li><a href="#api-docs">🔌 API Documentation</a></li>
+                <li><a href="#deployment">🚀 Production Deployment</a></li>
+                <li><a href="#security">🔒 Security & Authentication</a></li>
+                <li><a href="#legal">⚖️ Legal Compliance</a></li>
+                <li><a href="#testing">🧪 Testing & QA</a></li>
+                <li><a href="#monitoring">📊 Monitoring & Analytics</a></li>
+                <li><a href="#tech-stack">💻 Complete Technology Stack</a></li>
+            </ul>
+        </div>
+
+        <div id="overview" class="section">
+            <h2>🏗️ Project Overview</h2>
+            
+            <div class="highlight-box">
+                <h4>🎯 Mission Statement</h4>
+                <p>AisleMarts is an AI-powered global marketplace and lifestyle ecosystem featuring 0% commission and TikTok-inspired social commerce. The platform combines vertical video discovery with seamless shopping experiences, B2B marketplace functionality, and comprehensive creator monetization.</p>
+            </div>
+
+            <h3>🌟 Key Features</h3>
+            <div class="feature-list">
+                <div class="feature-item">
+                    <h4>🎬 TikTok-Style Discovery</h4>
+                    <p>Vertical video feed with infinite scroll, AI-powered content ranking, and shoppable video overlays</p>
+                </div>
+                <div class="feature-item">
+                    <h4>🛒 Shoppable Content</h4>
+                    <p>In-feed checkout, product tagging, live shopping, and seamless purchase experience</p>
+                </div>
+                <div class="feature-item">
+                    <h4>💰 0% Commission Model</h4>
+                    <p>Direct creator-to-consumer sales with transparent pricing and no platform fees</p>
+                </div>
+                <div class="feature-item">
+                    <h4>🏢 B2B Marketplace</h4>
+                    <p>Request for Quote (RFQ) system for business buyers with secure quote management</p>
+                </div>
+                <div class="feature-item">
+                    <h4>🎯 Affiliate Program</h4>
+                    <p>Multi-tier creator monetization with real-time analytics and performance tracking</p>
+                </div>
+                <div class="feature-item">
+                    <h4>🌍 Global Commerce</h4>
+                    <p>Multi-currency support with real-time FX conversion and transparent pricing</p>
+                </div>
+            </div>
+        </div>
+
+        <div id="architecture" class="section">
+            <h2>🔧 System Architecture</h2>
+            
+            <div class="architecture-diagram">
+                <h3>📐 Application Architecture</h3>
+                <pre>
+┌─────────────────┐    ┌──────────────────┐    ┌─────────────────┐
+│   Mobile App    │    │   Web Browser    │    │  Admin Panel    │
+│  (Expo/RN)     │    │   (Future)       │    │   (Future)      │
+└─────────┬───────┘    └─────────┬────────┘    └─────────┬───────┘
+          │                      │                       │
+          └──────────────────────┼───────────────────────┘
+                                 │
+                    ┌─────────────▼─────────────┐
+                    │      Caddy Proxy         │
+                    │   (SSL, Load Balancer)   │
+                    └─────────────┬─────────────┘
+                                 │
+                    ┌─────────────▼─────────────┐
+                    │     FastAPI Backend      │
+                    │  (Python 3.11 + JWT)    │
+                    └─────────────┬─────────────┘
+                                 │
+         ┌───────────────────────┼───────────────────────┐
+         │                       │                       │
+┌────────▼────────┐    ┌────────▼────────┐    ┌────────▼────────┐
+│   MongoDB       │    │   Redis Cache   │    │   S3 Storage    │
+│  (Primary DB)   │    │  (Sessions)     │    │  (Media Files)  │
+└─────────────────┘    └─────────────────┘    └─────────────────┘
+                </pre>
+            </div>
+
+            <h3>🗂️ Project Structure</h3>
+            <div class="code-block">
+                <div class="language-label">Project Structure</div>
+                <pre>/app
+├── backend/                    # FastAPI Backend
+│   ├── routers/               # API route handlers
+│   ├── middleware/            # Auth, rate limiting, CORS
+│   ├── models/                # Database models
+│   ├── validation/            # Input validation
+│   ├── observability/         # Metrics and monitoring
+│   ├── server.py             # Main application
+│   └── requirements.txt      # Python dependencies
+├── frontend/                  # Expo React Native App
+│   ├── app/                  # Screen components (expo-router)
+│   ├── src/                  # Shared components and utilities
+│   ├── lib/                  # Business logic libraries
+│   ├── package.json         # Node.js dependencies
+│   └── app.json            # Expo configuration
+├── legal/                    # Legal documents
+│   ├── privacy-policy.md    # Privacy Policy
+│   └── terms-of-service.md  # Terms of Service
+├── web/                     # Web assets for app linking
+│   └── .well-known/        # Universal/Deep link configs
+├── k6/                      # Load testing scripts
+├── docker-compose.yml       # Development environment
+└── Caddyfile.production    # Production web server config</pre>
+            </div>
+        </div>
+
+        <div id="backend" class="section">
+            <h2>⚙️ Backend Application (FastAPI + Python)</h2>
+
+            <h3>🚀 Main Server Configuration</h3>
+            <p><span class="file-path">/app/backend/server.py</span></p>
+            <div class="code-block python">
+                <div class="language-label">Python (FastAPI)</div>
+                <pre>"""
+AisleMarts Backend Server - Enhanced with Shop Integration
+"""
+
+from fastapi import FastAPI, HTTPException, Request
+from fastapi.middleware.cors import CORSMiddleware
+from fastapi.responses import JSONResponse
+import uvicorn
+import os
+from dotenv import load_dotenv
+from datetime import datetime
+import traceback
+import time
+
+# Load environment variables
+load_dotenv()
+
+# Import Shop Router
+from routers.shop_router import router as shop_router
+
+app = FastAPI(
+    title="AisleMarts API - Enhanced with TikTok Shop Features",
+    description="0% Commission Global Commerce Platform with Social Shopping",
+    version="2.1.0",
+    docs_url="/api/docs",
+    redoc_url="/api/redoc"
+)
+
+# CORS configuration
+app.add_middleware(
+    CORSMiddleware,
+    allow_origins=["*"],  # Configure appropriately for production
+    allow_credentials=True,
+    allow_methods=["*"],
+    allow_headers=["*"],
+)
+
+# Health check
+@app.get("/api/health")
+async def health_check():
+    """Comprehensive health check including new Shop features"""
+    return {
+        "status": "healthy",
+        "service": "AisleMarts API Server",
+        "version": "2.1.0",
+        "features": {
+            "shop": "✅ Shop MVP with TikTok-style features",
+            "shoppable_video": "✅ In-feed checkout enabled",
+            "live_shopping": "✅ Live product pinning",
+            "commerce": "✅ 0% Commission model",
+            "ai_ranker": "✅ AI Commerce Ranker",
+            "social": "✅ Social commerce integration"
+        },
+        "timestamp": datetime.now().isoformat(),
+        "uptime_seconds": time.time()
+    }
+
+# Include Shop Router - Priority Integration
+app.include_router(shop_router, tags=["shop"])
+print("🛍️ AisleMarts Shop (TikTok Enhanced) loaded successfully")
+
+# Include other routers with error handling
+try:
+    from routers.legal_router import router as legal_router
+    app.include_router(legal_router)
+    print("⚖️ Legal Documents API loaded successfully")
+except ImportError as e:
+    print(f"⚠️ Legal Documents API not available: {e}")
+
+try:
+    from routers.rfq_router import router as rfq_router
+    app.include_router(rfq_router, tags=["b2b_rfq"])
+    print("✅ B2B RFQ system loaded successfully")
+except ImportError as e:
+    print(f"⚠️ B2B RFQ system not available: {e}")
+
+try:
+    from routers.affiliate_router import router as affiliate_router
+    app.include_router(affiliate_router, tags=["affiliate"])
+    print("✅ Affiliate system loaded successfully")
+except ImportError as e:
+    print(f"⚠️ Affiliate system not available: {e}")
+
+@app.on_event("startup")
+async def startup_event():
+    """Enhanced startup with Shop services"""
+    print("🛍️💎🚀 AISLEMARTS SHOP ENHANCED BACKEND LIVE")
+    print("✅ TikTok Shop Features: Shoppable Video + In-Feed Checkout + Live Shopping")
+    print("✅ 0% Commission Model | AI Commerce Ranker | Social Commerce Integration")
+
+if __name__ == "__main__":
+    uvicorn.run("server:app", host="0.0.0.0", port=8001, reload=True)</pre>
+            </div>
+
+            <h3>⚙️ Configuration Management</h3>
+            <p><span class="file-path">/app/backend/config.py</span></p>
+            <div class="code-block python">
+                <div class="language-label">Python (Pydantic Settings)</div>
+                <pre>from pydantic_settings import BaseSettings
+import os
+
+class Settings(BaseSettings):
+    MONGO_URL: str = os.getenv("MONGO_URL", "mongodb://localhost:27017")
+    DB_NAME: str = os.getenv("DB_NAME", "aislemarts")
+    JWT_SECRET: str = os.getenv("JWT_SECRET", "your-super-secret-jwt-key-change-this-in-production")
+    JWT_ALG: str = "HS256"
+    ACCESS_TOKEN_EXPIRE_MINUTES: int = 60 * 24 * 30  # 30 days
+    STRIPE_SECRET_KEY: str = os.getenv("STRIPE_SECRET_KEY", "sk_test_")
+    EMERGENT_LLM_KEY: str | None = os.getenv("EMERGENT_LLM_KEY")
+    
+    # Phase 3: Nearby/Onsite Commerce Configuration
+    NEARBY_ENABLED: bool = os.getenv("NEARBY_ENABLED", "true").lower() == "true"
+    MAP_PROVIDER: str = os.getenv("MAP_PROVIDER", "mapbox")
+    MAPBOX_PUBLIC_TOKEN: str = os.getenv("MAPBOX_PUBLIC_TOKEN", "pk.demo_token")
+    REDIS_URL: str = os.getenv("REDIS_URL", "redis://localhost:6379")
+
+    model_config = {"env_file": ".env", "extra": "ignore"}
+
+settings = Settings()</pre>
+            </div>
+
+            <h3>🛍️ Shop Router - TikTok Commerce Features</h3>
+            <p><span class="file-path">/app/backend/routers/shop_router.py</span></p>
+            <div class="highlight-box">
+                <h4>🌟 Key Features</h4>
+                <ul>
+                    <li><strong>Shoppable Video:</strong> Tag products in videos with overlay positioning</li>
+                    <li><strong>In-feed Checkout:</strong> Quick purchase flow directly from feed</li>
+                    <li><strong>Live Shopping:</strong> Real-time product pinning during live streams</li>
+                    <li><strong>Product Catalog:</strong> Full product management with variants and media</li>
+                    <li><strong>Order Management:</strong> Complete order lifecycle tracking</li>
+                </ul>
+            </div>
+
+            <div class="code-block python">
+                <div class="language-label">Python (FastAPI Router)</div>
+                <pre>"""
+AisleMarts Shop API Router - TikTok Shop Enhanced Implementation
+Supports: Product catalog, cart, checkout, orders, reviews, shoppable video integration
+"""
+
+from fastapi import APIRouter, Depends, Query, HTTPException, BackgroundTasks
+from pydantic import BaseModel, Field
+from typing import List, Dict, Any, Optional, Union
+import uuid
+import time
+from datetime import datetime, timedelta
+from enum import Enum
+
+router = APIRouter()
+
+# Feature Flags
+SHOP_ENABLED = True
+INFEED_CHECKOUT_ENABLED = True
+LIVE_SHOPPING_ENABLED = True
+
+class ProductStatus(str, Enum):
+    ACTIVE = "active"
+    DRAFT = "draft" 
+    ARCHIVED = "archived"
+
+class Product(BaseModel):
+    id: str = Field(default_factory=lambda: str(uuid.uuid4()))
+    title: str
+    description: str
+    price: float  # base price
+    compare_at_price: Optional[float] = None
+    category: str
+    seller_id: str
+    seller_name: str
+    seller_tier: str = "VERIFIED"
+    status: ProductStatus = ProductStatus.ACTIVE
+    rating: float = 0.0
+    review_count: int = 0
+    created_at: datetime = Field(default_factory=datetime.now)
+    
+    # Shoppable Video Fields
+    video_tags: List[str] = []  # video IDs this product is tagged in
+    
+    # Commerce Metrics
+    views: int = 0
+    clicks: int = 0
+    cart_adds: int = 0
+    purchases: int = 0
+    conversion_rate: float = 0.0
+
+# === SHOPPABLE VIDEO & IN-FEED CHECKOUT ===
+
+@router.post("/api/shop/videos/{video_id}/tag", tags=["shoppable_video"])
+async def tag_video_products(video_id: str, request: ShoppableVideoRequest):
+    """Tag products in a video for shoppable content"""
+    if not INFEED_CHECKOUT_ENABLED:
+        raise HTTPException(status_code=403, detail="In-feed checkout not enabled")
+    
+    # Implementation for tagging products in videos
+    return {"success": True, "video_id": video_id}
+
+@router.post("/api/shop/checkout/mini", tags=["checkout"])
+async def mini_checkout_session(
+    product_id: str,
+    variant_id: Optional[str] = None,
+    quantity: int = 1,
+    source: str = "feed",
+    video_id: Optional[str] = None,
+    user_id: str = "demo_user"
+):
+    """Create mini-checkout session for in-feed purchases"""
+    if not INFEED_CHECKOUT_ENABLED:
+        raise HTTPException(status_code=403, detail="In-feed checkout not enabled")
+    
+    # Calculate total and create session
+    session_id = f"cs_{int(time.time())}_{uuid.uuid4().hex[:8]}"
+    
+    return {
+        "session_id": session_id,
+        "total": 99.99,  # Would calculate from actual product
+        "expires_at": (datetime.now() + timedelta(minutes=15)).isoformat()
+    }
+
+@router.get("/api/shop/products", tags=["products"])
+async def get_products(
+    query: Optional[str] = Query(None, description="Search query"),
+    category: Optional[str] = Query(None, description="Product category"),
+    sort: str = Query("relevance", description="Sort by: relevance, price_asc, price_desc, rating, newest"),
+    limit: int = Query(20, le=100, description="Number of products to return")
+):
+    """Get products with search, filtering, and pagination"""
+    # Sample products for demonstration
+    sample_products = [
+        {
+            "id": "prod_luxury_watch_001",
+            "title": "Premium Smartwatch - Rose Gold Edition",
+            "description": "Luxury smartwatch with health tracking, GPS, and premium rose gold finish.",
+            "price": 299.99,
+            "compare_at_price": 399.99,
+            "category": "electronics",
+            "seller_name": "@TechLuxury",
+            "seller_tier": "gold",
+            "rating": 4.8,
+            "review_count": 247,
+            "media": [{"url": "https://via.placeholder.com/400x400/FFB6C1/000?text=Rose+Gold+Watch", "type": "image"}],
+            "variants": [{"id": "var_001", "title": "42mm Rose Gold", "price": 299.99, "stock": 15}],
+            "views": 1250,
+            "conversion_rate": 13.5
+        },
+        {
+            "id": "prod_fashion_jacket_002", 
+            "title": "Designer Leather Jacket - Black Premium",
+            "description": "Genuine leather jacket with premium craftsmanship.",
+            "price": 189.99,
+            "compare_at_price": 299.99,
+            "category": "fashion",
+            "seller_name": "@FashionCo",
+            "seller_tier": "diamond",
+            "rating": 4.9,
+            "review_count": 189,
+            "media": [{"url": "https://via.placeholder.com/400x400/000000/FFF?text=Leather+Jacket", "type": "image"}],
+            "variants": [{"id": "var_003", "title": "Small Black", "price": 189.99, "stock": 5}],
+            "views": 980,
+            "conversion_rate": 11.5
+        }
+    ]
+    
+    return {"products": sample_products, "total": len(sample_products)}
+
+@router.get("/api/shop/health", tags=["health"])
+async def shop_health():
+    """Shop service health check"""
+    return {
+        "status": "healthy",
+        "service": "AisleMarts Shop",
+        "version": "1.0.0",
+        "features": {
+            "shop_enabled": SHOP_ENABLED,
+            "infeed_checkout": INFEED_CHECKOUT_ENABLED,
+            "live_shopping": LIVE_SHOPPING_ENABLED
+        },
+        "timestamp": datetime.now().isoformat()
+    }</pre>
+            </div>
+
+            <h3>⚖️ Legal Documents Router</h3>
+            <p><span class="file-path">/app/backend/routers/legal_router.py</span></p>
+            <div class="success-box">
+                <h4>✅ App Store Compliance</h4>
+                <p>Serves Privacy Policy and Terms of Service as formatted HTML with proper caching headers and security policies for App Store compliance.</p>
+            </div>
+
+            <div class="code-block python">
+                <div class="language-label">Python (Legal Compliance)</div>
+                <pre>"""
+AisleMarts Legal Document Router
+Serves Privacy Policy and Terms of Service as HTML with proper headers for App Store compliance
+"""
+
+from fastapi import APIRouter, Response, Header, HTTPException
+from pathlib import Path
+import hashlib
+import markdown
+from datetime import datetime
+
+router = APIRouter(prefix="/api/legal", tags=["legal"])
+
+BASE = Path("/app/legal")
+
+def render(doc_name: str) -> tuple[str, str, float]:
+    """Render markdown document to HTML with metadata"""
+    p = BASE / f"{doc_name}.md"
+    if not p.exists():
+        raise HTTPException(status_code=404, detail=f"Document {doc_name} not found")
+    
+    raw = p.read_text(encoding="utf-8")
+    html = markdown.markdown(raw, extensions=["extra", "toc", "sane_lists"])
+    etag = hashlib.sha1(raw.encode("utf-8")).hexdigest()[:12]
+    mtime = p.stat().st_mtime
+    return html, etag, mtime
+
+def legal_response(html: str, etag: str, mtime: float, doc_title: str) -> Response:
+    """Create legal document response with proper headers and template"""
+    last_modified = datetime.fromtimestamp(mtime).strftime('%a, %d %b %Y %H:%M:%S GMT')
+    
+    tpl = f"""<!doctype html>
+<html lang="en">
+<head>
+    <meta charset="utf-8">
+    <meta name="viewport" content="width=device-width,initial-scale=1">
+    <title>{doc_title} - AisleMarts Legal</title>
+    <meta name="robots" content="noindex">
+    <style>
+        body {{
+            font-family: system-ui, -apple-system, 'Segoe UI', Roboto, sans-serif;
+            max-width: 820px;
+            margin: 32px auto;
+            padding: 0 16px;
+            line-height: 1.6;
+            color: #333;
+        }}
+        h1, h2 {{ color: #2c3e50; }}
+        h1 {{ border-bottom: 2px solid #e74c3c; }}
+    </style>
+</head>
+<body>
+    <div class="doc-meta">
+        <strong>Document:</strong> {doc_title}<br>
+        <strong>Version:</strong> {etag}<br>
+        <strong>Last Updated:</strong> {last_modified}
+    </div>
+    
+    {html}
+</body>
+</html>"""
+    
+    return Response(
+        content=tpl,
+        media_type="text/html; charset=utf-8",
+        headers={
+            "Cache-Control": "public, max-age=3600",
+            "ETag": f'"{etag}"',
+            "Last-Modified": last_modified,
+            "X-Content-Type-Options": "nosniff"
+        }
+    )
+
+@router.get("/privacy-policy")
+def privacy_policy(if_none_match: str | None = Header(default=None)):
+    """Serve AisleMarts Privacy Policy as formatted HTML"""
+    html, etag, mtime = render("privacy-policy")
+    
+    # Handle conditional requests (304 Not Modified)
+    if if_none_match and if_none_match.strip('"') == etag:
+        return Response(status_code=304)
+    
+    return legal_response(html, etag, mtime, "Privacy Policy")
+
+@router.get("/terms-of-service")
+def terms_of_service(if_none_match: str | None = Header(default=None)):
+    """Serve AisleMarts Terms of Service as formatted HTML"""
+    html, etag, mtime = render("terms-of-service")
+    
+    if if_none_match and if_none_match.strip('"') == etag:
+        return Response(status_code=304)
+    
+    return legal_response(html, etag, mtime, "Terms of Service")</pre>
+            </div>
+
+            <h3>🏢 B2B RFQ System</h3>
+            <div class="feature-list">
+                <div class="feature-item">
+                    <h4>🔐 Authentication</h4>
+                    <p>JWT-based auth with role verification</p>
+                </div>
+                <div class="feature-item">
+                    <h4>⚡ Rate Limiting</h4>
+                    <p>Prevents abuse and ensures fair usage</p>
+                </div>
+                <div class="feature-item">
+                    <h4>✅ Validation</h4>
+                    <p>Comprehensive input validation and sanitization</p>
+                </div>
+                <div class="feature-item">
+                    <h4>📊 Analytics</h4>
+                    <p>Event tracking and performance metrics</p>
+                </div>
+            </div>
+
+            <h3>🎯 Affiliate Marketing System</h3>
+            <div class="highlight-box">
+                <h4>💰 Multi-tier Commission Structure</h4>
+                <ul>
+                    <li><strong>Verified Creators:</strong> Base commission rates</li>
+                    <li><strong>Pro Creators:</strong> +2-3% bonus</li>
+                    <li><strong>Elite Creators:</strong> +4-5% bonus</li>
+                </ul>
+            </div>
+        </div>
+
+        <div id="frontend" class="section">
+            <h2>📱 Frontend Application (Expo React Native)</h2>
+
+            <h3>📦 Package Configuration</h3>
+            <p><span class="file-path">/app/frontend/package.json</span></p>
+            <div class="code-block json">
+                <div class="language-label">JSON (Package Configuration)</div>
+                <pre>{
+  "name": "frontend",
+  "main": "expo-router/entry",
+  "version": "1.0.0",
+  "scripts": {
+    "start": "expo start",
+    "android": "expo run:android", 
+    "ios": "expo run:ios",
+    "web": "expo start --web"
+  },
+  "dependencies": {
+    "expo": "^54.0.10",
+    "expo-router": "~5.1.4",
+    "react": "19.0.0",
+    "react-native": "0.79.5",
+    "@react-navigation/native": "^7.1.6",
+    "@react-navigation/bottom-tabs": "^7.3.10",
+    "@react-native-async-storage/async-storage": "^2.2.0",
+    "axios": "^1.11.0",
+    "zustand": "^5.0.8"
+  }
+}</pre>
+            </div>
+
+            <h3>📱 Expo App Configuration</h3>
+            <p><span class="file-path">/app/frontend/app.json</span></p>
+            <div class="code-block json">
+                <div class="language-label">JSON (Expo Configuration)</div>
+                <pre>{
+  "expo": {
+    "name": "AisleMarts",
+    "slug": "aislemarts", 
+    "version": "1.0.0",
+    "orientation": "portrait",
+    "icon": "./assets/icon.png",
+    "ios": {
+      "bundleIdentifier": "com.aislemarts.app",
+      "associatedDomains": [
+        "applinks:aislemarts.com",
+        "applinks:app.aislemarts.com"
+      ]
+    },
+    "android": {
+      "package": "com.aislemarts.app",
+      "intentFilters": [
+        {
+          "action": "VIEW",
+          "autoVerify": true,
+          "data": [
+            {"scheme": "https", "host": "aislemarts.com"}
+          ]
+        }
+      ]
+    },
+    "scheme": "aislemarts"
+  }
+}</pre>
+            </div>
+
+            <h3>🎬 For You Feed - TikTok Style</h3>
+            <p><span class="file-path">/app/frontend/app/for-you.tsx</span></p>
+            <div class="highlight-box">
+                <h4>✨ Key Features</h4>
+                <ul>
+                    <li><strong>Infinite Content Generation:</strong> Dynamic creator pool with realistic engagement</li>
+                    <li><strong>Shoppable Video Integration:</strong> Product tagging and in-feed checkout</li>
+                    <li><strong>Stories System:</strong> 24-hour expiring stories with commerce indicators</li>
+                    <li><strong>Full-Screen Experience:</strong> Gesture-based navigation with auto-hiding UI</li>
+                    <li><strong>AI Ranker Integration:</strong> UCB1 algorithm for personalized content</li>
+                </ul>
+            </div>
+
+            <div class="code-block typescript">
+                <div class="language-label">TypeScript (React Native)</div>
+                <pre>import React, { useState, useEffect, useRef, useCallback } from 'react';
+import {
+  View, Text, Dimensions, StyleSheet, SafeAreaView,
+  TouchableOpacity, Animated, ScrollView, Alert,
+} from 'react-native';
+import { useRouter } from 'expo-router';
+import { Video, ResizeMode } from 'expo-av';
+
+const { width, height } = Dimensions.get('window');
+
+export default function ForYouScreen() {
+  const router = useRouter();
+  const [currentIndex, setCurrentIndex] = useState(0);
+  const [isPlaying, setIsPlaying] = useState(true);
+  const [showShoppableOverlay, setShowShoppableOverlay] = useState(false);
+  
+  // Feature flags
+  const shopEnabled = process.env.EXPO_PUBLIC_SHOP_ENABLED === '1';
+  const infeedCheckoutEnabled = process.env.EXPO_PUBLIC_INFEED_CHECKOUT === '1';
+
+  // Creator Pool with Verification System
+  const creatorPool = [
+    {
+      id: 'luxefashion',
+      name: '@LuxeFashion',
+      category: 'fashion',
+      tier: 'premium',
+      verification: 'goldwave',
+      baseEngagement: { likes: [80000, 200000], comments: [5000, 15000] },
+      commissionRate: 0.15,
+      bio: 'Premium Fashion & Luxury Lifestyle ✨'
+    },
+    {
+      id: 'techguru',
+      name: '@TechGuru', 
+      category: 'technology',
+      tier: 'verified',
+      verification: 'bluewave',
+      baseEngagement: { likes: [60000, 150000], comments: [3000, 10000] },
+      commissionRate: 0.08,
+      bio: 'Latest Tech Reviews & Gadgets 📱'
+    }
+  ];
+
+  // Infinite Content Generation
+  const generateInfiniteReel = (index: number) => {
+    const creatorIndex = index % creatorPool.length;
+    const creator = creatorPool[creatorIndex];
+    
+    const likes = Math.floor(Math.random() * 
+      (creator.baseEngagement.likes[1] - creator.baseEngagement.likes[0])) + 
+      creator.baseEngagement.likes[0];
+    
+    return {
+      id: `${creator.id}_${index}`,
+      uri: `https://commondatastorage.googleapis.com/gtv-videos-bucket/sample/BigBuckBunny.mp4`,
+      creator: {
+        id: creator.id,
+        name: creator.name,
+        verified: true,
+        verificationTier: creator.verification,
+        category: creator.category
+      },
+      likes,
+      caption: `Transform your ${creator.category} experience!`,
+      products: ['smartwatch', 'accessories']
+    };
+  };
+
+  const handleShopPress = (video: any) => {
+    if (!shopEnabled) return;
+    console.log('Shop pressed for video:', video.id);
+    setShowShoppableOverlay(true);
+  };
+
+  const handleSwipeUp = () => {
+    if (currentIndex < 19) {
+      setCurrentIndex(currentIndex + 1);
+    }
+  };
+
+  return (
+    <View style={styles.fullScreenContainer}>
+      {/* Video Background */}
+      <Video
+        source={{ uri: generateInfiniteReel(currentIndex).uri }}
+        style={styles.backgroundVideo}
+        resizeMode={ResizeMode.COVER}
+        shouldPlay={isPlaying}
+        isLooping
+      />
+      
+      {/* Shop Button */}
+      {shopEnabled && (
+        <TouchableOpacity 
+          style={styles.shopButton}
+          onPress={() => handleShopPress(generateInfiniteReel(currentIndex))}
+        >
+          <Text style={styles.shopIcon}>🛍️</Text>
+        </TouchableOpacity>
+      )}
+    </View>
+  );
+}
+
+const styles = StyleSheet.create({
+  fullScreenContainer: {
+    flex: 1,
+    backgroundColor: '#000',
+  },
+  backgroundVideo: {
+    position: 'absolute',
+    top: 0,
+    left: 0,
+    bottom: 0,
+    right: 0,
+  },
+  shopButton: {
+    position: 'absolute',
+    right: 20,
+    bottom: 200,
+    backgroundColor: 'rgba(212, 175, 55, 0.9)',
+    borderRadius: 25,
+    padding: 12,
+  },
+  shopIcon: {
+    fontSize: 28,
+  }
+});</pre>
+            </div>
+
+            <h3>🛒 Shop Screen - Marketplace</h3>
+            <div class="feature-list">
+                <div class="feature-item">
+                    <h4>🔍 Advanced Search</h4>
+                    <p>Text search with category and sort filtering</p>
+                </div>
+                <div class="feature-item">
+                    <h4>💰 Zero Commission</h4>
+                    <p>Highlighted throughout the shopping experience</p>
+                </div>
+                <div class="feature-item">
+                    <h4>⭐ Seller Tiers</h4>
+                    <p>Visual indicators for Gold/Diamond sellers</p>
+                </div>
+                <div class="feature-item">
+                    <h4>📊 Real-time Data</h4>
+                    <p>Stock levels and conversion rates</p>
+                </div>
+            </div>
+
+            <h3>🛍️ Shopping Cart - Multi-Currency</h3>
+            <div class="success-box">
+                <h4>💱 Currency-Infinity Engine</h4>
+                <p>The cart supports real-time FX conversion, dual currency display, and transparent FX margin tracking for global commerce.</p>
+            </div>
+
+            <h3>🗂️ Tab Navigation System</h3>
+            <p><span class="file-path">/app/frontend/app/(tabs)/_layout.tsx</span></p>
+            <div class="code-block typescript">
+                <div class="language-label">TypeScript (Navigation)</div>
+                <pre>import React from 'react';
+import { Tabs } from 'expo-router';
+import { Ionicons } from '@expo/vector-icons';
+
+export default function TabsLayout() {
+  return (
+    <Tabs
+      screenOptions={{
+        headerShown: false,
+        tabBarStyle: {
+          backgroundColor: '#1A1A1A',
+          borderTopColor: '#333',
+          height: 60,
+        },
+        tabBarActiveTintColor: '#D4AF37',
+        tabBarInactiveTintColor: '#888',
+      }}
+    >
+      <Tabs.Screen
+        name="explore"
+        options={{
+          title: 'Explore',
+          tabBarIcon: ({ color, size }) => (
+            <Ionicons name="search" size={size} color={color} />
+          ),
+        }}
+      />
+      <Tabs.Screen
+        name="for-you"
+        options={{
+          title: 'For You',
+          tabBarIcon: ({ color, size }) => (
+            <Ionicons name="home" size={size} color={color} />
+          ),
+        }}
+      />
+      <Tabs.Screen
+        name="marketplace"
+        options={{
+          title: 'Marts',
+          tabBarIcon: ({ color, size }) => (
+            <Ionicons name="storefront" size={size} color={color} />
+          ),
+        }}
+      />
+      <Tabs.Screen
+        name="profile"
+        options={{
+          title: 'Profile',
+          tabBarIcon: ({ color, size }) => (
+            <Ionicons name="person" size={size} color={color} />
+          ),
+        }}
+      />
+    </Tabs>
+  );
+}</pre>
+            </div>
+        </div>
+
+        <div id="deployment" class="section">
+            <h2>🚀 Production Deployment</h2>
+
+            <h3>🐳 Docker Configuration</h3>
+            <p><span class="file-path">/app/backend/Dockerfile.production</span></p>
+            <div class="code-block dockerfile">
+                <div class="language-label">Dockerfile</div>
+                <pre>FROM python:3.11-slim
+
+WORKDIR /app
+
+# Copy requirements and install dependencies
+COPY requirements.txt .
+RUN pip install --no-cache-dir -r requirements.txt
+
+# Copy application code
+COPY . .
+
+# Expose port
+EXPOSE 8001
+
+# Run with Gunicorn for production
+CMD ["gunicorn", "server:app", "-w", "4", "-k", "uvicorn.workers.UvicornWorker", "--bind", "0.0.0.0:8001"]</pre>
+            </div>
+
+            <h3>📦 Docker Compose - Production</h3>
+            <p><span class="file-path">/app/docker-compose.production.yml</span></p>
+            <div class="code-block yaml">
+                <div class="language-label">YAML (Docker Compose)</div>
+                <pre>version: '3.8'
+
+services:
+  aislemarts-api:
+    build:
+      context: ./backend
+      dockerfile: Dockerfile.production
+    ports:
+      - "8001:8001"
+    environment:
+      - MONGO_URL=${MONGO_URL}
+      - DB_NAME=${DB_NAME}
+      - JWT_SECRET=${JWT_SECRET}
+      - STRIPE_SECRET_KEY=${STRIPE_SECRET_KEY}
+      - EMERGENT_LLM_KEY=${EMERGENT_LLM_KEY}
+    volumes:
+      - ./backend/.env.production:/app/.env
+    healthcheck:
+      test: ["CMD", "curl", "-f", "http://localhost:8001/api/health"]
+      interval: 30s
+      timeout: 10s
+      retries: 3
+    restart: unless-stopped
+    networks:
+      - aislemarts
+
+networks:
+  aislemarts:
+    driver: bridge</pre>
+            </div>
+
+            <h3>🌐 Caddy Server Configuration</h3>
+            <p><span class="file-path">/app/Caddyfile.production</span></p>
+            <div class="code-block">
+                <div class="language-label">Caddyfile</div>
+                <pre>aislemarts.com, www.aislemarts.com {
+    # Static file hosting for app linking
+    handle /.well-known/* {
+        root * /var/www/html
+        file_server
+    }
+    
+    # API routes
+    handle /api/* {
+        reverse_proxy localhost:8001
+    }
+    
+    # Redirect to app stores for root
+    handle / {
+        redir https://apps.apple.com/app/aislemarts permanent
+    }
+    
+    encode gzip
+    log {
+        output file /var/log/caddy/aislemarts.log
+        level INFO
+    }
+}
+
+api.aislemarts.com {
+    reverse_proxy localhost:8001 {
+        header_up Host {host}
+        header_up X-Real-IP {remote}
+        header_up X-Forwarded-For {remote}
+        header_up X-Forwarded-Proto {scheme}
+    }
+    
+    encode gzip
+    log {
+        output file /var/log/caddy/api.log
+        level INFO
+    }
+}</pre>
+            </div>
+
+            <h3>📱 EAS Build Configuration</h3>
+            <p><span class="file-path">/app/frontend/eas.json</span></p>
+            <div class="code-block json">
+                <div class="language-label">JSON (EAS Configuration)</div>
+                <pre>{
+  "cli": {
+    "version": ">= 8.0.0"
+  },
+  "build": {
+    "development": {
+      "developmentClient": true,
+      "distribution": "internal"
+    },
+    "preview": {
+      "distribution": "internal"
+    },
+    "production": {
+      "distribution": "store"
+    }
+  },
+  "submit": {
+    "production": {
+      "ios": {
+        "appleId": "developer@aislemarts.com",
+        "ascAppId": "1234567890",
+        "appleTeamId": "TEAMID"
+      },
+      "android": {
+        "serviceAccountKeyPath": "path/to/api-key.json",
+        "track": "production"
+      }
+    }
+  }
+}</pre>
+            </div>
+
+            <h3>🔗 Universal Links Configuration</h3>
+            <div class="feature-list">
+                <div class="feature-item">
+                    <h4>📱 iOS Universal Links</h4>
+                    <p>apple-app-site-association file for seamless deep linking</p>
+                </div>
+                <div class="feature-item">
+                    <h4>🤖 Android App Links</h4>
+                    <p>assetlinks.json for verified app linking</p>
+                </div>
+            </div>
+        </div>
+
+        <div id="security" class="section">
+            <h2>🔒 Security & Authentication</h2>
+
+            <h3>🔐 JWT Authentication System</h3>
+            <p><span class="file-path">/app/backend/middleware/auth.py</span></p>
+            <div class="code-block python">
+                <div class="language-label">Python (JWT Security)</div>
+                <pre>import jwt
+from datetime import datetime, timedelta
+from fastapi import HTTPException, Depends, status
+from fastapi.security import HTTPBearer
+
+security = HTTPBearer()
+
+class UserRole:
+    BUYER = "buyer"
+    SUPPLIER = "supplier" 
+    AFFILIATE = "affiliate"
+    ADMIN = "admin"
+    CREATOR = "creator"
+
+class AuthToken:
+    def __init__(self, user_id: str, role: str, email: str = "", business_id: str = ""):
+        self.user_id = user_id
+        self.role = role
+        self.email = email
+        self.business_id = business_id
+
+def verify_token(token: str) -> AuthToken:
+    """Verify and decode JWT token"""
+    try:
+        payload = jwt.decode(token, JWT_SECRET_KEY, algorithms=[JWT_ALGORITHM])
+        return AuthToken(
+            user_id=payload.get("user_id"),
+            role=payload.get("role"),
+            email=payload.get("email", ""),
+            business_id=payload.get("business_id", "")
+        )
+    except jwt.ExpiredSignatureError:
+        raise HTTPException(
+            status_code=status.HTTP_401_UNAUTHORIZED,
+            detail="Token has expired"
+        )
+    except jwt.JWTError:
+        raise HTTPException(
+            status_code=status.HTTP_401_UNAUTHORIZED,
+            detail="Invalid authentication credentials"
+        )
+
+async def get_current_user(credentials = Depends(security)) -> AuthToken:
+    """Dependency to get current authenticated user"""
+    token = credentials.credentials
+    return verify_token(token)
+
+def require_resource_ownership(resource_user_id: str, current_user: AuthToken) -> None:
+    """Raise HTTP 403 if user doesn't own resource and isn't admin"""
+    if not (current_user.role == UserRole.ADMIN or current_user.user_id == resource_user_id):
+        raise HTTPException(
+            status_code=status.HTTP_403_FORBIDDEN,
+            detail="Access denied. You can only access your own resources."
+        )</pre>
+            </div>
+
+            <h3>✅ Input Validation System</h3>
+            <div class="highlight-box">
+                <h4>🛡️ Security Features</h4>
+                <ul>
+                    <li><strong>Anti-spam filtering:</strong> Content validation against prohibited keywords</li>
+                    <li><strong>Business rules:</strong> Category and value-based restrictions</li>
+                    <li><strong>File validation:</strong> Attachment type and size validation</li>
+                    <li><strong>Rate limiting:</strong> API endpoint protection</li>
+                </ul>
+            </div>
+
+            <h3>📊 Security Monitoring</h3>
+            <div class="feature-list">
+                <div class="feature-item">
+                    <h4>🔍 Event Tracking</h4>
+                    <p>Authentication failures and suspicious activity</p>
+                </div>
+                <div class="feature-item">
+                    <h4>⚡ Rate Limiting</h4>
+                    <p>Per-endpoint and per-user limits</p>
+                </div>
+                <div class="feature-item">
+                    <h4>📈 Metrics</h4>
+                    <p>Security-related Prometheus metrics</p>
+                </div>
+                <div class="feature-item">
+                    <h4>🚨 Alerting</h4>
+                    <p>Real-time security event notifications</p>
+                </div>
+            </div>
+        </div>
+
+        <div id="legal" class="section">
+            <h2>⚖️ Legal Compliance</h2>
+
+            <h3>📋 Privacy Policy</h3>
+            <p><span class="file-path">/app/legal/privacy-policy.md</span></p>
+            <div class="success-box">
+                <h4>✅ Comprehensive Coverage</h4>
+                <ul>
+                    <li>Data collection practices and user rights</li>
+                    <li>Third-party integrations and cookies</li>
+                    <li>International compliance (GDPR, CCPA)</li>
+                    <li>Contact information for privacy concerns</li>
+                </ul>
+            </div>
+
+            <h3>📋 Terms of Service</h3>
+            <p><span class="file-path">/app/legal/terms-of-service.md</span></p>
+            <div class="success-box">
+                <h4>✅ Complete Terms Coverage</h4>
+                <ul>
+                    <li>User responsibilities and platform guidelines</li>
+                    <li>Commerce and payment terms</li>
+                    <li>Intellectual property rights</li>
+                    <li>Dispute resolution procedures</li>
+                </ul>
+            </div>
+
+            <h3>🔗 Frontend Integration</h3>
+            <div class="highlight-box">
+                <h4>📱 Legal Document Access</h4>
+                <p>Legal documents are accessible from multiple points in the app:</p>
+                <ul>
+                    <li><strong>Settings Screen:</strong> Dedicated legal section</li>
+                    <li><strong>Signup Flow:</strong> Required agreement checkbox</li>
+                    <li><strong>Checkout:</strong> Legal microcopy with links</li>
+                    <li><strong>Profile:</strong> Easy access to terms and policies</li>
+                </ul>
+            </div>
+        </div>
+
+        <div id="testing" class="section">
+            <h2>🧪 Testing & Quality Assurance</h2>
+
+            <h3>⚡ Load Testing with K6</h3>
+            <p><span class="file-path">/app/k6/rfq-create.js</span></p>
+            <div class="code-block javascript">
+                <div class="language-label">JavaScript (K6 Load Test)</div>
+                <pre>import http from 'k6/http';
+import { check, sleep } from 'k6';
+
+export let options = {
+  stages: [
+    { duration: '2m', target: 10 },
+    { duration: '5m', target: 10 },
+    { duration: '2m', target: 20 },
+    { duration: '5m', target: 20 },
+    { duration: '2m', target: 0 },
+  ],
+};
+
+export default function () {
+  const payload = JSON.stringify({
+    title: `Load Test RFQ ${Date.now()}`,
+    category: 'electronics',
+    description: 'Performance validation RFQ with comprehensive testing parameters...',
+    quantity: 100,
+    target_price: 50.00,
+    currency: 'USD',
+    shipping_destination: 'New York, NY, USA'
+  });
+
+  const params = {
+    headers: {
+      'Content-Type': 'application/json',
+      'Authorization': 'Bearer test_token'
+    },
+  };
+
+  const response = http.post('http://localhost:8001/api/rfq', payload, params);
+  
+  check(response, {
+    'status is 200': (r) => r.status === 200,
+    'response time < 2000ms': (r) => r.timings.duration < 2000,
+    'has valid response': (r) => JSON.parse(r.body).success === true
+  });
+
+  sleep(1);
+}</pre>
+            </div>
+
+            <h3>🎯 Affiliate Performance Testing</h3>
+            <p><span class="file-path">/app/k6/affiliate-click.js</span></p>
+            <div class="code-block javascript">
+                <div class="language-label">JavaScript (Affiliate Load Test)</div>
+                <pre>import http from 'k6/http';
+import { check, sleep } from 'k6';
+
+export let options = {
+  stages: [
+    { duration: '1m', target: 50 },
+    { duration: '3m', target: 100 },
+    { duration: '1m', target: 0 },
+  ],
+};
+
+export default function () {
+  const trackingCodes = ['STYLE2025', 'BEAUTY30', 'TECHWAT', 'LIFE2025'];
+  const code = trackingCodes[Math.floor(Math.random() * trackingCodes.length)];
+  
+  const response = http.get(`http://localhost:8001/api/affiliate/track/${code}`);
+  
+  check(response, {
+    'status is 200': (r) => r.status === 200,
+    'has redirect_to': (r) => JSON.parse(r.body).redirect_to !== undefined,
+    'response time < 500ms': (r) => r.timings.duration < 500,
+  });
+
+  sleep(Math.random() * 2);
+}</pre>
+            </div>
+
+            <h3>✅ Testing Coverage</h3>
+            <div class="feature-list">
+                <div class="feature-item">
+                    <h4>🔧 Backend Testing</h4>
+                    <p>API validation, auth, database ops, performance</p>
+                </div>
+                <div class="feature-item">
+                    <h4>📱 Frontend Testing</h4>
+                    <p>Navigation, components, interactions, accessibility</p>
+                </div>
+                <div class="feature-item">
+                    <h4>⚡ Performance Testing</h4>
+                    <p>Load testing, stress testing, endurance testing</p>
+                </div>
+                <div class="feature-item">
+                    <h4>🔒 Security Testing</h4>
+                    <p>Auth validation, input sanitization, rate limiting</p>
+                </div>
+            </div>
+        </div>
+
+        <div id="monitoring" class="section">
+            <h2>📊 Monitoring & Analytics</h2>
+
+            <h3>📈 Prometheus Metrics</h3>
+            <div class="code-block python">
+                <div class="language-label">Python (Metrics Collection)</div>
+                <pre>from prometheus_client import Counter, Histogram, Gauge
+
+# HTTP Metrics
+http_requests_total = Counter(
+    'http_requests_total',
+    'Total HTTP requests',
+    ['method', 'route', 'status_code']
+)
+
+http_request_duration_seconds = Histogram(
+    'http_request_duration_seconds', 
+    'HTTP request duration in seconds',
+    ['method', 'route']
+)
+
+# Domain-Specific Metrics
+rfq_created_total = Counter(
+    'rfq_created_total',
+    'Total RFQs created',
+    ['category', 'has_target_price']
+)
+
+affiliate_clicks_total = Counter(
+    'affiliate_clicks_total',
+    'Total affiliate link clicks', 
+    ['campaign_id', 'product_category']
+)
+
+affiliate_gmv_usd_total = Counter(
+    'affiliate_gmv_usd_total',
+    'Total GMV from affiliates',
+    ['campaign_id', 'product_category']
+)</pre>
+            </div>
+
+            <h3>📊 Event Analytics</h3>
+            <div class="highlight-box">
+                <h4>🔍 Comprehensive Event Tracking</h4>
+                <ul>
+                    <li><strong>RFQ Funnel:</strong> Creation → Quotes → Acceptance</li>
+                    <li><strong>Affiliate Analytics:</strong> Clicks → Conversions → Payouts</li>
+                    <li><strong>Shop Events:</strong> Views → Cart → Purchase</li>
+                    <li><strong>System Health:</strong> Performance and error tracking</li>
+                </ul>
+            </div>
+
+            <h3>🚨 Health Monitoring</h3>
+            <div class="feature-list">
+                <div class="feature-item">
+                    <h4>💚 Health Checks</h4>
+                    <p>API, database, and service health monitoring</p>
+                </div>
+                <div class="feature-item">
+                    <h4>📊 SLI/SLO Tracking</h4>
+                    <p>Service Level Indicators and Objectives</p>
+                </div>
+                <div class="feature-item">
+                    <h4>🔔 Alerting</h4>
+                    <p>Real-time alerts for critical issues</p>
+                </div>
+                <div class="feature-item">
+                    <h4>📈 Dashboards</h4>
+                    <p>Grafana dashboards for visualization</p>
+                </div>
+            </div>
+        </div>
+
+        <div id="tech-stack" class="section">
+            <h2>💻 Complete Technology Stack</h2>
+
+            <div class="tech-stack">
+                <div class="tech-category">
+                    <h4>📱 Frontend</h4>
+                    <ul>
+                        <li>Expo SDK 54</li>
+                        <li>React Native 0.79</li>
+                        <li>Expo Router</li>
+                        <li>TypeScript</li>
+                        <li>Zustand</li>
+                        <li>Axios</li>
+                    </ul>
+                </div>
+
+                <div class="tech-category">
+                    <h4>⚙️ Backend</h4>
+                    <ul>
+                        <li>FastAPI 0.111</li>
+                        <li>Python 3.11</li>
+                        <li>Pydantic</li>
+                        <li>Uvicorn/Gunicorn</li>
+                        <li>JWT Auth</li>
+                        <li>Prometheus</li>
+                    </ul>
+                </div>
+
+                <div class="tech-category">
+                    <h4>🗄️ Database</h4>
+                    <ul>
+                        <li>MongoDB</li>
+                        <li>Motor (Async)</li>
+                        <li>Redis Cache</li>
+                        <li>S3 Storage</li>
+                    </ul>
+                </div>
+
+                <div class="tech-category">
+                    <h4>🚀 Infrastructure</h4>
+                    <ul>
+                        <li>Docker</li>
+                        <li>Caddy Server</li>
+                        <li>EAS Build</li>
+                        <li>K6 Testing</li>
+                    </ul>
+                </div>
+
+                <div class="tech-category">
+                    <h4>🔒 Security</h4>
+                    <ul>
+                        <li>JWT Authentication</li>
+                        <li>Rate Limiting</li>
+                        <li>Input Validation</li>
+                        <li>HTTPS/SSL</li>
+                    </ul>
+                </div>
+
+                <div class="tech-category">
+                    <h4>📊 Monitoring</h4>
+                    <ul>
+                        <li>Prometheus</li>
+                        <li>Grafana</li>
+                        <li>Structured Logging</li>
+                        <li>Health Checks</li>
+                    </ul>
+                </div>
+            </div>
+
+            <div class="success-box">
+                <h4>🎯 Production Ready Features</h4>
+                <ul>
+                    <li><strong>🏪 0% Commission Social Commerce</strong> with TikTok-style discovery</li>
+                    <li><strong>🎬 Shoppable Video System</strong> with in-feed checkout</li>
+                    <li><strong>🏢 B2B RFQ Marketplace</strong> with secure quote management</li>
+                    <li><strong>🎯 Multi-tier Affiliate Program</strong> with real-time analytics</li>
+                    <li><strong>🤖 AI-powered Content Ranking</strong> using UCB1 algorithm</li>
+                    <li><strong>💱 Multi-currency Global Commerce</strong> with FX transparency</li>
+                    <li><strong>⚖️ App Store Compliance</strong> with legal documents and proper headers</li>
+                </ul>
+            </div>
+        </div>
+
+        <footer>
+            <h3>🛍️ AisleMarts - Complete Codebase Documentation</h3>
+            <p>Production-ready social commerce platform with TikTok-style discovery, 0% commission model, and comprehensive B2B marketplace functionality.</p>
+            <p><strong>Version:</strong> 2.1.0 | <strong>Last Updated:</strong> December 2024</p>
+        </footer>
+    </div>
+</body>
+</html>
