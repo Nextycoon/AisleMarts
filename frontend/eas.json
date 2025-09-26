@@ -1,29 +1,56 @@
 {
+  "cli": {
+    "version": ">= 14.0.0"
+  },
   "build": {
-    "ios-prod": {
-      "extends": "production",
-      "platform": "ios"
+    "development": {
+      "developmentClient": true,
+      "distribution": "internal"
     },
-    "android-gms-prod": {
-      "extends": "production",
-      "platform": "android",
-      "gradleCommand": ":app:bundleGmsRelease"
+    "preview": {
+      "distribution": "internal",
+      "env": {
+        "EXPO_PUBLIC_BACKEND_URL": "https://marketplace-docs.preview.emergentagent.com",
+        "EXPO_PUBLIC_SHOP_API_BASE": "https://marketplace-docs.preview.emergentagent.com/api/shop"
+      }
     },
-    "android-hms-prod": {
-      "extends": "production",
-      "platform": "android",
-      "gradleCommand": ":app:bundleHmsRelease"
+    "production": {
+      "channel": "production",
+      "env": {
+        "EXPO_PUBLIC_BACKEND_URL": "https://api.aislemarts.com",
+        "EXPO_PUBLIC_SHOP_API_BASE": "https://api.aislemarts.com/api/shop",
+        "EXPO_PUBLIC_SAFE_MODE": "false",
+        "EXPO_PUBLIC_AWARENESS_ENABLED": "true",
+        "EXPO_PUBLIC_NEARBY_ENABLED": "true",
+        "EXPO_PUBLIC_MAP_PROVIDER": "mapbox",
+        "EXPO_PUBLIC_RANKER_ENABLED": "1",
+        "EXPO_PUBLIC_USE_SERVER_RANKING": "1",
+        "EXPO_PUBLIC_SHOP_ENABLED": "1",
+        "EXPO_PUBLIC_INFEED_CHECKOUT": "1",
+        "EXPO_PUBLIC_LIVE_SHOPPING": "1",
+        "EXPO_PUBLIC_ZERO_COMMISSION": "1",
+        "EXPO_PUBLIC_PAYMENT_PROVIDER": "production"
+      },
+      "android": {
+        "buildType": "app-bundle"
+      },
+      "ios": {
+        "image": "latest",
+        "resourceClass": "m-medium"
+      }
     }
   },
   "submit": {
-    "ios-prod": {
-      "extends": "production"
-    },
-    "android-gms-prod": {
-      "extends": "production"
-    },
-    "android-hms-prod": {
-      "extends": "production"
+    "production": {
+      "android": {
+        "serviceAccountKeyPath": "./google-service-account.json",
+        "track": "internal"
+      },
+      "ios": {
+        "appleId": "your-apple-id@email.com",
+        "ascAppId": "your-app-store-connect-id",
+        "appleTeamId": "your-team-id"
+      }
     }
   }
 }
