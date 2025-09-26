@@ -1,0 +1,108 @@
+name: Deploy to Production
+
+on:
+  workflow_dispatch:
+    inputs:
+      environment:
+        description: 'Deployment environment'
+        required: true
+        default: 'production'
+        type: choice
+        options:
+          - production
+          - staging
+  
+  push:
+    branches: [ main ]
+    paths:
+      - 'backend/**'
+      - 'docker-compose.production.yml'
+
+jobs:
+  deploy:
+    runs-on: ubuntu-latest
+    environment: production
+    
+    steps:
+    - name: Checkout code
+      uses: actions/checkout@v4
+
+    - name: Setup deployment files
+      run: |
+        # Create deployment directory structure
+        mkdir -p deployment/backend
+        mkdir -p deployment/scripts
+        
+        # Copy necessary files
+        cp docker-compose.production.yml deployment/
+        cp -r backend/. deployment/backend/
+        
+        # Create production environment file from template
+        envsubst < backend/.env.production > deployment/backend/.env.production
+
+    - name: Deploy to production server
+      uses: appleboy/scp-action@v0.1.7
+      with:
+        host: ${{ secrets.PROD_HOST }}
+        username: ${{ secrets.PROD_USER }}
+        key: ${{ secrets.PROD_SSH_KEY }}
+        port: ${{ secrets.PROD_PORT || 22 }}
+        source: "deployment/*"
+        target: "/srv/aislemarts/"
+        strip_components: 1
+
+    - name: Execute deployment on production server
+      uses: appleboy/ssh-action@v1.0.3
+      with:
+        host: ${{ secrets.PROD_HOST }}
+        username: ${{ secrets.PROD_USER }}
+        key: ${{ secrets.PROD_SSH_KEY }}
+        port: ${{ secrets.PROD_PORT || 22 }}
+        script: |
+          cd /srv/aislemarts
+          
+          # Pull latest images
+          docker-compose -f docker-compose.production.yml pull
+          
+          # Stop existing containers
+          docker-compose -f docker-compose.production.yml down
+          
+          # Start new containers
+          docker-compose -f docker-compose.production.yml up -d --build
+          
+          # Wait for services to be healthy
+          echo "Waiting for services to start..."
+          sleep 30
+          
+          # Health check
+          curl -f http://localhost:8000/api/health || exit 1
+          
+          # Clean up old images
+          docker system prune -f
+
+    - name: Verify deployment
+      uses: appleboy/ssh-action@v1.0.3
+      with:
+        host: ${{ secrets.PROD_HOST }}
+        username: ${{ secrets.PROD_USER }}
+        key: ${{ secrets.PROD_SSH_KEY }}
+        port: ${{ secrets.PROD_PORT || 22 }}
+        script: |
+          # Check if services are running
+          docker-compose -f /srv/aislemarts/docker-compose.production.yml ps
+          
+          # Test API endpoints
+          curl -f http://localhost:8000/api/health
+          curl -f http://localhost:8000/api/legal/health
+          
+          echo "✅ Deployment successful!"
+
+    - name: Notify deployment status
+      if: always()
+      run: |
+        if [ "${{ job.status }}" = "success" ]; then
+          echo "✅ Production deployment successful"
+        else
+          echo "❌ Production deployment failed"
+          exit 1
+        fi

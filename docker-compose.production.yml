@@ -1,0 +1,91 @@
+version: "3.9"
+
+services:
+  # AisleMarts API Backend
+  api:
+    build:
+      context: ./backend
+      dockerfile: Dockerfile.production
+    restart: unless-stopped
+    env_file:
+      - ./backend/.env.production
+    ports:
+      - "8000:8000"
+    networks:
+      - aislemarts
+    healthcheck:
+      test: ["CMD", "curl", "-f", "http://localhost:8000/api/health"]
+      interval: 30s
+      timeout: 10s
+      retries: 3
+      start_period: 40s
+    volumes:
+      - ./backend/logs:/app/logs
+    depends_on:
+      - redis
+      - mongodb
+
+  # Redis for caching and sessions
+  redis:
+    image: redis:7-alpine
+    restart: unless-stopped
+    ports:
+      - "6379:6379"
+    networks:
+      - aislemarts
+    volumes:
+      - redis_data:/data
+    command: redis-server --appendonly yes --maxmemory 256mb --maxmemory-policy allkeys-lru
+
+  # MongoDB (for development/testing - use Atlas for production)
+  mongodb:
+    image: mongo:7
+    restart: unless-stopped
+    ports:
+      - "27017:27017"
+    networks:
+      - aislemarts
+    volumes:
+      - mongodb_data:/data/db
+      - ./backend/scripts:/docker-entrypoint-initdb.d
+    environment:
+      MONGO_INITDB_DATABASE: aislemarts
+      MONGO_INITDB_ROOT_USERNAME: admin
+      MONGO_INITDB_ROOT_PASSWORD: ${MONGO_ROOT_PASSWORD:-changeme123}
+
+  # Nginx reverse proxy (alternative to Caddy)
+  nginx:
+    image: nginx:alpine
+    restart: unless-stopped
+    ports:
+      - "80:80"
+      - "443:443"
+    networks:
+      - aislemarts
+    volumes:
+      - ./nginx/nginx.conf:/etc/nginx/nginx.conf:ro
+      - ./nginx/ssl:/etc/ssl/certs:ro
+      - nginx_cache:/var/cache/nginx
+    depends_on:
+      - api
+
+  # Monitoring with Uptime Kuma (optional)
+  uptime-kuma:
+    image: louislam/uptime-kuma:latest
+    restart: unless-stopped
+    ports:
+      - "3001:3001"
+    networks:
+      - aislemarts
+    volumes:
+      - uptime_data:/app/data
+
+volumes:
+  mongodb_data:
+  redis_data:
+  uptime_data:
+  nginx_cache:
+
+networks:
+  aislemarts:
+    driver: bridge
