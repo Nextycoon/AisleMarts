@@ -1,0 +1,19 @@
+{
+  "applinks": {
+    "apps": [],
+    "details": [{
+      "appID": "REPLACE_WITH_TEAM_ID.com.aislemarts.app",
+      "paths": [
+        "*",
+        "/product/*",
+        "/shop/*",
+        "/rfq/*",
+        "/affiliate/*",
+        "/live/*"
+      ]
+    }]
+  },
+  "webcredentials": {
+    "apps": ["REPLACE_WITH_TEAM_ID.com.aislemarts.app"]
+  }
+}
