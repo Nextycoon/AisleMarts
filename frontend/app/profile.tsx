@@ -304,6 +304,13 @@ export default function ProfileScreen() {
         },
         {
           id: '24',
+          title: 'Legal',
+          icon: '⚖️',
+          subtitle: 'Privacy Policy, Terms of Service',
+          route: '/screens/SettingsLegal',
+        },
+        {
+          id: '25',
           title: 'About AisleMarts',
           icon: 'ℹ️',
           subtitle: 'Version 2.1.0',
