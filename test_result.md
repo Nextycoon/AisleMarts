@@ -3228,14 +3228,14 @@ metadata:
 
 test_plan:
   current_focus:
-    - "Enhanced Search Models and Collections"
-    - "Enhanced Search API Endpoints"
-    - "Search Aggregation and Scoring Engine"
-    - "Enhanced Discover Screen"
-    - "Best Pick Components"
+    - "Legal Document Hosting Endpoints - Privacy Policy"
+    - "Legal Document Hosting Endpoints - Terms of Service"
+    - "Legal Document Health Check & Version Tracking"
+    - "Legal Document ETag Caching & Performance"
+    - "Legal Document Error Handling & App Store Compliance"
   stuck_tasks: []
   test_all: false
-  test_priority: "high_first"  # Phase 1 Enhanced Search/Discovery implementation
+  test_priority: "critical_first"  # Legal Document App Store Compliance Testing Complete
 
   - task: "AI Domain Specialization - Trade Intelligence"
     implemented: true
