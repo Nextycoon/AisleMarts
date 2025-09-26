@@ -126,119 +126,88 @@ def legal_response(html: str, etag: str, mtime: float, doc_title: str) -> Respon
         },
     )
 
-@router.get("/legal/privacy-policy", response_class=HTMLResponse, tags=["legal"])
-async def privacy_policy():
-    """
-    Privacy Policy - App Store Compliance
+@router.get("/privacy-policy")
+def privacy_policy(if_none_match: str | None = Header(default=None)):
+    """Serve AisleMarts Privacy Policy as formatted HTML"""
+    html, etag, mtime = render("privacy-policy")
     
-    Returns the complete Privacy Policy in HTML format.
-    Required for Apple App Store and Google Play Store submissions.
-    """
-    return load_legal_document("privacy-policy.md")
-
-@router.get("/legal/terms-of-service", response_class=HTMLResponse, tags=["legal"]) 
-async def terms_of_service():
-    """
-    Terms of Service - App Store Compliance
+    # Handle conditional requests (304 Not Modified)
+    if if_none_match and if_none_match.strip('"') == etag:
+        return Response(status_code=304)
     
-    Returns the complete Terms of Service in HTML format.
-    Required for Apple App Store and Google Play Store submissions.
-    """
-    return load_legal_document("terms-of-service.md")
+    return legal_response(html, etag, mtime, "Privacy Policy")
 
-@router.get("/legal/privacy", response_class=HTMLResponse, tags=["legal"])
-async def privacy_policy_short():
-    """Privacy Policy (short URL)"""
-    return load_legal_document("privacy-policy.md")
+@router.get("/terms-of-service")
+def terms_of_service(if_none_match: str | None = Header(default=None)):
+    """Serve AisleMarts Terms of Service as formatted HTML"""
+    html, etag, mtime = render("terms-of-service")
+    
+    # Handle conditional requests (304 Not Modified)
+    if if_none_match and if_none_match.strip('"') == etag:
+        return Response(status_code=304)
+    
+    return legal_response(html, etag, mtime, "Terms of Service")
 
-@router.get("/legal/terms", response_class=HTMLResponse, tags=["legal"])
-async def terms_of_service_short():
-    """Terms of Service (short URL)"""
-    return load_legal_document("terms-of-service.md")
+@router.get("/privacy-policy/version")
+def privacy_policy_version():
+    """Get Privacy Policy version information"""
+    try:
+        _, etag, mtime = render("privacy-policy")
+        return {
+            "document": "privacy-policy",
+            "version": etag,
+            "last_modified": datetime.fromtimestamp(mtime).isoformat(),
+            "url": "/api/legal/privacy-policy"
+        }
+    except Exception as e:
+        raise HTTPException(status_code=500, detail=str(e))
 
-@router.get("/privacy-policy", response_class=HTMLResponse, tags=["legal"])
-async def privacy_policy_root():
-    """Privacy Policy (root URL for app store)"""
-    return load_legal_document("privacy-policy.md")
+@router.get("/terms-of-service/version")
+def terms_of_service_version():
+    """Get Terms of Service version information"""
+    try:
+        _, etag, mtime = render("terms-of-service")
+        return {
+            "document": "terms-of-service", 
+            "version": etag,
+            "last_modified": datetime.fromtimestamp(mtime).isoformat(),
+            "url": "/api/legal/terms-of-service"
+        }
+    except Exception as e:
+        raise HTTPException(status_code=500, detail=str(e))
 
-@router.get("/terms-of-service", response_class=HTMLResponse, tags=["legal"])  
-async def terms_of_service_root():
-    """Terms of Service (root URL for app store)"""
-    return load_legal_document("terms-of-service.md")
-
-@router.get("/legal", response_class=HTMLResponse, tags=["legal"])
-async def legal_index():
-    """Legal documents index page"""
-    return HTMLResponse("""
-<!DOCTYPE html>
-<html lang="en">
-<head>
-    <meta charset="UTF-8">
-    <meta name="viewport" content="width=device-width, initial-scale=1.0">
-    <title>AisleMarts - Legal Documents</title>
-    <style>
-        body {
-            font-family: -apple-system, BlinkMacSystemFont, 'Segoe UI', Roboto, sans-serif;
-            line-height: 1.6;
-            color: #333;
-            max-width: 600px;
-            margin: 0 auto;
-            padding: 20px;
-            background-color: #f8f9fa;
-        }
-        .container {
-            background: white;
-            padding: 40px;
-            border-radius: 12px;
-            box-shadow: 0 2px 10px rgba(0,0,0,0.1);
-            text-align: center;
-        }
-        .logo {
-            color: #667eea;
-            font-size: 2.5em;
-            font-weight: bold;
-            margin-bottom: 20px;
-        }
-        .links {
-            margin: 30px 0;
-        }
-        .links a {
-            display: inline-block;
-            margin: 10px 20px;
-            padding: 12px 24px;
-            background: #667eea;
-            color: white;
-            text-decoration: none;
-            border-radius: 8px;
-            transition: background 0.3s;
-        }
-        .links a:hover {
-            background: #5a67d8;
-        }
-        .footer {
-            margin-top: 40px;
-            color: #666;
-            font-size: 0.9em;
-        }
-    </style>
-</head>
-<body>
-    <div class="container">
-        <div class="logo">AisleMarts</div>
-        <h1>Legal Documents</h1>
-        <p>Access our legal policies and terms for app store compliance and user transparency.</p>
+@router.get("/health")
+def legal_health():
+    """Health check for legal document service"""
+    try:
+        privacy_html, privacy_etag, privacy_mtime = render("privacy-policy")
+        terms_html, terms_etag, terms_mtime = render("terms-of-service")
         
-        <div class="links">
-            <a href="/legal/privacy-policy">Privacy Policy</a>
-            <a href="/legal/terms-of-service">Terms of Service</a>
-        </div>
-        
-        <div class="footer">
-            <p><strong>AisleMarts, Inc.</strong><br>
-            AI-Powered Global Marketplace & Social Commerce Platform</p>
-            <p>Questions? Contact: <a href="mailto:legal@aislemarts.com">legal@aislemarts.com</a></p>
-        </div>
-    </div>
-</body>
-</html>
-    """)
+        return {
+            "service": "legal-documents",
+            "status": "operational",
+            "documents": {
+                "privacy_policy": {
+                    "available": True,
+                    "version": privacy_etag,
+                    "size_kb": round(len(privacy_html) / 1024, 2),
+                    "last_modified": datetime.fromtimestamp(privacy_mtime).isoformat()
+                },
+                "terms_of_service": {
+                    "available": True,
+                    "version": terms_etag,
+                    "size_kb": round(len(terms_html) / 1024, 2),
+                    "last_modified": datetime.fromtimestamp(terms_mtime).isoformat()
+                }
+            },
+            "features": [
+                "html_rendering",
+                "etag_caching",
+                "version_tracking",
+                "app_store_headers",
+                "mobile_responsive"
+            ],
+            "timestamp": datetime.now().isoformat()
+        }
+    except Exception as e:
+        raise HTTPException(status_code=500, detail=f"Legal service error: {str(e)}")
