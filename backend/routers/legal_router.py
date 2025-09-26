@@ -1,102 +1,130 @@
 """
 AisleMarts Legal Document Router
-Serves Privacy Policy and Terms of Service for app store compliance
+Serves Privacy Policy and Terms of Service as HTML with proper headers for App Store compliance
 """
 
-from fastapi import APIRouter
-from fastapi.responses import HTMLResponse
-import os
+from fastapi import APIRouter, Response, Header, HTTPException
 from pathlib import Path
+import hashlib
 import markdown
+import os
+from datetime import datetime
 
-router = APIRouter()
+router = APIRouter(prefix="/api/legal", tags=["legal"])
 
-# Get legal documents directory
-LEGAL_DIR = Path(__file__).parent.parent.parent / "legal"
+BASE = Path("/app/legal")
 
-def load_legal_document(filename: str) -> str:
-    """Load and convert markdown legal document to HTML"""
-    try:
-        file_path = LEGAL_DIR / filename
-        with open(file_path, 'r', encoding='utf-8') as f:
-            markdown_content = f.read()
-        
-        # Convert markdown to HTML
-        html_content = markdown.markdown(markdown_content, extensions=['toc'])
-        
-        # Wrap in basic HTML template
-        html_template = f"""
-<!DOCTYPE html>
+def render(doc_name: str) -> tuple[str, str, float]:
+    """Render markdown document to HTML with metadata"""
+    p = BASE / f"{doc_name}.md"
+    if not p.exists():
+        raise HTTPException(status_code=404, detail=f"Document {doc_name} not found")
+    
+    raw = p.read_text(encoding="utf-8")
+    html = markdown.markdown(raw, extensions=["extra", "toc", "sane_lists"])
+    etag = hashlib.sha1(raw.encode("utf-8")).hexdigest()[:12]  # Short hash for ETag
+    mtime = p.stat().st_mtime
+    return html, etag, mtime
+
+def legal_response(html: str, etag: str, mtime: float, doc_title: str) -> Response:
+    """Create legal document response with proper headers and template"""
+    last_modified = datetime.fromtimestamp(mtime).strftime('%a, %d %b %Y %H:%M:%S GMT')
+    
+    tpl = f"""<!doctype html>
 <html lang="en">
 <head>
-    <meta charset="UTF-8">
-    <meta name="viewport" content="width=device-width, initial-scale=1.0">
-    <title>AisleMarts - {filename.replace('-', ' ').replace('.md', '').title()}</title>
+    <meta charset="utf-8">
+    <meta name="viewport" content="width=device-width,initial-scale=1">
+    <title>{doc_title} - AisleMarts Legal</title>
+    <meta name="robots" content="noindex">
+    <meta http-equiv="Content-Security-Policy" content="default-src 'none'; style-src 'unsafe-inline'; img-src data:;">
+    <meta http-equiv="X-Content-Type-Options" content="nosniff">
+    <meta http-equiv="Referrer-Policy" content="no-referrer">
+    <meta http-equiv="X-Frame-Options" content="DENY">
     <style>
         body {{
-            font-family: -apple-system, BlinkMacSystemFont, 'Segoe UI', Roboto, sans-serif;
+            font-family: system-ui, -apple-system, 'Segoe UI', Roboto, sans-serif;
+            max-width: 820px;
+            margin: 32px auto;
+            padding: 0 16px;
             line-height: 1.6;
             color: #333;
-            max-width: 800px;
-            margin: 0 auto;
-            padding: 20px;
-            background-color: #f8f9fa;
+            background: #fff;
         }}
-        .container {{
-            background: white;
-            padding: 40px;
-            border-radius: 12px;
-            box-shadow: 0 2px 10px rgba(0,0,0,0.1);
+        h1, h2 {{
+            margin-top: 1.2em;
+            color: #2c3e50;
         }}
-        h1 {{ color: #667eea; border-bottom: 3px solid #667eea; padding-bottom: 10px; }}
-        h2 {{ color: #555; margin-top: 30px; }}
-        h3 {{ color: #666; margin-top: 20px; }}
-        ul, ol {{ margin-left: 20px; }}
-        strong {{ color: #333; }}
-        .last-updated {{
-            color: #666;
+        h1 {{
+            border-bottom: 2px solid #e74c3c;
+            padding-bottom: 0.3em;
+        }}
+        h2 {{
+            border-bottom: 1px solid #bdc3c7;
+            padding-bottom: 0.2em;
+        }}
+        .doc-meta {{
+            background: #f8f9fa;
+            border: 1px solid #e9ecef;
+            border-radius: 4px;
+            padding: 12px;
+            margin: 16px 0;
             font-size: 0.9em;
-            border-top: 1px solid #eee;
-            padding-top: 20px;
-            margin-top: 40px;
+            color: #6c757d;
         }}
-        .toc {{ 
-            background: #f8f9fa; 
-            padding: 20px; 
-            border-radius: 8px; 
-            margin: 20px 0; 
+        .contact-info {{
+            background: #e8f4f8;
+            border-left: 4px solid #17a2b8;
+            padding: 16px;
+            margin: 24px 0;
+        }}
+        code {{
+            background: #f1f3f4;
+            padding: 2px 4px;
+            border-radius: 3px;
+            font-size: 0.9em;
         }}
         @media (max-width: 768px) {{
-            body {{ padding: 10px; }}
-            .container {{ padding: 20px; }}
+            body {{
+                margin: 16px auto;
+                padding: 0 12px;
+            }}
         }}
     </style>
 </head>
 <body>
-    <div class="container">
-        {html_content}
-        <div class="last-updated">
-            <p><strong>AisleMarts, Inc.</strong><br>
-            This document is part of our app store compliance and legal framework.<br>
-            For questions, contact: <a href="mailto:legal@aislemarts.com">legal@aislemarts.com</a></p>
-        </div>
+    <div class="doc-meta">
+        <strong>Document:</strong> {doc_title}<br>
+        <strong>Version:</strong> {etag}<br>
+        <strong>Last Updated:</strong> {last_modified}<br>
+        <strong>Contact:</strong> legal@aislemarts.com
+    </div>
+    
+    {html}
+    
+    <div class="contact-info">
+        <h3>Contact Information</h3>
+        <p><strong>Legal Department:</strong> legal@aislemarts.com</p>
+        <p><strong>Privacy Team:</strong> privacy@aislemarts.com</p>
+        <p><strong>Support:</strong> support@aislemarts.com</p>
     </div>
 </body>
-</html>
-        """
-        
-        return html_template
-        
-    except FileNotFoundError:
-        return """
-<!DOCTYPE html>
-<html><head><title>Document Not Found</title></head>
-<body style="font-family: Arial, sans-serif; text-align: center; padding: 50px;">
-    <h1>Document Not Available</h1>
-    <p>The requested legal document could not be found.</p>
-    <p>Please contact <a href="mailto:legal@aislemarts.com">legal@aislemarts.com</a> for assistance.</p>
-</body></html>
-        """
+</html>"""
+    
+    return Response(
+        content=tpl,
+        media_type="text/html; charset=utf-8",
+        headers={
+            "Cache-Control": "public, max-age=3600",
+            "ETag": f'"{etag}"',
+            "Last-Modified": last_modified,
+            "X-Doc-Version": etag,
+            "Content-Security-Policy": "default-src 'none'; style-src 'unsafe-inline'; img-src data:;",
+            "X-Content-Type-Options": "nosniff",
+            "Referrer-Policy": "no-referrer",
+            "X-Frame-Options": "DENY"
+        },
+    )
 
 @router.get("/legal/privacy-policy", response_class=HTMLResponse, tags=["legal"])
 async def privacy_policy():
