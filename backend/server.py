@@ -143,6 +143,14 @@ try:
 except ImportError as e:
     print(f"⚠️ Observability middleware not available: {e}")
 
+# Include Legal Documents Router
+try:
+    from routers.legal_router import router as legal_router
+    app.include_router(legal_router)
+    print("⚖️ Legal Documents API loaded successfully")
+except ImportError as e:
+    print(f"⚠️ Legal Documents API not available: {e}")
+
 # NEW: Include Shop Router - Priority Integration
 app.include_router(shop_router, tags=["shop"])
 print("🛍️ AisleMarts Shop (TikTok Enhanced) loaded successfully")
