@@ -24,7 +24,7 @@ This isn't science fiction. This is operational.
 
 Not "online OR offline" - seamlessly BLENDED.
 
-🎯 Live demo: https://marketplace-docs.preview.emergentagent.com/fusion-dashboard
+🎯 Live demo: https://market-launch-4.preview.emergentagent.com/fusion-dashboard
 
 3/8 Watch this 30-second journey:
 → Spot luxury bag in Milan
@@ -71,7 +71,7 @@ AisleMarts: The Operating System of Blended Reality.
 
 Where real meets virtual, and one lifestyle spans both worlds.
 
-Try it: https://marketplace-docs.preview.emergentagent.com/fusion-dashboard
+Try it: https://market-launch-4.preview.emergentagent.com/fusion-dashboard
 
 🌊 #DigitalLifestyleUniverse #BlendedReality #FutureOfTech #AI #Series A
 ```
@@ -86,7 +86,7 @@ Tweet 3: "15+ AI services. 7 languages. 15 currencies. Real-time awareness. Ente
 
 Tweet 4: "Not real OR virtual. Real AND virtual. One lifestyle spanning both dimensions. Welcome to post-digital humanity. 🌊"
 
-Tweet 5: "Demo the future yourself: https://marketplace-docs.preview.emergentagent.com/fusion-dashboard - This is what the next phase of human-computer interaction looks like."
+Tweet 5: "Demo the future yourself: https://market-launch-4.preview.emergentagent.com/fusion-dashboard - This is what the next phase of human-computer interaction looks like."
 ```
 
 ---
@@ -142,7 +142,7 @@ Every human will live this way within 5 years. The infrastructure needs to exist
 
 We built it. It's operational. It's ready for global scale.
 
-Experience it yourself: https://marketplace-docs.preview.emergentagent.com/fusion-dashboard
+Experience it yourself: https://market-launch-4.preview.emergentagent.com/fusion-dashboard
 
 Series A opening soon for investors who understand we're not building an app - we're building the habitat where future humanity lives.
 

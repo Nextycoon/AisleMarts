@@ -13,7 +13,7 @@ import os
 from urllib.parse import urljoin
 
 # Get backend URL from environment
-BACKEND_URL = os.getenv('REACT_APP_BACKEND_URL', 'https://marketplace-docs.preview.emergentagent.com')
+BACKEND_URL = os.getenv('REACT_APP_BACKEND_URL', 'https://market-launch-4.preview.emergentagent.com')
 BASE_URL = f"{BACKEND_URL}/api"
 
 class LegalDocumentTester:

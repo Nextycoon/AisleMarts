@@ -139,7 +139,7 @@ const getBaseUrl = (): string => {
     return window.location.origin;
   }
   // React Native or server environment
-  return process.env.EXPO_PUBLIC_BACKEND_URL || 'https://marketplace-docs.preview.emergentagent.com';
+  return process.env.EXPO_PUBLIC_BACKEND_URL || 'https://market-launch-4.preview.emergentagent.com';
 };
 
 const BASE_URL = `${getBaseUrl()}/api/rewards`;

@@ -10,8 +10,8 @@
     "preview": {
       "distribution": "internal",
       "env": {
-        "EXPO_PUBLIC_BACKEND_URL": "https://marketplace-docs.preview.emergentagent.com",
-        "EXPO_PUBLIC_SHOP_API_BASE": "https://marketplace-docs.preview.emergentagent.com/api/shop"
+        "EXPO_PUBLIC_BACKEND_URL": "https://market-launch-4.preview.emergentagent.com",
+        "EXPO_PUBLIC_SHOP_API_BASE": "https://market-launch-4.preview.emergentagent.com/api/shop"
       }
     },
     "production": {

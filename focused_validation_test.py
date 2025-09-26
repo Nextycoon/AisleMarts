@@ -15,7 +15,7 @@ import uuid
 from datetime import datetime
 
 # Use production URL from frontend/.env
-BASE_URL = "https://marketplace-docs.preview.emergentagent.com/api"
+BASE_URL = "https://market-launch-4.preview.emergentagent.com/api"
 
 class FocusedValidator:
     def __init__(self):

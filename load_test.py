@@ -14,7 +14,7 @@ from datetime import datetime
 from typing import List, Dict, Any
 
 # Test configuration
-API_BASE = "https://marketplace-docs.preview.emergentagent.com"
+API_BASE = "https://market-launch-4.preview.emergentagent.com"
 MOCK_BUYER_TOKEN = "mock-token-for-testing"  # We'll test without auth first
 
 class LoadTestResults:

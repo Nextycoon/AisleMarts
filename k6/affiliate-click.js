@@ -24,7 +24,7 @@ export const options = {
   summaryTrendStats: ['avg', 'min', 'med', 'max', 'p(90)', 'p(95)', 'p(99)', 'count'],
 };
 
-const API_BASE = __ENV.API_BASE || 'https://marketplace-docs.preview.emergentagent.com';
+const API_BASE = __ENV.API_BASE || 'https://market-launch-4.preview.emergentagent.com';
 
 // Affiliate test data
 const campaigns = ['summer_fashion_2024', 'tech_gadgets_q4', 'home_decor_winter', 'fitness_spring'];

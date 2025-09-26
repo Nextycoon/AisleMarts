@@ -3,7 +3,7 @@
 ## 🚀 Quick Start Guide
 
 ### Immediate Testing Access
-- **Web App**: https://marketplace-docs.preview.emergentagent.com
+- **Web App**: https://market-launch-4.preview.emergentagent.com
 - **Mobile (Expo Go)**: Open Expo Go app → Enter URL: `exp://aislefeed.ngrok.io:80`
 
 ### Expected User Experience
@@ -32,7 +32,7 @@
 
 ### Browser Access
 1. **Open Browser** (Chrome, Safari, Firefox recommended)
-2. **Navigate**: Go to `https://marketplace-docs.preview.emergentagent.com`
+2. **Navigate**: Go to `https://market-launch-4.preview.emergentagent.com`
 3. **Mobile View**: Use developer tools to simulate mobile viewport (390x844)
 
 ### Testing Checklist - Web
@@ -214,7 +214,7 @@ sudo supervisorctl status | grep RUNNING
 curl -s localhost:8001/api/currency/rates?base=USD | jq .
 
 # Check frontend build
-curl -s https://marketplace-docs.preview.emergentagent.com | grep AisleMarts
+curl -s https://market-launch-4.preview.emergentagent.com | grep AisleMarts
 
 # Verify tunnel
 curl -s https://aislefeed.ngrok.io | head -5
