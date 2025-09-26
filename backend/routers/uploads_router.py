@@ -46,7 +46,7 @@ class SignedUploadRequest(BaseModel):
     filename: str = Field(..., min_length=1, max_length=255)
     content_type: str = Field(..., min_length=5, max_length=100)
     file_size: int = Field(..., ge=1, le=MAX_FILE_SIZE)
-    upload_context: str = Field(..., regex=r'^(rfq|affiliate|product|profile|general)$')
+    upload_context: str = Field(..., pattern=r'^(rfq|affiliate|product|profile|general)$')
     metadata: Optional[Dict[str, str]] = Field(default_factory=dict, max_items=10)
     
     @validator('filename')
