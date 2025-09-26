@@ -1,0 +1,137 @@
+# AisleMarts Production Caddy Configuration
+
+# Main website
+aislemarts.com, www.aislemarts.com {
+    encode gzip zstd
+    
+    # Security headers
+    header {
+        Strict-Transport-Security "max-age=31536000; includeSubDomains; preload"
+        X-Frame-Options "DENY"
+        X-Content-Type-Options "nosniff"
+        Referrer-Policy "strict-origin-when-cross-origin"
+        Permissions-Policy "geolocation=(), microphone=(), camera=()"
+        X-XSS-Protection "1; mode=block"
+    }
+    
+    # Serve landing page
+    root * /srv/aislemarts/web
+    file_server
+    
+    # Fallback to index.html for SPA routing
+    try_files {path} /index.html
+    
+    # Well-known files for app links
+    handle /.well-known/* {
+        root * /srv/aislemarts/web/.well-known
+        file_server
+    }
+}
+
+# API subdomain
+api.aislemarts.com {
+    encode gzip zstd
+    
+    # API-specific headers
+    header {
+        Strict-Transport-Security "max-age=31536000; includeSubDomains; preload"
+        Access-Control-Allow-Origin "*"
+        Access-Control-Allow-Methods "GET, POST, PUT, PATCH, DELETE, OPTIONS"
+        Access-Control-Allow-Headers "Authorization, Content-Type, X-Request-ID, X-API-Key"
+        Access-Control-Max-Age "86400"
+        X-Content-Type-Options "nosniff"
+        X-Frame-Options "DENY"
+        Referrer-Policy "strict-origin-when-cross-origin"
+    }
+    
+    # Handle preflight requests
+    @options method OPTIONS
+    handle @options {
+        respond 204
+    }
+    
+    # Rate limiting (basic)
+    rate_limit {
+        zone static_api {
+            key {remote_host}
+            events 100
+            window 1m
+        }
+    }
+    
+    # Reverse proxy to FastAPI backend
+    reverse_proxy 127.0.0.1:8000 {
+        # Health check
+        health_uri /api/health
+        health_interval 30s
+        health_timeout 5s
+        
+        # Connection settings
+        transport http {
+            keepalive 30s
+            keepalive_idle_conns 10
+        }
+        
+        # Headers for backend
+        header_up Host {upstream_hostport}
+        header_up X-Real-IP {remote_host}
+        header_up X-Forwarded-For {remote_host}
+        header_up X-Forwarded-Proto {scheme}
+        header_up X-Forwarded-Host {host}
+    }
+    
+    # Custom error pages
+    handle_errors {
+        @5xx expression {http.error.status_code} >= 500
+        handle @5xx {
+            respond "API temporarily unavailable. Please try again later." 503
+        }
+        
+        @4xx expression {http.error.status_code} >= 400
+        handle @4xx {
+            respond "Bad request. Please check your request and try again." 400
+        }
+    }
+    
+    # Logging
+    log {
+        output file /var/log/caddy/api.aislemarts.com.log {
+            roll_size 100mb
+            roll_keep 5
+            roll_keep_for 720h
+        }
+        format json
+        level INFO
+    }
+}
+
+# Status/monitoring subdomain (optional)
+status.aislemarts.com {
+    encode gzip zstd
+    
+    header {
+        Strict-Transport-Security "max-age=31536000; includeSubDomains; preload"
+        X-Frame-Options "SAMEORIGIN"
+        X-Content-Type-Options "nosniff"
+    }
+    
+    # Reverse proxy to uptime monitoring (if enabled)
+    reverse_proxy 127.0.0.1:3001
+}
+
+# Redirect HTTP to HTTPS
+http://aislemarts.com, http://www.aislemarts.com, http://api.aislemarts.com {
+    redir https://{host}{uri} permanent
+}
+
+# Global error handling
+handle_errors {
+    @maintenance file /srv/aislemarts/maintenance.html
+    handle @maintenance {
+        root * /srv/aislemarts
+        rewrite * /maintenance.html
+        file_server
+    }
+    
+    respond "Service temporarily unavailable" 503
+}
