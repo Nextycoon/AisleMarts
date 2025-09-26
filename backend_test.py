@@ -1,479 +1,487 @@
 #!/usr/bin/env python3
 """
-AisleMarts Backend Testing Suite - B2B RFQ & Affiliate Systems Validation
-Comprehensive testing for Series A investor demonstration readiness
+Comprehensive Backend Testing for Legal Document Hosting Endpoints
+Testing Focus: App Store compliance, ETag caching, security headers, performance
 """
 
 import requests
-import json
 import time
-from datetime import datetime, timedelta
-from typing import Dict, List, Any
-import sys
+import json
+from datetime import datetime
+import hashlib
+import os
+from urllib.parse import urljoin
 
-# Configuration
-BACKEND_URL = "https://marketplace-docs.preview.emergentagent.com"
-API_BASE = f"{BACKEND_URL}/api"
+# Get backend URL from environment
+BACKEND_URL = os.getenv('REACT_APP_BACKEND_URL', 'https://marketplace-docs.preview.emergentagent.com')
+BASE_URL = f"{BACKEND_URL}/api"
 
-class BackendTester:
+class LegalDocumentTester:
     def __init__(self):
-        self.results = {
-            "total_tests": 0,
-            "passed": 0,
-            "failed": 0,
-            "errors": [],
-            "test_details": []
-        }
-        self.start_time = time.time()
-    
-    def log_test(self, test_name: str, success: bool, details: str = "", response_time: float = 0):
-        """Log test result"""
-        self.results["total_tests"] += 1
+        self.results = []
+        self.total_tests = 0
+        self.passed_tests = 0
+        
+    def log_result(self, test_name, success, details="", response_time=None):
+        """Log test result with details"""
+        self.total_tests += 1
         if success:
-            self.results["passed"] += 1
-            status = "✅ PASS"
-        else:
-            self.results["failed"] += 1
-            status = "❌ FAIL"
-            self.results["errors"].append(f"{test_name}: {details}")
-        
-        self.results["test_details"].append({
+            self.passed_tests += 1
+            
+        result = {
             "test": test_name,
-            "status": status,
+            "success": success,
             "details": details,
-            "response_time_ms": round(response_time * 1000, 2)
-        })
+            "response_time": response_time,
+            "timestamp": datetime.now().isoformat()
+        }
+        self.results.append(result)
         
-        print(f"{status} | {test_name} | {details} | {round(response_time * 1000, 2)}ms")
+        status = "✅ PASS" if success else "❌ FAIL"
+        time_info = f" ({response_time:.3f}s)" if response_time else ""
+        print(f"{status}: {test_name}{time_info}")
+        if details:
+            print(f"    Details: {details}")
     
-    def make_request(self, method: str, endpoint: str, data: Dict = None, params: Dict = None) -> tuple:
-        """Make HTTP request and return response, success, time"""
-        start_time = time.time()
+    def test_health_endpoint(self):
+        """Test legal service health check endpoint"""
         try:
-            url = f"{API_BASE}{endpoint}"
-            if method.upper() == "GET":
-                response = requests.get(url, params=params, timeout=10)
-            elif method.upper() == "POST":
-                response = requests.post(url, json=data, params=params, timeout=10)
-            elif method.upper() == "PUT":
-                response = requests.put(url, json=data, params=params, timeout=10)
-            else:
-                raise ValueError(f"Unsupported method: {method}")
-            
-            response_time = time.time() - start_time
-            return response, True, response_time
-        except Exception as e:
-            response_time = time.time() - start_time
-            return str(e), False, response_time
-
-    def test_rfq_system(self):
-        """Test B2B RFQ System Endpoints"""
-        print("\n🏭 TESTING B2B RFQ SYSTEM")
-        print("=" * 50)
-        
-        # 1. RFQ Health Check
-        response, success, response_time = self.make_request("GET", "/b2b/health")
-        if success and response.status_code == 200:
-            data = response.json()
-            self.log_test("RFQ Health Check", True, 
-                         f"Service: {data.get('service', 'Unknown')}, RFQs: {data.get('stats', {}).get('rfqs', 0)}", 
-                         response_time)
-        else:
-            self.log_test("RFQ Health Check", False, f"Failed: {response}", response_time)
-        
-        # 2. List RFQs
-        response, success, response_time = self.make_request("GET", "/b2b/rfq", params={"limit": 10})
-        if success and response.status_code == 200:
-            data = response.json()
-            rfq_count = len(data.get("rfqs", []))
-            self.log_test("List RFQs", True, f"Retrieved {rfq_count} RFQs", response_time)
-            
-            # Store first RFQ ID for further testing
-            if rfq_count > 0:
-                self.first_rfq_id = data["rfqs"][0]["id"]
-        else:
-            self.log_test("List RFQs", False, f"Failed: {response}", response_time)
-            self.first_rfq_id = None
-        
-        # 3. Get specific RFQ details
-        if hasattr(self, 'first_rfq_id') and self.first_rfq_id:
-            response, success, response_time = self.make_request("GET", f"/b2b/rfq/{self.first_rfq_id}")
-            if success and response.status_code == 200:
-                data = response.json()
-                quote_count = data.get("quote_count", 0)
-                self.log_test("Get RFQ Details", True, f"RFQ loaded with {quote_count} quotes", response_time)
-            else:
-                self.log_test("Get RFQ Details", False, f"Failed: {response}", response_time)
-        
-        # 4. Create new RFQ
-        new_rfq_data = {
-            "title": "Test RFQ - Bluetooth Headphones",
-            "category": "electronics",
-            "description": "Testing RFQ creation for Series A demo",
-            "specifications": {
-                "material": "Plastic + Metal",
-                "color": "Black",
-                "certifications": ["FCC", "CE"],
-                "sample_required": True
-            },
-            "quantity": 1000,
-            "target_price": 25.00,
-            "currency": "USD",
-            "shipping_destination": "San Francisco, CA, USA"
-        }
-        
-        response, success, response_time = self.make_request("POST", "/b2b/rfq", data=new_rfq_data)
-        if success and response.status_code == 200:
-            data = response.json()
-            if data.get("success"):
-                new_rfq_id = data["rfq"]["id"]
-                self.log_test("Create RFQ", True, f"Created RFQ: {new_rfq_id}", response_time)
-                self.new_rfq_id = new_rfq_id
-            else:
-                self.log_test("Create RFQ", False, "Success flag false", response_time)
-        else:
-            self.log_test("Create RFQ", False, f"Failed: {response}", response_time)
-            self.new_rfq_id = None
-        
-        # 5. Submit quote for RFQ
-        if hasattr(self, 'new_rfq_id') and self.new_rfq_id:
-            quote_data = {
-                "supplier_message": "We can provide high-quality Bluetooth headphones with competitive pricing.",
-                "items": [
-                    {
-                        "description": "Bluetooth Headphones - Custom Design",
-                        "unit_price": 23.50,
-                        "quantity": 1000,
-                        "total_price": 23500.00,
-                        "lead_time_days": 30,
-                        "notes": "Includes custom packaging"
-                    }
-                ],
-                "total_amount": 23500.00,
-                "currency": "USD",
-                "lead_time_days": 30,
-                "payment_terms": "30% T/T deposit, 70% before shipment",
-                "shipping_terms": "FOB Shanghai",
-                "validity_days": 15,
-                "certifications": ["FCC", "CE", "RoHS"],
-                "sample_available": True,
-                "sample_cost": 100.00
-            }
-            
-            response, success, response_time = self.make_request("POST", f"/b2b/rfq/{self.new_rfq_id}/quote", data=quote_data)
-            if success and response.status_code == 200:
-                data = response.json()
-                if data.get("success"):
-                    quote_id = data["quote"]["id"]
-                    self.log_test("Submit Quote", True, f"Quote submitted: {quote_id}", response_time)
-                    self.new_quote_id = quote_id
-                else:
-                    self.log_test("Submit Quote", False, "Success flag false", response_time)
-            else:
-                self.log_test("Submit Quote", False, f"Failed: {response}", response_time)
-        
-        # 6. RFQ Analytics
-        response, success, response_time = self.make_request("GET", "/b2b/analytics/rfq")
-        if success and response.status_code == 200:
-            data = response.json()
-            total_rfqs = data.get("total_rfqs", 0)
-            total_quotes = data.get("total_quotes", 0)
-            self.log_test("RFQ Analytics", True, f"Analytics: {total_rfqs} RFQs, {total_quotes} quotes", response_time)
-        else:
-            self.log_test("RFQ Analytics", False, f"Failed: {response}", response_time)
-        
-        # 7. Filter RFQs by category
-        response, success, response_time = self.make_request("GET", "/b2b/rfq", params={"category": "electronics", "limit": 5})
-        if success and response.status_code == 200:
-            data = response.json()
-            electronics_count = len(data.get("rfqs", []))
-            self.log_test("Filter RFQs by Category", True, f"Found {electronics_count} electronics RFQs", response_time)
-        else:
-            self.log_test("Filter RFQs by Category", False, f"Failed: {response}", response_time)
-
-    def test_affiliate_system(self):
-        """Test Affiliate Marketing System Endpoints"""
-        print("\n🎯 TESTING AFFILIATE SYSTEM")
-        print("=" * 50)
-        
-        # 1. Affiliate Health Check
-        response, success, response_time = self.make_request("GET", "/affiliate/health")
-        if success and response.status_code == 200:
-            data = response.json()
-            self.log_test("Affiliate Health Check", True, 
-                         f"Service: {data.get('service', 'Unknown')}, Campaigns: {data.get('stats', {}).get('campaigns', 0)}", 
-                         response_time)
-        else:
-            self.log_test("Affiliate Health Check", False, f"Failed: {response}", response_time)
-        
-        # 2. List Campaigns
-        response, success, response_time = self.make_request("GET", "/affiliate/campaigns", params={"limit": 10})
-        if success and response.status_code == 200:
-            data = response.json()
-            campaign_count = len(data.get("campaigns", []))
-            self.log_test("List Campaigns", True, f"Retrieved {campaign_count} campaigns", response_time)
-            
-            # Store first campaign ID for further testing
-            if campaign_count > 0:
-                self.first_campaign_id = data["campaigns"][0]["id"]
-        else:
-            self.log_test("List Campaigns", False, f"Failed: {response}", response_time)
-            self.first_campaign_id = None
-        
-        # 3. Get specific campaign details
-        if hasattr(self, 'first_campaign_id') and self.first_campaign_id:
-            response, success, response_time = self.make_request("GET", f"/affiliate/campaigns/{self.first_campaign_id}")
-            if success and response.status_code == 200:
-                data = response.json()
-                total_creators = data.get("performance", {}).get("total_creators", 0)
-                self.log_test("Get Campaign Details", True, f"Campaign loaded with {total_creators} creators", response_time)
-            else:
-                self.log_test("Get Campaign Details", False, f"Failed: {response}", response_time)
-        
-        # 4. Create new campaign
-        new_campaign_data = {
-            "name": "Test Campaign - Series A Demo",
-            "description": "Testing campaign creation for investor demonstration",
-            "base_rate_bps": 2000,  # 20%
-            "open_collaboration": True,
-            "invited_creators": [],
-            "product_ids": ["test_product_001"]
-        }
-        
-        response, success, response_time = self.make_request("POST", "/affiliate/campaigns", data=new_campaign_data)
-        if success and response.status_code == 200:
-            data = response.json()
-            if data.get("success"):
-                new_campaign_id = data["campaign"]["id"]
-                self.log_test("Create Campaign", True, f"Created campaign: {new_campaign_id}", response_time)
-                self.new_campaign_id = new_campaign_id
-            else:
-                self.log_test("Create Campaign", False, "Success flag false", response_time)
-        else:
-            self.log_test("Create Campaign", False, f"Failed: {response}", response_time)
-            self.new_campaign_id = None
-        
-        # 5. Create affiliate link
-        if hasattr(self, 'new_campaign_id') and self.new_campaign_id:
-            link_data = {
-                "campaign_id": self.new_campaign_id,
-                "custom_code": "TESTDEMO"
-            }
-            
-            response, success, response_time = self.make_request("POST", "/affiliate/links", data=link_data)
-            if success and response.status_code == 200:
-                data = response.json()
-                if data.get("success"):
-                    link_id = data["link"]["id"]
-                    tracking_code = data["link"]["code"]
-                    self.log_test("Create Affiliate Link", True, f"Link created: {tracking_code}", response_time)
-                    self.new_link_code = tracking_code
-                else:
-                    self.log_test("Create Affiliate Link", False, "Success flag false", response_time)
-            else:
-                self.log_test("Create Affiliate Link", False, f"Failed: {response}", response_time)
-        
-        # 6. Track affiliate click
-        if hasattr(self, 'new_link_code') and self.new_link_code:
-            response, success, response_time = self.make_request("GET", f"/affiliate/track/{self.new_link_code}")
-            if success and response.status_code == 200:
-                data = response.json()
-                redirect_url = data.get("redirect_to", "")
-                self.log_test("Track Affiliate Click", True, f"Click tracked, redirect: {redirect_url}", response_time)
-            else:
-                self.log_test("Track Affiliate Click", False, f"Failed: {response}", response_time)
-        
-        # 7. Track affiliate purchase
-        if hasattr(self, 'new_link_code') and self.new_link_code:
-            purchase_data = {
-                "order_id": "test_order_001",
-                "tracking_code": self.new_link_code,
-                "amount": 150.00,
-                "product_ids": ["test_product_001"]
-            }
-            
-            response, success, response_time = self.make_request("POST", "/affiliate/track/purchase", data=purchase_data)
-            if success and response.status_code == 200:
-                data = response.json()
-                if data.get("success"):
-                    commission = data.get("commission_earned", 0)
-                    self.log_test("Track Purchase", True, f"Purchase tracked, commission: ${commission}", response_time)
-                else:
-                    self.log_test("Track Purchase", False, "Success flag false", response_time)
-            else:
-                self.log_test("Track Purchase", False, f"Failed: {response}", response_time)
-        
-        # 8. Get creator links
-        response, success, response_time = self.make_request("GET", "/affiliate/creators/demo_creator/links")
-        if success and response.status_code == 200:
-            data = response.json()
-            total_links = data.get("total_links", 0)
-            total_commissions = data.get("stats", {}).get("total_commissions", 0)
-            self.log_test("Get Creator Links", True, f"Creator has {total_links} links, ${total_commissions} commissions", response_time)
-        else:
-            self.log_test("Get Creator Links", False, f"Failed: {response}", response_time)
-        
-        # 9. Creators leaderboard
-        response, success, response_time = self.make_request("GET", "/affiliate/analytics/creators", params={"limit": 5})
-        if success and response.status_code == 200:
-            data = response.json()
-            total_creators = data.get("total_creators", 0)
-            self.log_test("Creators Leaderboard", True, f"Leaderboard with {total_creators} creators", response_time)
-        else:
-            self.log_test("Creators Leaderboard", False, f"Failed: {response}", response_time)
-        
-        # 10. Performance analytics
-        response, success, response_time = self.make_request("GET", "/affiliate/analytics/performance", params={"days": 30})
-        if success and response.status_code == 200:
-            data = response.json()
-            metrics = data.get("metrics", {})
-            total_clicks = metrics.get("total_clicks", 0)
-            conversion_rate = metrics.get("conversion_rate_percent", 0)
-            self.log_test("Performance Analytics", True, f"{total_clicks} clicks, {conversion_rate}% conversion", response_time)
-        else:
-            self.log_test("Performance Analytics", False, f"Failed: {response}", response_time)
-
-    def test_performance_benchmarks(self):
-        """Test performance benchmarks for Series A readiness"""
-        print("\n⚡ TESTING PERFORMANCE BENCHMARKS")
-        print("=" * 50)
-        
-        # Test concurrent requests
-        import threading
-        import queue
-        
-        def make_concurrent_request(endpoint, result_queue):
             start_time = time.time()
-            response, success, _ = self.make_request("GET", endpoint)
+            response = requests.get(f"{BASE_URL}/legal/health", timeout=10)
             response_time = time.time() - start_time
-            result_queue.put((success and response.status_code == 200, response_time))
-        
-        # Test 5 concurrent health checks
-        result_queue = queue.Queue()
-        threads = []
-        
-        for _ in range(5):
-            thread = threading.Thread(target=make_concurrent_request, args=("/b2b/health", result_queue))
-            threads.append(thread)
-            thread.start()
-        
-        for thread in threads:
-            thread.join()
-        
-        # Collect results
-        concurrent_results = []
-        while not result_queue.empty():
-            concurrent_results.append(result_queue.get())
-        
-        successful_requests = sum(1 for success, _ in concurrent_results if success)
-        avg_response_time = sum(rt for _, rt in concurrent_results) / len(concurrent_results)
-        
-        if successful_requests == 5 and avg_response_time < 0.5:  # 500ms target
-            self.log_test("Concurrent Load Test", True, 
-                         f"{successful_requests}/5 success, avg {round(avg_response_time*1000, 2)}ms", 
-                         avg_response_time)
-        else:
-            self.log_test("Concurrent Load Test", False, 
-                         f"{successful_requests}/5 success, avg {round(avg_response_time*1000, 2)}ms", 
-                         avg_response_time)
-
-    def test_sample_data_integrity(self):
-        """Test sample data integrity for demo scenarios"""
-        print("\n📊 TESTING SAMPLE DATA INTEGRITY")
-        print("=" * 50)
-        
-        # Check RFQ sample data
-        response, success, response_time = self.make_request("GET", "/b2b/rfq")
-        if success and response.status_code == 200:
-            data = response.json()
-            rfqs = data.get("rfqs", [])
             
-            # Verify we have at least 3 RFQs as specified
-            if len(rfqs) >= 3:
-                categories = set(rfq.get("category") for rfq in rfqs)
-                self.log_test("RFQ Sample Data", True, 
-                             f"{len(rfqs)} RFQs across {len(categories)} categories", response_time)
+            if response.status_code == 200:
+                data = response.json()
+                required_fields = ["service", "status", "documents", "features"]
+                missing_fields = [field for field in required_fields if field not in data]
+                
+                if missing_fields:
+                    self.log_result("Legal Health Check", False, 
+                                  f"Missing fields: {missing_fields}", response_time)
+                else:
+                    # Check document availability
+                    docs = data.get("documents", {})
+                    privacy_available = docs.get("privacy_policy", {}).get("available", False)
+                    terms_available = docs.get("terms_of_service", {}).get("available", False)
+                    
+                    if privacy_available and terms_available:
+                        features = data.get("features", [])
+                        expected_features = ["html_rendering", "etag_caching", "version_tracking", 
+                                           "app_store_headers", "mobile_responsive"]
+                        
+                        if all(feature in features for feature in expected_features):
+                            self.log_result("Legal Health Check", True, 
+                                          f"All documents available, {len(features)} features enabled", 
+                                          response_time)
+                        else:
+                            missing_features = [f for f in expected_features if f not in features]
+                            self.log_result("Legal Health Check", False, 
+                                          f"Missing features: {missing_features}", response_time)
+                    else:
+                        self.log_result("Legal Health Check", False, 
+                                      f"Documents not available - Privacy: {privacy_available}, Terms: {terms_available}", 
+                                      response_time)
             else:
-                self.log_test("RFQ Sample Data", False, f"Only {len(rfqs)} RFQs found, need 3+", response_time)
-        else:
-            self.log_test("RFQ Sample Data", False, f"Failed to retrieve RFQs: {response}", response_time)
-        
-        # Check Affiliate sample data
-        response, success, response_time = self.make_request("GET", "/affiliate/campaigns")
-        if success and response.status_code == 200:
-            data = response.json()
-            campaigns = data.get("campaigns", [])
+                self.log_result("Legal Health Check", False, 
+                              f"HTTP {response.status_code}: {response.text}", response_time)
+                
+        except Exception as e:
+            self.log_result("Legal Health Check", False, f"Exception: {str(e)}")
+    
+    def test_privacy_policy_endpoint(self):
+        """Test privacy policy endpoint with App Store compliance validation"""
+        try:
+            start_time = time.time()
+            response = requests.get(f"{BASE_URL}/legal/privacy-policy", timeout=10)
+            response_time = time.time() - start_time
             
-            # Verify we have at least 3 campaigns as specified
-            if len(campaigns) >= 3:
-                active_campaigns = sum(1 for c in campaigns if c.get("status") == "active")
-                self.log_test("Affiliate Sample Data", True, 
-                             f"{len(campaigns)} campaigns, {active_campaigns} active", response_time)
+            if response.status_code == 200:
+                # Check content type
+                content_type = response.headers.get('content-type', '')
+                if 'text/html' not in content_type:
+                    self.log_result("Privacy Policy Content Type", False, 
+                                  f"Expected text/html, got {content_type}", response_time)
+                    return
+                
+                # Check App Store compliance headers
+                required_headers = {
+                    'Cache-Control': 'public, max-age=3600',
+                    'ETag': None,  # Should exist but value varies
+                    'Last-Modified': None,  # Should exist but value varies
+                    'X-Doc-Version': None,  # Should exist but value varies
+                    'Content-Security-Policy': 'default-src \'none\'; style-src \'unsafe-inline\'; img-src data:;',
+                    'X-Content-Type-Options': 'nosniff',
+                    'Referrer-Policy': 'no-referrer',
+                    'X-Frame-Options': 'DENY'
+                }
+                
+                missing_headers = []
+                incorrect_headers = []
+                
+                for header, expected_value in required_headers.items():
+                    actual_value = response.headers.get(header)
+                    if actual_value is None:
+                        missing_headers.append(header)
+                    elif expected_value is not None and actual_value != expected_value:
+                        incorrect_headers.append(f"{header}: expected '{expected_value}', got '{actual_value}'")
+                
+                if missing_headers or incorrect_headers:
+                    issues = []
+                    if missing_headers:
+                        issues.append(f"Missing: {missing_headers}")
+                    if incorrect_headers:
+                        issues.append(f"Incorrect: {incorrect_headers}")
+                    
+                    self.log_result("Privacy Policy App Store Headers", False, 
+                                  "; ".join(issues), response_time)
+                else:
+                    # Check HTML content structure
+                    content = response.text
+                    required_elements = [
+                        '<!doctype html>',
+                        '<title>Privacy Policy - AisleMarts Legal</title>',
+                        'AisleMarts Privacy Policy',
+                        'privacy@aislemarts.com'
+                    ]
+                    
+                    missing_elements = [elem for elem in required_elements if elem not in content]
+                    
+                    if missing_elements:
+                        self.log_result("Privacy Policy HTML Structure", False, 
+                                      f"Missing elements: {missing_elements}", response_time)
+                    else:
+                        # Check document size (should be substantial)
+                        size_kb = len(content) / 1024
+                        if size_kb < 5:  # Less than 5KB seems too small for a privacy policy
+                            self.log_result("Privacy Policy Content Size", False, 
+                                          f"Document too small: {size_kb:.1f}KB", response_time)
+                        else:
+                            self.log_result("Privacy Policy Endpoint", True, 
+                                          f"Valid HTML document ({size_kb:.1f}KB) with all required headers", 
+                                          response_time)
             else:
-                self.log_test("Affiliate Sample Data", False, f"Only {len(campaigns)} campaigns found, need 3+", response_time)
-        else:
-            self.log_test("Affiliate Sample Data", False, f"Failed to retrieve campaigns: {response}", response_time)
-        
-        # Check affiliate links
-        response, success, response_time = self.make_request("GET", "/affiliate/creators/creator_fashion_001/links")
-        if success and response.status_code == 200:
-            data = response.json()
-            total_links = data.get("total_links", 0)
+                self.log_result("Privacy Policy Endpoint", False, 
+                              f"HTTP {response.status_code}: {response.text}", response_time)
+                
+        except Exception as e:
+            self.log_result("Privacy Policy Endpoint", False, f"Exception: {str(e)}")
+    
+    def test_terms_of_service_endpoint(self):
+        """Test terms of service endpoint with App Store compliance validation"""
+        try:
+            start_time = time.time()
+            response = requests.get(f"{BASE_URL}/legal/terms-of-service", timeout=10)
+            response_time = time.time() - start_time
             
-            if total_links >= 1:
-                self.log_test("Affiliate Links Data", True, f"Creator has {total_links} links", response_time)
+            if response.status_code == 200:
+                # Check content type
+                content_type = response.headers.get('content-type', '')
+                if 'text/html' not in content_type:
+                    self.log_result("Terms of Service Content Type", False, 
+                                  f"Expected text/html, got {content_type}", response_time)
+                    return
+                
+                # Check App Store compliance headers (same as privacy policy)
+                required_headers = {
+                    'Cache-Control': 'public, max-age=3600',
+                    'ETag': None,
+                    'Last-Modified': None,
+                    'X-Doc-Version': None,
+                    'Content-Security-Policy': 'default-src \'none\'; style-src \'unsafe-inline\'; img-src data:;',
+                    'X-Content-Type-Options': 'nosniff',
+                    'Referrer-Policy': 'no-referrer',
+                    'X-Frame-Options': 'DENY'
+                }
+                
+                missing_headers = []
+                for header, expected_value in required_headers.items():
+                    actual_value = response.headers.get(header)
+                    if actual_value is None:
+                        missing_headers.append(header)
+                    elif expected_value is not None and actual_value != expected_value:
+                        missing_headers.append(f"{header} (incorrect value)")
+                
+                if missing_headers:
+                    self.log_result("Terms of Service App Store Headers", False, 
+                                  f"Issues with headers: {missing_headers}", response_time)
+                else:
+                    # Check HTML content structure
+                    content = response.text
+                    required_elements = [
+                        '<!doctype html>',
+                        '<title>Terms of Service - AisleMarts Legal</title>',
+                        'AisleMarts Terms of Service',
+                        'legal@aislemarts.com'
+                    ]
+                    
+                    missing_elements = [elem for elem in required_elements if elem not in content]
+                    
+                    if missing_elements:
+                        self.log_result("Terms of Service HTML Structure", False, 
+                                      f"Missing elements: {missing_elements}", response_time)
+                    else:
+                        size_kb = len(content) / 1024
+                        if size_kb < 5:
+                            self.log_result("Terms of Service Content Size", False, 
+                                          f"Document too small: {size_kb:.1f}KB", response_time)
+                        else:
+                            self.log_result("Terms of Service Endpoint", True, 
+                                          f"Valid HTML document ({size_kb:.1f}KB) with all required headers", 
+                                          response_time)
             else:
-                self.log_test("Affiliate Links Data", False, f"Creator has no links", response_time)
-        else:
-            self.log_test("Affiliate Links Data", False, f"Failed to retrieve creator links: {response}", response_time)
-
+                self.log_result("Terms of Service Endpoint", False, 
+                              f"HTTP {response.status_code}: {response.text}", response_time)
+                
+        except Exception as e:
+            self.log_result("Terms of Service Endpoint", False, f"Exception: {str(e)}")
+    
+    def test_etag_caching_privacy_policy(self):
+        """Test ETag caching functionality for privacy policy"""
+        try:
+            # First request to get ETag
+            start_time = time.time()
+            response1 = requests.get(f"{BASE_URL}/legal/privacy-policy", timeout=10)
+            response_time1 = time.time() - start_time
+            
+            if response1.status_code != 200:
+                self.log_result("ETag Caching - Privacy Policy", False, 
+                              f"First request failed: HTTP {response1.status_code}", response_time1)
+                return
+            
+            etag = response1.headers.get('ETag')
+            if not etag:
+                self.log_result("ETag Caching - Privacy Policy", False, 
+                              "No ETag header in first response", response_time1)
+                return
+            
+            # Second request with If-None-Match header
+            start_time = time.time()
+            headers = {'If-None-Match': etag}
+            response2 = requests.get(f"{BASE_URL}/legal/privacy-policy", headers=headers, timeout=10)
+            response_time2 = time.time() - start_time
+            
+            if response2.status_code == 304:
+                self.log_result("ETag Caching - Privacy Policy", True, 
+                              f"304 Not Modified returned correctly (ETag: {etag})", 
+                              response_time1 + response_time2)
+            else:
+                self.log_result("ETag Caching - Privacy Policy", False, 
+                              f"Expected 304, got {response2.status_code}", 
+                              response_time1 + response_time2)
+                
+        except Exception as e:
+            self.log_result("ETag Caching - Privacy Policy", False, f"Exception: {str(e)}")
+    
+    def test_etag_caching_terms_of_service(self):
+        """Test ETag caching functionality for terms of service"""
+        try:
+            # First request to get ETag
+            start_time = time.time()
+            response1 = requests.get(f"{BASE_URL}/legal/terms-of-service", timeout=10)
+            response_time1 = time.time() - start_time
+            
+            if response1.status_code != 200:
+                self.log_result("ETag Caching - Terms of Service", False, 
+                              f"First request failed: HTTP {response1.status_code}", response_time1)
+                return
+            
+            etag = response1.headers.get('ETag')
+            if not etag:
+                self.log_result("ETag Caching - Terms of Service", False, 
+                              "No ETag header in first response", response_time1)
+                return
+            
+            # Second request with If-None-Match header
+            start_time = time.time()
+            headers = {'If-None-Match': etag}
+            response2 = requests.get(f"{BASE_URL}/legal/terms-of-service", headers=headers, timeout=10)
+            response_time2 = time.time() - start_time
+            
+            if response2.status_code == 304:
+                self.log_result("ETag Caching - Terms of Service", True, 
+                              f"304 Not Modified returned correctly (ETag: {etag})", 
+                              response_time1 + response_time2)
+            else:
+                self.log_result("ETag Caching - Terms of Service", False, 
+                              f"Expected 304, got {response2.status_code}", 
+                              response_time1 + response_time2)
+                
+        except Exception as e:
+            self.log_result("ETag Caching - Terms of Service", False, f"Exception: {str(e)}")
+    
+    def test_version_endpoints(self):
+        """Test version tracking endpoints"""
+        endpoints = [
+            ("Privacy Policy Version", "/legal/privacy-policy/version"),
+            ("Terms of Service Version", "/legal/terms-of-service/version")
+        ]
+        
+        for test_name, endpoint in endpoints:
+            try:
+                start_time = time.time()
+                response = requests.get(f"{BASE_URL}{endpoint}", timeout=10)
+                response_time = time.time() - start_time
+                
+                if response.status_code == 200:
+                    data = response.json()
+                    required_fields = ["document", "version", "last_modified", "url"]
+                    missing_fields = [field for field in required_fields if field not in data]
+                    
+                    if missing_fields:
+                        self.log_result(test_name, False, 
+                                      f"Missing fields: {missing_fields}", response_time)
+                    else:
+                        # Validate version format (should be a hash)
+                        version = data.get("version", "")
+                        if len(version) < 8:  # ETags should be at least 8 characters
+                            self.log_result(test_name, False, 
+                                          f"Version too short: {version}", response_time)
+                        else:
+                            self.log_result(test_name, True, 
+                                          f"Version: {version}, Last Modified: {data.get('last_modified')}", 
+                                          response_time)
+                else:
+                    self.log_result(test_name, False, 
+                                  f"HTTP {response.status_code}: {response.text}", response_time)
+                    
+            except Exception as e:
+                self.log_result(test_name, False, f"Exception: {str(e)}")
+    
+    def test_error_handling(self):
+        """Test error handling for missing documents"""
+        try:
+            start_time = time.time()
+            response = requests.get(f"{BASE_URL}/legal/nonexistent-document", timeout=10)
+            response_time = time.time() - start_time
+            
+            if response.status_code == 404:
+                self.log_result("Error Handling - 404 for Missing Document", True, 
+                              "Correctly returns 404 for nonexistent document", response_time)
+            else:
+                self.log_result("Error Handling - 404 for Missing Document", False, 
+                              f"Expected 404, got {response.status_code}", response_time)
+                
+        except Exception as e:
+            self.log_result("Error Handling - 404 for Missing Document", False, f"Exception: {str(e)}")
+    
+    def test_performance_benchmarks(self):
+        """Test performance requirements (under 2 seconds)"""
+        endpoints = [
+            ("Privacy Policy Performance", "/legal/privacy-policy"),
+            ("Terms of Service Performance", "/legal/terms-of-service"),
+            ("Health Check Performance", "/legal/health")
+        ]
+        
+        for test_name, endpoint in endpoints:
+            try:
+                start_time = time.time()
+                response = requests.get(f"{BASE_URL}{endpoint}", timeout=10)
+                response_time = time.time() - start_time
+                
+                if response.status_code == 200:
+                    if response_time < 2.0:
+                        self.log_result(test_name, True, 
+                                      f"Response time: {response_time:.3f}s (under 2s requirement)", 
+                                      response_time)
+                    else:
+                        self.log_result(test_name, False, 
+                                      f"Response time: {response_time:.3f}s (exceeds 2s requirement)", 
+                                      response_time)
+                else:
+                    self.log_result(test_name, False, 
+                                  f"HTTP {response.status_code} (performance test failed)", response_time)
+                    
+            except Exception as e:
+                self.log_result(test_name, False, f"Exception: {str(e)}")
+    
+    def test_mobile_responsiveness(self):
+        """Test mobile viewport and responsive design"""
+        try:
+            start_time = time.time()
+            headers = {
+                'User-Agent': 'Mozilla/5.0 (iPhone; CPU iPhone OS 14_7_1 like Mac OS X) AppleWebKit/605.1.15 (KHTML, like Gecko) Version/14.1.2 Mobile/15E148 Safari/604.1'
+            }
+            response = requests.get(f"{BASE_URL}/legal/privacy-policy", headers=headers, timeout=10)
+            response_time = time.time() - start_time
+            
+            if response.status_code == 200:
+                content = response.text
+                mobile_indicators = [
+                    'viewport" content="width=device-width,initial-scale=1"',
+                    '@media (max-width: 768px)',
+                    'font-family: system-ui'
+                ]
+                
+                found_indicators = [indicator for indicator in mobile_indicators if indicator in content]
+                
+                if len(found_indicators) >= 2:  # At least 2 mobile indicators should be present
+                    self.log_result("Mobile Responsiveness", True, 
+                                  f"Found {len(found_indicators)}/3 mobile design indicators", 
+                                  response_time)
+                else:
+                    self.log_result("Mobile Responsiveness", False, 
+                                  f"Only found {len(found_indicators)}/3 mobile design indicators", 
+                                  response_time)
+            else:
+                self.log_result("Mobile Responsiveness", False, 
+                              f"HTTP {response.status_code}", response_time)
+                
+        except Exception as e:
+            self.log_result("Mobile Responsiveness", False, f"Exception: {str(e)}")
+    
     def run_all_tests(self):
-        """Run comprehensive test suite"""
-        print("🚀💎 AISLEMARTS B2B RFQ & AFFILIATE BACKEND TESTING")
-        print("Series A Investor Demo Validation")
-        print("=" * 60)
+        """Run comprehensive legal document endpoint testing"""
+        print("🚀 Starting Comprehensive Legal Document Backend Testing")
+        print(f"Backend URL: {BASE_URL}")
+        print("=" * 80)
         
-        # Run test suites
-        self.test_rfq_system()
-        self.test_affiliate_system()
+        # Core endpoint tests
+        self.test_health_endpoint()
+        self.test_privacy_policy_endpoint()
+        self.test_terms_of_service_endpoint()
+        
+        # ETag caching tests
+        self.test_etag_caching_privacy_policy()
+        self.test_etag_caching_terms_of_service()
+        
+        # Version tracking tests
+        self.test_version_endpoints()
+        
+        # Error handling tests
+        self.test_error_handling()
+        
+        # Performance tests
         self.test_performance_benchmarks()
-        self.test_sample_data_integrity()
         
-        # Calculate final results
-        total_time = time.time() - self.start_time
-        success_rate = (self.results["passed"] / self.results["total_tests"]) * 100 if self.results["total_tests"] > 0 else 0
+        # Mobile responsiveness test
+        self.test_mobile_responsiveness()
         
-        print("\n" + "=" * 60)
-        print("🏆 FINAL RESULTS")
-        print("=" * 60)
-        print(f"Total Tests: {self.results['total_tests']}")
-        print(f"Passed: {self.results['passed']} ✅")
-        print(f"Failed: {self.results['failed']} ❌")
-        print(f"Success Rate: {success_rate:.1f}%")
-        print(f"Total Time: {total_time:.2f}s")
+        # Summary
+        print("=" * 80)
+        print(f"🏆 TESTING COMPLETE: {self.passed_tests}/{self.total_tests} tests passed")
+        success_rate = (self.passed_tests / self.total_tests) * 100 if self.total_tests > 0 else 0
+        print(f"📊 Success Rate: {success_rate:.1f}%")
         
-        # Series A readiness assessment
-        if success_rate >= 95:
-            print(f"\n🎯 SERIES A READINESS: ✅ READY ({success_rate:.1f}% success rate)")
-        elif success_rate >= 90:
-            print(f"\n🎯 SERIES A READINESS: ⚠️ MOSTLY READY ({success_rate:.1f}% success rate)")
+        if success_rate >= 90:
+            print("✅ SERIES A READY: Legal document endpoints meet App Store compliance requirements")
+        elif success_rate >= 75:
+            print("⚠️  NEEDS ATTENTION: Some issues found, but core functionality working")
         else:
-            print(f"\n🎯 SERIES A READINESS: ❌ NOT READY ({success_rate:.1f}% success rate)")
+            print("❌ CRITICAL ISSUES: Major problems found, not ready for App Store submission")
         
-        # Show errors if any
-        if self.results["errors"]:
-            print("\n❌ ERRORS ENCOUNTERED:")
-            for error in self.results["errors"]:
-                print(f"  • {error}")
-        
-        return self.results
+        return {
+            "total_tests": self.total_tests,
+            "passed_tests": self.passed_tests,
+            "success_rate": success_rate,
+            "results": self.results
+        }
 
 if __name__ == "__main__":
-    tester = BackendTester()
+    tester = LegalDocumentTester()
     results = tester.run_all_tests()
     
-    # Exit with appropriate code
-    if results["failed"] == 0:
-        sys.exit(0)
-    else:
-        sys.exit(1)
+    # Save detailed results to file
+    with open('/app/legal_test_results.json', 'w') as f:
+        json.dump(results, f, indent=2)
+    
+    print(f"\n📄 Detailed results saved to: /app/legal_test_results.json")
